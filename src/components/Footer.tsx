@@ -31,10 +31,10 @@ export default function Footer() {
 
             <div className="flex gap-6">
               <FooterLink href="https://github.com/abdhesh369" icon={<Github className="w-5 h-5" />} label="Github" />
-              <FooterLink href="#" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
-              <FooterLink href="#" icon={<Twitter className="w-5 h-5" />} label="Twitter" />
-              <FooterLink href="#" icon={<Instagram className="w-5 h-5" />} label="Instagram" />
-              <FooterLink href="#" icon={<Facebook className="w-5 h-5" />} label="Facebook" />
+              <FooterLink href="www.linkedin.com/in/abdhesh369" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
+              <FooterLink href="https://x.com/abdhesh369" icon={<Twitter className="w-5 h-5" />} label="Twitter" />
+              <FooterLink href="https://www.instagram.com/abdhesh.369" icon={<Instagram className="w-5 h-5" />} label="Instagram" />
+              <FooterLink href="https://www.facebook.com/abdhesh.369" icon={<Facebook className="w-5 h-5" />} label="Facebook" />
             </div>
           </div>
         </div>

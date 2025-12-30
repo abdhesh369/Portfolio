@@ -95,8 +95,8 @@ export default function Hero() {
             </div>
 
             <div className="flex gap-6 pt-8 border-t border-border/50">
-              <SocialLink href="https://github.com" icon={<Github className="w-5 h-5" />} label="GitHub" />
-              <SocialLink href="https://linkedin.com" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
+              <SocialLink href="https://github.com/abdhesh369" icon={<Github className="w-5 h-5" />} label="GitHub" />
+              <SocialLink href="www.linkedin.com/in/abdhesh369" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
             </div>
           </motion.div>
 

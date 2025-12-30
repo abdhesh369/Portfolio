@@ -16,7 +16,7 @@ import { useSkills } from "@/hooks/use-portfolio";
 
 // Local Skill Type (instead of importing from @shared/schema)
 interface Skill {
-  id: string;
+  id: string | number;
   name: string;
   category: string;
   icon?: string;
