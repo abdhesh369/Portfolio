@@ -1,27 +1,24 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "dist",
     "target": "ES2020",
-    "module": "ES2020",
-    "moduleResolution": "node",
+    "useDefineForClassFields": true,
     "lib": ["ES2020"],
-    "strict": false,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
+    "module": "ES2020",
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "sourceMap": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "isolatedModules": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": [
-    "src/**/*.ts",
-    "shared/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

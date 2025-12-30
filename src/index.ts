@@ -30,13 +30,31 @@ function log(message: string, source = "express") {
 // ------------------- MIDDLEWARE -------------------
 
 // CORS (required for separate frontend)
+// ------------------- CORS CONFIGURATION (UPDATED) -------------------
+
+// Define allowed origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "https://abdheshsah.com.np",
+  "https://www.abdheshsah.com.np",
+  process.env.FRONTEND_URL, // Allow env variable override if set
+].filter(Boolean); // Remove undefined/null values
+
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? process.env.FRONTEND_URL
-        : ["http://localhost:5173", "http://localhost:4173"],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log(`CORS blocked origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
