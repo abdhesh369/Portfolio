@@ -15,12 +15,16 @@ function logDb(message: string, level: "info" | "error" | "warn" = "info") {
 
 // ✅ Always use /tmp in production/Render, ./data locally
 let dataDir: string;
-if (process.env.NODE_ENV === "production" || process.env.RENDER === "true" || process.env.RENDER_SERVICE_ID) {
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.RENDER === "true" ||
+  process.env.RENDER_SERVICE_ID
+) {
   dataDir = "/tmp/portfolio-db";
-  console.log(`[DB_INIT] PRODUCTION MODE - Using /tmp`);
+  console.log(`[DB_INIT] PRODUCTION MODE - Using ${dataDir}`);
 } else {
   dataDir = path.resolve(process.cwd(), "data");
-  console.log(`[DB_INIT] DEVELOPMENT MODE - Using ./data`);
+  console.log(`[DB_INIT] DEVELOPMENT MODE - Using ${dataDir}`);
 }
 
 console.log(`[DB_INIT] Final dataDir: ${dataDir}`);
@@ -46,7 +50,9 @@ try {
   sqliteDb = new Database(dbFile, {
     verbose: process.env.NODE_ENV !== "production" ? console.log : undefined,
   });
-  logDb(`Database ${fs.existsSync(dbFile) ? "opened" : "created"} successfully`);
+  logDb(
+    `Database ${fs.existsSync(dbFile) ? "opened" : "created"} successfully`
+  );
 } catch (error) {
   logDb(`Failed to initialize database: ${error}`, "error");
   throw error;
@@ -72,7 +78,11 @@ export const sqlite: any = sqliteDb;
 export { schema };
 
 // Health check
-export function checkDatabaseHealth(): { healthy: boolean; message: string; details?: any } {
+export function checkDatabaseHealth(): {
+  healthy: boolean;
+  message: string;
+  details?: any;
+} {
   try {
     const result = sqliteDb.prepare("SELECT 1 as health").get();
     if (result && (result as any).health === 1) {
@@ -88,7 +98,11 @@ export function checkDatabaseHealth(): { healthy: boolean; message: string; deta
     }
     return { healthy: false, message: "Database query returned unexpected result" };
   } catch (error) {
-    return { healthy: false, message: `Database health check failed: ${error}`, details: { error } };
+    return {
+      healthy: false,
+      message: `Database health check failed: ${error}`,
+      details: { error },
+    };
   }
 }
 
