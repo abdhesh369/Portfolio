@@ -3,8 +3,7 @@ import { createServer } from "http";
 import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { seedDatabase } from "./seed.js";
-
-
+import { createTables } from "./create-tables.js";
 // ------------------- APP SETUP -------------------
 const app = express();
 const httpServer = createServer(app);
@@ -30,20 +29,17 @@ function log(message: string, source = "express") {
 // ------------------- MIDDLEWARE -------------------
 
 // ------------------- CORS CONFIGURATION (UPDATED) -------------------
-
-// Define allowed origins
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
   "https://abdheshsah.com.np",
   "https://www.abdheshsah.com.np",
-  process.env.FRONTEND_URL, // Allow env variable override if set
-].filter(Boolean); // Remove undefined/null values
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, etc.)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -80,14 +76,12 @@ app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 // Request logging
 app.use((req, res, next) => {
   const start = Date.now();
-
   res.on("finish", () => {
     if (req.path.startsWith("/api")) {
       const duration = Date.now() - start;
       log(`${req.method} ${req.path} ${res.statusCode} in ${duration}ms`);
     }
   });
-
   next();
 });
 
@@ -133,7 +127,15 @@ function setupGracefulShutdown() {
   try {
     log("Starting server...", "startup");
 
-    // Seed database (safe if idempotent)
+    // ✅ Create tables first
+    try {
+      await createTables();
+      log("Database tables created", "startup");
+    } catch (error) {
+      log(`Table creation error (may already exist): ${error}`, "startup");
+    }
+
+    // ✅ Then seed
     try {
       await seedDatabase();
       log("Database seed complete", "startup");
