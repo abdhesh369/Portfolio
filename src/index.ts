@@ -1,6 +1,3 @@
-// ============================================================
-// FILE: src/server.ts
-// ============================================================
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import cors from "cors";
@@ -115,41 +112,36 @@ function setupGracefulShutdown() {
   process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
-(async () => {
+// ==================== MAIN STARTUP ====================
+async function startServer() {
   try {
     log("Starting server...", "startup");
 
-    // ✅ CRITICAL: Create tables FIRST
-    log("Creating database tables...", "startup");
-    try {
-      await createTables();
-      log("✓ Database tables created successfully", "startup");
-    } catch (error) {
-      log(`❌ Failed to create tables: ${error}`, "error");
-      throw error;
-    }
+    // STEP 1: CREATE TABLES (MUST BE FIRST)
+    log("📍 Creating database tables...", "startup");
+    await createTables();
+    log("✓ Tables created successfully", "startup");
 
-    // ✅ Then seed
-    log("Seeding database...", "startup");
+    // STEP 2: SEED DATABASE
+    log("📍 Seeding database...", "startup");
     try {
       await seedDatabase();
-      log("✓ Database seed complete", "startup");
+      log("✓ Database seeding complete", "startup");
     } catch (err) {
-      log("⚠️ Seed skipped or failed (safe to ignore)", "startup");
+      log("⚠️ Seed failed (continuing anyway)", "startup");
     }
 
-    // ✅ Register API routes
-    log("Registering API routes...", "startup");
+    // STEP 3: REGISTER ROUTES
+    log("📍 Registering API routes...", "startup");
     await registerRoutes(httpServer, app);
     log("✓ API routes registered", "startup");
 
+    // STEP 4: GLOBAL ERROR HANDLER
     app.use(
       (err: any, _req: Request, res: Response, _next: NextFunction) => {
         const status = err.status || err.statusCode || 500;
         const message = err.message || "Internal Server Error";
-
         log(`Error ${status}: ${message}`, "error");
-
         res.status(status).json({
           message,
           ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
@@ -157,16 +149,21 @@ function setupGracefulShutdown() {
       }
     );
 
+    // STEP 5: SETUP GRACEFUL SHUTDOWN
     setupGracefulShutdown();
 
+    // STEP 6: START HTTP SERVER
     const port = parseInt(process.env.PORT || "5000", 10);
     const host = "0.0.0.0";
 
     httpServer.listen(port, host, () => {
-      log(`Server running on ${host}:${port}`, "startup");
+      log(`✓ Server running on ${host}:${port}`, "startup");
     });
   } catch (error) {
-    log(`Startup failed: ${error}`, "error");
+    log(`❌ STARTUP FAILED: ${error}`, "error");
     process.exit(1);
   }
-})();
+}
+
+// Run the startup
+startServer();
