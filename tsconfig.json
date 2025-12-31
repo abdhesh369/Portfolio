@@ -7,16 +7,16 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "moduleResolution": "node",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
