@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "tsx src/index.ts",
+    "postinstall": "npm rebuild better-sqlite3",
     "build": "tsc --project tsconfig.json",
-    "start": "NODE_ENV=production node dist/src/index.js",
-    "postinstall": "npm rebuild better-sqlite3"
+    "start": "bash start.sh"
   },
   "dependencies": {
     "better-sqlite3": "^12.5.0",
@@ -29,6 +29,7 @@
     "@types/express-session": "^1.18.0",
     "@types/node": "^20.19.27",
     "@types/ws": "^8.5.13",
+    "drizzle-kit": "^0.31.8",
     "tsx": "^4.20.5",
     "typescript": "^5.9.3"
   }
