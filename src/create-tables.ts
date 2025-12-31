@@ -10,51 +10,64 @@ export async function createTables() {
   try {
     log("Starting table creation...");
 
-    // Create tables using raw SQL
-    const createTablesSQL = `
-      CREATE TABLE IF NOT EXISTS projects (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        techStack TEXT NOT NULL DEFAULT '[]',
-        imageUrl TEXT NOT NULL,
-        githubUrl TEXT,
-        liveUrl TEXT,
-        category TEXT NOT NULL,
-        problemStatement TEXT,
-        motivation TEXT,
-        systemDesign TEXT,
-        challenges TEXT,
-        learnings TEXT
-      );
+    // Create tables one by one with proper error handling
+    sqlite
+      .prepare(
+        `CREATE TABLE IF NOT EXISTS projects (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL,
+          techStack TEXT NOT NULL DEFAULT '[]',
+          imageUrl TEXT NOT NULL,
+          githubUrl TEXT,
+          liveUrl TEXT,
+          category TEXT NOT NULL,
+          problemStatement TEXT,
+          motivation TEXT,
+          systemDesign TEXT,
+          challenges TEXT,
+          learnings TEXT
+        )`
+      )
+      .run();
 
-      CREATE TABLE IF NOT EXISTS skills (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        category TEXT NOT NULL,
-        icon TEXT NOT NULL DEFAULT 'Code'
-      );
+    sqlite
+      .prepare(
+        `CREATE TABLE IF NOT EXISTS skills (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          category TEXT NOT NULL,
+          icon TEXT NOT NULL DEFAULT 'Code'
+        )`
+      )
+      .run();
 
-      CREATE TABLE IF NOT EXISTS experiences (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT NOT NULL,
-        organization TEXT NOT NULL,
-        period TEXT NOT NULL,
-        description TEXT NOT NULL,
-        type TEXT NOT NULL DEFAULT 'Experience'
-      );
+    sqlite
+      .prepare(
+        `CREATE TABLE IF NOT EXISTS experiences (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          role TEXT NOT NULL,
+          organization TEXT NOT NULL,
+          period TEXT NOT NULL,
+          description TEXT NOT NULL,
+          type TEXT NOT NULL DEFAULT 'Experience'
+        )`
+      )
+      .run();
 
-      CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        subject TEXT NOT NULL DEFAULT '',
-        message TEXT NOT NULL,
-        createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
+    sqlite
+      .prepare(
+        `CREATE TABLE IF NOT EXISTS messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          subject TEXT NOT NULL DEFAULT '',
+          message TEXT NOT NULL,
+          createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`
+      )
+      .run();
 
-    sqlite.exec(createTablesSQL);
     log("All tables created successfully!");
 
     // Verify tables exist
