@@ -82,7 +82,7 @@ const form = useForm<InsertMessage>({
               <p className="text-sm text-muted-foreground italic">
                 "Simplicity is the soul of efficiency."
               </p>
-              <p className="text-sm font-semibold text-primary mt-1">— Austin Freeman</p>
+              <p className="text-sm font-semibold text-primary mt-1">~~~~~~</p>
             </div>
           </form>
         </div>
