@@ -1,3 +1,6 @@
+// ============================================================
+// FILE: src/server.ts
+// ============================================================
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import cors from "cors";
@@ -5,18 +8,15 @@ import { registerRoutes } from "./routes.js";
 import { seedDatabase } from "./seed.js";
 import { createTables } from "./create-tables.js";
 
-// ------------------- APP SETUP -------------------
 const app = express();
 const httpServer = createServer(app);
 
-// Extend IncomingMessage for rawBody
 declare module "http" {
   interface IncomingMessage {
     rawBody: Buffer;
   }
 }
 
-// ------------------- LOGGING -------------------
 function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -27,9 +27,6 @@ function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-// ------------------- MIDDLEWARE -------------------
-
-// ------------------- CORS CONFIGURATION (UPDATED) -------------------
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
@@ -54,7 +51,6 @@ app.use(
   })
 );
 
-// Security headers
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
@@ -63,7 +59,6 @@ app.use((_req, res, next) => {
   next();
 });
 
-// Body parsing
 app.use(
   express.json({
     limit: "10mb",
@@ -74,7 +69,6 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
-// Request logging
 app.use((req, res, next) => {
   const start = Date.now();
   res.on("finish", () => {
@@ -86,7 +80,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------------------- HEALTH CHECK -------------------
 app.get("/health", (_req, res) => {
   res.status(200).json({
     ok: true,
@@ -103,7 +96,6 @@ app.get("/healthz", (_req, res) => {
   });
 });
 
-// ------------------- GRACEFUL SHUTDOWN -------------------
 function setupGracefulShutdown() {
   const shutdown = (signal: string) => {
     log(`${signal} received, shutting down...`, "shutdown");
@@ -123,32 +115,34 @@ function setupGracefulShutdown() {
   process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
-// ------------------- MAIN -------------------
 (async () => {
   try {
     log("Starting server...", "startup");
 
-    // ✅ Create tables first
+    // ✅ CRITICAL: Create tables FIRST
+    log("Creating database tables...", "startup");
     try {
       await createTables();
-      log("Database tables created", "startup");
+      log("✓ Database tables created successfully", "startup");
     } catch (error) {
-      log(`Table creation error (may already exist): ${error}`, "startup");
+      log(`❌ Failed to create tables: ${error}`, "error");
+      throw error;
     }
 
     // ✅ Then seed
+    log("Seeding database...", "startup");
     try {
       await seedDatabase();
-      log("Database seed complete", "startup");
+      log("✓ Database seed complete", "startup");
     } catch (err) {
-      log("Seed skipped or failed (safe to ignore)", "startup");
+      log("⚠️ Seed skipped or failed (safe to ignore)", "startup");
     }
 
-    // Register API routes
+    // ✅ Register API routes
+    log("Registering API routes...", "startup");
     await registerRoutes(httpServer, app);
-    log("API routes registered", "startup");
+    log("✓ API routes registered", "startup");
 
-    // Global error handler (LAST)
     app.use(
       (err: any, _req: Request, res: Response, _next: NextFunction) => {
         const status = err.status || err.statusCode || 500;
@@ -165,7 +159,6 @@ function setupGracefulShutdown() {
 
     setupGracefulShutdown();
 
-    // Start server
     const port = parseInt(process.env.PORT || "5000", 10);
     const host = "0.0.0.0";
 

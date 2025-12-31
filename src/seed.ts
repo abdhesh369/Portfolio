@@ -1,7 +1,9 @@
-import { storage } from "./storage.js";
+// ============================================================
+// FILE: src/seed.ts
+// ============================================================
+import { storage as storage2 } from "./storage.js";
 
-// Logging utility (consistent with db.ts)
-function log(message: string, level: "info" | "error" | "warn" = "info") {
+function logSeed(message: string, level: "info" | "error" | "warn" = "info") {
   const timestamp = new Date().toISOString();
   const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
   console.log(`${prefix} [${timestamp}] [SEED] ${message}`);
@@ -9,23 +11,20 @@ function log(message: string, level: "info" | "error" | "warn" = "info") {
 
 export async function seedDatabase() {
   try {
-    // Check if database already has data (with error handling)
     let existingProjects: any[] = [];
     try {
-      existingProjects = await storage.getProjects();
+      existingProjects = await storage2.getProjects();
     } catch (err) {
-      // Tables might not exist yet, that's OK - continue with seeding
-      log("Tables don't exist yet or database empty, proceeding with seeding...");
+      logSeed("Tables don't exist yet or database empty, proceeding with seeding...");
     }
 
     if (existingProjects.length > 0) {
-      log("Database already seeded, skipping...", "warn");
+      logSeed("Database already seeded, skipping...", "warn");
       return;
     }
 
-    log("Starting database seed...");
+    logSeed("Starting database seed...");
 
-    // ------------------- PROJECTS -------------------
     const projectList = [
       {
         title: "Calculator Application",
@@ -90,46 +89,36 @@ export async function seedDatabase() {
 
     for (const proj of projectList) {
       try {
-        await storage.createProject(proj);
-        log(`Seeded project: ${proj.title}`);
+        await storage2.createProject(proj);
+        logSeed(`Seeded project: ${proj.title}`);
         successCount++;
       } catch (err) {
-        log(`Failed to seed project: ${proj.title} - ${err}`, "error");
+        logSeed(`Failed to seed project: ${proj.title} - ${err}`, "error");
         failCount++;
       }
     }
 
-    log(`Projects: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Projects: ${successCount} succeeded, ${failCount} failed`);
 
-    // ------------------- SKILLS -------------------
     const skillList = [
-      // Languages
       { name: "C", category: "Languages", icon: "Code" },
       { name: "C++", category: "Languages", icon: "Code2" },
       { name: "Python", category: "Languages", icon: "Snake" },
       { name: "JavaScript", category: "Languages", icon: "FileJson" },
       { name: "TypeScript", category: "Languages", icon: "FileCode" },
-      
-      // Web Technologies
       { name: "HTML5", category: "Web", icon: "Layout" },
       { name: "CSS3", category: "Web", icon: "Palette" },
       { name: "React", category: "Web", icon: "Component" },
       { name: "Node.js", category: "Web", icon: "Server" },
       { name: "Express", category: "Web", icon: "Route" },
       { name: "TailwindCSS", category: "Web", icon: "Paintbrush" },
-      
-      // Database & Tools
       { name: "SQL", category: "Database", icon: "Database" },
       { name: "SQLite", category: "Database", icon: "HardDrive" },
       { name: "Git", category: "Tools", icon: "GitBranch" },
       { name: "GitHub", category: "Tools", icon: "Github" },
-      
-      // Core CS
       { name: "Data Structures", category: "Core", icon: "Binary" },
       { name: "Algorithms", category: "Core", icon: "Cpu" },
       { name: "OOP", category: "Core", icon: "Box" },
-      
-      // Hardware
       { name: "8085 Microprocessor", category: "Hardware", icon: "Chip" },
       { name: "Digital Electronics", category: "Hardware", icon: "CircuitBoard" },
     ];
@@ -139,18 +128,17 @@ export async function seedDatabase() {
 
     for (const skill of skillList) {
       try {
-        await storage.createSkill(skill);
-        log(`Seeded skill: ${skill.name}`);
+        await storage2.createSkill(skill);
+        logSeed(`Seeded skill: ${skill.name}`);
         successCount++;
       } catch (err) {
-        log(`Failed to seed skill: ${skill.name} - ${err}`, "error");
+        logSeed(`Failed to seed skill: ${skill.name} - ${err}`, "error");
         failCount++;
       }
     }
 
-    log(`Skills: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Skills: ${successCount} succeeded, ${failCount} failed`);
 
-    // ------------------- EXPERIENCES -------------------
     const experienceList = [
       {
         role: "Bachelor of Engineering Student",
@@ -173,33 +161,32 @@ export async function seedDatabase() {
 
     for (const exp of experienceList) {
       try {
-        await storage.createExperience(exp);
-        log(`Seeded experience: ${exp.role}`);
+        await storage2.createExperience(exp);
+        logSeed(`Seeded experience: ${exp.role}`);
         successCount++;
       } catch (err) {
-        log(`Failed to seed experience: ${exp.role} - ${err}`, "error");
+        logSeed(`Failed to seed experience: ${exp.role} - ${err}`, "error");
         failCount++;
       }
     }
 
-    log(`Experiences: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Experiences: ${successCount} succeeded, ${failCount} failed`);
 
-    // ------------------- SAMPLE MESSAGE -------------------
     try {
-      await storage.createMessage({
+      await storage2.createMessage({
         name: "Portfolio System",
         email: "system@portfolio.local",
         subject: "Database Initialized",
         message: "This is a sample message created during database seeding. Your contact form is working correctly!",
       });
-      log("Seeded sample message");
+      logSeed("Seeded sample message");
     } catch (err) {
-      log(`Failed to seed sample message: ${err}`, "error");
+      logSeed(`Failed to seed sample message: ${err}`, "error");
     }
 
-    log("Database seeding completed successfully! 🎉");
+    logSeed("Database seeding completed successfully! 🎉");
   } catch (err) {
-    log(`Database seeding failed: ${err}`, "error");
-    throw err; // Re-throw to let the caller handle it
+    logSeed(`Database seeding failed: ${err}`, "error");
+    throw err;
   }
 }

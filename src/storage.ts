@@ -1,5 +1,9 @@
+
+// ============================================================
+// FILE: src/storage.ts
+// ============================================================
 import { eq } from "drizzle-orm";
-import { db } from "./db.js";
+import { db as db2 } from "./db.js";
 import {
   projectsTable,
   skillsTable,
@@ -15,31 +19,26 @@ import {
   type InsertExperience,
 } from "../shared/schema.js";
 
-// Logging utility (consistent with other files)
-function log(message: string, level: "info" | "error" | "warn" = "info") {
+function logStorage(message: string, level: "info" | "error" | "warn" = "info") {
   const timestamp = new Date().toISOString();
   const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
   console.log(`${prefix} [${timestamp}] [STORAGE] ${message}`);
 }
 
-// Helper function to safely parse JSON
 function safeJsonParse<T>(json: string | null, fallback: T): T {
   if (!json) return fallback;
   try {
     return JSON.parse(json) as T;
   } catch (error) {
-    log(`Failed to parse JSON: ${error}`, "warn");
+    logStorage(`Failed to parse JSON: ${error}`, "warn");
     return fallback;
   }
 }
 
-// Helper function to validate email format
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-
-// ==================== TRANSFORM FUNCTIONS ====================
 
 function transformProject(dbProject: any): Project {
   return {
@@ -90,16 +89,12 @@ function transformMessage(dbMsg: any): Message {
   };
 }
 
-// ==================== DATABASE STORAGE CLASS ====================
-
 export class DatabaseStorage {
-  // Simple in-memory cache for read-heavy data (skills, experiences)
   private skillsCache: Skill[] | null = null;
   private experiencesCache: Experience[] | null = null;
   private cacheTimestamp: Record<string, number> = {};
-  private CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache TTL for Render
+  private CACHE_TTL = 5 * 60 * 1000;
 
-  // Invalidate cache when data changes
   private invalidateSkillsCache() {
     this.skillsCache = null;
     delete this.cacheTimestamp["skills"];
@@ -110,31 +105,29 @@ export class DatabaseStorage {
     delete this.cacheTimestamp["experiences"];
   }
 
-  // ==================== PROJECTS ====================
-
   async getProjects(): Promise<Project[]> {
     try {
       const start = Date.now();
-      const result = await db.select().from(projectsTable).all();
+      const result = await db2.select().from(projectsTable).all();
       const duration = Date.now() - start;
-      log(`Fetched ${result.length} projects in ${duration}ms`);
+      logStorage(`Fetched ${result.length} projects in ${duration}ms`);
       return result.map(transformProject);
     } catch (error) {
-      log(`Failed to get projects: ${error}`, "error");
+      logStorage(`Failed to get projects: ${error}`, "error");
       throw new Error("Failed to fetch projects from database");
     }
   }
 
   async getProjectById(id: number): Promise<Project | null> {
     try {
-      const result = await db
+      const result = await db2
         .select()
         .from(projectsTable)
         .where(eq(projectsTable.id, id))
         .get();
       return result ? transformProject(result) : null;
     } catch (error) {
-      log(`Failed to get project ${id}: ${error}`, "error");
+      logStorage(`Failed to get project ${id}: ${error}`, "error");
       throw new Error(`Failed to fetch project with id ${id}`);
     }
   }
@@ -145,29 +138,29 @@ export class DatabaseStorage {
         throw new Error("Title and description are required");
       }
 
-      const inserted = await db
-  .insert(projectsTable)
-  .values({
-    title: project.title,
-    description: project.description,
-    imageUrl: project.imageUrl,
-    category: project.category,
-    githubUrl: project.githubUrl ?? null,
-    liveUrl: project.liveUrl ?? null,
-    problemStatement: project.problemStatement ?? null,
-    motivation: project.motivation ?? null,
-    systemDesign: project.systemDesign ?? null,
-    challenges: project.challenges ?? null,
-    learnings: project.learnings ?? null,
-    techStack: JSON.stringify(project.techStack ?? []),
-  })
-  .returning()
-  .get();
+      const inserted = await db2
+        .insert(projectsTable)
+        .values({
+          title: project.title,
+          description: project.description,
+          imageUrl: project.imageUrl,
+          category: project.category,
+          githubUrl: project.githubUrl ?? null,
+          liveUrl: project.liveUrl ?? null,
+          problemStatement: project.problemStatement ?? null,
+          motivation: project.motivation ?? null,
+          systemDesign: project.systemDesign ?? null,
+          challenges: project.challenges ?? null,
+          learnings: project.learnings ?? null,
+          techStack: JSON.stringify(project.techStack ?? []),
+        })
+        .returning()
+        .get();
 
-      log(`Created project: ${inserted.title}`);
+      logStorage(`Created project: ${inserted.title}`);
       return transformProject(inserted);
     } catch (error) {
-      log(`Failed to create project: ${error}`, "error");
+      logStorage(`Failed to create project: ${error}`, "error");
       throw error;
     }
   }
@@ -179,7 +172,7 @@ export class DatabaseStorage {
         updates.techStack = JSON.stringify(project.techStack);
       }
 
-      const updated = await db
+      const updated = await db2
         .update(projectsTable)
         .set(updates)
         .where(eq(projectsTable.id, id))
@@ -190,17 +183,17 @@ export class DatabaseStorage {
         throw new Error(`Project with id ${id} not found`);
       }
 
-      log(`Updated project: ${updated.title}`);
+      logStorage(`Updated project: ${updated.title}`);
       return transformProject(updated);
     } catch (error) {
-      log(`Failed to update project ${id}: ${error}`, "error");
+      logStorage(`Failed to update project ${id}: ${error}`, "error");
       throw error;
     }
   }
 
   async deleteProject(id: number): Promise<void> {
     try {
-      const deleted = await db
+      const deleted = await db2
         .delete(projectsTable)
         .where(eq(projectsTable.id, id))
         .returning()
@@ -210,86 +203,83 @@ export class DatabaseStorage {
         throw new Error(`Project with id ${id} not found`);
       }
 
-      log(`Deleted project: ${deleted.title}`);
+      logStorage(`Deleted project: ${deleted.title}`);
     } catch (error) {
-      log(`Failed to delete project ${id}: ${error}`, "error");
+      logStorage(`Failed to delete project ${id}: ${error}`, "error");
       throw error;
     }
   }
 
-  // ==================== SKILLS ====================
-
   async getSkills(): Promise<Skill[]> {
     try {
-      // Check cache (for Render's ephemeral storage optimization)
       const now = Date.now();
       if (
         this.skillsCache &&
         this.cacheTimestamp["skills"] &&
         now - this.cacheTimestamp["skills"] < this.CACHE_TTL
       ) {
-        log("Returning cached skills");
+        logStorage("Returning cached skills");
         return this.skillsCache;
       }
 
       const start = Date.now();
-      const result = await db.select().from(skillsTable).all();
+      const result = await db2.select().from(skillsTable).all();
       const duration = Date.now() - start;
 
       const transformed = result.map(transformSkill);
       this.skillsCache = transformed;
       this.cacheTimestamp["skills"] = now;
 
-      log(`Fetched ${result.length} skills in ${duration}ms`);
+      logStorage(`Fetched ${result.length} skills in ${duration}ms`);
       return transformed;
     } catch (error) {
-      log(`Failed to get skills: ${error}`, "error");
+      logStorage(`Failed to get skills: ${error}`, "error");
       throw new Error("Failed to fetch skills from database");
     }
   }
 
   async getSkillById(id: number): Promise<Skill | null> {
     try {
-      const result = await db
+      const result = await db2
         .select()
         .from(skillsTable)
         .where(eq(skillsTable.id, id))
         .get();
       return result ? transformSkill(result) : null;
     } catch (error) {
-      log(`Failed to get skill ${id}: ${error}`, "error");
+      logStorage(`Failed to get skill ${id}: ${error}`, "error");
       throw new Error(`Failed to fetch skill with id ${id}`);
     }
   }
 
   async createSkill(skill: InsertSkill): Promise<Skill> {
-  try {
-    if (!skill.name || !skill.category) {
-      throw new Error("Name and category are required");
-    }
+    try {
+      if (!skill.name || !skill.category) {
+        throw new Error("Name and category are required");
+      }
 
-    const inserted = await db
-      .insert(skillsTable)
-      .values({
-        name: skill.name,
-        category: skill.category,
-        icon: skill.icon || "Code",
-      })
-      .returning()
-      .get();
+      const inserted = await db2
+        .insert(skillsTable)
+        .values({
+          name: skill.name,
+          category: skill.category,
+          icon: skill.icon || "Code",
+        })
+        .returning()
+        .get();
 
       this.invalidateSkillsCache();
-      log(`Created skill: ${inserted.name}`);
+      logStorage(`Created skill: ${inserted.name}`);
       return transformSkill(inserted);
     } catch (error) {
-      log(`Failed to create skill: ${error}`, "error");
+      logStorage(`Failed to create skill: ${error}`, "error");
       throw error;
     }
   }
 
   async updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill> {
     try {
-      const updated = await db
+      const updated = await db2
         .update(skillsTable)
         .set(skill)
         .where(eq(skillsTable.id, id))
@@ -301,17 +291,17 @@ export class DatabaseStorage {
       }
 
       this.invalidateSkillsCache();
-      log(`Updated skill: ${updated.name}`);
+      logStorage(`Updated skill: ${updated.name}`);
       return transformSkill(updated);
     } catch (error) {
-      log(`Failed to update skill ${id}: ${error}`, "error");
+      logStorage(`Failed to update skill ${id}: ${error}`, "error");
       throw error;
     }
   }
 
   async deleteSkill(id: number): Promise<void> {
     try {
-      const deleted = await db
+      const deleted = await db2
         .delete(skillsTable)
         .where(eq(skillsTable.id, id))
         .returning()
@@ -322,88 +312,85 @@ export class DatabaseStorage {
       }
 
       this.invalidateSkillsCache();
-      log(`Deleted skill: ${deleted.name}`);
+      logStorage(`Deleted skill: ${deleted.name}`);
     } catch (error) {
-      log(`Failed to delete skill ${id}: ${error}`, "error");
+      logStorage(`Failed to delete skill ${id}: ${error}`, "error");
       throw error;
     }
   }
 
-  // ==================== EXPERIENCES ====================
-
   async getExperiences(): Promise<Experience[]> {
     try {
-      // Check cache
       const now = Date.now();
       if (
         this.experiencesCache &&
         this.cacheTimestamp["experiences"] &&
         now - this.cacheTimestamp["experiences"] < this.CACHE_TTL
       ) {
-        log("Returning cached experiences");
+        logStorage("Returning cached experiences");
         return this.experiencesCache;
       }
 
       const start = Date.now();
-      const result = await db.select().from(experiencesTable).all();
+      const result = await db2.select().from(experiencesTable).all();
       const duration = Date.now() - start;
 
       const transformed = result.map(transformExperience);
       this.experiencesCache = transformed;
       this.cacheTimestamp["experiences"] = now;
 
-      log(`Fetched ${result.length} experiences in ${duration}ms`);
+      logStorage(`Fetched ${result.length} experiences in ${duration}ms`);
       return transformed;
     } catch (error) {
-      log(`Failed to get experiences: ${error}`, "error");
+      logStorage(`Failed to get experiences: ${error}`, "error");
       throw new Error("Failed to fetch experiences from database");
     }
   }
 
-async getExperienceById(id: number): Promise<Experience | null> {
-  try {
-    const result = await db
-      .select()
-      .from(experiencesTable)
-      .where(eq(experiencesTable.id, id))
-      .get();
-    return result ? transformExperience(result) : null;
-  } catch (error) {
-    log(`Failed to get experience ${id}: ${error}`, "error");
-    throw new Error(`Failed to fetch experience with id ${id}`);
-  }
-}
-
-async createExperience(exp: InsertExperience): Promise<Experience> {
-  try {
-    if (!exp.role || !exp.organization) {
-      throw new Error("Role and organization are required");
+  async getExperienceById(id: number): Promise<Experience | null> {
+    try {
+      const result = await db2
+        .select()
+        .from(experiencesTable)
+        .where(eq(experiencesTable.id, id))
+        .get();
+      return result ? transformExperience(result) : null;
+    } catch (error) {
+      logStorage(`Failed to get experience ${id}: ${error}`, "error");
+      throw new Error(`Failed to fetch experience with id ${id}`);
     }
-
-    const inserted = await db
-      .insert(experiencesTable)
-      .values({
-        role: exp.role,
-        organization: exp.organization,
-        period: exp.period,
-        description: exp.description,
-        type: exp.type || "Experience",
-      })
-      .returning()
-      .get();
-
-    this.invalidateExperiencesCache();
-    log(`Created experience: ${inserted.role} at ${inserted.organization}`);
-    return transformExperience(inserted);
-  } catch (error) {
-    log(`Failed to create experience: ${error}`, "error");
-    throw error;
   }
-}
+
+  async createExperience(exp: InsertExperience): Promise<Experience> {
+    try {
+      if (!exp.role || !exp.organization) {
+        throw new Error("Role and organization are required");
+      }
+
+      const inserted = await db2
+        .insert(experiencesTable)
+        .values({
+          role: exp.role,
+          organization: exp.organization,
+          period: exp.period,
+          description: exp.description,
+          type: exp.type || "Experience",
+        })
+        .returning()
+        .get();
+
+      this.invalidateExperiencesCache();
+      logStorage(`Created experience: ${inserted.role} at ${inserted.organization}`);
+      return transformExperience(inserted);
+    } catch (error) {
+      logStorage(`Failed to create experience: ${error}`, "error");
+      throw error;
+    }
+  }
 
   async updateExperience(id: number, exp: Partial<InsertExperience>): Promise<Experience> {
     try {
-      const updated = await db
+      const updated = await db2
         .update(experiencesTable)
         .set(exp)
         .where(eq(experiencesTable.id, id))
@@ -415,17 +402,17 @@ async createExperience(exp: InsertExperience): Promise<Experience> {
       }
 
       this.invalidateExperiencesCache();
-      log(`Updated experience: ${updated.role}`);
+      logStorage(`Updated experience: ${updated.role}`);
       return transformExperience(updated);
     } catch (error) {
-      log(`Failed to update experience ${id}: ${error}`, "error");
+      logStorage(`Failed to update experience ${id}: ${error}`, "error");
       throw error;
     }
   }
 
   async deleteExperience(id: number): Promise<void> {
     try {
-      const deleted = await db
+      const deleted = await db2
         .delete(experiencesTable)
         .where(eq(experiencesTable.id, id))
         .returning()
@@ -436,55 +423,50 @@ async createExperience(exp: InsertExperience): Promise<Experience> {
       }
 
       this.invalidateExperiencesCache();
-      log(`Deleted experience: ${deleted.role}`);
+      logStorage(`Deleted experience: ${deleted.role}`);
     } catch (error) {
-      log(`Failed to delete experience ${id}: ${error}`, "error");
+      logStorage(`Failed to delete experience ${id}: ${error}`, "error");
       throw error;
     }
   }
 
-  // ==================== MESSAGES ====================
-
   async getMessages(): Promise<Message[]> {
     try {
       const start = Date.now();
-      const result = await db.select().from(messagesTable).all();
+      const result = await db2.select().from(messagesTable).all();
       const duration = Date.now() - start;
-      log(`Fetched ${result.length} messages in ${duration}ms`);
+      logStorage(`Fetched ${result.length} messages in ${duration}ms`);
       return result.map(transformMessage);
     } catch (error) {
-      log(`Failed to get messages: ${error}`, "error");
+      logStorage(`Failed to get messages: ${error}`, "error");
       throw new Error("Failed to fetch messages from database");
     }
   }
 
   async getMessageById(id: number): Promise<Message | null> {
     try {
-      const result = await db
+      const result = await db2
         .select()
         .from(messagesTable)
         .where(eq(messagesTable.id, id))
         .get();
       return result ? transformMessage(result) : null;
     } catch (error) {
-      log(`Failed to get message ${id}: ${error}`, "error");
+      logStorage(`Failed to get message ${id}: ${error}`, "error");
       throw new Error(`Failed to fetch message with id ${id}`);
     }
   }
 
   async createMessage(message: InsertMessage): Promise<Message> {
     try {
-      // Validate required fields
       if (!message.name || !message.email || !message.message) {
         throw new Error("Name, email, and message are required");
       }
 
-      // Email validation
       if (!isValidEmail(message.email)) {
         throw new Error("Invalid email format");
       }
 
-      // Sanitize message (basic protection)
       const sanitized = {
         ...message,
         name: message.name.trim().slice(0, 255),
@@ -493,23 +475,23 @@ async createExperience(exp: InsertExperience): Promise<Experience> {
         message: message.message.trim().slice(0, 5000),
       };
 
-      const inserted = await db
+      const inserted = await db2
         .insert(messagesTable)
         .values(sanitized)
         .returning()
         .get();
 
-      log(`Created message from: ${inserted.name} (${inserted.email})`);
+      logStorage(`Created message from: ${inserted.name} (${inserted.email})`);
       return transformMessage(inserted);
     } catch (error) {
-      log(`Failed to create message: ${error}`, "error");
+      logStorage(`Failed to create message: ${error}`, "error");
       throw error;
     }
   }
 
   async deleteMessage(id: number): Promise<void> {
     try {
-      const deleted = await db
+      const deleted = await db2
         .delete(messagesTable)
         .where(eq(messagesTable.id, id))
         .returning()
@@ -519,9 +501,9 @@ async createExperience(exp: InsertExperience): Promise<Experience> {
         throw new Error(`Message with id ${id} not found`);
       }
 
-      log(`Deleted message from: ${deleted.name}`);
+      logStorage(`Deleted message from: ${deleted.name}`);
     } catch (error) {
-      log(`Failed to delete message ${id}: ${error}`, "error");
+      logStorage(`Failed to delete message ${id}: ${error}`, "error");
       throw error;
     }
   }
