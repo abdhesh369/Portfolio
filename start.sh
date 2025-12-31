@@ -9,6 +9,6 @@ echo "PWD: $(pwd)"
 echo "==============================================="
 
 # Start the compiled backend
-node dist/index.js
+node dist/src/index.js
 echo "Starting Portfolio Backend on Render"
 echo "==============================================="
