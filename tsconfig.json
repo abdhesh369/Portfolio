@@ -12,7 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,              // ✅ must emit JS files
+    "outDir": "dist",             // ✅ output directory for compiled JS
+    "rootDir": ".",             // ✅ source root
     "moduleResolution": "node",
     "baseUrl": ".",
     "declaration": false,

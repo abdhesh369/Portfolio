@@ -10,3 +10,5 @@ echo "==============================================="
 
 # Start the compiled backend
 node dist/index.js
+echo "Starting Portfolio Backend on Render"
+echo "==============================================="
