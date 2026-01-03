@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Github, ExternalLink, Activity, GitBranch, Terminal } from "lucide-react";
+import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type GitHubEvent = {
@@ -8,13 +8,16 @@ type GitHubEvent = {
   created_at: string;
   repo: { name: string };
   payload: {
-    commits: { message: string }[];
+    commits?: { message: string }[];
+    ref_type?: string;
+    action?: string;
   };
 };
 
 type ActivityItem = {
   task: string;
   time: string;
+  type: string;
 };
 
 export default function CodeAndPractice() {
@@ -25,20 +28,55 @@ export default function CodeAndPractice() {
       .then(res => res.json())
       .then((data: GitHubEvent[]) => {
         if (!Array.isArray(data)) {
-          console.error("GitHub API returned non-array data:", data);
           return;
         }
+
         const filtered = data
-          .filter(e => e && e.type === "PushEvent")
-          .flatMap(e => {
-            const commits = e.payload?.commits;
-            if (!Array.isArray(commits)) return [];
-            return commits.map(c => ({
-              task: c.message,
-              time: new Date(e.created_at).toLocaleString(),
-            }));
+          .map(e => {
+            const date = new Date(e.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+            // Handle different event types
+            if (e.type === "PushEvent") {
+              // Try to get specific commit messages
+              const commits = e.payload?.commits;
+              if (Array.isArray(commits) && commits.length > 0) {
+                return commits.map(c => ({
+                  task: `Pushed: ${c.message}`,
+                  time: date,
+                  type: "push"
+                }));
+              }
+              // Fallback if no commits in payload
+              return [{
+                task: `Pushed to ${e.repo.name}`,
+                time: date,
+                type: "push"
+              }];
+            } else if (e.type === "CreateEvent") {
+              return [{
+                task: `Created ${e.payload.ref_type || 'repository'} in ${e.repo.name}`,
+                time: date,
+                type: "create"
+              }];
+            } else if (e.type === "WatchEvent") {
+              return [{
+                task: `Starred ${e.repo.name}`,
+                time: date,
+                type: "star"
+              }];
+            } else if (e.type === "PullRequestEvent") {
+              return [{
+                task: `PR in ${e.repo.name}`,
+                time: date,
+                type: "pr"
+              }];
+            }
+            return [];
           })
-          .slice(0, 3);
+          .flat() // Flatten the array of arrays
+          .filter(item => item.task) // Remove empty/null tasks
+          .slice(0, 4); // Show top 4 items
+
         setEvents(filtered);
       })
       .catch(err => console.error("GitHub fetch failed:", err));
@@ -122,10 +160,16 @@ export default function CodeAndPractice() {
               <div className="space-y-6">
                 {
                   events.length > 0 ? events.map((item, i) => (
-                    <div key={i} className="flex gap-4 items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    <div key={i} className="flex gap-4 items-start">
+                      <div className="mt-1">
+                        {item.type === "push" && <GitCommit className="w-4 h-4 text-primary" />}
+                        {item.type === "star" && <Star className="w-4 h-4 text-yellow-500" />}
+                        {item.type === "create" && <Plus className="w-4 h-4 text-green-500" />}
+                        {item.type === "pr" && <GitPullRequest className="w-4 h-4 text-purple-500" />}
+                        {!["push", "star", "create", "pr"].includes(item.type) && <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />}
+                      </div>
                       <div className="flex-1">
-                        <div className="text-sm font-medium">{item.task}</div>
+                        <div className="text-sm font-medium line-clamp-2">{item.task}</div>
                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider">{item.time}</div>
                       </div>
                     </div>
@@ -136,14 +180,20 @@ export default function CodeAndPractice() {
               </div>
 
               <div className="mt-8 pt-8 border-t border-border/50">
-                <div className="flex gap-2">
-                  {[...Array(14)].map((_, i) => (
-                    <div key={i} className="flex-1 h-8 rounded-sm bg-primary/20 animate-pulse" style={{ opacity: Math.random() * 0.5 + 0.2 }} />
-                  ))}
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                  <img
+                    src="https://ghchart.rshah.org/00d4ff/abdhesh369"
+                    alt="GitHub Contribution Graph"
+                    className="relative w-full rounded-lg opacity-90 hover:opacity-100 transition-all duration-300 filter hue-rotate-0"
+                    style={{
+                      maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+                    }}
+                  />
                 </div>
-                <div className="flex justify-between mt-2 text-[10px] text-muted-foreground font-mono">
+                <div className="flex justify-between mt-4 text-[10px] text-muted-foreground font-mono">
                   <span>LESS</span>
-                  <span>CONTRIBUTION GRAPH</span>
+                  <span className="text-cyan-400/50">CONTRIBUTION GRAPH</span>
                   <span>MORE</span>
                 </div>
               </div>

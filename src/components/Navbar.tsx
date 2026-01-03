@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
-import { Menu, X, Moon, Sun, Download } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Menu, X, Code2, Terminal, Cpu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "./theme-provider"; // We'll create this context provider
+import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { name: "Home", href: "#hero" },
-  { name: "About", href: "#about" },
+  { name: "Home", href: "/" },
   { name: "Skills", href: "#skills" },
-  { name: "Why Hire Me", href: "#why-hire-me" },
-  { name: "Mindset", href: "#mindset" },
   { name: "Projects", href: "#projects" },
-  { name: "Activity", href: "#code-practice" },
   { name: "Experience", href: "#experience" },
   { name: "Contact", href: "#contact" },
 ];
@@ -19,94 +15,95 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
-  const { theme, setTheme } = useTheme();
+  const [location, setLocation] = useLocation();
 
-  // Handle scroll effects
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-
-      // Simple spy logic
-      const sections = navItems.map(item => item.href.substring(1));
-      const scrollPosition = window.scrollY + 100;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element && element.offsetTop <= scrollPosition && (element.offsetTop + element.offsetHeight) > scrollPosition) {
-          setActiveSection(section);
-        }
-      }
+      setScrolled(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const handleNavClick = (href: string) => {
     setIsOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (href.startsWith("#")) {
+      if (location !== "/") {
+        setLocation("/");
+        // Wait for navigation then scroll
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          element?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        const element = document.querySelector(href);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+    } else if (href === "/") {
+      if (location === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setLocation(href);
+        // Wait for potential page transition then scroll
+        setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 100);
+      }
+    } else {
+      setLocation(href);
     }
   };
 
   return (
-    <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-md shadow-sm border-b border-border/40" : "bg-transparent"
-      }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled
+        ? "bg-[#050510]/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-cyan-500/5"
+        : "bg-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 md:h-20">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link 
-              href="/" 
-              className="text-2xl font-bold font-display tracking-tighter hover:text-primary transition-colors"
-            >
-              AS<span className="text-primary">.</span>
-            </Link>
+        <div className="flex justify-between items-center h-20">
+          {/* Brand Logo */}
+          <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => handleNavClick("/")}>
+            <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30 overflow-hidden group">
+              <Code2 className="w-6 h-6 text-cyan-400 relative z-10 group-hover:scale-110 transition-transform" />
+              <div className="absolute inset-0 bg-cyan-500/20 blur-md opacity-50 group-hover:opacity-100 transition-opacity" />
+              {/* Scanline effect */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
+            </div>
+            <span className="font-display font-bold text-xl tracking-tight text-white group">
+              Abdhesh<span className="text-cyan-400">.</span>Dev
+            </span>
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <button
                 key={item.name}
-                onClick={() => scrollToSection(item.href.substring(1))}
-                className={`nav-link ${activeSection === item.href.substring(1) ? "active" : ""}`}
+                onClick={() => handleNavClick(item.href)}
+                className="relative px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors rounded-full group overflow-hidden"
               >
-                {item.name}
+                <span className="relative z-10">{item.name}</span>
+                {/* Hover Glow Background */}
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-cyan-400 group-hover:w-[60%] transition-all duration-300 shadow-[0_0_10px_#22d3ee]" />
               </button>
             ))}
-            
-            <div className="ml-4 pl-4 border-l border-border flex items-center gap-4">
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                aria-label="Toggle Theme"
+
+            <div className="ml-4 pl-4 border-l border-white/10">
+              <Button
+                onClick={() => handleNavClick("#contact")}
+                className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-full px-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all"
               >
-                {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
+                Hire Me
+              </Button>
             </div>
-          </nav>
+          </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-4">
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground"
-            >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+          <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-foreground hover:text-primary transition-colors"
-              aria-label="Menu"
+              className="p-2 text-gray-300 hover:text-white transition-colors"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -114,33 +111,35 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-b border-border overflow-hidden"
+            className="md:hidden bg-[#0a0520]/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navItems.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => scrollToSection(item.href.substring(1))}
-                  className={`block w-full text-left px-3 py-3 rounded-md text-base font-medium transition-colors ${
-                    activeSection === item.href.substring(1) 
-                      ? "bg-primary/10 text-primary" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
+                  onClick={() => handleNavClick(item.href)}
+                  className="block w-full text-left px-4 py-3 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all border-l-2 border-transparent hover:border-cyan-400"
                 >
                   {item.name}
                 </button>
               ))}
+              <Button
+                onClick={() => handleNavClick("#contact")}
+                className="w-full mt-4 bg-cyan-500 text-black hover:bg-cyan-400"
+              >
+                Hire Me
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </nav>
   );
 }

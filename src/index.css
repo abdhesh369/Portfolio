@@ -407,3 +407,105 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ==================== SKILL TREE STYLES ==================== */
+
+:root {
+  /* Skill Tree Colors */
+  --skill-cyan: 188 100% 50%;
+  --skill-magenta: 300 100% 50%;
+  --skill-purple: 270 100% 60%;
+  --skill-dark: 240 50% 8%;
+}
+
+/* Skill tree specific animations */
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px currentColor);
+    opacity: 0.8;
+  }
+  50% {
+    filter: drop-shadow(0 0 25px currentColor);
+    opacity: 1;
+  }
+}
+
+@keyframes crystal-shimmer {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes hexagon-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hexagon clip path utility */
+.clip-hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Glow utilities for skill tree */
+.glow-cyan {
+  box-shadow: 0 0 20px hsl(var(--skill-cyan) / 0.5),
+              0 0 40px hsl(var(--skill-cyan) / 0.3),
+              inset 0 0 20px hsl(var(--skill-cyan) / 0.1);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px hsl(var(--skill-purple) / 0.5),
+              0 0 40px hsl(var(--skill-purple) / 0.3),
+              inset 0 0 20px hsl(var(--skill-purple) / 0.1);
+}
+
+.glow-magenta {
+  box-shadow: 0 0 20px hsl(var(--skill-magenta) / 0.5),
+              0 0 40px hsl(var(--skill-magenta) / 0.3),
+              inset 0 0 20px hsl(var(--skill-magenta) / 0.1);
+}
+
+/* Glass panel for skill tree stats */
+.skill-glass-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 40, 0.8) 0%,
+    rgba(40, 20, 60, 0.6) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(100, 100, 150, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Skill tree text glow */
+.text-glow-cyan {
+  text-shadow: 0 0 10px hsl(var(--skill-cyan)),
+               0 0 20px hsl(var(--skill-cyan) / 0.5);
+}
