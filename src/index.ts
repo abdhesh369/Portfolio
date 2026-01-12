@@ -1,4 +1,8 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+// Explicitly load .env from current working directory to avoid loading issues
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import cors from "cors";

@@ -1,73 +1,50 @@
-// ============================================================
-// FILE: src/db.ts
-// ============================================================
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
-import * as schema from "../shared/schema.js";
-import dotenv from "dotenv";
+import { drizzle } from 'drizzle-orm/mysql2';
+import mysql from 'mysql2/promise';
+import * as schema from '../shared/schema.js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-function logDb(message: string, level: "info" | "error" | "warn" = "info") {
-  const timestamp = new Date().toISOString();
-  const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
-  console.log(`${prefix} [${timestamp}] [DB] ${message}`);
-}
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-const dbConfig = {
-  host: process.env.MYSQL_HOST || "localhost",
-  user: process.env.MYSQL_USER || "root",
-  password: process.env.MYSQL_PASSWORD || "",
-  database: process.env.MYSQL_DATABASE || "portfolio",
-  port: parseInt(process.env.MYSQL_PORT || "3306"),
+const poolConnection = mysql.createPool({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    port: parseInt(process.env.MYSQL_PORT || '3306'),
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+});
+
+export const db = drizzle(poolConnection, { schema, mode: 'default' });
+
+// Export connection for use by create-tables.ts
+export const connection = poolConnection;
+
+const logDb = (msg: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log('[' + timestamp + '] [db] ' + msg);
 };
 
-logDb(`Connecting to MySQL at ${dbConfig.host}:${dbConfig.port}...`);
-
-const pool = mysql.createPool(dbConfig);
-
-// ✅ Export connections
-export const db = drizzle(pool, { schema, mode: "default" });
-export const connection = pool;
-export { schema };
-
-// Health check
-export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message: string; details?: any; }> {
-  try {
-    const [rows] = await pool.query("SELECT 1 as health");
-    if (Array.isArray(rows) && (rows[0] as any).health === 1) {
-      return {
-        healthy: true,
-        message: "Database is healthy",
-        details: {
-          host: dbConfig.host,
-          database: dbConfig.database,
-        },
-      };
+export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message?: string }> {
+    try {
+        const connection = await poolConnection.getConnection();
+        connection.release();
+        logDb('Successfully connected to MySQL database');
+        return { healthy: true };
+    } catch (error) {
+        logDb('Database connection error: ' + error);
+        return { healthy: false, message: String(error) };
     }
-    return { healthy: false, message: "Database query returned unexpected result" };
-  } catch (error) {
-    return {
-      healthy: false,
-      message: `Database health check failed: ${error}`,
-      details: { error },
-    };
-  }
 }
 
-// Graceful shutdown
-export async function closeDatabaseConnection(): Promise<void> {
-  try {
-    await pool.end();
-    logDb("Database connection closed successfully");
-  } catch (error) {
-    logDb(`Error closing database connection: ${error}`, "error");
-    throw error;
-  }
-}
-
-process.on("beforeExit", () => {
-  closeDatabaseConnection().catch((error) => {
-    logDb(`Error during cleanup: ${error}`, "error");
-  });
+process.on('SIGINT', async () => {
+    logDb('Closing database pool...');
+    await poolConnection.end();
+    process.exit(0);
 });
