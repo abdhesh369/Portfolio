@@ -2,8 +2,10 @@ import { z } from "zod";
 import {
   projectSchema,
   skillSchema,
+  skillConnectionSchema,
   experienceSchema,
   messageSchema,
+  mindsetSchema,
   insertProjectApiSchema,
   insertSkillApiSchema,
   insertExperienceApiSchema,
@@ -131,6 +133,15 @@ export const api = {
         500: errorSchemas.internal,
       },
     },
+    connections: {
+      method: "GET" as const,
+      path: "/api/skills/connections",
+      description: "List all skill connections (public)",
+      responses: {
+        200: z.array(skillConnectionSchema),
+        500: errorSchemas.internal,
+      },
+    },
     get: {
       method: "GET" as const,
       path: "/api/skills/:id",
@@ -181,6 +192,30 @@ export const api = {
         400: errorSchemas.badRequest,
         401: errorSchemas.unauthorized,
         403: errorSchemas.forbidden,
+        404: errorSchemas.notFound,
+        500: errorSchemas.internal,
+      },
+    },
+  },
+
+  // ---------- MINDSET ----------
+  mindset: {
+    list: {
+      method: "GET" as const,
+      path: "/api/mindset",
+      description: "List all engineering mindset principles (public)",
+      responses: {
+        200: z.array(mindsetSchema),
+        500: errorSchemas.internal,
+      },
+    },
+    get: {
+      method: "GET" as const,
+      path: "/api/mindset/:id",
+      description: "Get single mindset principle by ID (public)",
+      responses: {
+        200: mindsetSchema,
+        400: errorSchemas.badRequest,
         404: errorSchemas.notFound,
         500: errorSchemas.internal,
       },

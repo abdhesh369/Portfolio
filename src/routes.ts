@@ -213,6 +213,19 @@ export async function registerRoutes(
     })
   );
 
+
+
+  // ==================== SKILL CONNECTIONS ====================
+
+  // GET /api/skills/connections - List all skill connections
+  app.get(
+    api.skills.connections.path,
+    asyncHandler(async (_req, res) => {
+      const connections = await storage.getSkillConnections();
+      res.json(connections);
+    })
+  );
+
   // ==================== EXPERIENCES ====================
 
   // GET /api/experiences - List all experiences
@@ -289,6 +302,41 @@ export async function registerRoutes(
       await storage.deleteExperience(id);
       log(`Deleted experience with id: ${id}`);
       res.status(204).send();
+    })
+  );
+
+
+
+  // ==================== MINDSET ====================
+
+  // GET /api/mindset - List all mindset principles
+  app.get(
+    api.mindset.list.path,
+    asyncHandler(async (_req, res) => {
+      const mindset = await storage.getMindset();
+      res.json(mindset);
+    })
+  );
+
+  // GET /api/mindset/:id - Get single mindset principle
+  app.get(
+    "/api/mindset/:id",
+    asyncHandler(async (req, res) => {
+      const id = parseInt(req.params.id, 10);
+
+      if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid mindset ID" });
+        return;
+      }
+
+      const mindset = await storage.getMindsetById(id);
+
+      if (!mindset) {
+        res.status(404).json({ message: "Mindset principle not found" });
+        return;
+      }
+
+      res.json(mindset);
     })
   );
 

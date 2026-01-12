@@ -9,10 +9,14 @@ import {
   skillsTable,
   experiencesTable,
   messagesTable,
+  mindsetTable,
+  skillConnectionsTable,
   type Project,
   type Skill,
+  type SkillConnection,
   type Experience,
   type Message,
+  type Mindset,
   type InsertMessage,
   type InsertProject,
   type InsertSkill,
@@ -47,6 +51,15 @@ export interface IStorage {
   getMessageById(id: number): Promise<Message | null>;
   createMessage(message: InsertMessage): Promise<Message>;
   deleteMessage(id: number): Promise<void>;
+
+  // Skill Connections
+  getSkillConnections(): Promise<SkillConnection[]>;
+  createSkillConnection(connection: Omit<SkillConnection, "id">): Promise<SkillConnection>;
+
+  // Mindset
+  getMindset(): Promise<Mindset[]>;
+  getMindsetById(id: number): Promise<Mindset | null>;
+  createMindset(mindset: Omit<Mindset, "id">): Promise<Mindset>;
 }
 
 function logStorage(message: string, level: "info" | "error" | "warn" = "info") {
@@ -119,20 +132,36 @@ function transformMessage(dbMsg: any): Message {
   };
 }
 
+function transformMindset(dbMindset: any): Mindset {
+  return {
+    id: dbMindset.id,
+    title: dbMindset.title ?? "",
+    description: dbMindset.description ?? "",
+    icon: dbMindset.icon ?? "Brain",
+    tags: safeJsonParse<string[]>(dbMindset.tags, []),
+  };
+}
+
 // ================= MEMORY STORAGE =================
 export class MemStorage implements IStorage {
   private projects: Map<number, Project>;
   private skills: Map<number, Skill>;
   private experiences: Map<number, Experience>;
+
   private messages: Map<number, Message>;
+  private mindset: Map<number, Mindset>;
+  private skillConnections: Map<number, SkillConnection>;
   private currentIds: { [key: string]: number };
 
   constructor() {
     this.projects = new Map();
     this.skills = new Map();
     this.experiences = new Map();
+
     this.messages = new Map();
-    this.currentIds = { projects: 1, skills: 1, experiences: 1, messages: 1 };
+    this.mindset = new Map();
+    this.skillConnections = new Map();
+    this.currentIds = { projects: 1, skills: 1, experiences: 1, messages: 1, mindset: 1, skillConnections: 1 };
   }
 
   async getProjects(): Promise<Project[]> {
@@ -237,6 +266,32 @@ export class MemStorage implements IStorage {
 
   async deleteMessage(id: number): Promise<void> {
     this.messages.delete(id);
+  }
+
+  async getSkillConnections(): Promise<SkillConnection[]> {
+    return Array.from(this.skillConnections.values());
+  }
+
+  async createSkillConnection(connection: Omit<SkillConnection, "id">): Promise<SkillConnection> {
+    const id = this.currentIds.skillConnections++;
+    const newConnection: SkillConnection = { ...connection, id };
+    this.skillConnections.set(id, newConnection);
+    return newConnection;
+  }
+
+  async getMindset(): Promise<Mindset[]> {
+    return Array.from(this.mindset.values());
+  }
+
+  async getMindsetById(id: number): Promise<Mindset | null> {
+    return this.mindset.get(id) || null;
+  }
+
+  async createMindset(mindset: Omit<Mindset, "id">): Promise<Mindset> {
+    const id = this.currentIds.mindset++;
+    const newMindset: Mindset = { ...mindset, id };
+    this.mindset.set(id, newMindset);
+    return newMindset;
   }
 }
 
@@ -663,6 +718,73 @@ export class DatabaseStorage implements IStorage {
       logStorage(`Deleted message from: ${message.name}`);
     } catch (error) {
       logStorage(`Failed to delete message ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+
+  async getSkillConnections(): Promise<SkillConnection[]> {
+    try {
+      const result = await db2.select().from(skillConnectionsTable);
+      return result as SkillConnection[];
+    } catch (error) {
+      logStorage(`Failed to get skill connections: ${error}`, "error");
+      throw new Error("Failed to fetch skill connections");
+    }
+  }
+
+  async createSkillConnection(connection: Omit<SkillConnection, "id">): Promise<SkillConnection> {
+    try {
+      const [result] = await db2.insert(skillConnectionsTable).values({
+        fromSkillId: connection.fromSkillId,
+        toSkillId: connection.toSkillId,
+      });
+      const insertedId = (result as any).insertId;
+      return { ...connection, id: insertedId } as SkillConnection;
+    } catch (error) {
+      logStorage(`Failed to create skill connection: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async getMindset(): Promise<Mindset[]> {
+    try {
+      const result = await db2.select().from(mindsetTable);
+      return result.map(transformMindset);
+    } catch (error) {
+      logStorage(`Failed to get mindset: ${error}`, "error");
+      throw new Error("Failed to fetch mindset principles");
+    }
+  }
+
+  async getMindsetById(id: number): Promise<Mindset | null> {
+    try {
+      const [result] = await db2
+        .select()
+        .from(mindsetTable)
+        .where(eq(mindsetTable.id, id))
+        .limit(1);
+      return result ? transformMindset(result) : null;
+    } catch (error) {
+      logStorage(`Failed to get mindset ${id}: ${error}`, "error");
+      throw new Error(`Failed to fetch mindset with id ${id}`);
+    }
+  }
+
+  async createMindset(mindset: Omit<Mindset, "id">): Promise<Mindset> {
+    try {
+      const [result] = await db2.insert(mindsetTable).values({
+        title: mindset.title,
+        description: mindset.description,
+        icon: mindset.icon,
+        tags: JSON.stringify(mindset.tags),
+      });
+      const insertedId = (result as any).insertId;
+      const inserted = await this.getMindsetById(insertedId);
+      if (!inserted) throw new Error("Failed to fetch inserted mindset");
+      return inserted;
+    } catch (error) {
+      logStorage(`Failed to create mindset: ${error}`, "error");
       throw error;
     }
   }
