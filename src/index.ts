@@ -125,17 +125,25 @@ async function startServer() {
     log("Starting server...", "startup");
 
     // STEP 0: CHECK DATABASE HEALTH
-    log("📍 Checking database health...", "startup");
-    const health = await checkDatabaseHealth();
     let useFallback = false;
 
-    if (!health.healthy) {
-      log("⚠️ Database connection failed. Switching to In-Memory Fallback...", "startup");
-      log(`Reason: ${health.message}`, "warn");
+    // Check if we have database configuration before attempting connection
+    if (!process.env.MYSQL_HOST) {
+      log("ℹ️ No Database configuration found. Using In-Memory Storage.", "startup");
       setStorage(new MemStorage());
       useFallback = true;
     } else {
-      log("✓ Database is healthy", "startup");
+      log("📍 Checking database health...", "startup");
+      const health = await checkDatabaseHealth();
+
+      if (!health.healthy) {
+        log("⚠️ Database connection failed. Switching to In-Memory Fallback...", "startup");
+        log(`Reason: ${health.message}`, "warn");
+        setStorage(new MemStorage());
+        useFallback = true;
+      } else {
+        log("✓ Database is healthy", "startup");
+      }
     }
 
     if (!useFallback) {

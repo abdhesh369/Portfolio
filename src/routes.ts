@@ -145,6 +145,15 @@ export async function registerRoutes(
     })
   );
 
+  // GET /api/skills/connections - List all skill connections
+  app.get(
+    api.skills.connections.path,
+    asyncHandler(async (_req, res) => {
+      const connections = await storage.getSkillConnections();
+      res.json(connections);
+    })
+  );
+
   // GET /api/skills/:id - Get single skill
   app.get(
     "/api/skills/:id",
@@ -217,14 +226,7 @@ export async function registerRoutes(
 
   // ==================== SKILL CONNECTIONS ====================
 
-  // GET /api/skills/connections - List all skill connections
-  app.get(
-    api.skills.connections.path,
-    asyncHandler(async (_req, res) => {
-      const connections = await storage.getSkillConnections();
-      res.json(connections);
-    })
-  );
+
 
   // ==================== EXPERIENCES ====================
 
@@ -398,12 +400,14 @@ export async function registerRoutes(
 
           const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            port: 465, // Try SMTPS
+            secure: true, // Use SSL/TLS
             auth: {
               user: process.env.GMAIL_USER,
               pass: process.env.GMAIL_APP_PASSWORD,
             },
+            connectionTimeout: 10000, // 10 seconds
+            greetingTimeout: 10000,   // 10 seconds
           });
 
           const mailOptions = {
