@@ -83,7 +83,7 @@ const TimelineItem = ({
       <motion.div
         whileHover={{ x: 5 }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="bg-card p-6 rounded-2xl border-2 border-border hover:border-primary/50 shadow-sm hover:shadow-xl transition-all cursor-pointer group"
+        className="bg-[#0a0520]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -285,7 +285,7 @@ export default function Experience() {
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2].map(i => (
-                  <div key={i} className="h-32 bg-card rounded-2xl animate-pulse" />
+                  <div key={i} className="h-32 bg-white/5 rounded-2xl animate-pulse" />
                 ))}
               </div>
             ) : work.length === 0 ? (
@@ -327,7 +327,7 @@ export default function Experience() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className="mt-6 p-6 bg-card rounded-2xl border border-border"
+                  className="mt-6 p-6 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/10"
                 >
                   <h5 className="font-semibold mb-4 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import {
@@ -689,7 +689,7 @@ const SkillTooltip = ({
       <motion.div
         className="relative w-full max-w-sm p-6 rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, rgba(15, 10, 35, 0.98) 0%, rgba(30, 15, 50, 0.95) 100%)',
+          background: 'linear-gradient(135deg, rgba(15, 10, 35, 0.85) 0%, rgba(30, 15, 50, 0.8) 100%)',
           border: '1px solid rgba(100, 100, 180, 0.3)',
           boxShadow: '0 25px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(139, 92, 246, 0.2)'
         }}
@@ -772,7 +772,7 @@ const StatPanel = ({
       className={`absolute ${position === 'left' ? 'left-3 md:left-4' : 'right-3 md:right-4'} 
         bottom-3 md:bottom-4 w-40 md:w-52 p-3 md:p-4 rounded-xl z-20`}
       style={{
-        background: 'linear-gradient(135deg, rgba(15, 10, 35, 0.9) 0%, rgba(25, 15, 45, 0.85) 100%)',
+        background: 'linear-gradient(135deg, rgba(15, 10, 35, 0.8) 0%, rgba(25, 15, 45, 0.75) 100%)',
         backdropFilter: 'blur(20px)',
         border: '1px solid rgba(100, 100, 160, 0.25)',
         boxShadow: '0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
@@ -967,12 +967,9 @@ export default function SkillsTree() {
 
         {/* Tree Container */}
         <motion.div
-          className="relative w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl overflow-hidden"
+          className="relative w-full max-w-5xl mx-auto"
           style={{
-            aspectRatio: '16 / 12',
-            background: 'linear-gradient(180deg, rgba(10, 5, 25, 0.6) 0%, rgba(15, 8, 35, 0.8) 50%, rgba(10, 5, 25, 0.6) 100%)',
-            border: '1px solid rgba(100, 100, 160, 0.15)',
-            boxShadow: '0 0 100px rgba(139, 92, 246, 0.08), inset 0 0 100px rgba(0, 0, 0, 0.5)'
+            aspectRatio: '16 / 12'
           }}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}

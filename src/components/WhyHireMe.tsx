@@ -89,7 +89,7 @@ const PointCard = ({ point, index }: { point: any; index: number }) => {
         className="absolute -inset-2 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-3xl blur-xl"
       />
 
-      <div className="relative p-8 bg-card rounded-2xl border-2 border-border hover:border-primary/50 transition-all duration-300 h-full">
+      <div className="relative p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-300 h-full hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
         {/* Icon */}
         <motion.div
           animate={{
@@ -190,7 +190,7 @@ export default function WhyHireMe() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-card rounded-3xl border border-border mb-12"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10 mb-12"
         >
           <AnimatedCounter value={10} suffix="+" label="Skills Learned" />
           <AnimatedCounter value={5} suffix="+" label="Projects Built" />
@@ -213,7 +213,7 @@ export default function WhyHireMe() {
           className="grid md:grid-cols-2 gap-12 mb-12"
         >
           {/* Soft Skills */}
-          <div className="p-8 bg-card rounded-3xl border border-border">
+          <div className="p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10">
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
               <Target className="w-5 h-5 text-primary" />
               Core Strengths
@@ -304,7 +304,7 @@ export default function WhyHireMe() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
-                className="h-14 px-8 bg-card border-2 border-border text-foreground rounded-full font-bold hover:border-primary/50 transition-all flex items-center gap-2"
+                className="h-14 px-8 bg-[#0a0520]/80 backdrop-blur-sm border border-white/10 text-white rounded-full font-bold hover:bg-white/5 hover:border-cyan-500/50 transition-all flex items-center gap-2"
               >
                 Let's Talk
                 <ArrowRight className="w-5 h-5" />

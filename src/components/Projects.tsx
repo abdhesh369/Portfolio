@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
