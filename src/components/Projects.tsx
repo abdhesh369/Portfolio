@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
+import { type Project } from "@shared/schema";
 import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -9,7 +10,7 @@ import { Link } from "wouter";
 
 
 // Enhanced 3D Tilt Card with Sci-Fi styling
-const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (p: any) => void; index: number }) => {
+const ProjectCard = ({ project, onPreview, index }: { project: Project; onPreview: (p: Project) => void; index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -25,6 +26,9 @@ const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (
     setRotateX(rotateXValue);
     setRotateY(rotateYValue);
   };
+
+  const shouldReduceMotion = useReducedMotion();
+  const transitionConfig = shouldReduceMotion ? { duration: 0 } : { duration: 0.4, delay: index * 0.1 };
 
   const handleMouseLeave = () => {
     setRotateX(0);
@@ -66,7 +70,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+      transition={transitionConfig}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
@@ -120,6 +124,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (
               <motion.img
                 src={project.imageUrl}
                 alt={project.title}
+                loading="lazy"
                 animate={{ scale: isHovered ? 1.1 : 1 }}
                 transition={{ duration: 0.5 }}
                 className="w-full h-full object-cover"
@@ -137,7 +142,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (
             >
               <motion.div
                 animate={{ rotate: isHovered ? 360 : 0 }}
-                transition={{ duration: 1.5, ease: 'easeInOut' }}
+                transition={{ duration: shouldReduceMotion ? 0 : 1.5, ease: 'easeInOut' }}
               >
                 <Folder className="w-16 h-16 text-gray-600" />
               </motion.div>
@@ -307,7 +312,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: any; onPreview: (
 };
 
 // Enhanced Preview Modal
-const PreviewModal = ({ project, onClose }: { project: any; onClose: () => void }) => {
+const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
   const catColors: Record<string, { glow: string; text: string }> = {
     System: { glow: 'rgba(0, 212, 255, 0.3)', text: '#00d4ff' },
     Academic: { glow: 'rgba(168, 85, 247, 0.3)', text: '#a855f7' },
@@ -479,7 +484,7 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
 export default function Projects() {
   const { data: projects, isLoading, error } = useProjects();
   const [filter, setFilter] = useState("All");
-  const [previewProject, setPreviewProject] = useState<any>(null);
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
   const categories = ["All", "Web", "System", "Academic", "Backend", "Utility"];
 

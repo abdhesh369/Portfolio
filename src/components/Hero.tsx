@@ -84,6 +84,7 @@ const ProfileCard = () => {
         <img
           src={profileImg}
           alt="Abdhesh"
+          loading="eager"
           className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay grayscale hover:grayscale-0 transition-all duration-700"
         />
 
