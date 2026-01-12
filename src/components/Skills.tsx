@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import {
   Code2,
   Database,
@@ -14,6 +15,20 @@ import {
   BookOpen,
   X
 } from 'lucide-react';
+
+const ICON_MAP: Record<string, React.ElementType> = {
+  Code2,
+  Database,
+  Layout,
+  Server,
+  Terminal,
+  GitBranch,
+  Globe,
+  Braces,
+  Zap,
+  Layers,
+  BookOpen
+};
 
 // --- Type Definitions ---
 
@@ -312,9 +327,19 @@ const FloatingParticles = () => {
 
 // --- Enhanced Tree SVG ---
 
-const EnhancedTreeSVG = ({ highlightedConnections, activeNode }: { highlightedConnections: Set<string>; activeNode: string | null }) => {
+const EnhancedTreeSVG = ({
+  highlightedConnections,
+  activeNode,
+  skillNodes,
+  connections
+}: {
+  highlightedConnections: Set<string>;
+  activeNode: string | null;
+  skillNodes: SkillNode[];
+  connections: Connection[];
+}) => {
   const getNodePos = (id: string) => {
-    const node = SKILL_NODES.find((n) => n.id === id);
+    const node = skillNodes.find((n) => n.id === id);
     return node ? { x: node.x, y: node.y } : { x: 0, y: 0 };
   };
 
@@ -485,7 +510,7 @@ const EnhancedTreeSVG = ({ highlightedConnections, activeNode }: { highlightedCo
       />
 
       {/* Skill connection lines */}
-      {CONNECTIONS.map((conn, i) => {
+      {connections.map((conn, i) => {
         const start = getNodePos(conn.from);
         const end = getNodePos(conn.to);
         const isHighlighted = highlightedConnections.has(`${conn.from}-${conn.to}`);
@@ -902,11 +927,17 @@ const StatPanel = ({
   );
 };
 
-const ProficiencyChart = () => {
+const ProficiencyChart = ({ skillNodes }: { skillNodes: SkillNode[] }) => {
+  const counts = {
+    Core: skillNodes.filter(n => n.status === 'Core').length,
+    Comfortable: skillNodes.filter(n => n.status === 'Comfortable').length,
+    Learning: skillNodes.filter(n => n.status === 'Learning').length
+  };
+
   const categories = [
-    { name: 'Core', count: 6, color: '#00d4ff', bgColor: 'rgba(0, 212, 255, 0.2)' },
-    { name: 'Comfortable', count: 4, color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.2)' },
-    { name: 'Learning', count: 2, color: '#ec4899', bgColor: 'rgba(236, 72, 153, 0.2)' }
+    { name: 'Core', count: counts.Core, color: '#00d4ff', bgColor: 'rgba(0, 212, 255, 0.2)' },
+    { name: 'Comfortable', count: counts.Comfortable, color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.2)' },
+    { name: 'Learning', count: counts.Learning, color: '#ec4899', bgColor: 'rgba(236, 72, 153, 0.2)' }
   ];
 
   const max = Math.max(...categories.map((c) => c.count));
@@ -936,12 +967,19 @@ const ProficiencyChart = () => {
   );
 };
 
-const CategorySummary = () => {
+const CategorySummary = ({ skillNodes }: { skillNodes: SkillNode[] }) => {
+  const counts = {
+    Foundations: skillNodes.filter(n => n.category === 'Foundations').length,
+    Frontend: skillNodes.filter(n => n.category === 'Frontend').length,
+    Backend: skillNodes.filter(n => n.category === 'Backend').length,
+    Tools: skillNodes.filter(n => n.category === 'Tools').length
+  };
+
   const categories: { name: string; count: number; icon: string; color: string }[] = [
-    { name: 'Core', count: 3, icon: '🏛️', color: 'rgba(0, 212, 255, 0.1)' },
-    { name: 'Frontend', count: 5, icon: '🎨', color: 'rgba(168, 85, 247, 0.1)' },
-    { name: 'Backend', count: 3, icon: '⚙️', color: 'rgba(236, 72, 153, 0.1)' },
-    { name: 'Tools', count: 1, icon: '🔧', color: 'rgba(34, 197, 94, 0.1)' }
+    { name: 'Foundations', count: counts.Foundations, icon: '🏛️', color: 'rgba(0, 212, 255, 0.1)' },
+    { name: 'Frontend', count: counts.Frontend, icon: '🎨', color: 'rgba(168, 85, 247, 0.1)' },
+    { name: 'Backend', count: counts.Backend, icon: '⚙️', color: 'rgba(236, 72, 153, 0.1)' },
+    { name: 'Tools', count: counts.Tools, icon: '🔧', color: 'rgba(34, 197, 94, 0.1)' }
   ];
 
   return (
@@ -973,24 +1011,46 @@ export default function SkillsTree() {
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const { data: apiSkills, isLoading: skillsLoading } = useSkills();
+  const { data: apiConnections, isLoading: connectionsLoading } = useSkillConnections();
+
+  const skillNodes = useMemo(() => {
+    if (!apiSkills || apiSkills.length === 0) return SKILL_NODES;
+    return apiSkills.map(s => ({
+      ...s,
+      id: String(s.id),
+      icon: ICON_MAP[s.icon] || Code2,
+      status: s.status as SkillStatus,
+      category: s.category as SkillCategory
+    }));
+  }, [apiSkills]);
+
+  const connections = useMemo(() => {
+    if (!apiConnections || apiConnections.length === 0) return CONNECTIONS;
+    return apiConnections.map(c => ({
+      from: c.fromSkillId,
+      to: c.toSkillId
+    }));
+  }, [apiConnections]);
+
   const highlightedConnections = useMemo(() => {
     if (!activeNode) return new Set<string>();
-    const connections = new Set<string>();
+    const connectionsSet = new Set<string>();
     const visited = new Set<string>([activeNode]);
     const queue = [activeNode];
 
     while (queue.length > 0) {
       const current = queue.shift()!;
-      CONNECTIONS.forEach((conn) => {
+      connections.forEach((conn) => {
         if (conn.to === current && !visited.has(conn.from)) {
           visited.add(conn.from);
-          connections.add(`${conn.from}-${conn.to}`);
+          connectionsSet.add(`${conn.from}-${conn.to}`);
           queue.push(conn.from);
         }
       });
     }
-    return connections;
-  }, [activeNode]);
+    return connectionsSet;
+  }, [activeNode, connections]);
 
   const handleNodeClick = (id: string) => {
     setActiveNode(id);
@@ -1002,7 +1062,7 @@ export default function SkillsTree() {
     setActiveNode(null);
   };
 
-  const activeNodeData = SKILL_NODES.find((n) => n.id === activeNode);
+  const activeNodeData = skillNodes.find((n) => n.id === activeNode);
 
   return (
     <section
@@ -1087,10 +1147,15 @@ export default function SkillsTree() {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           {/* Tree SVG */}
-          <EnhancedTreeSVG highlightedConnections={highlightedConnections} activeNode={activeNode} />
+          <EnhancedTreeSVG
+            highlightedConnections={highlightedConnections}
+            activeNode={activeNode}
+            skillNodes={skillNodes}
+            connections={connections}
+          />
 
           {/* Skill Nodes */}
-          {SKILL_NODES.map((node) => (
+          {skillNodes.map((node) => (
             <HexagonNode
               key={node.id}
               node={node}
@@ -1107,7 +1172,7 @@ export default function SkillsTree() {
             position="left"
             icon={<Zap className="w-3 h-3 text-cyan-400" />}
           >
-            <ProficiencyChart />
+            <ProficiencyChart skillNodes={skillNodes} />
           </StatPanel>
 
           <StatPanel
@@ -1115,7 +1180,7 @@ export default function SkillsTree() {
             position="right"
             icon={<Layers className="w-3 h-3 text-purple-400" />}
           >
-            <CategorySummary />
+            <CategorySummary skillNodes={skillNodes} />
           </StatPanel>
         </motion.div>
 

@@ -1,6 +1,17 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
+import { useMindset } from "@/hooks/use-portfolio";
 import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
+
+const ICON_MAP: Record<string, React.ElementType> = {
+  Brain,
+  Layers,
+  Zap,
+  Users,
+  Code2,
+  Sparkles,
+  ArrowRight
+};
 
 // Principle Card with Connection
 const PrincipleCard = ({
@@ -54,8 +65,8 @@ const PrincipleCard = ({
           animate={{ rotate: isActive ? 360 : 0 }}
           transition={{ duration: 0.5 }}
           className={`mb-6 p-4 rounded-2xl w-fit transition-all duration-300 ${isActive
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
             }`}
         >
           <principle.icon className="w-7 h-7" />
@@ -141,6 +152,15 @@ const principles = [
 
 export default function EngineeringMindset() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const { data: apiPrinciples, isLoading } = useMindset();
+
+  const principlesData = useMemo(() => {
+    if (!apiPrinciples || apiPrinciples.length === 0) return principles;
+    return apiPrinciples.map(p => ({
+      ...p,
+      icon: ICON_MAP[p.icon] || Brain
+    }));
+  }, [apiPrinciples]);
 
   return (
     <section id="mindset" className="section-container bg-muted/30 overflow-hidden">
@@ -184,7 +204,7 @@ export default function EngineeringMindset() {
       <div className="max-w-6xl mx-auto">
         {/* Flowchart Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-12 mb-8">
-          {principles.map((principle, index) => (
+          {principlesData.map((principle, index) => (
             <PrincipleCard
               key={index}
               principle={principle}
@@ -197,7 +217,7 @@ export default function EngineeringMindset() {
 
         {/* Expanded Detail */}
         {activeIndex !== null && (
-          <DetailPanel principle={principles[activeIndex]} />
+          <DetailPanel principle={principlesData[activeIndex]} />
         )}
 
         {/* Quote Section */}
