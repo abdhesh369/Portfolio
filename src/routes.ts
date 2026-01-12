@@ -26,6 +26,7 @@ function validateBody<T extends z.ZodType>(schema: T) {
       next();
     } catch (err) {
       if (err instanceof z.ZodError) {
+        log(`Validation Error: ${JSON.stringify(err.errors)}`, "error");
         res.status(400).json({
           message: "Validation failed",
           errors: err.errors.map((e) => ({

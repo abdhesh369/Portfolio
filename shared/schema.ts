@@ -157,7 +157,7 @@ export const messageSchema = z.object({
 
 export const insertMessageApiSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
-  email: z.string().email("Must be a valid email").max(255),
+  email: z.string().trim().email("Must be a valid email").max(255),
   subject: z.string().max(500).default(""),
   message: z.string().min(1, "Message is required").max(5000),
 });
