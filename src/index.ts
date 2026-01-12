@@ -1,11 +1,10 @@
-import dotenv from "dotenv";
-import path from "path";
-// Explicitly load .env from current working directory to avoid loading issues
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+// Validate environment variables immediately
+import "./env.js";
 
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import cors from "cors";
+import helmet from "helmet";
 import { registerRoutes } from "./routes.js";
 import { seedDatabase } from "./seed.js";
 import { createTables } from "./create-tables.js";
@@ -55,13 +54,7 @@ app.use(
   })
 );
 
-app.use((_req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  next();
-});
+app.use(helmet());
 
 app.use(
   express.json({
@@ -164,7 +157,7 @@ async function startServer() {
 
     // STEP 3: REGISTER ROUTES
     log("📍 Registering API routes...", "startup");
-    await registerRoutes(httpServer, app);
+    registerRoutes(app);
     log("✓ API routes registered", "startup");
 
     // STEP 4: GLOBAL ERROR HANDLER
