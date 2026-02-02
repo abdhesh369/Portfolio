@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
 import { useMindset } from "@/hooks/use-portfolio";
+import type { Mindset } from "@shared/schema";
 import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -20,7 +21,7 @@ const PrincipleCard = ({
   isActive,
   onClick
 }: {
-  principle: any;
+  principle: Omit<Mindset, "icon"> & { icon: React.ElementType };
   index: number;
   isActive: boolean;
   onClick: () => void;
@@ -69,7 +70,10 @@ const PrincipleCard = ({
             : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
             }`}
         >
-          <principle.icon className="w-7 h-7" />
+          {(() => {
+            const Icon = principle.icon;
+            return <Icon className="w-7 h-7" />;
+          })()}
         </motion.div>
 
         {/* Content */}
@@ -93,7 +97,7 @@ const PrincipleCard = ({
 };
 
 // Expanded Detail Panel
-const DetailPanel = ({ principle }: { principle: any }) => (
+const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon: React.ElementType } }) => (
   <motion.div
     initial={{ opacity: 0, height: 0 }}
     animate={{ opacity: 1, height: "auto" }}
@@ -103,7 +107,10 @@ const DetailPanel = ({ principle }: { principle: any }) => (
     <div className="p-8 bg-gradient-to-br from-primary/10 via-card to-primary/5 rounded-3xl border border-primary/20 mt-6">
       <div className="flex items-start gap-6">
         <div className="p-4 bg-primary/20 rounded-2xl">
-          <principle.icon className="w-10 h-10 text-primary" />
+          {(() => {
+            const Icon = principle.icon;
+            return <Icon className="w-10 h-10 text-primary" />;
+          })()}
         </div>
         <div className="flex-1">
           <h4 className="text-2xl font-bold mb-3">{principle.title}</h4>
@@ -125,24 +132,28 @@ const DetailPanel = ({ principle }: { principle: any }) => (
 
 const principles = [
   {
+    id: 1,
     title: "Fundamentals over Frameworks",
     description: "Prioritizing strong core understanding of languages and systems before adopting high-level abstractions. Frameworks come and go, but fundamentals remain constant.",
     icon: Code2,
     tags: ["Data Structures", "Algorithms", "Design Patterns", "System Design"]
   },
   {
+    id: 2,
     title: "Simplicity over Complexity",
     description: "Designing straightforward solutions that solve the problem efficiently without over-engineering. The best code is code you don't have to write.",
     icon: Layers,
     tags: ["Clean Code", "KISS Principle", "Minimal Dependencies", "Pragmatic"]
   },
   {
+    id: 3,
     title: "Logic before Optimization",
     description: "Focusing on correctness and clear business logic before premature performance tuning. Get it working, then get it fast.",
     icon: Zap,
     tags: ["Test-Driven", "Iterative", "Profiling", "Benchmarking"]
   },
   {
+    id: 4,
     title: "Readable Code",
     description: "Writing maintainable, well-documented code that is intuitive for other engineers to understand and extend.",
     icon: Users,
