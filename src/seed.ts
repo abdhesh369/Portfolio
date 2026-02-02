@@ -19,8 +19,7 @@ export async function seedDatabase() {
     }
 
     if (existingProjects.length > 0) {
-      logSeed("Database already seeded, skipping...", "warn");
-      return;
+      logSeed("Database has existing projects, updating/merging data...");
     }
 
     logSeed("Starting database seed...");
@@ -28,45 +27,87 @@ export async function seedDatabase() {
     const projectList = [
       {
         title: "Portfolio Website",
-        description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.\n\nBackend Source: https://github.com/abdhesh369/Backend.git",
-        techStack: ["React", "TypeScript", "Express", "MySQL", "TailwindCSS"],
+        description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
+        techStack: ["React", "TypeScript", "Express", "MySQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
         imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
         category: "Web",
         githubUrl: "https://github.com/abdhesh369/Frontend.git",
         liveUrl: "https://abdheshsah.com.np",
         problemStatement: "Needed a professional online presence to showcase projects and skills to potential employers and collaborators with a unique, memorable design.",
         motivation: "Create a modern, responsive portfolio that demonstrates full-stack development capabilities with cutting-edge UI/UX design principles.",
-        systemDesign: "Full-stack application with React frontend using Framer Motion for animations, Express REST API backend, MySQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
-        challenges: "Implementing complex animations like the skill tree without performance issues, creating a cohesive sci-fi design language, and ensuring responsive design across all devices.",
-        learnings: "Advanced animation techniques with Framer Motion, full-stack development workflow, API design patterns, and the importance of consistent design systems.",
+        systemDesign: "Full-stack application with React frontend using Framer Motion and Three.js for animations, Express REST API backend, MySQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
+        challenges: "Implementing complex animations like the 3D plexus and skill tree without performance issues, creating a cohesive sci-fi design language, and ensuring responsive design across all devices.",
+        learnings: "Advanced animation techniques, full-stack development workflow, API design patterns, and the importance of consistent design systems.",
+      },
+      {
+        title: "AI Study Buddy",
+        description: "A Monolithic Flask application integrated with OpenRouter API (GPT-4o-mini) to provide AI-powered study assistance. Features a modern glassmorphic UI.",
+        techStack: ["Python", "Flask", "OpenRouter API", "Jinja2", "JavaScript", "Glassmorphism", "CSS3"],
+        imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
+        category: "Web",
+        githubUrl: "https://github.com/abdhesh369/Projects",
+        liveUrl: null,
+        problemStatement: "Students often lack immediate access to tutoring or help when studying complex subjects, leading to frustration and slower learning.",
+        motivation: "To leverage modern LLMs to provide a personal AI tutor that can answer questions and generate study materials in a visually appealing interface.",
+        systemDesign: "Flask backend handling API requests to OpenRouter, using Jinja2 templates for dynamic content delivery. Frontend uses vanilla JavaScript for asynchronous communication and CSS for glassmorphism effects.",
+        challenges: "Ensuring smooth API integration with error handling for rate limits or connectivity issues, and perfecting the glassmorphic UI without sacrificing readability.",
+        learnings: "AI API integration, Flask web development, and advanced CSS styling techniques.",
+      },
+      {
+        title: "Assistant (Edith)",
+        description: "A modular Python-based desktop automation assistant with voice recognition and text-to-speech capabilities, designed to streamline daily tasks.",
+        techStack: ["Python", "pyttsx3", "SpeechRecognition", "pyautogui", "pywhatkit", "psutil"],
+        imageUrl: "https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=800&auto=format&fit=crop",
+        category: "System",
+        githubUrl: "https://github.com/abdhesh369/Projects",
+        liveUrl: null,
+        problemStatement: "Interacting with computer systems manually for repetitive tasks like opening apps, searching YouTube, or taking notes can be inefficient.",
+        motivation: "Created to experiment with desktop automation and voice-UI (VUI) to build a hands-free interactive layer for Windows.",
+        systemDesign: "Modular architecture with dedicated command mapping for dispatcher efficiency. Uses pyttsx3 for offline TTS and Google Speech Recognition for STT. pyautogui handles hardware control.",
+        challenges: "Improving the robustness of voice command detection and ensuring file-path automation (like video playback) works across different system environments.",
+        learnings: "Automation scripting, speech processing, and modular software design in Python.",
+      },
+      {
+        title: "Finance Tracker",
+        description: "A secure personal finance management web application featuring user authentication and database persistence for transaction tracking.",
+        techStack: ["Flask", "Flask-Login", "SQLAlchemy", "SQLite", "Flask-Migrate", "Flask-WTF", "Python"],
+        imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
+        category: "Web",
+        githubUrl: "https://github.com/abdhesh369/Projects",
+        liveUrl: null,
+        problemStatement: "Managing personal expenses and budgets manually is tedious and often results in lost data or lack of financial insight.",
+        motivation: "Demonstate secure development practices including password hashing, session management, and database migrations in a Flask environment.",
+        systemDesign: "Application Factory pattern with Blueprints for authentication and main routes. Uses SQLAlchemy ORM for database abstraction and Flask-Login for session security.",
+        challenges: "Implementing a clean authentication flow and setting up scalable database migrations for future feature expansions.",
+        learnings: "Web security fundamentals, database design, and the Flask application factory pattern.",
       },
       {
         title: "Calculator Application",
-        description: "A comprehensive scientific calculator with advanced mathematical functions including trigonometry, logarithms, factorial, and expression parsing.",
-        techStack: ["React", "TypeScript", "CSS3"],
+        description: "A polished scientific calculator featuring a detailed dark-theme UI with ripple effects and comprehensive keyboard support.",
+        techStack: ["HTML5", "CSS3", "JavaScript", "Vanilla JS", "Regex"],
         imageUrl: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=800&auto=format&fit=crop",
         category: "Utility",
-        githubUrl: "https://github.com/abdhesh369",
+        githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
-        problemStatement: "Users needed a convenient way to perform both basic and scientific calculations without switching between multiple tools or dealing with clunky interfaces.",
-        motivation: "Built to demonstrate complex state management in React and provide a practical tool for students and professionals doing mathematical computations.",
-        systemDesign: "Component-based React architecture with custom math expression parser, history tracking, keyboard support for accessibility, and responsive design for mobile use.",
-        challenges: "Implementing correct operator precedence and parenthesis evaluation, handling floating-point precision issues in JavaScript, and creating an intuitive UI for complex operations.",
-        learnings: "Improved understanding of React state management patterns, event handling, expression parsing algorithms, and computer arithmetic precision limitations.",
+        problemStatement: "Most basic web calculators lack a premium feel and do not support keyboard navigation, making them less efficient for power users.",
+        motivation: "To create a highly interactive and visually stunning utility tool that prioritizes user experience through micro-animations and responsive logic.",
+        systemDesign: "Event-driven architecture using vanilla JS. Implements custom ripple animations via dynamic DOM manipulation and uses regex for real-time number formatting.",
+        challenges: "Perfecting the CSS Grid layout for all screen sizes and implementing error-free keyboard event listeners for all math operations.",
+        learnings: "Advanced DOM manipulation, event handling, and polished UI design using modern CSS.",
       },
       {
-        title: "Student Record System",
-        description: "C++ based student record and marksheet management system with binary file persistence, search/sort capabilities, and comprehensive CRUD operations.",
-        techStack: ["C++", "File Handling", "STL"],
-        imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop",
+        title: "Flappy Bird",
+        description: "A Python-based desktop game prototype using Pygame, demonstrating game loop fundamentals and collision detection concepts.",
+        techStack: ["Python", "Pygame"],
+        imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
         category: "Academic",
-        githubUrl: "https://github.com/abdhesh369",
+        githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
-        problemStatement: "Manual marksheet management in educational institutions was inefficient, error-prone, and time-consuming, especially when dealing with large student datasets.",
-        motivation: "Academic project to practice file persistence, data structure implementation, and object-oriented design principles in C++.",
-        systemDesign: "Binary file storage with structured records, implementing efficient search algorithms using STL containers, sorting capabilities, and a menu-driven console interface.",
-        challenges: "Maintaining data consistency during file operations, implementing efficient search on binary files, and handling edge cases in student data validation.",
-        learnings: "Strong understanding of file I/O in C++, binary vs text file trade-offs, data structures for efficient searching, and the importance of data validation.",
+        problemStatement: "Understanding the complexities of game physics and state management can be difficult for beginners.",
+        motivation: "Built as a skeleton project to explore the Pygame engine and set the foundation for more complex game development projects.",
+        systemDesign: "Implements a standard game loop (Process Inputs -> Update State -> Render). Features a 1000x1000 game window with basic event polling.",
+        challenges: "Setting up a stable frame-rate and preparing the architectural hooks for bird physics and pipe generation.",
+        learnings: "Game development basics, 2D rendering, and event-driven programming.",
       },
     ];
 
@@ -75,16 +116,22 @@ export async function seedDatabase() {
 
     for (const proj of projectList) {
       try {
-        await storage2.createProject(proj);
-        logSeed(`Seeded project: ${proj.title}`);
+        const existing = existingProjects.find(p => p.title === proj.title);
+        if (existing) {
+          await storage2.updateProject(existing.id, proj);
+          logSeed(`Updated project: ${proj.title}`);
+        } else {
+          await storage2.createProject(proj);
+          logSeed(`Seeded project: ${proj.title}`);
+        }
         successCount++;
       } catch (err) {
-        logSeed(`Failed to seed project: ${proj.title} - ${err}`, "error");
+        logSeed(`Failed to process project: ${proj.title} - ${err}`, "error");
         failCount++;
       }
     }
 
-    logSeed(`Projects: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Projects: ${successCount} processed (${successCount - (projectList.length - failCount)} updated, ${projectList.length - failCount} created/synced), ${failCount} failed`);
 
     const skillList = [
       { name: "C", category: "Languages", icon: "Code" },
