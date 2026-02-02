@@ -40,7 +40,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -59,14 +59,14 @@ app.use(helmet());
 app.use(
   express.json({
     limit: "10mb",
-    verify: (req, _res, buf) => {
+    verify: (req: Request, _res: Response, buf: Buffer) => {
       req.rawBody = buf;
     },
   })
 );
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
   res.on("finish", () => {
     if (req.path.startsWith("/api")) {
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/health", (_req, res) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
     ok: true,
     environment: process.env.NODE_ENV || "development",

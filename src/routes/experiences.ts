@@ -1,11 +1,11 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertExperienceApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 
 function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: any, res: any, next: any): void => {
+    return (req: Request, res: Response, next: NextFunction): void => {
         try {
             req.body = schema.parse(req.body);
             next();
@@ -25,8 +25,8 @@ function validateBody<T extends z.ZodType>(schema: T) {
     };
 }
 
-function asyncHandler(fn: (req: any, res: any, next: any) => Promise<any>) {
-    return (req: any, res: any, next: any): void => {
+function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+    return (req: Request, res: Response, next: NextFunction): void => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 }

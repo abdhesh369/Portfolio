@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
 import rateLimit from "express-rate-limit";
@@ -18,7 +18,7 @@ const contactFormLimiter = rateLimit({
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: any, res: any, next: any): void => {
+    return (req: Request, res: Response, next: NextFunction): void => {
         try {
             req.body = schema.parse(req.body);
             next();
@@ -39,8 +39,8 @@ function validateBody<T extends z.ZodType>(schema: T) {
 }
 
 // Error handler wrapper
-function asyncHandler(fn: (req: any, res: any, next: any) => Promise<any>) {
-    return (req: any, res: any, next: any): void => {
+function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+    return (req: Request, res: Response, next: NextFunction): void => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 }
