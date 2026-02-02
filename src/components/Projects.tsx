@@ -65,6 +65,18 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     MySQL: "bg-blue-400/15 text-blue-300 border-blue-400/30",
     Pygame: "bg-red-500/15 text-red-400 border-red-500/30",
     "OpenRouter API": "bg-indigo-500/15 text-indigo-400 border-indigo-500/30",
+    "SQLAlchemy": "bg-red-600/15 text-red-500 border-red-600/30",
+    "Flask-Login": "bg-emerald-600/15 text-emerald-500 border-emerald-600/30",
+    "Drizzle ORM": "bg-indigo-500/15 text-indigo-400 border-indigo-500/30",
+    "Framer Motion": "bg-purple-500/15 text-purple-400 border-purple-500/30",
+    "Three.js": "bg-blue-400/15 text-blue-300 border-blue-400/30",
+    "pyttsx3": "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+    "SpeechRecognition": "bg-orange-500/15 text-orange-400 border-orange-500/30",
+    "Regex": "bg-gray-500/15 text-gray-400 border-gray-500/30",
+    "psutil": "bg-slate-500/15 text-slate-400 border-slate-500/30",
+    "mysql2": "bg-blue-600/15 text-blue-400 border-blue-600/30",
+    "Zod": "bg-blue-500/15 text-blue-400 border-blue-500/30",
+    "Vanilla JS": "bg-yellow-400/15 text-yellow-300 border-yellow-400/30",
   };
 
   return (

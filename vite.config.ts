@@ -1,13 +1,14 @@
 ﻿import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': '/src',
-      '@assets': '/Resources',
-      '@shared': '/shared',
+      '@': path.resolve(__dirname, './src'),
+      '@assets': path.resolve(__dirname, './Resources'),
+      '@shared': path.resolve(__dirname, '../Backend/shared'),
     },
   },
   server: {

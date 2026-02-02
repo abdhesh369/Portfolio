@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMessageApiSchema, type InsertMessage } from "../../shared/schema";
+import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
