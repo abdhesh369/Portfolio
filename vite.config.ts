@@ -7,6 +7,7 @@ export default defineConfig({
     alias: {
       '@': '/src',
       '@assets': '/Resources',
+      '@shared': '/shared',
     },
   },
   server: {

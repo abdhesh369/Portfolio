@@ -61,6 +61,10 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     TailwindCSS: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
     SQLite: "bg-blue-500/15 text-blue-400 border-blue-500/30",
     CSS3: "bg-purple-500/15 text-purple-400 border-purple-500/30",
+    Flask: "bg-orange-500/15 text-orange-400 border-orange-500/30",
+    MySQL: "bg-blue-400/15 text-blue-300 border-blue-400/30",
+    Pygame: "bg-red-500/15 text-red-400 border-red-500/30",
+    "OpenRouter API": "bg-indigo-500/15 text-indigo-400 border-indigo-500/30",
   };
 
   return (
@@ -490,13 +494,12 @@ export default function Projects() {
 
   const filteredProjects = (Array.isArray(projects) ? projects : [])?.filter(p => {
     const isExcluded = p.title.toLowerCase().includes("netflix") ||
-      p.title.toLowerCase().includes("amazon") ||
-      p.title === "Python Utilities & Scripts";
+      p.title.toLowerCase().includes("amazon");
     if (isExcluded) return false;
 
     if (filter === "All") return true;
     return p.category === filter;
-  }).slice(0, 3) || [];
+  }) || [];
 
   const getCategoryCount = (cat: string) => {
     const allProjects = (Array.isArray(projects) ? projects : []).filter(p => {

@@ -2,7 +2,7 @@
 
 A high-end, premium interactive portfolio website featuring a futuristic sci-fi/cyberpunk aesthetic. Built with React 19, Vite, and Framer Motion for a state-of-the-art immersive experience.
 
-![Portfolio Preview](placeholder_for_image)
+![Portfolio Preview]()
 
 ## 🌌 Overview
 
