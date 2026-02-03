@@ -134,7 +134,7 @@ export default function Footer() {
   );
 }
 
-function Badge({ icon: Icon, text, color }: { icon: any, text: string, color: 'cyan' | 'purple' | 'pink' }) {
+function Badge({ icon: Icon, text, color }: { icon: React.ElementType, text: string, color: 'cyan' | 'purple' | 'pink' }) {
   const colors = {
     cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
     purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
@@ -149,7 +149,7 @@ function Badge({ icon: Icon, text, color }: { icon: any, text: string, color: 'c
   );
 }
 
-function FooterLink({ href, icon: Icon, label, color }: { href: string, icon: any, label: string, color: string }) {
+function FooterLink({ href, icon: Icon, label, color }: { href: string, icon: React.ElementType, label: string, color: string }) {
   return (
     <motion.a
       href={href}

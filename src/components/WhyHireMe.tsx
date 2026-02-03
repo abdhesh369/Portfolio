@@ -69,8 +69,14 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
   );
 };
 
+interface Point {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+}
+
 // Point Card with Hover Effects
-const PointCard = ({ point, index }: { point: any; index: number }) => {
+const PointCard = ({ point, index }: { point: Point; index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

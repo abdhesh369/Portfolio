@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { useExperiences } from "@/hooks/use-portfolio";
+import type { Experience as ExperienceType } from "@shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin, ExternalLink } from "lucide-react";
 
 // Animated Timeline Line
@@ -141,7 +142,7 @@ const TimelineItem = ({
 };
 
 // Section Header with Icon
-const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: any; title: string; subtitle?: string }) => (
+const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -182,8 +183,8 @@ export default function Experience() {
   const { data: experiences, isLoading } = useExperiences();
 
   // Split into education and work
-  const education = (experiences as any[])?.filter(e => e.type === "Education") || [];
-  const work = (experiences as any[])?.filter(e => e.type === "Experience") || [];
+  const education = (experiences as ExperienceType[])?.filter(e => e.type === "Education") || [];
+  const work = (experiences as ExperienceType[])?.filter(e => e.type === "Experience") || [];
 
   return (
     <section id="experience" className="section-container overflow-hidden">

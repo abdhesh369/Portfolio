@@ -63,7 +63,7 @@ const TiltCard = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Animated Counter
-const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: number; suffix?: string; label: string; icon: any }) => {
+const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: number; suffix?: string; label: string; icon: React.ElementType }) => {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -113,7 +113,7 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
 };
 
 // Holographic Info Card
-const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: any; label: string; value: string; delay: number, color?: "cyan" | "purple" }) => {
+const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: React.ElementType; label: string; value: string; delay: number, color?: "cyan" | "purple" }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

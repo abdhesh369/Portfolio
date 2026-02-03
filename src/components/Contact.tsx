@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
@@ -17,11 +17,11 @@ const CyberInput = ({
   required,
   isTextarea = false
 }: {
-  id: string;
+  id: keyof InsertMessage;
   label: string;
   type?: string;
   error?: string;
-  register: any;
+  register: UseFormRegister<InsertMessage>;
   required?: boolean;
   isTextarea?: boolean;
 }) => {
@@ -39,14 +39,14 @@ const CyberInput = ({
       <div className={`absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
 
       <Component
-        {...register(id, {
-          onChange: (e: any) => setHasValue(e.target.value.length > 0)
+        {...register(id as any, {
+          onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setHasValue(e.target.value.length > 0)
         })}
         type={type}
         id={id}
         rows={isTextarea ? 5 : undefined}
         onFocus={() => setIsFocused(true)}
-        onBlur={(e: any) => {
+        onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
           setIsFocused(false);
           setHasValue(e.target.value.length > 0);
         }}
@@ -83,7 +83,7 @@ const CyberInput = ({
 };
 
 // Data Card
-const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: any; label: string; value: string; href?: string; delay: number }) => (
+const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.ElementType; label: string; value: string; href?: string; delay: number }) => (
   <motion.div
     initial={{ opacity: 0, x: -20 }}
     whileInView={{ opacity: 1, x: 0 }}
@@ -273,7 +273,7 @@ export default function Contact() {
   );
 }
 
-const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: any; label: string; delay: number }) => (
+const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: React.ElementType; label: string; delay: number }) => (
   <motion.a
     href={href}
     target="_blank"
