@@ -2,10 +2,10 @@
 
 ## Basics
 - **Name**: Abdhesh Sah
-- **Role**: Full-Stack Engineer
+- **Role**: Full-Stack Engineer & System Architect
 - **Location**: Kathmandu, Nepal
 - **Email**: abdheshshah111@gmail.com
-- **Website**: https://abdhesh.dev
+- **Website**: https://abdheshsah.com.np
 
 ## Skills
 - **Languages**: JavaScript, TypeScript, C++, Python, SQL
@@ -14,7 +14,7 @@
 - **Tools**: Git, Docker, AWS, Vercel, Render
 
 ## Summary
-Full-Stack Engineer specialized in building high-performance web systems. Passionate about system design, algorithmic problem solving, and creating intuitive user experiences.
+Senior Full-Stack Engineer specialized in building high-performance web systems. Passionate about system design, algorithmic problem solving, and creating intuitive user experiences.
 
 ## Links
 - **GitHub**: https://github.com/abdhesh369
