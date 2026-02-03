@@ -85,6 +85,8 @@ const ProfileCard = () => {
           src={profileImg}
           alt="Abdhesh Sah - Full Stack Engineer & System Designer"
           loading="eager"
+          width={500}
+          height={500}
           className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay grayscale hover:grayscale-0 transition-all duration-700"
         />
 
