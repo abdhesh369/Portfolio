@@ -186,7 +186,7 @@ export function registerMessageRoutes(app: Router) {
 
             const resend = new Resend(env.RESEND_API_KEY);
             const { error } = await resend.emails.send({
-                from: "onboarding@resend.dev",
+                from: "contact@abdheshsah.com.np",
                 to: message.email,
                 subject: subject,
                 html: body,
