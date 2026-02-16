@@ -7,6 +7,7 @@ import { registerMindsetRoutes } from "./routes/mindset.js";
 import { authRoutes } from "./routes/auth.js";
 import { registerUploadRoutes } from "./routes/upload.js";
 import { registerAnalyticsRoutes } from "./routes/analytics.js";
+import { registerEmailTemplateRoutes } from "./routes/email-templates.js";
 
 export function registerRoutes(app: Express) {
   const router = app; // Express app can be used as a router
@@ -19,4 +20,5 @@ export function registerRoutes(app: Express) {
   registerMindsetRoutes(router);
   registerUploadRoutes(router);
   registerAnalyticsRoutes(router);
+  registerEmailTemplateRoutes(router);
 }

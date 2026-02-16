@@ -12,6 +12,7 @@ import {
   mindsetTable,
   skillConnectionsTable,
   analyticsTable,
+  emailTemplatesTable,
   type Project,
   type Skill,
   type SkillConnection,
@@ -19,11 +20,13 @@ import {
   type Message,
   type Mindset,
   type Analytics,
+  type EmailTemplate,
   type InsertMessage,
   type InsertProject,
   type InsertSkill,
   type InsertExperience,
   type InsertAnalytics,
+  type InsertEmailTemplate,
 } from "../shared/schema.js";
 
 // ================= STORAGE INTERFACE =================
@@ -72,6 +75,13 @@ export interface IStorage {
   // Analytics
   logAnalyticsEvent(event: InsertAnalytics): Promise<Analytics>;
   getAnalyticsSummary(): Promise<any>;
+
+  // Email Templates
+  getEmailTemplates(): Promise<EmailTemplate[]>;
+  getEmailTemplateById(id: number): Promise<EmailTemplate | null>;
+  createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate>;
+  updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate>;
+  deleteEmailTemplate(id: number): Promise<void>;
 }
 
 function logStorage(message: string, level: "info" | "error" | "warn" = "info") {
@@ -176,6 +186,16 @@ function transformAnalytics(dbAnalytics: any): Analytics {
   };
 }
 
+function transformEmailTemplate(dbTemplate: any): EmailTemplate {
+  return {
+    id: dbTemplate.id,
+    name: dbTemplate.name ?? "",
+    subject: dbTemplate.subject ?? "",
+    body: dbTemplate.body ?? "",
+    createdAt: dbTemplate.createdAt ?? new Date().toISOString(),
+  };
+}
+
 
 // ================= MEMORY STORAGE =================
 export class MemStorage implements IStorage {
@@ -186,6 +206,7 @@ export class MemStorage implements IStorage {
   private messages: Map<number, Message>;
   private mindset: Map<number, Mindset>;
   private skillConnections: Map<number, SkillConnection>;
+  private emailTemplates: Map<number, EmailTemplate>;
   private currentIds: { [key: string]: number };
 
   constructor() {
@@ -196,7 +217,8 @@ export class MemStorage implements IStorage {
     this.messages = new Map();
     this.mindset = new Map();
     this.skillConnections = new Map();
-    this.currentIds = { projects: 1, skills: 1, experiences: 1, messages: 1, mindset: 1, skillConnections: 1 };
+    this.emailTemplates = new Map();
+    this.currentIds = { projects: 1, skills: 1, experiences: 1, messages: 1, mindset: 1, skillConnections: 1, emailTemplates: 1 };
   }
 
   async getProjects(): Promise<Project[]> {
@@ -382,6 +404,36 @@ export class MemStorage implements IStorage {
     };
   }
 
+  async getEmailTemplates(): Promise<EmailTemplate[]> {
+    return Array.from(this.emailTemplates.values());
+  }
+
+  async getEmailTemplateById(id: number): Promise<EmailTemplate | null> {
+    return this.emailTemplates.get(id) || null;
+  }
+
+  async createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate> {
+    const id = this.currentIds.emailTemplates++;
+    const newTemplate: EmailTemplate = {
+      ...template,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.emailTemplates.set(id, newTemplate);
+    return newTemplate;
+  }
+
+  async updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
+    const existing = this.emailTemplates.get(id);
+    if (!existing) throw new Error(`Email template ${id} not found`);
+    const updated = { ...existing, ...template };
+    this.emailTemplates.set(id, updated);
+    return updated;
+  }
+
+  async deleteEmailTemplate(id: number): Promise<void> {
+    this.emailTemplates.delete(id);
+  }
 }
 
 // ================= DATABASE STORAGE =================
@@ -976,6 +1028,69 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getEmailTemplates(): Promise<EmailTemplate[]> {
+    try {
+      const result = await db2.select().from(emailTemplatesTable);
+      return result.map(transformEmailTemplate);
+    } catch (error) {
+      logStorage(`Failed to get email templates: ${error}`, "error");
+      throw new Error("Failed to fetch email templates from database");
+    }
+  }
+
+  async getEmailTemplateById(id: number): Promise<EmailTemplate | null> {
+    try {
+      const [result] = await db2
+        .select()
+        .from(emailTemplatesTable)
+        .where(eq(emailTemplatesTable.id, id))
+        .limit(1);
+      return result ? transformEmailTemplate(result) : null;
+    } catch (error) {
+      logStorage(`Failed to get email template ${id}: ${error}`, "error");
+      throw new Error(`Failed to fetch email template with id ${id}`);
+    }
+  }
+
+  async createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate> {
+    try {
+      const [result] = await db2.insert(emailTemplatesTable).values(template);
+      const insertedId = (result as { insertId: number }).insertId;
+      const inserted = await this.getEmailTemplateById(insertedId);
+      if (!inserted) throw new Error("Failed to fetch inserted email template");
+      return inserted;
+    } catch (error) {
+      logStorage(`Failed to create email template: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
+    try {
+      await db2
+        .update(emailTemplatesTable)
+        .set(template)
+        .where(eq(emailTemplatesTable.id, id));
+      const updated = await this.getEmailTemplateById(id);
+      if (!updated) throw new Error(`Email template ${id} not found after update`);
+      return updated;
+    } catch (error) {
+      logStorage(`Failed to update email template ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async deleteEmailTemplate(id: number): Promise<void> {
+    try {
+      await db2
+        .delete(emailTemplatesTable)
+        .where(eq(emailTemplatesTable.id, id));
+      logStorage(`Deleted email template: ${id}`);
+    } catch (error) {
+      logStorage(`Failed to delete email template ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
 }
 
 // ================= DYNAMIC EXPORT =================

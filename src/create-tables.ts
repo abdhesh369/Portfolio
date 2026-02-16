@@ -18,11 +18,13 @@ export async function createTables() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
-        techStack TEXT NOT NULL,
+        techStack JSON NOT NULL,
         imageUrl VARCHAR(500) NOT NULL,
         githubUrl VARCHAR(500),
         liveUrl VARCHAR(500),
         category VARCHAR(100) NOT NULL,
+        displayOrder INT NOT NULL DEFAULT 0,
+        status VARCHAR(50) NOT NULL DEFAULT 'Completed',
         problemStatement TEXT,
         motivation TEXT,
         systemDesign TEXT,
@@ -38,8 +40,8 @@ export async function createTables() {
         category VARCHAR(100) NOT NULL,
         status VARCHAR(100) NOT NULL DEFAULT 'Core',
         icon VARCHAR(100) NOT NULL DEFAULT 'Code',
-        description TEXT,
-        proof TEXT,
+        description TEXT NOT NULL DEFAULT '',
+        proof TEXT NOT NULL DEFAULT '',
         x FLOAT NOT NULL DEFAULT 50,
         y FLOAT NOT NULL DEFAULT 50
       )`
@@ -71,7 +73,7 @@ export async function createTables() {
         email VARCHAR(255) NOT NULL,
         subject VARCHAR(500) NOT NULL DEFAULT '',
         message TEXT NOT NULL,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
       )`
     );
 
@@ -81,7 +83,32 @@ export async function createTables() {
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         icon VARCHAR(100) NOT NULL DEFAULT 'Brain',
-        tags TEXT NOT NULL
+        tags JSON NOT NULL
+      )`
+    );
+
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS analytics (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type VARCHAR(50) NOT NULL,
+        targetId INT,
+        path VARCHAR(500) NOT NULL,
+        browser VARCHAR(100),
+        os VARCHAR(100),
+        device VARCHAR(50),
+        country VARCHAR(100),
+        city VARCHAR(100),
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+      )`
+    );
+
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS email_templates (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        subject VARCHAR(500) NOT NULL,
+        body TEXT NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
       )`
     );
 

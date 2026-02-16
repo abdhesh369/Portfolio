@@ -154,6 +154,54 @@ export function registerMessageRoutes(app: Router) {
         })
     );
 
+    // POST /api/messages/:id/reply - Reply to a message
+    app.post(
+        "/api/messages/:id/reply",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const id = parseInt(req.params.id, 10);
+            if (isNaN(id)) {
+                res.status(400).json({ message: "Invalid message ID" });
+                return;
+            }
+
+            const schema = z.object({
+                subject: z.string().min(1),
+                body: z.string().min(1),
+            });
+
+            const { subject, body } = schema.parse(req.body);
+
+            const message = await storage.getMessageById(id);
+            if (!message) {
+                res.status(404).json({ message: "Message not found" });
+                return;
+            }
+
+            if (!env.RESEND_API_KEY) {
+                res.status(500).json({ message: "Email service not configured (RESEND_API_KEY missing)" });
+                return;
+            }
+
+            const resend = new Resend(env.RESEND_API_KEY);
+            const { error } = await resend.emails.send({
+                from: "onboarding@resend.dev",
+                to: message.email,
+                subject: subject,
+                html: body,
+            });
+
+            if (error) {
+                log(`Failed to send reply to ${message.email}: ${error.message}`, "error");
+                res.status(500).json({ message: `Failed to send email: ${error.message}` });
+                return;
+            }
+
+            log(`Reply sent to ${message.email}`);
+            res.json({ success: true, message: "Reply sent successfully" });
+        })
+    );
+
     // DELETE /api/messages/:id - Delete message
     app.delete(
         "/api/messages/:id",

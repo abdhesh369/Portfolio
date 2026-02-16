@@ -79,6 +79,14 @@ export const analyticsTable = mysqlTable("analytics", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const emailTemplatesTable = mysqlTable("email_templates", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
 
 export const selectProjectSchema = createSelectSchema(projectsTable);
@@ -239,6 +247,25 @@ export const insertAnalyticsSchema = z.object({
   city: z.string().max(100).nullable().optional(),
 });
 
+export const emailTemplateSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(255),
+  subject: z.string().min(1).max(500),
+  body: z.string().min(1).max(10000),
+  createdAt: z.string(),
+});
+
+export const insertEmailTemplateApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  subject: z.string().min(1).max(500),
+  body: z.string().min(1).max(10000),
+});
+
+// ================= DATABASE SELECT/INSERT SCHEMAS =================
+
+export const selectEmailTemplateSchema = createSelectSchema(emailTemplatesTable);
+export const insertEmailTemplateSchema = createInsertSchema(emailTemplatesTable);
+
 // ================= TYPESCRIPT TYPES =================
 
 export type Project = z.infer<typeof projectSchema>;
@@ -248,12 +275,14 @@ export type Experience = z.infer<typeof experienceSchema>;
 export type Message = z.infer<typeof messageSchema>;
 export type Mindset = z.infer<typeof mindsetSchema>;
 export type Analytics = z.infer<typeof analyticsSchema>;
+export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
 export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
+export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateApiSchema>;
 
 // ================= TYPE GUARDS =================
 
@@ -271,4 +300,7 @@ export function isMessage(obj: unknown): obj is Message {
 }
 export function isMindset(obj: unknown): obj is Mindset {
   return mindsetSchema.safeParse(obj).success;
+}
+export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
+  return emailTemplateSchema.safeParse(obj).success;
 }

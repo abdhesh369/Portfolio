@@ -15,6 +15,13 @@
       "when": 1767801921942,
       "tag": "0001_icy_korg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1771246766395,
+      "tag": "0002_chief_dreaming_celestial",
+      "breakpoints": true
     }
   ]
 }

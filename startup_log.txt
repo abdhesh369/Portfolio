@@ -1,0 +1,50 @@
+[dotenv@17.2.3] injecting env (17) from .env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+7:36:37 PM [startup] Starting server...
+7:36:37 PM [startup] ≡ƒôì Checking database health...
+[7:36:38 PM] [db] Database connection error: AggregateError
+7:36:38 PM [startup] ΓÜá∩╕Å Database connection failed. Switching to In-Memory Fallback...
+7:36:38 PM [warn] Reason: AggregateError
+Γ£ô [2026-02-16T13:51:38.269Z] [STORAGE] Storage implementation swapped to: MemStorage
+7:36:38 PM [startup] ≡ƒôì Seeding In-Memory...
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Starting database seed... 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: Portfolio Website  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: AI Study Buddy  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: Assistant (Edith)  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: Finance Tracker  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: Calculator Application  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded project: Flappy Bird  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Projects: 6 processed(0 updated, 6 created / synced), 0 failed 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: C  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: C++  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: Python  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: HTML  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: CSS  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: JavaScript  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: React  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: Node.js  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: Express  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: MySQL  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: Git  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded skill: GitHub  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Skills: 12 succeeded, 0 failed 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: C -> C++  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: HTML -> CSS  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: CSS -> JavaScript  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: JavaScript -> React  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: Git -> GitHub  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: Node.js -> Express  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded connection: Express -> MySQL  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded mindset: Occam's Razor  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded mindset: The DRY Principle  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded mindset: Growth Mindset  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded experience: Bachelor of Engineering Student  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded experience: Self-Taught Developer  
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Experiences: 2 succeeded, 0 failed 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded sample message 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded email template: General Inquiry Reply 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Seeded email template: Project Collaboration 
+Γ£ô [2026-02-16T13:51:38.270Z][SEED] Database seeding completed successfully! ≡ƒÄë 
+7:36:38 PM [startup] Γ£ô Seeding complete
+7:36:38 PM [startup] ≡ƒôì Registering API routes...
+7:36:38 PM [startup] Γ£ô API routes registered
+7:36:38 PM [startup] Γ£ô Server running on 0.0.0.0:5000

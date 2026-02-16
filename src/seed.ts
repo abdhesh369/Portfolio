@@ -270,6 +270,28 @@ export async function seedDatabase() {
       logSeed(`Failed to seed sample message: ${err} `, "error");
     }
 
+    const emailTemplates = [
+      {
+        name: "General Inquiry Reply",
+        subject: "Re: Inquiry regarding my portfolio",
+        body: "Hello {name},\n\nThank you for reaching out! I've received your message and will get back to you shortly.\n\nBest regards,\nAbdhesh",
+      },
+      {
+        name: "Project Collaboration",
+        subject: "Re: Collaboration opportunity",
+        body: "Hi {name},\n\nThanks for your interest in collaborating. I've reviewed your message and I'm very interested in hearing more about the project.\n\nLet's schedule a call to discuss further.\n\nBest,\nAbdhesh",
+      },
+    ];
+
+    for (const template of emailTemplates) {
+      try {
+        await storage2.createEmailTemplate(template);
+        logSeed(`Seeded email template: ${template.name}`);
+      } catch (err) {
+        logSeed(`Failed to seed email template: ${template.name} - ${err}`, "error");
+      }
+    }
+
     logSeed("Database seeding completed successfully! 🎉");
   } catch (err) {
     logSeed(`Database seeding failed: ${err} `, "error");
