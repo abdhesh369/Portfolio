@@ -128,6 +128,7 @@ export const DEFAULT_CONNECTIONS: Connection[] = [
 ];
 
 export const ICON_MAP: Record<string, any> = {
+    Code: Code2,
     Code2,
     Database: Server,
     Layout: Layers,

@@ -139,7 +139,7 @@ export default function SkillsTree() {
             />
           ))}
 
-          ```tsx
+
           {/* Stat Panels */}
           <div className="hidden lg:block">
             <StatPanel
@@ -159,7 +159,6 @@ export default function SkillsTree() {
             </StatPanel>
           </div>
         </motion.div>
-        ```
 
         {/* Legend */}
         <motion.div
