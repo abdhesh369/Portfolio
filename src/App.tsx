@@ -1,6 +1,6 @@
 import { Switch, Route, useRoute } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, Component, type ReactNode } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -27,6 +27,41 @@ function PageLoader() {
       </div>
     </div>
   );
+}
+
+// Error Boundary to catch lazy-load and runtime errors
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-8">
+          <div className="max-w-md text-center space-y-4">
+            <h1 className="text-2xl font-bold">Something went wrong</h1>
+            <p className="text-muted-foreground">{this.state.error?.message}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 // Only show PlexusBackground on public routes
@@ -65,16 +100,18 @@ function Router() {
 // Main App component
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
-        <AuthProvider>
-          <AnalyticsTracker />
-          <ConditionalBackground />
-          <Router />
-          <Toaster />
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
+          <AuthProvider>
+            <AnalyticsTracker />
+            <ConditionalBackground />
+            <Router />
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
