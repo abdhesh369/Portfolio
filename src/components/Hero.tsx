@@ -225,6 +225,7 @@ export default function Hero() {
                 transition={{ delay: 0.3 }}
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
+                <span className="sr-only">Abdhesh Sah - </span>
                 Start building <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient-x relative inline-block pb-2">
                   The Future
