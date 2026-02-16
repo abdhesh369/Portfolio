@@ -1,8 +1,8 @@
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe } from "lucide-react";
 import Typewriter from "typewriter-effect";
-import profileImg from "../../Resources/images/Myphoto.jpg";
+// ...existing code... (profile image moved to public/images/hero.svg)
 import { Button } from "@/components/ui/button";
 
 // Mouse Follower Gradient
@@ -24,7 +24,7 @@ const MouseGradient = () => {
   }, [mouseX, mouseY]);
 
   return (
-    <motion.div
+    <m.div
       className="fixed inset-0 pointer-events-none z-0"
       style={{ x, y }}
     >
@@ -34,7 +34,7 @@ const MouseGradient = () => {
           background: "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 60%)",
         }}
       />
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -61,7 +61,7 @@ const ProfileCard = () => {
   };
 
   return (
-    <motion.div
+    <m.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -82,9 +82,11 @@ const ProfileCard = () => {
       <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-[#0a0520]/80 backdrop-blur-sm">
         {/* Profile Image */}
         <img
-          src={profileImg}
+          src="/images/Myphoto.jpg"
           alt="Abdhesh Sah - Full Stack Engineer & System Designer"
           loading="eager"
+          fetchPriority="high"
+          decoding="async"
           width={500}
           height={500}
           className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay grayscale hover:grayscale-0 transition-all duration-700"
@@ -107,14 +109,14 @@ const ProfileCard = () => {
           {/* Holographic Code Stream */}
           <div className="space-y-2 font-mono text-[10px] text-cyan-500/50 overflow-hidden h-32 opacity-50">
             {Array.from({ length: 8 }).map((_, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
               >
                 {`> initializing module_0${i + 1} ... OK`}
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
@@ -126,7 +128,7 @@ const ProfileCard = () => {
             </div>
             <div className="flex gap-2 flex-wrap">
               {["React", "Node.js", "TypeScript", "System Design"].map((tech, i) => (
-                <motion.span
+                <m.span
                   key={tech}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -134,7 +136,7 @@ const ProfileCard = () => {
                   className="px-2 py-1 bg-cyan-500/10 rounded text-[10px] border border-cyan-500/20 font-mono text-cyan-300"
                 >
                   {tech}
-                </motion.span>
+                </m.span>
               ))}
             </div>
           </div>
@@ -149,7 +151,7 @@ const ProfileCard = () => {
       <OrbitItem icon={Globe} label="Full Stack" color="purple" delay={1} x={20} y={20} />
       <OrbitItem icon={Terminal} label="DevOps" color="pink" delay={2} x={-20} y={20} />
 
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -170,7 +172,7 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
   };
 
   return (
-    <motion.div
+    <m.div
       animate={{
         y: [0, y, 0],
         x: [0, x, 0],
@@ -181,7 +183,7 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
     >
       <Icon className="w-5 h-5 pointer-events-none" />
       <span className="text-xs font-bold pointer-events-none">{label}</span>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -201,14 +203,14 @@ export default function Hero() {
       <div className="section-container relative z-10 w-full px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8 text-center lg:text-left"
           >
             {/* Status Pill */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -216,10 +218,10 @@ export default function Hero() {
             >
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
               SYSTEM_READY_FOR_WORK
-            </motion.div>
+            </m.div>
 
             <div className="space-y-4">
-              <motion.h1
+              <m.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -231,9 +233,9 @@ export default function Hero() {
                   The Future
                   <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
                 </span>
-              </motion.h1>
+              </m.h1>
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
@@ -255,20 +257,20 @@ export default function Hero() {
                     cursor: "█"
                   }}
                 />
-              </motion.div>
+              </m.div>
             </div>
 
-            <motion.p
+            <m.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
               className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 leading-relaxed"
             >
               I'm <strong className="text-white">Abdhesh Sah</strong>, a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive.
-            </motion.p>
+            </m.p>
 
             {/* CTA Buttons */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
@@ -290,10 +292,10 @@ export default function Hero() {
               >
                 Contact Me <Mail className="ml-2 w-4 h-4" />
               </Button>
-            </motion.div>
+            </m.div>
 
             {/* Social Proof */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
@@ -310,23 +312,23 @@ export default function Hero() {
                 ))}
               </div>
               <span className="text-xs text-gray-500 font-medium">Trusted by peers</span>
-            </motion.div>
+            </m.div>
 
-          </motion.div>
+          </m.div>
 
           {/* Hero Visual */}
           <ProfileCard />
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div
+        <m.div
           animate={{ y: [0, 10, 0], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer hidden md:block"
           onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: 'smooth' })}
         >
           <ChevronDown className="w-8 h-8 text-cyan-500/50" />
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

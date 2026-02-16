@@ -13,6 +13,8 @@
 # Don't cache HTML (always get fresh)
 /*.html
   Cache-Control: no-cache
+  Link: </assets/index.js>; rel=modulepreload
+  Link: </images/hero.svg>; rel=preload; as=image
 
 /
   Cache-Control: no-cache

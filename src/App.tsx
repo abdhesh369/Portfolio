@@ -1,6 +1,6 @@
 import { Switch, Route, useRoute } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy, Component, type ReactNode } from "react";
+import { Suspense, lazy, Component, type ReactNode, useEffect, useState } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -74,6 +74,20 @@ function ConditionalBackground() {
   return <PlexusBackground />;
 }
 
+// Load analytics after a short delay to avoid blocking first paint
+function DeferredAnalytics() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
+  return show ? (
+    <Suspense fallback={null}>
+      <AnalyticsTracker />
+    </Suspense>
+  ) : null;
+}
+
 // Router component
 function Router() {
   return (
@@ -99,6 +113,26 @@ function Router() {
   );
 }
 
+// Defer background loading to prioritize main content
+function DeferredBackground() {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    // Delay loading the 3D background for 3 seconds to let content render first
+    const timer = setTimeout(() => setShouldLoad(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!shouldLoad) return null;
+  return (
+    <Suspense fallback={null}>
+      <ConditionalBackground />
+    </Suspense>
+  );
+}
+
+import { LazyMotion, domAnimation } from "framer-motion";
+
 // Main App component
 function App() {
   return (
@@ -106,14 +140,12 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
-            <Suspense fallback={null}>
-              <AnalyticsTracker />
-            </Suspense>
-            <Suspense fallback={null}>
-              <ConditionalBackground />
-            </Suspense>
-            <Router />
-            <Toaster />
+            <LazyMotion features={domAnimation}>
+              <DeferredAnalytics />
+              <Router />
+              <DeferredBackground />
+              <Toaster />
+            </LazyMotion>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>

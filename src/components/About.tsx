@@ -1,7 +1,7 @@
 import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { User, GraduationCap, MapPin, Mail, Code, Calendar, Zap, Heart, Target, BookOpen, Layers, Monitor, Terminal, Cpu, Sparkles } from "lucide-react";
-import profileImg from "../../Resources/images/Myphoto.jpg";
+// ...existing code... (profile image moved to public/images/hero.svg)
 
 // Glitch Text Component
 const GlitchText = ({ text }: { text: string }) => {
@@ -217,7 +217,7 @@ export default function About() {
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 z-10 mix-blend-color-dodge opacity-50" />
 
                   <img
-                    src={profileImg}
+                    src="/images/Myphoto.jpg"
                     alt="Abdhesh Sah - Full-Stack Engineer"
                     loading="lazy"
                     decoding="async"
