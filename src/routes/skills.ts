@@ -3,7 +3,7 @@ import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertSkillApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, asyncHandler } from "../auth.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -24,13 +24,6 @@ function validateBody<T extends z.ZodType>(schema: T) {
             }
             next(err);
         }
-    };
-}
-
-// Error handler wrapper
-function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        Promise.resolve(fn(req, res, next)).catch(next);
     };
 }
 
@@ -96,6 +89,18 @@ export function registerSkillRoutes(app: Router) {
             }
             const skill = await storage.updateSkill(id, req.body);
             res.json(skill);
+        })
+    );
+
+    // POST /api/skills/bulk-delete - Bulk delete skills
+    app.post(
+        "/api/skills/bulk-delete",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const schema = z.object({ ids: z.array(z.number()) });
+            const { ids } = schema.parse(req.body);
+            await storage.bulkDeleteSkills(ids);
+            res.status(204).send();
         })
     );
 

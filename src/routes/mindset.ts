@@ -1,12 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { storage } from "../storage.js";
 import { api } from "../../shared/routes.js";
-
-function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        Promise.resolve(fn(req, res, next)).catch(next);
-    };
-}
+import { asyncHandler } from "../auth.js";
 
 export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset - List all mindset principles

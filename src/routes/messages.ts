@@ -6,7 +6,7 @@ import { storage } from "../storage.js";
 import { insertMessageApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 import { env } from "../env.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, asyncHandler } from "../auth.js";
 
 // Simple HTML escaping helper to prevent XSS in email templates
 function escapeHtml(text: string): string {
@@ -46,13 +46,6 @@ function validateBody<T extends z.ZodType>(schema: T) {
             }
             next(err);
         }
-    };
-}
-
-// Error handler wrapper
-function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        Promise.resolve(fn(req, res, next)).catch(next);
     };
 }
 
@@ -146,6 +139,18 @@ export function registerMessageRoutes(app: Router) {
                     log(`Failed to send email notification: ${emailError}`, "error");
                 }
             })();
+        })
+    );
+
+    // POST /api/messages/bulk-delete - Bulk delete messages
+    app.post(
+        "/api/messages/bulk-delete",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const schema = z.object({ ids: z.array(z.number()) });
+            const { ids } = schema.parse(req.body);
+            await storage.bulkDeleteMessages(ids);
+            res.status(204).send();
         })
     );
 

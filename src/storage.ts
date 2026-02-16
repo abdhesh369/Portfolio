@@ -2,7 +2,7 @@
 // ============================================================
 // FILE: src/storage.ts
 // ============================================================
-import { eq } from "drizzle-orm";
+import { eq, asc, inArray } from "drizzle-orm";
 import { db as db2 } from "./db.js";
 import {
   projectsTable,
@@ -31,6 +31,9 @@ export interface IStorage {
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: number, project: Partial<InsertProject>): Promise<Project>;
   deleteProject(id: number): Promise<void>;
+  reorderProjects(orderedIds: number[]): Promise<void>;
+  bulkDeleteProjects(ids: number[]): Promise<void>;
+  bulkUpdateProjectStatus(ids: number[], status: string): Promise<void>;
 
   // Skills
   getSkills(): Promise<Skill[]>;
@@ -38,6 +41,7 @@ export interface IStorage {
   createSkill(skill: InsertSkill): Promise<Skill>;
   updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill>;
   deleteSkill(id: number): Promise<void>;
+  bulkDeleteSkills(ids: number[]): Promise<void>;
 
   // Experiences
   getExperiences(): Promise<Experience[]>;
@@ -51,6 +55,7 @@ export interface IStorage {
   getMessageById(id: number): Promise<Message | null>;
   createMessage(message: InsertMessage): Promise<Message>;
   deleteMessage(id: number): Promise<void>;
+  bulkDeleteMessages(ids: number[]): Promise<void>;
 
   // Skill Connections
   getSkillConnections(): Promise<SkillConnection[]>;
@@ -90,9 +95,11 @@ function transformProject(dbProject: any): Project {
     description: dbProject.description ?? "",
     imageUrl: dbProject.imageUrl ?? "",
     category: dbProject.category ?? "",
+    status: dbProject.status ?? "Completed",
     techStack: safeJsonParse<string[]>(dbProject.techStack, []),
     githubUrl: dbProject.githubUrl ?? null,
     liveUrl: dbProject.liveUrl ?? null,
+    displayOrder: dbProject.displayOrder ?? 0,
     problemStatement: dbProject.problemStatement ?? null,
     motivation: dbProject.motivation ?? null,
     systemDesign: dbProject.systemDesign ?? null,
@@ -171,7 +178,7 @@ export class MemStorage implements IStorage {
   }
 
   async getProjects(): Promise<Project[]> {
-    return Array.from(this.projects.values());
+    return Array.from(this.projects.values()).sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
   }
 
   async getProjectById(id: number): Promise<Project | null> {
@@ -195,6 +202,28 @@ export class MemStorage implements IStorage {
 
   async deleteProject(id: number): Promise<void> {
     this.projects.delete(id);
+  }
+
+  async reorderProjects(orderedIds: number[]): Promise<void> {
+    orderedIds.forEach((id, index) => {
+      const project = this.projects.get(id);
+      if (project) {
+        this.projects.set(id, { ...project, displayOrder: index });
+      }
+    });
+  }
+
+  async bulkDeleteProjects(ids: number[]): Promise<void> {
+    ids.forEach((id) => this.projects.delete(id));
+  }
+
+  async bulkUpdateProjectStatus(ids: number[], status: string): Promise<void> {
+    ids.forEach((id) => {
+      const project = this.projects.get(id);
+      if (project) {
+        this.projects.set(id, { ...project, status });
+      }
+    });
   }
 
   async getSkills(): Promise<Skill[]> {
@@ -222,6 +251,10 @@ export class MemStorage implements IStorage {
 
   async deleteSkill(id: number): Promise<void> {
     this.skills.delete(id);
+  }
+
+  async bulkDeleteSkills(ids: number[]): Promise<void> {
+    ids.forEach((id) => this.skills.delete(id));
   }
 
   async getExperiences(): Promise<Experience[]> {
@@ -274,6 +307,10 @@ export class MemStorage implements IStorage {
     this.messages.delete(id);
   }
 
+  async bulkDeleteMessages(ids: number[]): Promise<void> {
+    ids.forEach((id) => this.messages.delete(id));
+  }
+
   async getSkillConnections(): Promise<SkillConnection[]> {
     return Array.from(this.skillConnections.values());
   }
@@ -322,7 +359,7 @@ export class DatabaseStorage implements IStorage {
   async getProjects(): Promise<Project[]> {
     try {
       const start = Date.now();
-      const result = await db2.select().from(projectsTable);
+      const result = await db2.select().from(projectsTable).orderBy(asc(projectsTable.displayOrder));
       const duration = Date.now() - start;
       logStorage(`Fetched ${result.length} projects in ${duration}ms`);
       return result.map(transformProject);
@@ -422,6 +459,48 @@ export class DatabaseStorage implements IStorage {
       logStorage(`Deleted project: ${project.title}`);
     } catch (error) {
       logStorage(`Failed to delete project ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async reorderProjects(orderedIds: number[]): Promise<void> {
+    try {
+      // Using Promise.all for parallel updates is fine for this scale
+      const updates = orderedIds.map((id, index) =>
+        db2
+          .update(projectsTable)
+          .set({ displayOrder: index })
+          .where(eq(projectsTable.id, id))
+      );
+      await Promise.all(updates);
+      logStorage(`Reordered ${orderedIds.length} projects`);
+    } catch (error) {
+      logStorage(`Failed to reorder projects: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async bulkDeleteProjects(ids: number[]): Promise<void> {
+    if (ids.length === 0) return;
+    try {
+      await db2.delete(projectsTable).where(inArray(projectsTable.id, ids));
+      logStorage(`Bulk deleted ${ids.length} projects`);
+    } catch (error) {
+      logStorage(`Failed to bulk delete projects: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async bulkUpdateProjectStatus(ids: number[], status: string): Promise<void> {
+    if (ids.length === 0) return;
+    try {
+      await db2
+        .update(projectsTable)
+        .set({ status })
+        .where(inArray(projectsTable.id, ids));
+      logStorage(`Bulk updated status for ${ids.length} projects to ${status}`);
+    } catch (error) {
+      logStorage(`Failed to bulk update project status: ${error}`, "error");
       throw error;
     }
   }
@@ -538,6 +617,18 @@ export class DatabaseStorage implements IStorage {
       logStorage(`Deleted skill: ${skill.name}`);
     } catch (error) {
       logStorage(`Failed to delete skill ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async bulkDeleteSkills(ids: number[]): Promise<void> {
+    if (ids.length === 0) return;
+    try {
+      await db2.delete(skillsTable).where(inArray(skillsTable.id, ids));
+      this.invalidateSkillsCache();
+      logStorage(`Bulk deleted ${ids.length} skills`);
+    } catch (error) {
+      logStorage(`Failed to bulk delete skills: ${error}`, "error");
       throw error;
     }
   }
@@ -730,6 +821,17 @@ export class DatabaseStorage implements IStorage {
       logStorage(`Deleted message from: ${message.name}`);
     } catch (error) {
       logStorage(`Failed to delete message ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async bulkDeleteMessages(ids: number[]): Promise<void> {
+    if (ids.length === 0) return;
+    try {
+      await db2.delete(messagesTable).where(inArray(messagesTable.id, ids));
+      logStorage(`Bulk deleted ${ids.length} messages`);
+    } catch (error) {
+      logStorage(`Failed to bulk delete messages: ${error}`, "error");
       throw error;
     }
   }

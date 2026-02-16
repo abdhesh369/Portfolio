@@ -3,7 +3,7 @@ import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertExperienceApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, asyncHandler } from "../auth.js";
 
 function validateBody<T extends z.ZodType>(schema: T) {
     return (req: Request, res: Response, next: NextFunction): void => {
@@ -23,12 +23,6 @@ function validateBody<T extends z.ZodType>(schema: T) {
             }
             next(err);
         }
-    };
-}
-
-function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        Promise.resolve(fn(req, res, next)).catch(next);
     };
 }
 

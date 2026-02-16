@@ -3,7 +3,7 @@ import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertProjectApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, asyncHandler } from "../auth.js";
 
 const router = Router();
 
@@ -26,13 +26,6 @@ function validateBody<T extends z.ZodType>(schema: T) {
       }
       next(err);
     }
-  };
-}
-
-// Error handler wrapper
-function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    Promise.resolve(fn(req, res, next)).catch(next);
   };
 }
 
@@ -72,6 +65,45 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const project = await storage.createProject(req.body);
       res.status(201).json(project);
+    })
+  );
+
+  // PUT /api/projects/reorder - Reorder projects
+  app.put(
+    "/api/projects/reorder",
+    isAuthenticated,
+    asyncHandler(async (req, res) => {
+      const schema = z.object({ orderedIds: z.array(z.number()) });
+      const { orderedIds } = schema.parse(req.body);
+      await storage.reorderProjects(orderedIds);
+      res.status(204).send();
+    })
+  );
+
+  // POST /api/projects/bulk-delete
+  app.post(
+    "/api/projects/bulk-delete",
+    isAuthenticated,
+    asyncHandler(async (req, res) => {
+      const schema = z.object({ ids: z.array(z.number()) });
+      const { ids } = schema.parse(req.body);
+      await storage.bulkDeleteProjects(ids);
+      res.status(204).send();
+    })
+  );
+
+  // POST /api/projects/bulk-status
+  app.post(
+    "/api/projects/bulk-status",
+    isAuthenticated,
+    asyncHandler(async (req, res) => {
+      const schema = z.object({
+        ids: z.array(z.number()),
+        status: z.enum(["In Progress", "Completed", "Archived"]),
+      });
+      const { ids, status } = schema.parse(req.body);
+      await storage.bulkUpdateProjectStatus(ids, status);
+      res.status(204).send();
     })
   );
 

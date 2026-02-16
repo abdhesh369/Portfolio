@@ -10,7 +10,9 @@ const envSchema = z.object({
     MYSQL_PORT: z.string().default("3306"),
     RESEND_API_KEY: z.string().optional(),
     FRONTEND_URL: z.string().optional(),
-    ADMIN_API_KEY: z.string().min(1).default("dev-secret-key-123"),
+    ADMIN_API_KEY: z.string().optional().default("abdhesh-portfolio-secure-key-2026"),
+    JWT_SECRET: z.string().min(10).default("super-secret-jwt-key-for-portfolio-2026"),
+    ADMIN_PASSWORD: z.string().min(1).default("admin123"),
 });
 
 export type Env = z.infer<typeof envSchema>;

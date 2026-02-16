@@ -2,12 +2,12 @@
 // FILE: src/seed.ts
 // ============================================================
 import { storage as storage2 } from "./storage.js";
-import type { Project } from "../shared/schema.js";
+import type { Project, InsertProject } from "../shared/schema.js";
 
 function logSeed(message: string, level: "info" | "error" | "warn" = "info") {
   const timestamp = new Date().toISOString();
   const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
-  console.log(`${prefix} [${timestamp}] [SEED] ${message}`);
+  console.log(`${prefix} [${timestamp}][SEED] ${message} `);
 }
 
 export async function seedDatabase() {
@@ -25,13 +25,14 @@ export async function seedDatabase() {
 
     logSeed("Starting database seed...");
 
-    const projectList = [
+    const projectList: InsertProject[] = [
       {
         title: "Portfolio Website",
         description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
         techStack: ["React", "TypeScript", "Express", "MySQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
         imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
         category: "Web",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Frontend.git",
         liveUrl: "https://abdheshsah.com.np",
         problemStatement: "Needed a professional online presence to showcase projects and skills to potential employers and collaborators with a unique, memorable design.",
@@ -46,6 +47,7 @@ export async function seedDatabase() {
         techStack: ["Python", "Flask", "OpenRouter API", "Jinja2", "JavaScript", "Glassmorphism", "CSS3"],
         imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
         category: "Web",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Students often lack immediate access to tutoring or help when studying complex subjects, leading to frustration and slower learning.",
@@ -60,6 +62,7 @@ export async function seedDatabase() {
         techStack: ["Python", "pyttsx3", "SpeechRecognition", "pyautogui", "pywhatkit", "psutil"],
         imageUrl: "https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=800&auto=format&fit=crop",
         category: "System",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Interacting with computer systems manually for repetitive tasks like opening apps, searching YouTube, or taking notes can be inefficient.",
@@ -74,6 +77,7 @@ export async function seedDatabase() {
         techStack: ["Flask", "Flask-Login", "SQLAlchemy", "SQLite", "Flask-Migrate", "Flask-WTF", "Python"],
         imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
         category: "Web",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Managing personal expenses and budgets manually is tedious and often results in lost data or lack of financial insight.",
@@ -88,6 +92,7 @@ export async function seedDatabase() {
         techStack: ["HTML5", "CSS3", "JavaScript", "Vanilla JS", "Regex"],
         imageUrl: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=800&auto=format&fit=crop",
         category: "Utility",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Most basic web calculators lack a premium feel and do not support keyboard navigation, making them less efficient for power users.",
@@ -102,6 +107,7 @@ export async function seedDatabase() {
         techStack: ["Python", "Pygame"],
         imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
         category: "Academic",
+        status: "Completed",
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Understanding the complexities of game physics and state management can be difficult for beginners.",
@@ -120,19 +126,19 @@ export async function seedDatabase() {
         const existing = existingProjects.find(p => p.title === proj.title);
         if (existing) {
           await storage2.updateProject(existing.id, proj);
-          logSeed(`Updated project: ${proj.title}`);
+          logSeed(`Updated project: ${proj.title} `);
         } else {
           await storage2.createProject(proj);
-          logSeed(`Seeded project: ${proj.title}`);
+          logSeed(`Seeded project: ${proj.title} `);
         }
         successCount++;
       } catch (err) {
-        logSeed(`Failed to process project: ${proj.title} - ${err}`, "error");
+        logSeed(`Failed to process project: ${proj.title} - ${err} `, "error");
         failCount++;
       }
     }
 
-    logSeed(`Projects: ${successCount} processed (${successCount - (projectList.length - failCount)} updated, ${projectList.length - failCount} created/synced), ${failCount} failed`);
+    logSeed(`Projects: ${successCount} processed(${successCount - (projectList.length - failCount)} updated, ${projectList.length - failCount} created / synced), ${failCount} failed`);
 
     const skillList = [
       // Foundations
@@ -159,10 +165,10 @@ export async function seedDatabase() {
     for (const skill of skillList) {
       try {
         await storage2.createSkill(skill);
-        logSeed(`Seeded skill: ${skill.name}`);
+        logSeed(`Seeded skill: ${skill.name} `);
         successCount++;
       } catch (err) {
-        logSeed(`Failed to seed skill: ${skill.name} - ${err}`, "error");
+        logSeed(`Failed to seed skill: ${skill.name} - ${err} `, "error");
         failCount++;
       }
     }
@@ -183,9 +189,9 @@ export async function seedDatabase() {
     for (const conn of connections) {
       try {
         await storage2.createSkillConnection(conn);
-        logSeed(`Seeded connection: ${conn.fromSkillId} -> ${conn.toSkillId}`);
+        logSeed(`Seeded connection: ${conn.fromSkillId} -> ${conn.toSkillId} `);
       } catch (err) {
-        logSeed(`Failed to seed connection: ${err}`, "error");
+        logSeed(`Failed to seed connection: ${err} `, "error");
       }
     }
 
@@ -213,9 +219,9 @@ export async function seedDatabase() {
     for (const mindset of mindsetList) {
       try {
         await storage2.createMindset(mindset);
-        logSeed(`Seeded mindset: ${mindset.title}`);
+        logSeed(`Seeded mindset: ${mindset.title} `);
       } catch (err) {
-        logSeed(`Failed to seed mindset: ${err}`, "error");
+        logSeed(`Failed to seed mindset: ${err} `, "error");
       }
     }
 
@@ -242,10 +248,10 @@ export async function seedDatabase() {
     for (const exp of experienceList) {
       try {
         await storage2.createExperience(exp);
-        logSeed(`Seeded experience: ${exp.role}`);
+        logSeed(`Seeded experience: ${exp.role} `);
         successCount++;
       } catch (err) {
-        logSeed(`Failed to seed experience: ${exp.role} - ${err}`, "error");
+        logSeed(`Failed to seed experience: ${exp.role} - ${err} `, "error");
         failCount++;
       }
     }
@@ -261,12 +267,12 @@ export async function seedDatabase() {
       });
       logSeed("Seeded sample message");
     } catch (err) {
-      logSeed(`Failed to seed sample message: ${err}`, "error");
+      logSeed(`Failed to seed sample message: ${err} `, "error");
     }
 
     logSeed("Database seeding completed successfully! 🎉");
   } catch (err) {
-    logSeed(`Database seeding failed: ${err}`, "error");
+    logSeed(`Database seeding failed: ${err} `, "error");
     throw err;
   }
 }
