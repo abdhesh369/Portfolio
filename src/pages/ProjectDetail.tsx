@@ -14,6 +14,7 @@ import {
   Sparkles,
   ChevronRight
 } from "lucide-react";
+import DOMPurify from "dompurify";
 
 // Floating particles (reused from main components)
 const FloatingParticles = () => {
@@ -66,13 +67,15 @@ const SectionCard = ({
   icon: Icon,
   children,
   accentColor = '#00d4ff',
-  variant = 'default'
+  variant = 'default',
+  className
 }: {
   title: string;
   icon: React.ElementType;
   children: React.ReactNode;
   accentColor?: string;
   variant?: 'default' | 'warning' | 'success';
+  className?: string;
 }) => {
   const bgColors = {
     default: 'rgba(15, 10, 35, 0.8)',
@@ -115,7 +118,7 @@ const SectionCard = ({
           </div>
           <span className="text-white">{title}</span>
         </h3>
-        <div className="text-gray-300 leading-relaxed">{children}</div>
+        <div className="text-gray-300 leading-relaxed w-full">{children}</div>
       </div>
     </motion.div>
   );
@@ -392,27 +395,42 @@ export default function ProjectDetail() {
               <div className="lg:col-span-2 space-y-8">
                 {/* Motivation */}
                 <SectionCard title="Motivation" icon={Lightbulb} accentColor="#00d4ff">
-                  <p className="text-lg">{project.motivation || project.description}</p>
+                  <div
+                    className="prose prose-invert max-w-none text-gray-300"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.motivation || project.description) }}
+                  />
                 </SectionCard>
 
                 {/* The Problem */}
                 <SectionCard title="The Problem" icon={AlertCircle} accentColor="#ef4444" variant="warning">
-                  <p>{project.problemStatement || "Problem statement not documented yet."}</p>
+                  <div
+                    className="prose prose-invert max-w-none text-gray-300"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.problemStatement || "Problem statement not documented yet.") }}
+                  />
                 </SectionCard>
 
                 {/* System Design */}
                 <SectionCard title="System Design" icon={Settings} accentColor="#a855f7">
-                  <p>{project.systemDesign || "System design details coming soon."}</p>
+                  <div
+                    className="prose prose-invert max-w-none text-gray-300"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.systemDesign || "System design details coming soon.") }}
+                  />
                 </SectionCard>
 
                 {/* Challenges & Learnings Grid */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <SectionCard title="Key Challenges" icon={Settings} accentColor="#f59e0b">
-                    <p className="text-sm">{project.challenges || "No challenges documented."}</p>
+                    <div
+                      className="prose prose-invert max-w-none text-gray-300 text-sm"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.challenges || "No challenges documented.") }}
+                    />
                   </SectionCard>
 
                   <SectionCard title="Key Learnings" icon={BookOpen} accentColor="#22c55e" variant="success">
-                    <p className="text-sm">{project.learnings || "Continuing to learn and iterate."}</p>
+                    <div
+                      className="prose prose-invert max-w-none text-gray-300 text-sm"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.learnings || "Continuing to learn and iterate.") }}
+                    />
                   </SectionCard>
                 </div>
               </div>

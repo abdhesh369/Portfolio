@@ -20,7 +20,13 @@ async function fetchAndParse<T>(
 ): Promise<T> {
   try {
     const url = `${API_BASE_URL}${path}`;
-    const res = await fetch(url);
+    const token = localStorage.getItem("auth_token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url, { headers });
 
     if (!res.ok) {
       const errorText = await res.text();
@@ -160,6 +166,60 @@ export function useSendMessage() {
     },
   });
 }
+
+/**
+ * Hook for admin login
+ */
+export function useLogin() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (password: string) => {
+      const url = `${API_BASE_URL}/api/auth/login`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Login failed");
+      }
+
+      const data = await res.json();
+      return data as { token: string };
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("auth_token", data.token);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back, Admin!",
+      });
+      // Redirect or refresh could happen here if needed
+      window.location.reload();
+    },
+    onError: (error) => {
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+/**
+ * Logout utility
+ */
+export function logout() {
+  localStorage.removeItem("auth_token");
+  window.location.reload();
+}
+
 /* ---------------------------------- */
 /* End of File */
 /* ---------------------------------- */

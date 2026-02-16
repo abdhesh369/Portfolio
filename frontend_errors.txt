@@ -1,0 +1,2 @@
+src/pages/admin/AdminDashboard.tsx(334,9): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/pages/admin/AdminDashboard.tsx(569,14): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
