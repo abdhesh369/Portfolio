@@ -22,6 +22,18 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+          'vendor-editor': ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extension-code-block-lowlight', '@tiptap/extension-image', '@tiptap/extension-link'],
+          'vendor-charts': ['recharts'],
+          'vendor-dnd': ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+          'vendor-three': ['three'],
+        },
+      },
+    },
   },
 })
