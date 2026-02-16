@@ -8,10 +8,11 @@ export function registerUploadRoutes(app: Express) {
         isAuthenticated,
         upload.single("image"),
         (req, res) => {
-            if (!req.file) {
+            const file = req.file as Express.Multer.File & { path?: string };
+            if (!file) {
                 return res.status(400).json({ message: "No file uploaded" });
             }
-            res.json({ url: (req.file as any).path });
+            res.json({ url: file.path });
         }
     );
 }
