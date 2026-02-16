@@ -139,23 +139,27 @@ export default function SkillsTree() {
             />
           ))}
 
+          ```tsx
           {/* Stat Panels */}
-          <StatPanel
-            title="Proficiency"
-            position="left"
-            icon={<Zap className="w-3 h-3 text-cyan-400" />}
-          >
-            <ProficiencyChart skillNodes={skillNodes} />
-          </StatPanel>
+          <div className="hidden lg:block">
+            <StatPanel
+              title="Proficiency"
+              position="left"
+              icon={<Zap className="w-3 h-3 text-cyan-400" />}
+            >
+              <ProficiencyChart skillNodes={skillNodes} />
+            </StatPanel>
 
-          <StatPanel
-            title="Categories"
-            position="right"
-            icon={<Layers className="w-3 h-3 text-purple-400" />}
-          >
-            <CategorySummary skillNodes={skillNodes} />
-          </StatPanel>
+            <StatPanel
+              title="Categories"
+              position="right"
+              icon={<Layers className="w-3 h-3 text-purple-400" />}
+            >
+              <CategorySummary skillNodes={skillNodes} />
+            </StatPanel>
+          </div>
         </motion.div>
+        ```
 
         {/* Legend */}
         <motion.div
