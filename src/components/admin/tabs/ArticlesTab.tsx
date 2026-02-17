@@ -15,12 +15,12 @@ const emptyArticle = {
     title: "",
     slug: "",
     content: "",
-    excerpt: "",
-    featuredImage: "",
+    excerpt: null as string | null,
+    featuredImage: null as string | null,
     status: "draft" as const,
     tags: [] as string[],
-    metaTitle: "",
-    metaDescription: "",
+    metaTitle: null as string | null,
+    metaDescription: null as string | null,
 };
 
 function ArticleItem({ article, onEdit, onDelete }: {
@@ -79,10 +79,10 @@ export function ArticlesTab({ token }: { token: string | null }) {
         setEditing({
             ...a,
             status: a.status as any,
-            excerpt: a.excerpt ?? "",
-            featuredImage: a.featuredImage ?? "",
-            metaTitle: a.metaTitle ?? "",
-            metaDescription: a.metaDescription ?? "",
+            excerpt: a.excerpt ?? null,
+            featuredImage: a.featuredImage ?? null,
+            metaTitle: a.metaTitle ?? null,
+            metaDescription: a.metaDescription ?? null,
             tags: [], // Tags fetch might be needed if they were separate but they are returned with article in storage.ts
         } as any);
         // If storage.ts transformArticle included tags, we'd use them. 
@@ -102,10 +102,13 @@ export function ArticlesTab({ token }: { token: string | null }) {
         if (!editing) return;
         setSaving(true);
 
+        const { id, tags: _oldTags, ...articleData } = editing;
         const body = {
-            ...editing,
+            ...articleData,
             tags: tagInput.split(",").map((s) => s.trim()).filter(Boolean),
-            slug: editing.slug || undefined, // Allow backend to generate if empty
+            slug: articleData.slug || undefined,
+            featuredImage: articleData.featuredImage || null,
+            excerpt: articleData.excerpt || null,
         };
 
         try {

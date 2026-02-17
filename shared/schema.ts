@@ -339,7 +339,7 @@ export const insertArticleApiSchema = z.object({
   slug: z.string().min(1).max(255).optional(), // Can be auto-generated
   content: z.string().min(1),
   excerpt: z.string().optional(),
-  featuredImage: z.string().url().max(500).optional().nullable(),
+  featuredImage: z.string().max(500).optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
   publishedAt: z.string().optional().nullable(), // Sent as ISO string
   readTimeMinutes: z.number().optional(), // Can be auto-calculated
