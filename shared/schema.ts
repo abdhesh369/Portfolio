@@ -345,20 +345,21 @@ export const insertSeoSettingsApiSchema = z.object({
 
 export const articleSchema = z.object({
   id: z.number(),
-  title: z.string().min(1).max(255),
-  slug: z.string().min(1).max(255),
-  content: z.string().min(1),
+  title: z.string(),
+  slug: z.string(),
+  content: z.string(),
   excerpt: z.string().nullable().optional(),
-  featuredImage: z.string().url().max(500).nullable().optional(),
-  status: z.enum(["draft", "published", "archived"]).default("draft"),
-  publishedAt: z.string().nullable().optional(),
-  viewCount: z.number().default(0),
-  readTimeMinutes: z.number().default(0),
-  metaTitle: z.string().max(255).nullable().optional(),
+  featuredImage: z.string().nullable().optional(),
+  status: z.enum(["draft", "published", "archived"]),
+  publishedAt: z.coerce.date().nullable(),
+  viewCount: z.number(),
+  readTimeMinutes: z.number(),
+  metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const insertArticleApiSchema = z.object({

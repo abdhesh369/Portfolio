@@ -247,14 +247,14 @@ function transformArticle(dbArticle: any): Article {
     excerpt: dbArticle.excerpt ?? null,
     featuredImage: dbArticle.featuredImage ?? null,
     status: dbArticle.status ?? "draft",
-    publishedAt: dbArticle.publishedAt ? new Date(dbArticle.publishedAt).toISOString() : null,
+    publishedAt: dbArticle.publishedAt ? new Date(dbArticle.publishedAt) : null,
     viewCount: dbArticle.viewCount ?? 0,
     readTimeMinutes: dbArticle.readTimeMinutes ?? 0,
     metaTitle: dbArticle.metaTitle ?? null,
     metaDescription: dbArticle.metaDescription ?? null,
     authorId: dbArticle.authorId ?? null,
-    createdAt: dbArticle.createdAt ? new Date(dbArticle.createdAt).toISOString() : new Date().toISOString(),
-    updatedAt: dbArticle.updatedAt ? new Date(dbArticle.updatedAt).toISOString() : new Date().toISOString(),
+    createdAt: dbArticle.createdAt ? new Date(dbArticle.createdAt) : new Date(),
+    updatedAt: dbArticle.updatedAt ? new Date(dbArticle.updatedAt) : new Date(),
   };
 }
 
@@ -575,14 +575,14 @@ export class MemStorage implements IStorage {
       slug: article.slug || article.title.toLowerCase().replace(/ /g, '-'),
       excerpt: article.excerpt ?? null,
       featuredImage: article.featuredImage ?? null,
-      publishedAt: article.publishedAt ?? null,
+      publishedAt: article.publishedAt ? new Date(article.publishedAt) : null,
       viewCount: 0,
       readTimeMinutes: article.readTimeMinutes ?? 0,
       metaTitle: article.metaTitle ?? null,
       metaDescription: article.metaDescription ?? null,
       authorId: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     this.articles.set(id, newArticle);
     return newArticle;
@@ -594,8 +594,9 @@ export class MemStorage implements IStorage {
     const updated: Article = {
       ...existing,
       ...article,
-      updatedAt: new Date().toISOString()
-    } as Article;
+      publishedAt: article.publishedAt ? new Date(article.publishedAt) : existing.publishedAt,
+      updatedAt: new Date()
+    };
     this.articles.set(id, updated);
     return updated;
   }
@@ -1352,9 +1353,31 @@ export class DatabaseStorage implements IStorage {
       }
 
       const result = await query;
+
+      if (result.length === 0) return [];
+
+      // Fetch tags for all articles in one go
+      const articleIds = result.map(a => a.id);
+      const allTags = await db2
+        .select()
+        .from(articleTagsTable)
+        .where(inArray(articleTagsTable.articleId, articleIds));
+
+      // Group tags by articleId
+      const tagsMap = allTags.reduce((acc, tag) => {
+        if (!acc[tag.articleId]) acc[tag.articleId] = [];
+        acc[tag.articleId].push(tag.tag);
+        return acc;
+      }, {} as Record<number, string[]>);
+
+      const formattedResult = result.map(article => ({
+        ...transformArticle(article),
+        tags: tagsMap[article.id] || []
+      }));
+
       const duration = Date.now() - start;
-      logStorage(`Fetched ${result.length} articles in ${duration}ms`);
-      return result.map(transformArticle);
+      logStorage(`Fetched ${formattedResult.length} articles with tags in ${duration}ms`);
+      return formattedResult;
     } catch (error) {
       logStorage(`Failed to get articles: ${error}`, "error");
       throw new Error("Failed to fetch articles from database");
@@ -1368,7 +1391,18 @@ export class DatabaseStorage implements IStorage {
         .from(articlesTable)
         .where(eq(articlesTable.id, id))
         .limit(1);
-      return result ? transformArticle(result) : null;
+
+      if (!result) return null;
+
+      const tags = await db2
+        .select({ tag: articleTagsTable.tag })
+        .from(articleTagsTable)
+        .where(eq(articleTagsTable.articleId, id));
+
+      return {
+        ...transformArticle(result),
+        tags: tags.map(t => t.tag)
+      };
     } catch (error) {
       logStorage(`Failed to get article ${id}: ${error}`, "error");
       throw new Error(`Failed to fetch article with id ${id}`);
@@ -1382,7 +1416,18 @@ export class DatabaseStorage implements IStorage {
         .from(articlesTable)
         .where(eq(articlesTable.slug, slug))
         .limit(1);
-      return result ? transformArticle(result) : null;
+
+      if (!result) return null;
+
+      const tags = await db2
+        .select({ tag: articleTagsTable.tag })
+        .from(articleTagsTable)
+        .where(eq(articleTagsTable.articleId, result.id));
+
+      return {
+        ...transformArticle(result),
+        tags: tags.map(t => t.tag)
+      };
     } catch (error) {
       logStorage(`Failed to get article by slug ${slug}: ${error}`, "error");
       throw new Error(`Failed to fetch article with slug ${slug}`);
