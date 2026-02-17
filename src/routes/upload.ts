@@ -6,15 +6,25 @@ export function registerUploadRoutes(app: Express) {
     app.post(
         "/api/upload",
         isAuthenticated,
-        upload.single("image"),
-        (req, res) => {
-            const file = req.file as Express.Multer.File & { path?: string };
-            if (!file) {
-                console.error("Upload Failed: No file provided in request");
-                return res.status(400).json({ message: "No file uploaded" });
-            }
-            console.log(`Upload Successful: ${file.originalname} -> ${file.path}`);
-            res.json({ url: file.path });
+        (req, res, next) => {
+            upload.single("image")(req, res, (err) => {
+                if (err) {
+                    console.error("Multer/Cloudinary Error:", err);
+                    return res.status(500).json({
+                        message: "Upload service error",
+                        details: err.message || String(err)
+                    });
+                }
+
+                const file = req.file as Express.Multer.File & { path?: string };
+                if (!file) {
+                    console.error("Upload Failed: No file provided in request");
+                    return res.status(400).json({ message: "No file uploaded" });
+                }
+
+                console.log(`Upload Successful: ${file.originalname} -> ${file.path}`);
+                res.json({ url: file.path });
+            });
         }
     );
 }
