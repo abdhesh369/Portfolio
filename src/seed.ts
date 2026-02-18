@@ -1,6 +1,7 @@
 // ============================================================
 // FILE: src/seed.ts
 // ============================================================
+import "dotenv/config";
 import { storage as storage2 } from "./storage.js";
 import type { Project, InsertProject, InsertSeoSettings } from "../shared/schema.js";
 
@@ -29,7 +30,7 @@ export async function seedDatabase() {
       {
         title: "Portfolio Website",
         description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
-        techStack: ["React", "TypeScript", "Express", "MySQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
+        techStack: ["React", "TypeScript", "Express", "PostgreSQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
         imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
         category: "Web",
         status: "Completed",
@@ -37,7 +38,7 @@ export async function seedDatabase() {
         liveUrl: "https://abdheshsah.com.np",
         problemStatement: "Needed a professional online presence to showcase projects and skills to potential employers and collaborators with a unique, memorable design.",
         motivation: "Create a modern, responsive portfolio that demonstrates full-stack development capabilities with cutting-edge UI/UX design principles.",
-        systemDesign: "Full-stack application with React frontend using Framer Motion and Three.js for animations, Express REST API backend, MySQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
+        systemDesign: "Full-stack application with React frontend using Framer Motion and Three.js for animations, Express REST API backend, PostgreSQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
         challenges: "Implementing complex animations like the 3D plexus and skill tree without performance issues, creating a cohesive sci-fi design language, and ensuring responsive design across all devices.",
         learnings: "Advanced animation techniques, full-stack development workflow, API design patterns, and the importance of consistent design systems.",
       },
@@ -153,7 +154,7 @@ export async function seedDatabase() {
       // Backend
       { name: "Node.js", category: "Backend", icon: "Server", status: "Comfortable", x: 40, y: 70, description: "Server-side runtime", proof: "Portfolio Backend" },
       { name: "Express", category: "Backend", icon: "Terminal", status: "Comfortable", x: 60, y: 70, description: "Web framework", proof: "Portfolio Backend" },
-      { name: "MySQL", category: "Backend", icon: "Database", status: "Comfortable", x: 50, y: 85, description: "Relational database", proof: "Portfolio Backend" },
+      { name: "PostgreSQL", category: "Backend", icon: "Database", status: "Comfortable", x: 50, y: 85, description: "Relational database", proof: "Portfolio Backend" },
       // Tools
       { name: "Git", category: "Tools", icon: "GitBranch", status: "Core", x: 15, y: 60, description: "Version control", proof: "All projects" },
       { name: "GitHub", category: "Tools", icon: "GitBranch", status: "Core", x: 30, y: 70, description: "Code hosting", proof: "All projects" },
@@ -183,7 +184,7 @@ export async function seedDatabase() {
       { fromSkillId: "JavaScript", toSkillId: "React" },
       { fromSkillId: "Git", toSkillId: "GitHub" },
       { fromSkillId: "Node.js", toSkillId: "Express" },
-      { fromSkillId: "Express", toSkillId: "MySQL" },
+      { fromSkillId: "Express", toSkillId: "PostgreSQL" },
     ];
 
     for (const conn of connections) {
@@ -341,4 +342,18 @@ export async function seedDatabase() {
     logSeed(`Database seeding failed: ${err} `, "error");
     throw err;
   }
+}
+
+// Run only when executed directly (not when imported)
+const isMainModule = process.argv[1]?.replace(/\\/g, '/').includes('seed');
+if (isMainModule) {
+  seedDatabase()
+    .then(() => {
+      console.log("Seeding complete. Exiting...");
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error("Seeding failed:", err);
+      process.exit(1);
+    });
 }

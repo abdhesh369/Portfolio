@@ -8,9 +8,9 @@ import helmet from "helmet";
 import { registerRoutes } from "./routes.js";
 import compression from "compression";
 import { seedDatabase } from "./seed.js";
-import { createTables } from "./create-tables.js";
+
 import { checkDatabaseHealth } from "./db.js";
-import { setStorage, MemStorage } from "./storage.js";
+
 import rateLimit from "express-rate-limit";
 
 const app = express();
@@ -143,36 +143,22 @@ async function startServer() {
     log("Starting server...", "startup");
 
     // STEP 0: CHECK DATABASE HEALTH
-    let useFallback = false;
+    log("📍 Checking database health...", "startup");
+    const health = await checkDatabaseHealth();
 
-    // Check if we have database configuration before attempting connection
-    if (!process.env.MYSQL_HOST) {
-      log("ℹ️ No Database configuration found. Using In-Memory Storage.", "startup");
-      setStorage(new MemStorage());
-      useFallback = true;
-    } else {
-      log("📍 Checking database health...", "startup");
-      const health = await checkDatabaseHealth();
-
-      if (!health.healthy) {
-        log("⚠️ Database connection failed. Switching to In-Memory Fallback...", "startup");
-        log(`Reason: ${health.message}`, "warn");
-        setStorage(new MemStorage());
-        useFallback = true;
-      } else {
-        log("✓ Database is healthy", "startup");
-      }
+    if (!health.healthy) {
+      log("❌ Database connection failed. Shutting down...", "startup");
+      log(`Reason: ${health.message}`, "error");
+      process.exit(1);
     }
+    log("✓ Database is healthy", "startup");
 
-    if (!useFallback) {
-      // STEP 1: CREATE TABLES (ONLY FOR REAL DB)
-      log("📍 Creating database tables...", "startup");
-      await createTables();
-      log("✓ Tables created successfully", "startup");
-    }
+    // STEP 1: CREATE TABLES
+    // managed by drizzle-kit push now
+    log("✓ Tables managed by Drizzle", "startup");
 
-    // STEP 2: SEED DATABASE (Works for both DB and Memory)
-    log(`📍 Seeding ${useFallback ? 'In-Memory' : 'Database'}...`, "startup");
+    // STEP 2: SEED DATABASE
+    log("📍 Seeding Database...", "startup");
     try {
       await seedDatabase();
       log("✓ Seeding complete", "startup");

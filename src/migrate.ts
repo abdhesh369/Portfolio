@@ -1,11 +1,10 @@
 import "dotenv/config";
-import { migrate } from "drizzle-orm/mysql2/migrator";
-import { db, connection } from "./db.js";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { db, pool } from "./db.js";
 
 async function main() {
     console.log("Running migrations...");
     try {
-        // This will run migrations on the database, skipping the ones already applied
         await migrate(db, { migrationsFolder: "drizzle/migrations" });
         console.log("Migrations applied successfully!");
         process.exit(0);
@@ -13,7 +12,7 @@ async function main() {
         console.error("Migration failed:", err);
         process.exit(1);
     } finally {
-        await connection.end();
+        await pool.end();
     }
 }
 

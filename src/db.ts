@@ -1,22 +1,16 @@
-import { drizzle } from 'drizzle-orm/mysql2';
-import mysql from 'mysql2/promise';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pg from 'pg';
 import * as schema from '../shared/schema.js';
 
-const poolConnection = mysql.createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    port: parseInt(process.env.MYSQL_PORT || '3306'),
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL must be set. Did you forget to provision a database?');
+}
+
+export const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
 });
 
-export const db = drizzle(poolConnection, { schema, mode: 'default' });
-
-// Export connection for use by create-tables.ts
-export const connection = poolConnection;
+export const db = drizzle(pool, { schema });
 
 const logDb = (msg: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -25,9 +19,9 @@ const logDb = (msg: string) => {
 
 export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message?: string }> {
     try {
-        const connection = await poolConnection.getConnection();
-        connection.release();
-        logDb('Successfully connected to MySQL database');
+        const client = await pool.connect();
+        client.release();
+        logDb('Successfully connected to PostgreSQL database');
         return { healthy: true };
     } catch (error) {
         logDb('Database connection error: ' + error);
@@ -37,6 +31,6 @@ export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message
 
 process.on('SIGINT', async () => {
     logDb('Closing database pool...');
-    await poolConnection.end();
+    await pool.end();
     process.exit(0);
 });

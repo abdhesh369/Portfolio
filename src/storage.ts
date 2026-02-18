@@ -259,353 +259,6 @@ function transformArticle(dbArticle: any): Article {
 }
 
 
-// ================= MEMORY STORAGE =================
-export class MemStorage implements IStorage {
-  private projects: Map<number, Project>;
-  private skills: Map<number, Skill>;
-  private experiences: Map<number, Experience>;
-
-  private messages: Map<number, Message>;
-  private mindset: Map<number, Mindset>;
-  private skillConnections: Map<number, SkillConnection>;
-  private emailTemplates: Map<number, EmailTemplate>;
-  private seoSettings: Map<number, SeoSettings>;
-  private currentIds: { [key: string]: number };
-
-  constructor() {
-    this.projects = new Map();
-    this.skills = new Map();
-    this.experiences = new Map();
-
-    this.messages = new Map();
-    this.mindset = new Map();
-    this.skillConnections = new Map();
-    this.emailTemplates = new Map();
-    this.seoSettings = new Map();
-    this.currentIds = { projects: 1, skills: 1, experiences: 1, messages: 1, mindset: 1, skillConnections: 1, emailTemplates: 1, seoSettings: 1 };
-  }
-
-  async getProjects(): Promise<Project[]> {
-    return Array.from(this.projects.values()).sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-  }
-
-  async getProjectById(id: number): Promise<Project | null> {
-    return this.projects.get(id) || null;
-  }
-
-  async createProject(project: InsertProject): Promise<Project> {
-    const id = this.currentIds.projects++;
-    const newProject: Project = { ...project, id, techStack: project.techStack ?? [] } as Project;
-    this.projects.set(id, newProject);
-    return newProject;
-  }
-
-  async updateProject(id: number, project: Partial<InsertProject>): Promise<Project> {
-    const existing = this.projects.get(id);
-    if (!existing) throw new Error(`Project ${id} not found`);
-    const updated = { ...existing, ...project } as Project;
-    this.projects.set(id, updated);
-    return updated;
-  }
-
-  async deleteProject(id: number): Promise<void> {
-    this.projects.delete(id);
-  }
-
-  async reorderProjects(orderedIds: number[]): Promise<void> {
-    orderedIds.forEach((id, index) => {
-      const project = this.projects.get(id);
-      if (project) {
-        this.projects.set(id, { ...project, displayOrder: index });
-      }
-    });
-  }
-
-  async bulkDeleteProjects(ids: number[]): Promise<void> {
-    ids.forEach((id) => this.projects.delete(id));
-  }
-
-  async bulkUpdateProjectStatus(ids: number[], status: string): Promise<void> {
-    ids.forEach((id) => {
-      const project = this.projects.get(id);
-      if (project) {
-        this.projects.set(id, { ...project, status });
-      }
-    });
-  }
-
-  async getSkills(): Promise<Skill[]> {
-    return Array.from(this.skills.values());
-  }
-
-  async getSkillById(id: number): Promise<Skill | null> {
-    return this.skills.get(id) || null;
-  }
-
-  async createSkill(skill: InsertSkill): Promise<Skill> {
-    const id = this.currentIds.skills++;
-    const newSkill: Skill = { ...skill, id } as Skill;
-    this.skills.set(id, newSkill);
-    return newSkill;
-  }
-
-  async updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill> {
-    const existing = this.skills.get(id);
-    if (!existing) throw new Error(`Skill ${id} not found`);
-    const updated = { ...existing, ...skill } as Skill;
-    this.skills.set(id, updated);
-    return updated;
-  }
-
-  async deleteSkill(id: number): Promise<void> {
-    this.skills.delete(id);
-  }
-
-  async bulkDeleteSkills(ids: number[]): Promise<void> {
-    ids.forEach((id) => this.skills.delete(id));
-  }
-
-  async getExperiences(): Promise<Experience[]> {
-    return Array.from(this.experiences.values());
-  }
-
-  async getExperienceById(id: number): Promise<Experience | null> {
-    return this.experiences.get(id) || null;
-  }
-
-  async createExperience(exp: InsertExperience): Promise<Experience> {
-    const id = this.currentIds.experiences++;
-    const newExp: Experience = { ...exp, id } as Experience;
-    this.experiences.set(id, newExp);
-    return newExp;
-  }
-
-  async updateExperience(id: number, exp: Partial<InsertExperience>): Promise<Experience> {
-    const existing = this.experiences.get(id);
-    if (!existing) throw new Error(`Experience ${id} not found`);
-    const updated = { ...existing, ...exp } as Experience;
-    this.experiences.set(id, updated);
-    return updated;
-  }
-
-  async deleteExperience(id: number): Promise<void> {
-    this.experiences.delete(id);
-  }
-
-  async getMessages(): Promise<Message[]> {
-    return Array.from(this.messages.values());
-  }
-
-  async getMessageById(id: number): Promise<Message | null> {
-    return this.messages.get(id) || null;
-  }
-
-  async createMessage(message: InsertMessage): Promise<Message> {
-    const id = this.currentIds.messages++;
-    const newMessage: Message = {
-      ...message,
-      id,
-      createdAt: new Date().toISOString(),
-    } as Message;
-    this.messages.set(id, newMessage);
-    return newMessage;
-  }
-
-  async deleteMessage(id: number): Promise<void> {
-    this.messages.delete(id);
-  }
-
-  async bulkDeleteMessages(ids: number[]): Promise<void> {
-    ids.forEach((id) => this.messages.delete(id));
-  }
-
-  async getSkillConnections(): Promise<SkillConnection[]> {
-    return Array.from(this.skillConnections.values());
-  }
-
-  async createSkillConnection(connection: Omit<SkillConnection, "id">): Promise<SkillConnection> {
-    const id = this.currentIds.skillConnections++;
-    const newConnection: SkillConnection = { ...connection, id };
-    this.skillConnections.set(id, newConnection);
-    return newConnection;
-  }
-
-  async getMindset(): Promise<Mindset[]> {
-    return Array.from(this.mindset.values());
-  }
-
-  async getMindsetById(id: number): Promise<Mindset | null> {
-    return this.mindset.get(id) || null;
-  }
-
-  async createMindset(mindset: Omit<Mindset, "id">): Promise<Mindset> {
-    const id = this.currentIds.mindset++;
-    const newMindset: Mindset = { ...mindset, id };
-    this.mindset.set(id, newMindset);
-    return newMindset;
-  }
-
-  async logAnalyticsEvent(event: InsertAnalytics): Promise<Analytics> {
-    const id = this.currentIds.analytics || 1;
-    this.currentIds.analytics = id + 1;
-    const newEvent: Analytics = {
-      ...event,
-      id,
-      createdAt: new Date().toISOString(),
-    } as Analytics;
-    // We don't necessarily need to store this in memory for long-term, 
-    // but let's keep a small log if needed.
-    return newEvent;
-  }
-
-  async getAnalyticsSummary(): Promise<any> {
-    return {
-      totalViews: 0,
-      viewsByDate: [],
-      mostViewedProjects: [],
-      devices: [],
-      locations: [],
-    };
-  }
-
-  async getEmailTemplates(): Promise<EmailTemplate[]> {
-    return Array.from(this.emailTemplates.values());
-  }
-
-  async getEmailTemplateById(id: number): Promise<EmailTemplate | null> {
-    return this.emailTemplates.get(id) || null;
-  }
-
-  async createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate> {
-    const id = this.currentIds.emailTemplates++;
-    const newTemplate: EmailTemplate = {
-      ...template,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-    this.emailTemplates.set(id, newTemplate);
-    return newTemplate;
-  }
-
-  async updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
-    const existing = this.emailTemplates.get(id);
-    if (!existing) throw new Error(`Email template ${id} not found`);
-    const updated = { ...existing, ...template };
-    this.emailTemplates.set(id, updated);
-    return updated;
-  }
-
-  async deleteEmailTemplate(id: number): Promise<void> {
-    this.emailTemplates.delete(id);
-  }
-
-  async getSeoSettings(): Promise<SeoSettings[]> {
-    return Array.from(this.seoSettings.values());
-  }
-
-  async getSeoSettingsBySlug(slug: string): Promise<SeoSettings | null> {
-    return Array.from(this.seoSettings.values()).find((s) => s.pageSlug === slug) || null;
-  }
-
-  async createSeoSettings(settings: InsertSeoSettings): Promise<SeoSettings> {
-    const id = this.currentIds.seoSettings++;
-    const newSettings: SeoSettings = {
-      ...settings,
-      id,
-      ogTitle: settings.ogTitle ?? null,
-      ogDescription: settings.ogDescription ?? null,
-      ogImage: settings.ogImage ?? null,
-      keywords: settings.keywords ?? null,
-      canonicalUrl: settings.canonicalUrl ?? null,
-      noindex: settings.noindex ?? false,
-      twitterCard: settings.twitterCard ?? "summary_large_image",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    this.seoSettings.set(id, newSettings);
-    return newSettings;
-  }
-
-  async updateSeoSettings(id: number, settings: Partial<InsertSeoSettings>): Promise<SeoSettings> {
-    const existing = this.seoSettings.get(id);
-    if (!existing) throw new Error(`SEO settings ${id} not found`);
-    const updated = { ...existing, ...settings, updatedAt: new Date().toISOString() };
-    this.seoSettings.set(id, updated);
-    return updated;
-  }
-
-  async deleteSeoSettings(id: number): Promise<void> {
-    this.seoSettings.delete(id);
-  }
-
-  // Articles
-  private articles: Map<number, Article> = new Map();
-  // We'll manage currentIds in the constructor properly, but for now let's reuse the pattern
-  // Note: In a real MemStorage update, we should initialize this in constructor, but 
-  // since we are appending, we'll initialize lazily or assume the constructor runs fresh.
-  // Actually, MemStorage isn't persistent across restarts, so we can just add the property here 
-  // and it will be initialized when the class is instantiated.
-  // Wait, I can't easily modify the constructor without replacing the whole class or a big chunk.
-  // I will just add properties and methods here.
-
-  async getArticles(status?: string): Promise<Article[]> {
-    let articles = Array.from(this.articles.values());
-    if (status) {
-      articles = articles.filter(a => a.status === status);
-    }
-    return articles.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }
-
-  async getArticleById(id: number): Promise<Article | null> {
-    return this.articles.get(id) || null;
-  }
-
-  async getArticleBySlug(slug: string): Promise<Article | null> {
-    return Array.from(this.articles.values()).find(a => a.slug === slug) || null;
-  }
-
-  async createArticle(article: InsertArticle): Promise<Article> {
-    // Hack for ID since we can't easily modify constructor
-    const id = (this.currentIds as any).articles ? (this.currentIds as any).articles++ : 1;
-    if (!(this.currentIds as any).articles) (this.currentIds as any).articles = 2;
-
-    const newArticle: Article = {
-      ...article,
-      id,
-      slug: article.slug || article.title.toLowerCase().replace(/ /g, '-'),
-      excerpt: article.excerpt ?? null,
-      featuredImage: article.featuredImage ?? null,
-      publishedAt: article.publishedAt ? new Date(article.publishedAt) : null,
-      viewCount: 0,
-      readTimeMinutes: article.readTimeMinutes ?? 0,
-      metaTitle: article.metaTitle ?? null,
-      metaDescription: article.metaDescription ?? null,
-      authorId: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.articles.set(id, newArticle);
-    return newArticle;
-  }
-
-  async updateArticle(id: number, article: Partial<InsertArticle>): Promise<Article> {
-    const existing = this.articles.get(id);
-    if (!existing) throw new Error(`Article ${id} not found`);
-    const updated: Article = {
-      ...existing,
-      ...article,
-      publishedAt: article.publishedAt ? new Date(article.publishedAt) : existing.publishedAt,
-      updatedAt: new Date()
-    };
-    this.articles.set(id, updated);
-    return updated;
-  }
-
-  async deleteArticle(id: number): Promise<void> {
-    this.articles.delete(id);
-  }
-}
-
 // ================= DATABASE STORAGE =================
 export class DatabaseStorage implements IStorage {
   private skillsCache: Skill[] | null = null;
@@ -656,7 +309,7 @@ export class DatabaseStorage implements IStorage {
         throw new Error("Title and description are required");
       }
 
-      const [result] = await db2
+      const [inserted] = await db2
         .insert(projectsTable)
         .values({
           title: project.title,
@@ -671,15 +324,13 @@ export class DatabaseStorage implements IStorage {
           challenges: project.challenges ?? null,
           learnings: project.learnings ?? null,
           techStack: JSON.stringify(project.techStack ?? []),
-        });
+        })
+        .returning();
 
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getProjectById(insertedId);
-
-      if (!inserted) throw new Error("Failed to fetch inserted project");
+      if (!inserted) throw new Error("Failed to create project");
 
       logStorage(`Created project: ${inserted.title}`);
-      return inserted;
+      return transformProject(inserted);
     } catch (error) {
       logStorage(`Failed to create project: ${error}`, "error");
       throw error;
@@ -693,19 +344,18 @@ export class DatabaseStorage implements IStorage {
         updates.techStack = JSON.stringify(project.techStack);
       }
 
-      await db2
+      const [updated] = await db2
         .update(projectsTable)
         .set(updates)
-        .where(eq(projectsTable.id, id));
-
-      const updated = await this.getProjectById(id);
+        .where(eq(projectsTable.id, id))
+        .returning();
 
       if (!updated) {
         throw new Error(`Project with id ${id} not found after update`);
       }
 
       logStorage(`Updated project: ${updated.title}`);
-      return updated;
+      return transformProject(updated);
     } catch (error) {
       logStorage(`Failed to update project ${id}: ${error}`, "error");
       throw error;
@@ -820,7 +470,7 @@ export class DatabaseStorage implements IStorage {
         throw new Error("Name and category are required");
       }
 
-      const [result] = await db2
+      const [inserted] = await db2
         .insert(skillsTable)
         .values({
           name: skill.name,
@@ -831,16 +481,14 @@ export class DatabaseStorage implements IStorage {
           proof: skill.proof || "",
           x: skill.x ?? 50,
           y: skill.y ?? 50,
-        });
+        })
+        .returning();
 
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getSkillById(insertedId);
-
-      if (!inserted) throw new Error("Failed to fetch inserted skill");
+      if (!inserted) throw new Error("Failed to create skill");
 
       this.invalidateSkillsCache();
       logStorage(`Created skill: ${inserted.name}`);
-      return inserted;
+      return transformSkill(inserted);
     } catch (error) {
       logStorage(`Failed to create skill: ${error}`, "error");
       throw error;
@@ -849,12 +497,11 @@ export class DatabaseStorage implements IStorage {
 
   async updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill> {
     try {
-      await db2
+      const [updated] = await db2
         .update(skillsTable)
         .set(skill)
-        .where(eq(skillsTable.id, id));
-
-      const updated = await this.getSkillById(id);
+        .where(eq(skillsTable.id, id))
+        .returning();
 
       if (!updated) {
         throw new Error(`Skill with id ${id} not found after update`);
@@ -862,7 +509,7 @@ export class DatabaseStorage implements IStorage {
 
       this.invalidateSkillsCache();
       logStorage(`Updated skill: ${updated.name}`);
-      return updated;
+      return transformSkill(updated);
     } catch (error) {
       logStorage(`Failed to update skill ${id}: ${error}`, "error");
       throw error;
@@ -948,7 +595,7 @@ export class DatabaseStorage implements IStorage {
         throw new Error("Role and organization are required");
       }
 
-      const [result] = await db2
+      const [inserted] = await db2
         .insert(experiencesTable)
         .values({
           role: exp.role,
@@ -956,16 +603,14 @@ export class DatabaseStorage implements IStorage {
           period: exp.period,
           description: exp.description,
           type: exp.type || "Experience",
-        });
+        })
+        .returning();
 
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getExperienceById(insertedId);
-
-      if (!inserted) throw new Error("Failed to fetch inserted experience");
+      if (!inserted) throw new Error("Failed to create experience");
 
       this.invalidateExperiencesCache();
       logStorage(`Created experience: ${inserted.role} at ${inserted.organization}`);
-      return inserted;
+      return transformExperience(inserted);
     } catch (error) {
       logStorage(`Failed to create experience: ${error}`, "error");
       throw error;
@@ -974,12 +619,11 @@ export class DatabaseStorage implements IStorage {
 
   async updateExperience(id: number, exp: Partial<InsertExperience>): Promise<Experience> {
     try {
-      await db2
+      const [updated] = await db2
         .update(experiencesTable)
         .set(exp)
-        .where(eq(experiencesTable.id, id));
-
-      const updated = await this.getExperienceById(id);
+        .where(eq(experiencesTable.id, id))
+        .returning();
 
       if (!updated) {
         throw new Error(`Experience with id ${id} not found after update`);
@@ -987,7 +631,7 @@ export class DatabaseStorage implements IStorage {
 
       this.invalidateExperiencesCache();
       logStorage(`Updated experience: ${updated.role}`);
-      return updated;
+      return transformExperience(updated);
     } catch (error) {
       logStorage(`Failed to update experience ${id}: ${error}`, "error");
       throw error;
@@ -1057,17 +701,15 @@ export class DatabaseStorage implements IStorage {
         message: message.message.trim().slice(0, 5000),
       };
 
-      const [result] = await db2
+      const [inserted] = await db2
         .insert(messagesTable)
-        .values(sanitized);
+        .values(sanitized)
+        .returning();
 
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getMessageById(insertedId);
-
-      if (!inserted) throw new Error("Failed to fetch inserted message");
+      if (!inserted) throw new Error("Failed to create message");
 
       logStorage(`Created message from: ${inserted.name} (${inserted.email})`);
-      return inserted;
+      return transformMessage(inserted);
     } catch (error) {
       logStorage(`Failed to create message: ${error}`, "error");
       throw error;
@@ -1116,12 +758,12 @@ export class DatabaseStorage implements IStorage {
 
   async createSkillConnection(connection: Omit<SkillConnection, "id">): Promise<SkillConnection> {
     try {
-      const [result] = await db2.insert(skillConnectionsTable).values({
+      const [inserted] = await db2.insert(skillConnectionsTable).values({
         fromSkillId: connection.fromSkillId,
         toSkillId: connection.toSkillId,
-      });
-      const insertedId = (result as { insertId: number }).insertId;
-      return { ...connection, id: insertedId } as SkillConnection;
+      }).returning();
+      if (!inserted) throw new Error("Failed to create skill connection");
+      return inserted as SkillConnection;
     } catch (error) {
       logStorage(`Failed to create skill connection: ${error}`, "error");
       throw error;
@@ -1154,16 +796,14 @@ export class DatabaseStorage implements IStorage {
 
   async createMindset(mindset: Omit<Mindset, "id">): Promise<Mindset> {
     try {
-      const [result] = await db2.insert(mindsetTable).values({
+      const [inserted] = await db2.insert(mindsetTable).values({
         title: mindset.title,
         description: mindset.description,
         icon: mindset.icon,
         tags: JSON.stringify(mindset.tags),
-      });
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getMindsetById(insertedId);
-      if (!inserted) throw new Error("Failed to fetch inserted mindset");
-      return inserted;
+      }).returning();
+      if (!inserted) throw new Error("Failed to create mindset");
+      return transformMindset(inserted);
     } catch (error) {
       logStorage(`Failed to create mindset: ${error}`, "error");
       throw error;
@@ -1172,9 +812,9 @@ export class DatabaseStorage implements IStorage {
 
   async logAnalyticsEvent(event: InsertAnalytics): Promise<Analytics> {
     try {
-      const [result] = await db2.insert(analyticsTable).values(event);
-      const insertedId = (result as { insertId: number }).insertId;
-      return { ...event, id: insertedId, createdAt: new Date().toISOString() } as Analytics;
+      const [inserted] = await db2.insert(analyticsTable).values(event).returning();
+      if (!inserted) throw new Error("Failed to log analytics event");
+      return transformAnalytics(inserted);
     } catch (error) {
       logStorage(`Failed to log analytics event: ${error}`, "error");
       throw error;
@@ -1224,11 +864,9 @@ export class DatabaseStorage implements IStorage {
 
   async createEmailTemplate(template: InsertEmailTemplate): Promise<EmailTemplate> {
     try {
-      const [result] = await db2.insert(emailTemplatesTable).values(template);
-      const insertedId = (result as { insertId: number }).insertId;
-      const inserted = await this.getEmailTemplateById(insertedId);
-      if (!inserted) throw new Error("Failed to fetch inserted email template");
-      return inserted;
+      const [inserted] = await db2.insert(emailTemplatesTable).values(template).returning();
+      if (!inserted) throw new Error("Failed to create email template");
+      return transformEmailTemplate(inserted);
     } catch (error) {
       logStorage(`Failed to create email template: ${error}`, "error");
       throw error;
@@ -1237,13 +875,13 @@ export class DatabaseStorage implements IStorage {
 
   async updateEmailTemplate(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
     try {
-      await db2
+      const [updated] = await db2
         .update(emailTemplatesTable)
         .set(template)
-        .where(eq(emailTemplatesTable.id, id));
-      const updated = await this.getEmailTemplateById(id);
+        .where(eq(emailTemplatesTable.id, id))
+        .returning();
       if (!updated) throw new Error(`Email template ${id} not found after update`);
-      return updated;
+      return transformEmailTemplate(updated);
     } catch (error) {
       logStorage(`Failed to update email template ${id}: ${error}`, "error");
       throw error;
@@ -1288,17 +926,11 @@ export class DatabaseStorage implements IStorage {
 
   async createSeoSettings(settings: InsertSeoSettings): Promise<SeoSettings> {
     try {
-      const [result] = await db2.insert(seoSettingsTable).values(settings);
-      const insertedId = (result as { insertId: number }).insertId;
-
-      // Since we can't easily fetch by ID without a generic getSeoSettingsById (which I didn't add to interface but could have),
-      // let's fetch by slug as it is unique.
-      const inserted = await this.getSeoSettingsBySlug(settings.pageSlug);
-
-      if (!inserted) throw new Error("Failed to fetch inserted SEO settings");
+      const [inserted] = await db2.insert(seoSettingsTable).values(settings).returning();
+      if (!inserted) throw new Error("Failed to create SEO settings");
 
       logStorage(`Created SEO settings for: ${inserted.pageSlug}`);
-      return inserted;
+      return transformSeoSettings(inserted);
     } catch (error) {
       logStorage(`Failed to create SEO settings: ${error}`, "error");
       throw error;
@@ -1445,7 +1077,7 @@ export class DatabaseStorage implements IStorage {
       // Auto-generate slug if not provided
       const slug = articleData.slug || articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-      const [result] = await db2.insert(articlesTable).values({
+      const [inserted] = await db2.insert(articlesTable).values({
         ...articleData,
         slug,
         excerpt: articleData.excerpt ?? null,
@@ -1457,25 +1089,25 @@ export class DatabaseStorage implements IStorage {
         metaTitle: articleData.metaTitle ?? null,
         metaDescription: articleData.metaDescription ?? null,
         authorId: null,
-      });
+      }).returning();
 
-      const insertedId = (result as { insertId: number }).insertId;
+      if (!inserted) throw new Error("Failed to create article");
 
       // Handle Tags
       if (tags && tags.length > 0) {
         await db2.insert(articleTagsTable).values(
           tags.map((tag: string) => ({
-            articleId: insertedId,
+            articleId: inserted.id,
             tag
           }))
         );
       }
 
-      const inserted = await this.getArticleById(insertedId);
-      if (!inserted) throw new Error("Failed to fetch inserted article");
+      const fullArticle = await this.getArticleById(inserted.id);
+      if (!fullArticle) throw new Error("Failed to fetch inserted article");
 
-      logStorage(`Created article: ${inserted.title}`);
-      return inserted;
+      logStorage(`Created article: ${fullArticle.title}`);
+      return fullArticle;
     } catch (error) {
       logStorage(`Failed to create article: ${error}`, "error");
       throw error;
@@ -1547,26 +1179,12 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// ================= DYNAMIC EXPORT =================
-let storageInstance: IStorage;
-
-if (process.env.USE_MEMORY_DB === "true" || process.env.NODE_ENV === "test") {
-  logStorage("Using In-Memory Storage (Explicitly requested or testing)");
-  storageInstance = new MemStorage();
-} else {
-  storageInstance = new DatabaseStorage();
-}
+// ================= DATABASE STORAGE =================
+export const storage: IStorage = new DatabaseStorage();
 
 /**
- * ⚠️ WARNING: This instance might be swapped at runtime by index.ts 
- * if the database connection fails during startup.
- */
-export let storage = storageInstance;
-
-/**
- * Utility to swap storage at runtime (used by startup logic)
+ * Utility to swap storage at runtime (kept for compatibility, though fallback is removed)
  */
 export function setStorage(newStorage: IStorage) {
-  storage = newStorage;
-  logStorage(`Storage implementation swapped to: ${newStorage.constructor.name}`);
+  logStorage(`WARNING: Attempted to swap storage to: ${newStorage.constructor.name}. This utility is deprecated as MemStorage is removed.`);
 }
