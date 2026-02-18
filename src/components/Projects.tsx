@@ -74,7 +74,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     "SpeechRecognition": "bg-orange-500/15 text-orange-400 border-orange-500/30",
     "Regex": "bg-gray-500/15 text-gray-400 border-gray-500/30",
     "psutil": "bg-slate-500/15 text-slate-400 border-slate-500/30",
-    "mysql2": "bg-blue-600/15 text-blue-400 border-blue-600/30",
+    "pg": "bg-blue-600/15 text-blue-400 border-blue-600/30",
     "Zod": "bg-blue-500/15 text-blue-400 border-blue-500/30",
     "Vanilla JS": "bg-yellow-400/15 text-yellow-300 border-yellow-400/30",
   };

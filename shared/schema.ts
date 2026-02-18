@@ -1,19 +1,19 @@
-import { mysqlTable, text, int, varchar, timestamp, json, float, boolean } from "drizzle-orm/mysql-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // ================= DATABASE TABLES =================
 
-export const projectsTable = mysqlTable("projects", {
-  id: int("id").primaryKey().autoincrement(),
+export const projectsTable = pgTable("projects", {
+  id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
-  techStack: json("techStack").notNull(),
+  techStack: jsonb("techStack").notNull(),
   imageUrl: varchar("imageUrl", { length: 500 }).notNull(),
   githubUrl: varchar("githubUrl", { length: 500 }),
   liveUrl: varchar("liveUrl", { length: 500 }),
   category: varchar("category", { length: 100 }).notNull(),
-  displayOrder: int("displayOrder").notNull().default(0),
+  displayOrder: integer("displayOrder").notNull().default(0),
   status: varchar("status", { length: 50 }).notNull().default("Completed"),
   problemStatement: text("problemStatement"),
   motivation: text("motivation"),
@@ -22,26 +22,26 @@ export const projectsTable = mysqlTable("projects", {
   learnings: text("learnings"),
 });
 
-export const skillsTable = mysqlTable("skills", {
-  id: int("id").primaryKey().autoincrement(),
+export const skillsTable = pgTable("skills", {
+  id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   category: varchar("category", { length: 100 }).notNull(),
   status: varchar("status", { length: 100 }).notNull().default("Core"),
   icon: varchar("icon", { length: 100 }).notNull().default("Code"),
   description: text("description").notNull().default(""),
   proof: text("proof").notNull().default(""),
-  x: float("x").notNull().default(50),
-  y: float("y").notNull().default(50),
+  x: real("x").notNull().default(50),
+  y: real("y").notNull().default(50),
 });
 
-export const skillConnectionsTable = mysqlTable("skill_connections", {
-  id: int("id").primaryKey().autoincrement(),
+export const skillConnectionsTable = pgTable("skill_connections", {
+  id: serial("id").primaryKey(),
   fromSkillId: varchar("from_skill_id", { length: 100 }).notNull(),
   toSkillId: varchar("to_skill_id", { length: 100 }).notNull(),
 });
 
-export const experiencesTable = mysqlTable("experiences", {
-  id: int("id").primaryKey().autoincrement(),
+export const experiencesTable = pgTable("experiences", {
+  id: serial("id").primaryKey(),
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
   period: varchar("period", { length: 100 }).notNull(),
@@ -49,8 +49,8 @@ export const experiencesTable = mysqlTable("experiences", {
   type: varchar("type", { length: 100 }).notNull().default("Experience"),
 });
 
-export const messagesTable = mysqlTable("messages", {
-  id: int("id").primaryKey().autoincrement(),
+export const messagesTable = pgTable("messages", {
+  id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 500 }).notNull().default(""),
@@ -58,18 +58,18 @@ export const messagesTable = mysqlTable("messages", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const mindsetTable = mysqlTable("mindset", {
-  id: int("id").primaryKey().autoincrement(),
+export const mindsetTable = pgTable("mindset", {
+  id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   icon: varchar("icon", { length: 100 }).notNull().default("Brain"),
-  tags: json("tags").notNull(),
+  tags: jsonb("tags").notNull(),
 });
 
-export const analyticsTable = mysqlTable("analytics", {
-  id: int("id").primaryKey().autoincrement(),
+export const analyticsTable = pgTable("analytics", {
+  id: serial("id").primaryKey(),
   type: varchar("type", { length: 50 }).notNull(), // page_view, project_view, contact_form
-  targetId: int("targetId"), // ID of project for project_view
+  targetId: integer("targetId"), // ID of project for project_view
   path: varchar("path", { length: 500 }).notNull(),
   browser: varchar("browser", { length: 100 }),
   os: varchar("os", { length: 100 }),
@@ -79,53 +79,53 @@ export const analyticsTable = mysqlTable("analytics", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const emailTemplatesTable = mysqlTable("email_templates", {
-  id: int("id").primaryKey().autoincrement(),
+export const emailTemplatesTable = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 500 }).notNull(),
   body: text("body").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const seoSettingsTable = mysqlTable("seo_settings", {
-  id: int("id").primaryKey().autoincrement(),
-  pageSlug: varchar("pageSlug", { length: 100 }).notNull().unique(), // e.g. 'home', 'about', 'project-1'
-  metaTitle: varchar("metaTitle", { length: 255 }).notNull(),
-  metaDescription: text("metaDescription").notNull(),
+
+export const seoSettingsTable = pgTable("seo_settings", {
+  id: serial("id").primaryKey(),
+  pageSlug: varchar("page_slug", { length: 100 }).notNull().unique(),
+  metaTitle: varchar("meta_title", { length: 60 }).notNull(),
+  metaDescription: text("meta_description").notNull(),
+  ogTitle: varchar("og_title", { length: 255 }),
+  ogDescription: text("og_description"),
+  ogImage: varchar("og_image", { length: 500 }),
   keywords: text("keywords"),
-  ogTitle: varchar("ogTitle", { length: 255 }),
-  ogDescription: text("ogDescription"),
-  ogImage: varchar("ogImage", { length: 500 }),
+  canonicalUrl: varchar("canonical_url", { length: 500 }),
   noindex: boolean("noindex").default(false),
-  canonicalUrl: varchar("canonicalUrl", { length: 500 }),
-  twitterCard: varchar("twitterCard", { length: 50 }).default("summary_large_image"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  twitterCard: varchar("twitter_card", { length: 50 }).default("summary_large_image"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(), // onUpdateNow is not directly supported in PG same way
 });
 
-export const articlesTable = mysqlTable("articles", {
-  id: int("id").primaryKey().autoincrement(),
+export const articlesTable = pgTable("articles", {
+  id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   content: text("content").notNull(),
   excerpt: text("excerpt"),
   featuredImage: varchar("featuredImage", { length: 500 }),
-  status: varchar("status", { length: 50 }).notNull().default("draft"), // draft, published, archived
+  status: varchar("status", { length: 50 }).notNull().default("draft"),
   publishedAt: timestamp("publishedAt"),
-  viewCount: int("viewCount").default(0).notNull(),
-  readTimeMinutes: int("readTimeMinutes").default(0).notNull(),
-  metaTitle: varchar("metaTitle", { length: 60 }),
-  metaDescription: varchar("metaDescription", { length: 160 }),
-  authorId: int("authorId"),
+  viewCount: integer("viewCount").notNull().default(0),
+  readTimeMinutes: integer("readTimeMinutes").notNull().default(0),
+  metaTitle: varchar("metaTitle", { length: 255 }),
+  metaDescription: text("metaDescription"),
+  authorId: integer("authorId"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const articleTagsTable = mysqlTable("article_tags", {
-  id: int("id").primaryKey().autoincrement(),
-  articleId: int("articleId").notNull(),
-  tag: varchar("tag", { length: 50 }).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+export const articleTagsTable = pgTable("article_tags", {
+  id: serial("id").primaryKey(),
+  articleId: integer("articleId").notNull(),
+  tag: varchar("tag", { length: 100 }).notNull(),
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
