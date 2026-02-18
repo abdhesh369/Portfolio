@@ -160,16 +160,20 @@ export async function seedDatabase() {
       { name: "GitHub", category: "Tools", icon: "GitBranch", status: "Core", x: 30, y: 70, description: "Code hosting", proof: "All projects" },
     ];
 
-    successCount = 0;
-    failCount = 0;
-
+    const existingSkills = await storage2.getSkills();
     for (const skill of skillList) {
       try {
-        await storage2.createSkill(skill);
-        logSeed(`Seeded skill: ${skill.name} `);
+        const existing = existingSkills.find(s => s.name === skill.name);
+        if (existing) {
+          await storage2.updateSkill(existing.id, skill);
+          logSeed(`Updated skill: ${skill.name} `);
+        } else {
+          await storage2.createSkill(skill);
+          logSeed(`Seeded skill: ${skill.name} `);
+        }
         successCount++;
       } catch (err) {
-        logSeed(`Failed to seed skill: ${skill.name} - ${err} `, "error");
+        logSeed(`Failed to process skill: ${skill.name} - ${err} `, "error");
         failCount++;
       }
     }
@@ -187,8 +191,16 @@ export async function seedDatabase() {
       { fromSkillId: "Express", toSkillId: "PostgreSQL" },
     ];
 
+    const existingConnections = await storage2.getSkillConnections();
     for (const conn of connections) {
       try {
+        const exists = existingConnections.some(
+          c => c.fromSkillId === conn.fromSkillId && c.toSkillId === conn.toSkillId
+        );
+        if (exists) {
+          logSeed(`Connection already exists: ${conn.fromSkillId} -> ${conn.toSkillId}, skipping... `);
+          continue;
+        }
         await storage2.createSkillConnection(conn);
         logSeed(`Seeded connection: ${conn.fromSkillId} -> ${conn.toSkillId} `);
       } catch (err) {
@@ -219,6 +231,11 @@ export async function seedDatabase() {
 
     for (const mindset of mindsetList) {
       try {
+        const existing = await storage2.getMindset().then(m => m.find(i => i.title === mindset.title));
+        if (existing) {
+          logSeed(`Mindset already exists, skipping: ${mindset.title} `);
+          continue;
+        }
         await storage2.createMindset(mindset);
         logSeed(`Seeded mindset: ${mindset.title} `);
       } catch (err) {
@@ -330,6 +347,11 @@ export async function seedDatabase() {
 
     for (const settings of seoSettings) {
       try {
+        const existing = await storage2.getSeoSettingsBySlug(settings.pageSlug);
+        if (existing) {
+          logSeed(`SEO settings already exist for: ${settings.pageSlug}, skipping...`);
+          continue;
+        }
         await storage2.createSeoSettings(settings);
         logSeed(`Seeded SEO settings for: ${settings.pageSlug}`);
       } catch (err) {

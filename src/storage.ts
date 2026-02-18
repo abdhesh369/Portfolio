@@ -114,8 +114,9 @@ function logStorage(message: string, level: "info" | "error" | "warn" = "info") 
   console.log(`${prefix} [${timestamp}] [STORAGE] ${message}`);
 }
 
-function safeJsonParse<T>(json: string | null, fallback: T): T {
+function safeJsonParse<T>(json: any, fallback: T): T {
   if (!json) return fallback;
+  if (typeof json === "object") return json as T;
   try {
     return JSON.parse(json) as T;
   } catch (error) {
@@ -323,7 +324,7 @@ export class DatabaseStorage implements IStorage {
           systemDesign: project.systemDesign ?? null,
           challenges: project.challenges ?? null,
           learnings: project.learnings ?? null,
-          techStack: JSON.stringify(project.techStack ?? []),
+          techStack: project.techStack ?? [],
         })
         .returning();
 
@@ -341,7 +342,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const updates: Record<string, any> = { ...project };
       if (project.techStack) {
-        updates.techStack = JSON.stringify(project.techStack);
+        updates.techStack = project.techStack;
       }
 
       const [updated] = await db2
@@ -800,7 +801,7 @@ export class DatabaseStorage implements IStorage {
         title: mindset.title,
         description: mindset.description,
         icon: mindset.icon,
-        tags: JSON.stringify(mindset.tags),
+        tags: mindset.tags,
       }).returning();
       if (!inserted) throw new Error("Failed to create mindset");
       return transformMindset(inserted);
