@@ -11,7 +11,7 @@
 - **Languages**: JavaScript, TypeScript, C++, Python, SQL
 - **Frontend**: React, Next.js, Tailwind CSS, Framer Motion
 - **Backend**: Node.js, Express, Drizzle ORM, PostgreSQL
-- **Tools**: Git, Docker, AWS, Vercel, Render
+- **Tools**: Git, Docker, AWS, Render
 
 ## Summary
 Senior Full-Stack Engineer specialized in building high-performance web systems. Passionate about system design, algorithmic problem solving, and creating intuitive user experiences.
