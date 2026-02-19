@@ -44,25 +44,55 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
 
     // Generate JWT
     const token = jwt.sign(
-        { role: "admin", user: "abdhesh", iat: Date.now() },
+        { role: "admin", user: "abdhesh" },
         env.JWT_SECRET,
         { expiresIn: "24h" }
     );
 
-    res.json({ token });
+    // Set HttpOnly cookie
+    res.cookie("auth_token", token, {
+        httpOnly: true,
+        secure: env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+
+    res.json({ token, message: "Login successful" });
+}));
+
+/**
+ * GET /api/auth/status
+ * Returns current auth status
+ */
+router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+    res.json({
+        authenticated: true,
+        user: (req as any).user
+    });
 }));
 
 /**
  * POST /api/auth/logout
- * Blacklists the current token
+ * Blacklists current token and clears cookie
  */
 router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+    // 1. Revoke token in blacklist (whether from header or cookie)
+    let token: string | undefined;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.substring(7);
+        token = authHeader.substring(7);
+    } else if (req.cookies && req.cookies.auth_token) {
+        token = req.cookies.auth_token;
+    }
+
+    if (token) {
         const { revokeToken } = await import("../auth.js");
         revokeToken(token);
     }
+
+    // 2. Clear cookie
+    res.clearCookie("auth_token");
+
     res.json({ message: "Logged out successfully" });
 }));
 

@@ -7,6 +7,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { registerRoutes } from "./routes.js";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
@@ -51,6 +52,7 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 app.use(compression());
+app.use(cookieParser());
 
 // Global Rate Limiter
 const globalLimiter = rateLimit({

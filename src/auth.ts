@@ -16,11 +16,19 @@ export function revokeToken(token: string) {
  * Middleware to check for admin authentication via JWT or API Key
  */
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+    let token: string | undefined;
+
     // 1. Check for Bearer token in Authorization header
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.substring(7);
+        token = authHeader.substring(7);
+    }
+    // 2. Check for token in auth_token cookie
+    else if (req.cookies && req.cookies.auth_token) {
+        token = req.cookies.auth_token;
+    }
 
+    if (token) {
         // Check if token is blacklisted
         if (tokenBlacklist.has(token)) {
             return res.status(401).json({ message: "Token has been revoked. Please login again." });
@@ -36,7 +44,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
         }
     }
 
-    // 2. Fallback to x-api-key (deprecated)
+    // 3. Fallback to x-api-key (deprecated)
     const apiKey = req.headers["x-api-key"];
     if (apiKey === env.ADMIN_API_KEY) {
         return next();
