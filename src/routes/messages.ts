@@ -58,9 +58,9 @@ function log(message: string, level: "info" | "error" | "warn" = "info") {
 }
 
 export function registerMessageRoutes(app: Router) {
-    // GET /api/messages - List all messages (admin only)
+    // GET /messages - List all messages (admin only)
     app.get(
-        "/api/messages",
+        "/messages",
         isAuthenticated,
         asyncHandler(async (_req, res) => {
             const messages = await storage.getMessages();
@@ -68,9 +68,9 @@ export function registerMessageRoutes(app: Router) {
         })
     );
 
-    // GET /api/messages/:id - Get single message
+    // GET /messages/:id - Get single message
     app.get(
-        "/api/messages/:id",
+        "/messages/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
@@ -87,9 +87,9 @@ export function registerMessageRoutes(app: Router) {
         })
     );
 
-    // POST /api/messages - Create message (contact form)
+    // POST /messages - Create message (contact form)
     app.post(
-        api.messages.create.path,
+        "/messages",
         contactFormLimiter,
         validateBody(insertMessageApiSchema),
         asyncHandler(async (req, res) => {

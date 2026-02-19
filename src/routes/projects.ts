@@ -68,9 +68,9 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
-  // PUT /api/projects/reorder - Reorder projects
+  // PUT /projects/reorder - Reorder projects
   app.put(
-    "/api/projects/reorder",
+    "/projects/reorder",
     isAuthenticated,
     asyncHandler(async (req, res) => {
       const schema = z.object({ orderedIds: z.array(z.number()) });
@@ -80,9 +80,9 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
-  // POST /api/projects/bulk-delete
+  // POST /projects/bulk-delete
   app.post(
-    "/api/projects/bulk-delete",
+    "/projects/bulk-delete",
     isAuthenticated,
     asyncHandler(async (req, res) => {
       const schema = z.object({ ids: z.array(z.number()) });
@@ -92,9 +92,9 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
-  // POST /api/projects/bulk-status
+  // POST /projects/bulk-status
   app.post(
-    "/api/projects/bulk-status",
+    "/projects/bulk-status",
     isAuthenticated,
     asyncHandler(async (req, res) => {
       const schema = z.object({
@@ -107,9 +107,9 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
-  // PUT /api/projects/:id - Update project
+  // PUT /projects/:id - Update project
   app.put(
-    "/api/projects/:id",
+    "/projects/:id",
     isAuthenticated,
     validateBody(insertProjectApiSchema.partial()),
     asyncHandler(async (req, res) => {
@@ -123,9 +123,9 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
-  // DELETE /api/projects/:id - Delete project
+  // DELETE /projects/:id - Delete project
   app.delete(
-    "/api/projects/:id",
+    "/projects/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);

@@ -7,9 +7,9 @@ import { z } from "zod";
 const router = Router();
 
 export function registerAnalyticsRoutes(app: Router) {
-    // POST /analytics - Log an analytics event
+    // POST /analytics/track - Log an analytics event
     app.post(
-        "/analytics",
+        "/analytics/track",
         asyncHandler(async (req, res) => {
             const parsed = insertAnalyticsSchema.safeParse(req.body);
             if (!parsed.success) {

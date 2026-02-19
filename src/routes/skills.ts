@@ -31,7 +31,7 @@ export function registerSkillRoutes(app: Router) {
     // GET /api/skills/connections - List all skill connections
     // (Defined BEFORE :id to avoid conflict)
     app.get(
-        api.skills.connections.path,
+        "/skills/connections",
         asyncHandler(async (_req, res) => {
             const connections = await storage.getSkillConnections();
             res.json(connections);
@@ -107,9 +107,9 @@ export function registerSkillRoutes(app: Router) {
         })
     );
 
-    // DELETE /skills - Bulk delete skills
-    app.delete(
-        "/skills",
+    // POST /skills/bulk-delete - Bulk delete skills
+    app.post(
+        "/skills/bulk-delete",
         isAuthenticated,
         asyncHandler(async (req, res) => {
             const schema = z.object({ ids: z.array(z.number()) });
