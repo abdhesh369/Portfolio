@@ -229,9 +229,10 @@ export async function seedDatabase() {
       }
     ];
 
+    const currentMindsets = await storage2.getMindset();
     for (const mindset of mindsetList) {
       try {
-        const existing = await storage2.getMindset().then(m => m.find(i => i.title === mindset.title));
+        const existing = currentMindsets.find(i => i.title === mindset.title);
         if (existing) {
           logSeed(`Mindset already exists, skipping: ${mindset.title} `);
           continue;
@@ -260,11 +261,17 @@ export async function seedDatabase() {
       },
     ];
 
+    const currentExperiences = await storage2.getExperiences();
     successCount = 0;
     failCount = 0;
 
     for (const exp of experienceList) {
       try {
+        const existing = currentExperiences.find(e => e.role === exp.role && e.organization === exp.organization);
+        if (existing) {
+          logSeed(`Experience already exists, skipping: ${exp.role} `);
+          continue;
+        }
         await storage2.createExperience(exp);
         logSeed(`Seeded experience: ${exp.role} `);
         successCount++;
@@ -274,18 +281,23 @@ export async function seedDatabase() {
       }
     }
 
-    logSeed(`Experiences: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Experiences: ${successCount} seeded`);
 
-    try {
-      await storage2.createMessage({
-        name: "Portfolio System",
-        email: "system@portfolio.local",
-        subject: "Database Initialized",
-        message: "This is a sample message created during database seeding. Your contact form is working correctly!",
-      });
-      logSeed("Seeded sample message");
-    } catch (err) {
-      logSeed(`Failed to seed sample message: ${err} `, "error");
+    const existingMessages = await storage2.getMessages();
+    if (existingMessages.length === 0) {
+      try {
+        await storage2.createMessage({
+          name: "Portfolio System",
+          email: "system@portfolio.local",
+          subject: "Database Initialized",
+          message: "This is a sample message created during database seeding. Your contact form is working correctly!",
+        });
+        logSeed("Seeded sample message");
+      } catch (err) {
+        logSeed(`Failed to seed sample message: ${err} `, "error");
+      }
+    } else {
+      logSeed("Messages already exist, skipping sample message seeding.");
     }
 
     const emailTemplates = [
@@ -301,8 +313,14 @@ export async function seedDatabase() {
       },
     ];
 
+    const currentTemplates = await storage2.getEmailTemplates();
     for (const template of emailTemplates) {
       try {
+        const existing = currentTemplates.find(t => t.name === template.name);
+        if (existing) {
+          logSeed(`Email template already exists, skipping: ${template.name}`);
+          continue;
+        }
         await storage2.createEmailTemplate(template);
         logSeed(`Seeded email template: ${template.name}`);
       } catch (err) {
