@@ -1,0 +1,22 @@
+# Abdhesh Sah - Full-Stack Engineer Portfolio
+
+## Basics
+- **Name**: Abdhesh Sah
+- **Role**: Full-Stack Engineer & System Architect
+- **Location**: Kathmandu, Nepal
+- **Email**: abdheshshah111@gmail.com
+- **Website**: https://abdheshsah.com.np
+
+## Skills
+- **Languages**: JavaScript, TypeScript, C++, Python, SQL
+- **Frontend**: React, Next.js, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Express, Drizzle ORM, PostgreSQL
+- **Tools**: Git, Docker, AWS, Render
+
+## Summary
+Senior Full-Stack Engineer specialized in building high-performance web systems. Passionate about system design, algorithmic problem solving, and creating intuitive user experiences.
+
+## Links
+- **GitHub**: https://github.com/abdhesh369
+- **LinkedIn**: https://www.linkedin.com/in/abdhesh369
+- **Twitter/X**: https://x.com/abdhesh369

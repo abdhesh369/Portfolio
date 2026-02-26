@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2020"
+    ],
+    "module": "NodeNext",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false, // ✅ must emit JS files
+    "outDir": "dist", // ✅ output directory for compiled JS
+    "rootDir": ".", // ✅ source root
+    "moduleResolution": "NodeNext",
+    "baseUrl": ".",
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": [
+    "src",
+    "shared"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://abdheshsah.com.np/sitemap.xml
+
+# Crawl-delay (optional, for polite crawlers)
+Crawl-delay: 1
