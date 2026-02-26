@@ -1,0 +1,10 @@
+
+> frontend@1.0.0 build
+> tsc && vite build && cp dist/index.html dist/200.html
+
+shared/routes.ts(388,30): error TS2345: Argument of type 'ZodObject<{ id: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; title: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; slug: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; ... 12 more ...; tags: ZodOptional<...>; }, { ...; }>' is not assignable to parameter of type 'ZodTypeAny'.
+  Type 'ZodObject<{ id: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; title: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; slug: ZodType<Buffer, unknown, $ZodTypeInternals<Buffer, unknown>>; ... 12 more ...; tags: ZodOptional<...>; }, { ...; }>' is missing the following properties from type 'ZodType<any, any, any>': _type, _parse, _getType, _getOrReturnCtx, and 7 more.
+src/components/admin/tabs/SeoTab.tsx(19,72): error TS2554: Expected 2-3 arguments, but got 4.
+src/components/admin/tabs/SeoTab.tsx(26,68): error TS2554: Expected 2-3 arguments, but got 4.
+src/components/admin/tabs/SeoTab.tsx(42,75): error TS2554: Expected 2-3 arguments, but got 4.
+src/components/admin/tabs/SeoTab.tsx(58,69): error TS2554: Expected 2-3 arguments, but got 4.

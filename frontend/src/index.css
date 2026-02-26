@@ -1,0 +1,570 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================== CSS VARIABLES ==================== */
+
+:root {
+  /* Fonts */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Light Theme Colors */
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --card-border: 214 32% 91%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --popover-border: 214 32% 91%;
+  
+  --primary: 262 83% 58%;
+  --primary-foreground: 210 40% 98%;
+  --primary-border: 262 83% 58%;
+  
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --secondary-border: 214 32% 91%;
+  
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --muted-border: 214 32% 91%;
+  
+  --accent: 262 83% 58%;
+  --accent-foreground: 210 40% 98%;
+  --accent-border: 262 83% 58%;
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --destructive-border: 0 84% 60%;
+
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 262 83% 58%;
+
+  --radius: 0.75rem;
+  
+  /* Chart Colors */
+  --chart-1: 262 83% 58%;
+  --chart-2: 239 84% 67%;
+  --chart-3: 200 98% 39%;
+  --chart-4: 43 96% 56%;
+  --chart-5: 27 87% 67%;
+}
+
+.dark {
+  /* Dark Theme Colors */
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  
+  --card: 222 47% 11%;
+  --card-foreground: 213 31% 91%;
+  --card-border: 216 34% 17%;
+  
+  --popover: 222 47% 11%;
+  --popover-foreground: 213 31% 91%;
+  --popover-border: 216 34% 17%;
+  
+  --primary: 263 70% 50%;
+  --primary-foreground: 210 40% 98%;
+  --primary-border: 263 70% 50%;
+  
+  --secondary: 222 47% 11%;
+  --secondary-foreground: 210 40% 98%;
+  --secondary-border: 216 34% 17%;
+  
+  --muted: 223 47% 11%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --muted-border: 216 34% 17%;
+  
+  --accent: 263 70% 50%;
+  --accent-foreground: 210 40% 98%;
+  --accent-border: 263 70% 50%;
+  
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+  --destructive-border: 0 63% 31%;
+  
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
+  --ring: 263 70% 50%;
+}
+
+/* ==================== BASE STYLES ==================== */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    @apply selection:bg-primary/20 selection:text-primary;
+    font-family: var(--font-body);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg;
+  }
+
+  p {
+    @apply text-base leading-relaxed text-muted-foreground;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
+
+  /* Focus visible for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/* ==================== COMPONENT UTILITIES ==================== */
+
+@layer components {
+  /* Container */
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+  }
+  
+  /* Glass Effect Card */
+  .glass-card {
+    @apply backdrop-blur-md border border-border/50 shadow-lg;
+    @apply transition-all duration-300 hover:shadow-xl hover:border-border;
+    background-color: hsl(var(--card) / 0.8);
+  }
+  
+  /* Navigation Links */
+  .nav-link {
+    @apply relative text-muted-foreground hover:text-primary;
+    @apply transition-colors duration-200 cursor-pointer;
+    @apply text-sm font-medium tracking-wide;
+  }
+  
+  .nav-link.active {
+    @apply text-primary font-semibold;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
+    @apply hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
+    @apply hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-foreground hover:bg-muted;
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
+  }
+
+  /* Cards */
+  .card-hover {
+    @apply transition-all duration-300;
+    @apply hover:-translate-y-1 hover:shadow-2xl;
+  }
+
+  /* Section Headers */
+  .section-header {
+    @apply text-center mb-12 md:mb-16;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto;
+  }
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+  @apply hover:bg-muted-foreground/50 transition-colors;
+}
+
+::-webkit-scrollbar-corner {
+  @apply bg-secondary;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--secondary));
+}
+
+/* ==================== CUSTOM UTILITIES ==================== */
+
+@layer utilities {
+  /* Text Gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--primary)),
+      hsl(263 70% 60%),
+      hsl(239 84% 67%)
+    );
+    background-size: 200% 200%;
+    animation: gradient-x 15s ease infinite;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(263 70% 60%)
+    );
+  }
+
+  .bg-gradient-secondary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--secondary)),
+      hsl(var(--muted))
+    );
+  }
+
+  /* Animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.5s ease-out forwards;
+  }
+
+  /* Utilities */
+  .blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  .blur-md {
+    backdrop-filter: blur(8px);
+  }
+
+  .blur-lg {
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* ==================== KEYFRAME ANIMATIONS ==================== */
+
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+  * {
+    @apply text-black bg-white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==================== SKILL TREE STYLES ==================== */
+
+:root {
+  /* Skill Tree Colors */
+  --skill-cyan: 188 100% 50%;
+  --skill-magenta: 300 100% 50%;
+  --skill-purple: 270 100% 60%;
+  --skill-dark: 240 50% 8%;
+}
+
+/* Skill tree specific animations */
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px currentColor);
+    opacity: 0.8;
+  }
+  50% {
+    filter: drop-shadow(0 0 25px currentColor);
+    opacity: 1;
+  }
+}
+
+@keyframes crystal-shimmer {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes hexagon-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hexagon clip path utility */
+.clip-hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Glow utilities for skill tree */
+.glow-cyan {
+  box-shadow: 0 0 20px hsl(var(--skill-cyan) / 0.5),
+              0 0 40px hsl(var(--skill-cyan) / 0.3),
+              inset 0 0 20px hsl(var(--skill-cyan) / 0.1);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px hsl(var(--skill-purple) / 0.5),
+              0 0 40px hsl(var(--skill-purple) / 0.3),
+              inset 0 0 20px hsl(var(--skill-purple) / 0.1);
+}
+
+.glow-magenta {
+  box-shadow: 0 0 20px hsl(var(--skill-magenta) / 0.5),
+              0 0 40px hsl(var(--skill-magenta) / 0.3),
+              inset 0 0 20px hsl(var(--skill-magenta) / 0.1);
+}
+
+/* Glass panel for skill tree stats */
+.skill-glass-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 40, 0.8) 0%,
+    rgba(40, 20, 60, 0.6) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(100, 100, 150, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Skill tree text glow */
+.text-glow-cyan {
+  text-shadow: 0 0 10px hsl(var(--skill-cyan)),
+               0 0 20px hsl(var(--skill-cyan) / 0.5);
+}
+/* ==================== SYNTAX HIGHLIGHTING (HLJS) ==================== */
+.prose pre code {
+  @apply bg-transparent p-0 border-none;
+}
+
+.hljs-comment,
+.hljs-quote {
+  @apply text-gray-500 italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  @apply text-purple-400 font-semibold;
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  @apply text-cyan-400;
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  @apply text-yellow-400;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  @apply text-orange-400;
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  @apply text-red-400;
+}
+
+.hljs-formula {
+  @apply bg-gray-800;
+}
+
+.hljs-emphasis {
+  @apply italic;
+}
+
+.hljs-strong {
+  @apply font-bold;
+}
