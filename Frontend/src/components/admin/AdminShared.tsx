@@ -1,13 +1,13 @@
 import React from "react";
 
-export function FormField({ label, value, onChange, placeholder, required }: {
-    label: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean;
+export function FormField({ label, value, onChange, placeholder, required, type = "text" }: {
+    label: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean; type?: string;
 }) {
     return (
         <div>
             <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">{label}</label>
             <input
-                type="text"
+                type={type}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}

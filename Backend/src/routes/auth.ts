@@ -49,11 +49,13 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         { expiresIn: "24h" }
     );
 
+    const isProd = process.env.NODE_ENV === "production";
+
     // Set HttpOnly cookie
     res.cookie("auth_token", token, {
         httpOnly: true,
-        secure: true, // Always true for SameSite=none
-        sameSite: "none", // Required for cross-domain production deployment
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
@@ -90,11 +92,13 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
         revokeToken(token);
     }
 
+    const isProd = process.env.NODE_ENV === "production";
+
     // 2. Clear cookie (must match flags used when setting)
     res.clearCookie("auth_token", {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none'
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax"
     });
 
     res.json({ message: "Logged out successfully" });

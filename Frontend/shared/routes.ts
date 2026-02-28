@@ -7,15 +7,17 @@ import {
     messageSchema,
     mindsetSchema,
     analyticsSchema,
-    articleSchema,
+    serviceSchema,
     insertProjectApiSchema,
     insertSkillApiSchema,
     insertExperienceApiSchema,
     insertMessageApiSchema,
     insertAnalyticsSchema,
-    insertArticleApiSchema,
+    insertServiceApiSchema,
     testimonialSchema,
     insertTestimonialApiSchema,
+    articleSchema,
+    insertArticleApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -295,6 +297,73 @@ export const api = {
         },
     },
 
+    // ---------- SERVICES ----------
+    services: {
+        list: {
+            method: "GET" as const,
+            path: "/api/services",
+            description: "List all services (public, cached)",
+            responses: {
+                200: z.array(serviceSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/services/:id",
+            description: "Get single service by ID (public)",
+            responses: {
+                200: serviceSchema,
+                400: errorSchemas.badRequest,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/services",
+            description: "Create new service (admin only)",
+            input: insertServiceApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: createSuccessResponse(serviceSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/services/:id",
+            description: "Update service by ID (admin only)",
+            input: insertServiceApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(serviceSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/services/:id",
+            description: "Delete service by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                400: errorSchemas.badRequest,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
     // ---------- MESSAGES ----------
     messages: {
         list: {
@@ -380,68 +449,6 @@ export const api = {
         },
     },
 
-    // ---------- ARTICLES ----------
-    articles: {
-        list: {
-            method: "GET" as const,
-            path: "/api/articles",
-            description: "List all articles (public/admin)",
-            responses: {
-                200: z.array(articleSchema as any),
-                500: errorSchemas.internal,
-            },
-        },
-        get: {
-            method: "GET" as const,
-            path: "/api/articles/:slug",
-            description: "Get single article by slug (public)",
-            responses: {
-                200: articleSchema,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        create: {
-            method: "POST" as const,
-            path: "/api/articles",
-            description: "Create new article (admin only)",
-            input: insertArticleApiSchema,
-            requiresAuth: true,
-            responses: {
-                201: articleSchema,
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                500: errorSchemas.internal,
-            },
-        },
-        update: {
-            method: "PATCH" as const,
-            path: "/api/articles/:id",
-            description: "Update article by ID (admin only)",
-            input: insertArticleApiSchema.partial(),
-            requiresAuth: true,
-            responses: {
-                200: articleSchema,
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        delete: {
-            method: "DELETE" as const,
-            path: "/api/articles/:id",
-            description: "Delete article by ID (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-    },
-
     // ---------- TESTIMONIALS ----------
     testimonials: {
         list: {
@@ -495,6 +502,67 @@ export const api = {
             method: "DELETE" as const,
             path: "/api/testimonials/:id",
             description: "Delete testimonial by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- ARTICLES ----------
+    articles: {
+        list: {
+            method: "GET" as const,
+            path: "/api/articles",
+            description: "List all articles (public/admin)",
+            responses: {
+                200: z.array(articleSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/articles/:slug",
+            description: "Get single article by slug (public)",
+            responses: {
+                200: articleSchema,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/articles",
+            description: "Create new article (admin only)",
+            input: insertArticleApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: articleSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/articles/:id",
+            description: "Update article by ID (admin only)",
+            input: insertArticleApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: articleSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/articles/:id",
+            description: "Delete article by ID (admin only)",
             requiresAuth: true,
             responses: {
                 204: z.void(),

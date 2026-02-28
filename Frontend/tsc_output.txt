@@ -1,0 +1,2 @@
+src/components/admin/tabs/ServicesTab.tsx(135,15): error TS2322: Type '{ label: string; type: string; value: string; onChange: (v: string) => void; }' is not assignable to type 'IntrinsicAttributes & { label: string; value: string; onChange: (v: string) => void; placeholder?: string | undefined; required?: boolean | undefined; }'.
+  Property 'type' does not exist on type 'IntrinsicAttributes & { label: string; value: string; onChange: (v: string) => void; placeholder?: string | undefined; required?: boolean | undefined; }'.

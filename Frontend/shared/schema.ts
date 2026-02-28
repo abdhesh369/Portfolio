@@ -20,6 +20,9 @@ export const projectsTable = pgTable("projects", {
   systemDesign: text("systemDesign"),
   challenges: text("challenges"),
   learnings: text("learnings"),
+  isFlagship: boolean("isFlagship").notNull().default(false),
+  impact: text("impact"),
+  role: text("role"),
 });
 
 export const skillsTable = pgTable("skills", {
@@ -128,6 +131,16 @@ export const articleTagsTable = pgTable("article_tags", {
   tag: varchar("tag", { length: 100 }).notNull(),
 });
 
+export const servicesTable = pgTable("services", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  summary: text("summary").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  tags: jsonb("tags").notNull(),
+  displayOrder: integer("displayOrder").notNull().default(0),
+  isFeatured: boolean("isFeatured").notNull().default(false),
+});
+
 export const testimonialsTable = pgTable("testimonials", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -160,6 +173,21 @@ export const insertMessageSchema = createInsertSchema(messagesTable);
 export const selectMindsetSchema = createSelectSchema(mindsetTable);
 export const insertMindsetSchema = createInsertSchema(mindsetTable);
 
+export const selectEmailTemplateSchema = createSelectSchema(emailTemplatesTable);
+export const insertEmailTemplateSchema = createInsertSchema(emailTemplatesTable);
+
+export const selectSeoSettingsSchema = createSelectSchema(seoSettingsTable);
+export const insertSeoSettingsSchema = createInsertSchema(seoSettingsTable);
+
+export const selectArticleSchema = createSelectSchema(articlesTable);
+export const insertArticleSchema = createInsertSchema(articlesTable);
+
+export const selectArticleTagSchema = createSelectSchema(articleTagsTable);
+export const insertArticleTagSchema = createInsertSchema(articleTagsTable);
+
+export const selectServiceSchema = createSelectSchema(servicesTable);
+export const insertServiceSchema = createInsertSchema(servicesTable);
+
 export const selectTestimonialSchema = createSelectSchema(testimonialsTable);
 export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
 
@@ -191,6 +219,9 @@ export const projectSchema = z.object({
   systemDesign: z.string().max(5000).nullish(),
   challenges: z.string().max(5000).nullish(),
   learnings: z.string().max(5000).nullish(),
+  isFlagship: z.boolean().default(false),
+  impact: z.string().max(5000).nullish(),
+  role: z.string().max(5000).nullish(),
 });
 
 export const insertProjectApiSchema = z.object({
@@ -207,6 +238,9 @@ export const insertProjectApiSchema = z.object({
   systemDesign: z.string().max(5000).nullable().optional(),
   challenges: z.string().max(5000).nullable().optional(),
   learnings: z.string().max(5000).nullable().optional(),
+  isFlagship: z.boolean().default(false).optional(),
+  impact: z.string().max(5000).nullable().optional(),
+  role: z.string().max(5000).nullable().optional(),
 });
 
 export const skillSchema = z.object({
@@ -246,6 +280,13 @@ export const mindsetSchema = z.object({
   tags: z.array(z.string()).default([]),
 });
 
+export const insertMindsetApiSchema = z.object({
+  title: z.string().min(1).max(255),
+  description: z.string().max(5000).default(""),
+  icon: z.string().max(100).default("Brain"),
+  tags: z.array(z.string()).default([]),
+});
+
 export const experienceSchema = z.object({
   id: z.number(),
   role: z.string().min(1).max(200),
@@ -255,12 +296,31 @@ export const experienceSchema = z.object({
   type: z.string().max(100),
 });
 
+export const serviceSchema = z.object({
+  id: z.number(),
+  title: z.string().min(1).max(255),
+  summary: z.string().min(1).max(5000),
+  category: z.string().min(1).max(100),
+  tags: z.array(z.string()).default([]),
+  displayOrder: z.number().default(0),
+  isFeatured: z.boolean().default(false),
+});
+
 export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().min(1).max(100),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
+});
+
+export const insertServiceApiSchema = z.object({
+  title: z.string().min(1).max(255),
+  summary: z.string().min(1).max(5000),
+  category: z.string().min(1).max(100),
+  tags: z.array(z.string()).default([]),
+  displayOrder: z.number().default(0),
+  isFeatured: z.boolean().default(false),
 });
 
 export const testimonialSchema = z.object({
@@ -339,28 +399,35 @@ export const insertEmailTemplateApiSchema = z.object({
   body: z.string().min(1).max(10000),
 });
 
-export const insertSeoSettingsApiSchema = z.object({
+export const seoSettingsSchema = z.object({
+  id: z.number(),
   pageSlug: z.string().min(1).max(100),
-  metaTitle: z.string().min(1).max(255),
-  metaDescription: z.string().min(1).max(5000),
-  keywords: z.string().max(1000).optional(),
-  ogTitle: z.string().max(255).optional().nullable(),
-  ogDescription: z.string().max(5000).optional().nullable(),
-  ogImage: z.string().max(500).optional().nullable(),
+  metaTitle: z.string().min(1).max(60),
+  metaDescription: z.string().min(1).max(160),
+  ogTitle: z.string().max(255).nullable().optional(),
+  ogDescription: z.string().nullable().optional(),
+  ogImage: z.string().url().max(500).nullable().optional(),
+  keywords: z.string().nullable().optional(),
+  canonicalUrl: z.string().url().max(500).nullable().optional(),
   noindex: z.boolean().default(false),
-  canonicalUrl: z.string().max(500).optional().nullable(),
-  twitterCard: z.string().max(50).default("summary_large_image"),
+  twitterCard: z.string().default("summary_large_image"),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
-// ================= DATABASE SELECT/INSERT SCHEMAS =================
+export const insertSeoSettingsApiSchema = z.object({
+  pageSlug: z.string().min(1).max(100),
+  metaTitle: z.string().min(1).max(60),
+  metaDescription: z.string().min(1).max(160),
+  ogTitle: z.string().max(255).nullable().optional(),
+  ogDescription: z.string().nullable().optional(),
+  ogImage: z.string().url().max(500).nullable().optional(),
+  keywords: z.string().nullable().optional(),
+  canonicalUrl: z.string().url().max(500).nullable().optional(),
+  noindex: z.boolean().default(false),
+  twitterCard: z.string().default("summary_large_image"),
+});
 
-export const selectEmailTemplateSchema = createSelectSchema(emailTemplatesTable);
-export const insertEmailTemplateSchema = createInsertSchema(emailTemplatesTable);
-
-export const selectSeoSettingsSchema = createSelectSchema(seoSettingsTable);
-export const insertSeoSettingsSchema = createInsertSchema(seoSettingsTable);
-
-export const selectArticleSchema = createSelectSchema(articlesTable);
 export const articleSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -379,25 +446,19 @@ export const articleSchema = z.object({
   updatedAt: z.coerce.date(),
   tags: z.array(z.string()).optional(),
 });
-export const insertArticleSchema = createInsertSchema(articlesTable);
-
-export const selectArticleTagSchema = createSelectSchema(articleTagsTable);
-export const insertArticleTagSchema = createInsertSchema(articleTagsTable);
-
-// ================= CUSTOM API SCHEMAS =================
 
 export const insertArticleApiSchema = z.object({
   title: z.string().min(1).max(255),
-  slug: z.string().min(1).max(255).optional(), // Can be auto-generated
+  slug: z.string().max(255).optional(),
   content: z.string().min(1),
-  excerpt: z.string().optional(),
-  featuredImage: z.string().max(500).optional().nullable(),
+  excerpt: z.string().nullable().optional(),
+  featuredImage: z.string().url().max(500).nullable().optional(),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
-  publishedAt: z.string().optional().nullable(), // Sent as ISO string
-  readTimeMinutes: z.number().optional(), // Can be auto-calculated
-  metaTitle: z.string().max(60).optional(),
-  metaDescription: z.string().max(160).optional(),
-  tags: z.array(z.string()).optional(), // Helper to insert tags
+  publishedAt: z.string().nullable().optional(),
+  readTimeMinutes: z.number().default(0),
+  metaTitle: z.string().max(255).nullable().optional(),
+  metaDescription: z.string().nullable().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const updateArticleApiSchema = insertArticleApiSchema.partial();
@@ -408,24 +469,25 @@ export type Project = z.infer<typeof projectSchema>;
 export type Skill = z.infer<typeof skillSchema>;
 export type SkillConnection = z.infer<typeof skillConnectionSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
+export type Service = z.infer<typeof serviceSchema>;
 export type Message = z.infer<typeof messageSchema>;
 export type Mindset = z.infer<typeof mindsetSchema>;
 export type Analytics = z.infer<typeof analyticsSchema>;
 export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
-export type SeoSettings = typeof seoSettingsTable.$inferSelect;
+export type SeoSettings = z.infer<typeof seoSettingsSchema>;
+export type Article = z.infer<typeof articleSchema>;
+export type Testimonial = z.infer<typeof testimonialSchema>;
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
+export type InsertService = z.infer<typeof insertServiceApiSchema>;
 export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateApiSchema>;
 export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
-
-export type Article = z.infer<typeof articleSchema>;
-export type ArticleTag = typeof articleTagsTable.$inferSelect;
+export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
-export type Testimonial = z.infer<typeof testimonialSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 
 // ================= TYPE GUARDS =================
@@ -448,8 +510,8 @@ export function isMindset(obj: unknown): obj is Mindset {
 export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
   return emailTemplateSchema.safeParse(obj).success;
 }
-export function isArticle(obj: unknown): obj is Article {
-  return articleSchema.safeParse(obj).success;
+export function isSeoSettings(obj: unknown): obj is SeoSettings {
+  return seoSettingsSchema.safeParse(obj).success;
 }
 export function isTestimonial(obj: unknown): obj is Testimonial {
   return testimonialSchema.safeParse(obj).success;

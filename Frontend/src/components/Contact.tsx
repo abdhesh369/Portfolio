@@ -191,6 +191,31 @@ export default function Contact() {
                 <SocialLink href="https://www.linkedin.com/in/abdhesh369" icon={Linkedin} label="LinkedIn" delay={0.5} />
               </div>
             </div>
+
+            {/* Availability Block */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              className="p-6 rounded-2xl border border-green-500/20 bg-green-500/5 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.1)] relative overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/10 to-green-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <div className="w-1 h-6 bg-green-500 rounded-full" />
+                Current Status
+              </h3>
+              <div className="flex items-center gap-4">
+                <div className="relative flex shrink-0 h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+                </div>
+                <div>
+                  <p className="text-green-400 font-medium font-mono text-sm leading-tight">Available for Opportunities</p>
+                  <p className="text-xs text-gray-400 mt-1">Open to Full-Time & Freelance</p>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
           {/* Form Terminal */}

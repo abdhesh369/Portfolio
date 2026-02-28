@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp } from "lucide-react";
+import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Animated Counter
@@ -256,6 +256,37 @@ export default function WhyHireMe() {
                 </motion.li>
               ))}
             </ul>
+          </div>
+        </motion.div>
+
+        {/* Tech Stack Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-12"
+        >
+          <div className="p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10">
+            <h3 className="text-xl font-bold mb-8 flex items-center justify-center gap-2 text-center text-white">
+              <Terminal className="w-5 h-5 text-primary" />
+              Development Stack
+            </h3>
+
+            <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+              {["TypeScript", "React", "Node.js", "Express", "PostgreSQL", "Drizzle ORM", "Tailwind CSS", "Framer Motion", "Vite", "Docker", "REST APIs", "Git"].map((tech, i) => (
+                <motion.div
+                  key={tech}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ y: -2 }}
+                  className="px-4 py-2 bg-primary/5 hover:bg-primary/20 border border-primary/20 hover:border-primary/50 text-gray-200 hover:text-white rounded-xl transition-all font-mono text-sm cursor-default shadow-sm"
+                >
+                  {tech}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
