@@ -30,6 +30,7 @@ const emptyProject = {
     title: "", description: "", techStack: [] as string[], imageUrl: "",
     githubUrl: "", liveUrl: "", category: "", status: "Completed",
     problemStatement: "", motivation: "", systemDesign: "", challenges: "", learnings: "",
+    isFlagship: false, impact: "", role: "",
 };
 
 function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSelect }: {
@@ -79,8 +80,13 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
             </div>
             <img src={project.imageUrl} alt={project.title} className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5" />
             <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <p className="font-semibold text-white text-sm">{project.title}</p>
+                    {project.isFlagship && (
+                        <Badge variant="outline" className="text-[10px] border border-amber-400/40 text-amber-300 bg-amber-500/10">
+                            Flagship
+                        </Badge>
+                    )}
                     {project.status && (
                         <Badge variant="outline" className={`text-[10px] border ${statusColors[project.status] || "border-white/10"}`}>
                             {project.status}
@@ -182,6 +188,9 @@ export function ProjectsTab({ token }: { token: string | null }) {
             systemDesign: p.systemDesign ?? "",
             challenges: p.challenges ?? "",
             learnings: p.learnings ?? "",
+            isFlagship: p.isFlagship ?? false,
+            impact: p.impact ?? "",
+            role: p.role ?? "",
         });
         setTechInput((p.techStack ?? []).join(", "));
     };
@@ -237,17 +246,28 @@ export function ProjectsTab({ token }: { token: string | null }) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <FormField label="Category *" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required />
-                        <div>
-                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">Status</label>
-                            <select
-                                value={editing.status || "Completed"}
-                                onChange={(e) => setEditing({ ...editing, status: e.target.value })}
-                                className="w-full px-3 py-2.5 rounded-lg text-white text-sm bg-[hsl(224_71%_4%_/_0.5)] border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 transition-all outline-none"
-                            >
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Archived">Archived</option>
-                            </select>
+                        <div className="space-y-2">
+                            <div>
+                                <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">Status</label>
+                                <select
+                                    value={editing.status || "Completed"}
+                                    onChange={(e) => setEditing({ ...editing, status: e.target.value })}
+                                    className="w-full px-3 py-2.5 rounded-lg text-white text-sm bg-[hsl(224_71%_4%_/_0.5)] border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 transition-all outline-none"
+                                >
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Archived">Archived</option>
+                                </select>
+                            </div>
+                            <label className="inline-flex items-center gap-2 text-xs text-white/70">
+                                <input
+                                    type="checkbox"
+                                    className="rounded border-white/30 bg-transparent"
+                                    checked={Boolean(editing.isFlagship)}
+                                    onChange={(e) => setEditing({ ...editing, isFlagship: e.target.checked })}
+                                />
+                                Mark as flagship case study
+                            </label>
                         </div>
                     </div>
 
@@ -261,6 +281,8 @@ export function ProjectsTab({ token }: { token: string | null }) {
                         <RichTextEditor label="System Design" value={editing.systemDesign ?? ""} onChange={(v) => setEditing({ ...editing, systemDesign: v })} />
                         <RichTextEditor label="Challenges" value={editing.challenges ?? ""} onChange={(v) => setEditing({ ...editing, challenges: v })} />
                         <RichTextEditor label="Learnings" value={editing.learnings ?? ""} onChange={(v) => setEditing({ ...editing, learnings: v })} />
+                        <RichTextEditor label="Impact" value={editing.impact ?? ""} onChange={(v) => setEditing({ ...editing, impact: v })} />
+                        <RichTextEditor label="Your Role" value={editing.role ?? ""} onChange={(v) => setEditing({ ...editing, role: v })} />
                     </div>
 
                     <div className="flex gap-3 pt-2">

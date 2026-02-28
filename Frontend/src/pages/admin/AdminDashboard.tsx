@@ -10,10 +10,12 @@ import { MessagesTab } from "@/components/admin/tabs/MessagesTab";
 import { ProjectsTab } from "@/components/admin/tabs/ProjectsTab";
 import { SkillsTab } from "@/components/admin/tabs/SkillsTab";
 import { ExperiencesTab } from "@/components/admin/tabs/ExperiencesTab";
+import { ServicesTab } from "@/components/admin/tabs/ServicesTab";
 import { SeoTab } from "@/components/admin/tabs/SeoTab";
 import { ArticlesTab } from "@/components/admin/tabs/ArticlesTab";
+import { TestimonialsTab } from "@/components/admin/tabs/TestimonialsTab";
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "seo" | "articles";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials";
 
 export default function AdminDashboard() {
     const [tab, setTab] = useState<Tab>("overview");
@@ -27,8 +29,10 @@ export default function AdminDashboard() {
         { key: "projects", label: "Projects", icon: "🚀" },
         { key: "skills", label: "Skills", icon: "⚡" },
         { key: "experiences", label: "Experiences", icon: "💼" },
+        { key: "services", label: "Services", icon: "🛠️" },
         { key: "seo", label: "SEO", icon: "🔍" },
         { key: "articles", label: "Articles", icon: "📝" },
+        { key: "testimonials", label: "Testimonials", icon: "⭐" },
     ];
 
     return (
@@ -83,7 +87,9 @@ export default function AdminDashboard() {
                 {tab === "skills" && <SkillsTab token={token} />}
                 {tab === "experiences" && <ExperiencesTab token={token} />}
                 {tab === "seo" && <SeoTab token={token} />}
+                {tab === "services" && <ServicesTab token={token} />}
                 {tab === "articles" && <ArticlesTab token={token} />}
+                {tab === "testimonials" && <TestimonialsTab token={token} />}
             </main>
         </div>
     );

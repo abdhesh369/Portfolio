@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,8 +9,9 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Link2, Check } from "lucide-react";
 import { Link } from "wouter";
+import { API_BASE_URL } from "@/lib/api-helpers";
 
 function PostSkeleton() {
     return (
@@ -36,6 +37,22 @@ export default function BlogPost() {
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
+    const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
+    const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        if (!slug) return;
+        fetch(`${API_BASE_URL}/api/v1/articles/related/${slug}`)
+            .then(res => res.ok ? res.json() : [])
+            .then(data => setRelatedArticles(data))
+            .catch(() => setRelatedArticles([]));
+    }, [slug]);
+
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    }
 
     if (isLoading) {
         return (
@@ -155,6 +172,53 @@ export default function BlogPost() {
                         animate-fade-in pt-8"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
                     />
+
+                    {/* Share button */}
+                    <div className="mt-12 flex items-center gap-3">
+                        <button
+                            onClick={copyLink}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm"
+                        >
+                            {copied ? (
+                                <><Check className="w-4 h-4 text-green-400" /> Copied!</>
+                            ) : (
+                                <><Link2 className="w-4 h-4" /> Copy Link</>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Related articles strip */}
+                    {relatedArticles.length > 0 && (
+                        <section className="mt-16 pt-16 border-t border-white/10">
+                            <h3 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
+                                Related Articles
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {relatedArticles.map((related: any) => (
+                                    <Link key={related.id} href={`/blog/${related.slug}`}>
+                                        <motion.div
+                                            whileHover={{ y: -4 }}
+                                            className="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 hover:border-primary/20 transition-all bg-white/[0.02]"
+                                        >
+                                            <div className="aspect-video bg-white/5 relative overflow-hidden">
+                                                {related.featuredImage ? (
+                                                    <img src={related.featuredImage} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📝</div>
+                                                )}
+                                            </div>
+                                            <div className="p-4">
+                                                <h4 className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                                                    {related.title}
+                                                </h4>
+                                                <p className="text-xs text-white/40 line-clamp-2">{related.excerpt}</p>
+                                            </div>
+                                        </motion.div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     <footer className="mt-16 pt-16 border-t border-white/10">
                         <div className="bg-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-white/5">

@@ -14,6 +14,8 @@ import {
     insertMessageApiSchema,
     insertAnalyticsSchema,
     insertArticleApiSchema,
+    testimonialSchema,
+    insertTestimonialApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -430,6 +432,69 @@ export const api = {
             method: "DELETE" as const,
             path: "/api/articles/:id",
             description: "Delete article by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
+    // ---------- TESTIMONIALS ----------
+    testimonials: {
+        list: {
+            method: "GET" as const,
+            path: "/api/testimonials",
+            description: "List all testimonials (public, cached)",
+            responses: {
+                200: z.array(testimonialSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/testimonials/:id",
+            description: "Get single testimonial by ID (public)",
+            responses: {
+                200: testimonialSchema,
+                400: errorSchemas.badRequest,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/testimonials",
+            description: "Create new testimonial (admin only)",
+            input: insertTestimonialApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: testimonialSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/testimonials/:id",
+            description: "Update testimonial by ID (admin only)",
+            input: insertTestimonialApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: testimonialSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/testimonials/:id",
+            description: "Delete testimonial by ID (admin only)",
             requiresAuth: true,
             responses: {
                 204: z.void(),

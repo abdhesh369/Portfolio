@@ -9,10 +9,12 @@ import { SEO } from "@/components/SEO";
 const About = lazy(() => import("@/components/About"));
 const Skills = lazy(() => import("@/components/Skills"));
 const WhyHireMe = lazy(() => import("@/components/WhyHireMe"));
+const Services = lazy(() => import("@/components/Services"));
 const EngineeringMindset = lazy(() => import("@/components/EngineeringMindset"));
 const Projects = lazy(() => import("@/components/Projects"));
 const CodeAndPractice = lazy(() => import("@/components/CodeAndPractice"));
 const Experience = lazy(() => import("@/components/Experience"));
+const Testimonials = lazy(() => import("@/components/Testimonials"));
 const Contact = lazy(() => import("@/components/Contact"));
 const Footer = lazy(() => import("@/components/Footer"));
 
@@ -74,6 +76,9 @@ export default function Home() {
           <WhyHireMe />
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
+          <Services />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <EngineeringMindset />
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
@@ -84,6 +89,9 @@ export default function Home() {
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
           <Experience />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Testimonials />
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
           <Contact />

@@ -9,9 +9,11 @@ import { authRoutes } from "./routes/auth.js";
 import { registerUploadRoutes } from "./routes/upload.js";
 import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerEmailTemplateRoutes } from "./routes/email-templates.js";
+import { registerServiceRoutes } from "./routes/services.js";
 import seoRoutes from "./routes/seo.js";
 import sitemapRoutes from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
+import { registerTestimonialRoutes } from "./routes/testimonials.js";
 
 export function registerRoutes(app: Express) {
   const v1Router = Router();
@@ -28,9 +30,11 @@ export function registerRoutes(app: Express) {
   registerExperienceRoutes(v1Router);
   registerMessageRoutes(v1Router);
   registerMindsetRoutes(v1Router);
+  registerServiceRoutes(v1Router);
   registerUploadRoutes(v1Router);
   registerAnalyticsRoutes(v1Router);
   registerEmailTemplateRoutes(v1Router);
+  registerTestimonialRoutes(v1Router);
 
   // Main API versioning
   app.use("/api/v1", v1Router);

@@ -110,6 +110,30 @@ export function useExperiences() {
   });
 }
 
+export function useServices() {
+  return useQuery({
+    queryKey: ["services"],
+    queryFn: () =>
+      fetchAndParse(
+        api.services.list.path,
+        api.services.list.responses[200],
+        "Failed to fetch services"
+      ),
+  });
+}
+
+export function useTestimonials() {
+  return useQuery({
+    queryKey: ["testimonials"],
+    queryFn: () =>
+      fetchAndParse(
+        api.testimonials.list.path,
+        api.testimonials.list.responses[200],
+        "Failed to fetch testimonials"
+      ),
+  });
+}
+
 export function useArticles(status?: string) {
   return useQuery({
     queryKey: ["articles", status],

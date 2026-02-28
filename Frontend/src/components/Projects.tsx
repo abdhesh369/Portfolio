@@ -223,8 +223,8 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             </m.button>
           </m.div>
 
-          {/* Category Badge */}
-          <div className="absolute top-3 right-3">
+          {/* Category & Flagship Badges */}
+          <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
             <m.span
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -238,6 +238,15 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             >
               {project.category}
             </m.span>
+            {project.isFlagship && (
+              <m.span
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-400/40 shadow-[0_0_15px_rgba(251,191,36,0.4)]"
+              >
+                Flagship Case Study
+              </m.span>
+            )}
           </div>
         </div>
 
@@ -315,7 +324,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                   boxShadow: `0 0 20px ${catColor.glow}`
                 }}
               >
-                Details
+                {project.isFlagship ? "Read case study" : "Details"}
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </Link>

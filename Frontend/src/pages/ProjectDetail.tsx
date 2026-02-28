@@ -421,13 +421,23 @@ export default function ProjectDetail() {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">
-                {/* Motivation */}
-                <SectionCard title="Motivation" icon={Lightbulb} accentColor="#00d4ff">
+              {/* Motivation */}
+              <SectionCard title="Motivation" icon={Lightbulb} accentColor="#00d4ff">
                   <div
                     className="prose prose-invert max-w-none text-gray-300"
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.motivation || project.description) }}
                   />
                 </SectionCard>
+
+              {/* Impact */}
+              {project.impact && (
+                <SectionCard title="Impact" icon={Sparkles} accentColor="#22c55e" variant="success">
+                  <div
+                    className="prose prose-invert max-w-none text-gray-300"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.impact) }}
+                  />
+                </SectionCard>
+              )}
 
                 {/* The Problem */}
                 <SectionCard title="The Problem" icon={AlertCircle} accentColor="#ef4444" variant="warning">
@@ -445,7 +455,7 @@ export default function ProjectDetail() {
                   />
                 </SectionCard>
 
-                {/* Challenges & Learnings Grid */}
+                {/* Challenges, Learnings & Role Grid */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <SectionCard title="Key Challenges" icon={Settings} accentColor="#f59e0b">
                     <div
@@ -461,6 +471,15 @@ export default function ProjectDetail() {
                     />
                   </SectionCard>
                 </div>
+
+                {project.role && (
+                  <SectionCard title="My Role" icon={Layers} accentColor="#38bdf8">
+                    <div
+                      className="prose prose-invert max-w-none text-gray-300 text-sm"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.role) }}
+                    />
+                  </SectionCard>
+                )}
               </div>
 
               {/* Sidebar */}

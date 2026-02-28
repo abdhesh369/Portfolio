@@ -7,11 +7,15 @@ import {
     messageSchema,
     mindsetSchema,
     analyticsSchema,
+    serviceSchema,
     insertProjectApiSchema,
     insertSkillApiSchema,
     insertExperienceApiSchema,
     insertMessageApiSchema,
     insertAnalyticsSchema,
+    insertServiceApiSchema,
+    testimonialSchema,
+    insertTestimonialApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -291,6 +295,73 @@ export const api = {
         },
     },
 
+    // ---------- SERVICES ----------
+    services: {
+        list: {
+            method: "GET" as const,
+            path: "/api/services",
+            description: "List all services (public, cached)",
+            responses: {
+                200: z.array(serviceSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/services/:id",
+            description: "Get single service by ID (public)",
+            responses: {
+                200: serviceSchema,
+                400: errorSchemas.badRequest,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/services",
+            description: "Create new service (admin only)",
+            input: insertServiceApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: createSuccessResponse(serviceSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/services/:id",
+            description: "Update service by ID (admin only)",
+            input: insertServiceApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(serviceSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/services/:id",
+            description: "Delete service by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                400: errorSchemas.badRequest,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
     // ---------- MESSAGES ----------
     messages: {
         list: {
@@ -371,6 +442,69 @@ export const api = {
                 200: z.any(), // Flexibly aggregate summary data
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
+    // ---------- TESTIMONIALS ----------
+    testimonials: {
+        list: {
+            method: "GET" as const,
+            path: "/api/testimonials",
+            description: "List all testimonials (public, cached)",
+            responses: {
+                200: z.array(testimonialSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/testimonials/:id",
+            description: "Get single testimonial by ID (public)",
+            responses: {
+                200: testimonialSchema,
+                400: errorSchemas.badRequest,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/testimonials",
+            description: "Create new testimonial (admin only)",
+            input: insertTestimonialApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: testimonialSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/testimonials/:id",
+            description: "Update testimonial by ID (admin only)",
+            input: insertTestimonialApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: testimonialSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/testimonials/:id",
+            description: "Delete testimonial by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
                 500: errorSchemas.internal,
             },
         },

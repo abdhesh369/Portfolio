@@ -128,6 +128,18 @@ export const articleTagsTable = pgTable("article_tags", {
   tag: varchar("tag", { length: 100 }).notNull(),
 });
 
+export const testimonialsTable = pgTable("testimonials", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }).notNull(),
+  company: varchar("company", { length: 255 }).notNull().default(""),
+  quote: text("quote").notNull(),
+  relationship: varchar("relationship", { length: 100 }).notNull().default("Colleague"),
+  avatarUrl: varchar("avatarUrl", { length: 500 }),
+  displayOrder: integer("displayOrder").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
 
 export const selectProjectSchema = createSelectSchema(projectsTable);
@@ -147,6 +159,9 @@ export const insertMessageSchema = createInsertSchema(messagesTable);
 
 export const selectMindsetSchema = createSelectSchema(mindsetTable);
 export const insertMindsetSchema = createInsertSchema(mindsetTable);
+
+export const selectTestimonialSchema = createSelectSchema(testimonialsTable);
+export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -246,6 +261,28 @@ export const insertExperienceApiSchema = z.object({
   period: z.string().min(1).max(100),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
+});
+
+export const testimonialSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(255),
+  role: z.string().min(1).max(255),
+  company: z.string().max(255),
+  quote: z.string().min(1).max(5000),
+  relationship: z.string().max(100),
+  avatarUrl: z.string().max(500).nullable().optional(),
+  displayOrder: z.number().default(0),
+  createdAt: z.string(),
+});
+
+export const insertTestimonialApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  role: z.string().min(1).max(255),
+  company: z.string().max(255).default(""),
+  quote: z.string().min(1).max(5000),
+  relationship: z.string().max(100).default("Colleague"),
+  avatarUrl: z.string().max(500).nullable().optional(),
+  displayOrder: z.number().default(0),
 });
 
 export const messageSchema = z.object({
@@ -388,6 +425,8 @@ export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type ArticleTag = typeof articleTagsTable.$inferSelect;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
+export type Testimonial = z.infer<typeof testimonialSchema>;
+export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 
 // ================= TYPE GUARDS =================
 
@@ -411,4 +450,7 @@ export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
 }
 export function isArticle(obj: unknown): obj is Article {
   return articleSchema.safeParse(obj).success;
+}
+export function isTestimonial(obj: unknown): obj is Testimonial {
+  return testimonialSchema.safeParse(obj).success;
 }

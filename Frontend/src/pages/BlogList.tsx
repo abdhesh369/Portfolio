@@ -79,12 +79,23 @@ function BlogSkeleton() {
 export default function BlogList() {
     const { data: articles, isLoading } = useArticles("published");
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-    const filteredArticles = articles?.filter(a =>
-        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()))
-    ) || [];
+    // Extract unique tags from all articles
+    const allTags = Array.from(
+        new Set(articles?.flatMap((a: any) => (a.tags as string[]) || []) || [])
+    ).sort();
+
+    const filteredArticles = articles?.filter(a => {
+        const matchesSearch = !searchQuery ||
+            a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            a.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        const matchesTag = !selectedTag || (a.tags as string[] | undefined)?.includes(selectedTag);
+
+        return matchesSearch && matchesTag;
+    }) || [];
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
@@ -115,7 +126,7 @@ export default function BlogList() {
                     </motion.p>
                 </header>
 
-                <section className="mb-12">
+                <section className="mb-12 space-y-4">
                     <div className="relative max-w-md">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">🔍</span>
                         <input
@@ -126,6 +137,38 @@ export default function BlogList() {
                             className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-11 pr-6 text-sm text-white focus:border-primary/50 outline-none transition-all"
                         />
                     </div>
+
+                    {/* Tag filter chips */}
+                    {allTags.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex flex-wrap gap-2"
+                        >
+                            <button
+                                onClick={() => setSelectedTag(null)}
+                                className={`text-xs px-3 py-1.5 rounded-full border transition-all ${!selectedTag
+                                        ? "bg-primary/20 text-primary border-primary/30"
+                                        : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
+                                    }`}
+                            >
+                                All
+                            </button>
+                            {allTags.map((tag) => (
+                                <button
+                                    key={tag}
+                                    onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                                    className={`text-xs px-3 py-1.5 rounded-full border transition-all ${selectedTag === tag
+                                            ? "bg-primary/20 text-primary border-primary/30"
+                                            : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
+                                        }`}
+                                >
+                                    #{tag}
+                                </button>
+                            ))}
+                        </motion.div>
+                    )}
                 </section>
 
                 {isLoading ? (
