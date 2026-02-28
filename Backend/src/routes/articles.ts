@@ -16,6 +16,43 @@ articlesRouter.get(
     })
 );
 
+// GET /articles/related/:slug - Get related articles based on overlapping tags
+articlesRouter.get(
+    "/related/:slug",
+    asyncHandler(async (req, res) => {
+        const slug = req.params.slug;
+        const article = await storage.getArticleBySlug(slug);
+        if (!article) {
+            res.status(404).json({ error: "Article not found" });
+            return;
+        }
+
+        // Get all published articles with tags
+        const allArticles = await storage.getArticles("published");
+
+        // Find articles with overlapping tags, excluding the current one
+        const currentTags = new Set((article.tags as string[]) || []);
+        if (currentTags.size === 0) {
+            res.json([]);
+            return;
+        }
+
+        const scored = allArticles
+            .filter((a: any) => a.slug !== slug)
+            .map((a: any) => {
+                const articleTags = (a.tags as string[]) || [];
+                const overlap = articleTags.filter((t: string) => currentTags.has(t)).length;
+                return { article: a, score: overlap };
+            })
+            .filter(({ score }) => score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3)
+            .map(({ article }) => article);
+
+        res.json(scored);
+    })
+);
+
 // GET /articles/:slug - Get article by slug
 articlesRouter.get(
     "/:slug",

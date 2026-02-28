@@ -13,6 +13,7 @@ import {
   skillConnectionsTable,
   analyticsTable,
   emailTemplatesTable,
+  servicesTable,
   type Project,
   type Skill,
   type SkillConnection,
@@ -35,6 +36,12 @@ import {
   articleTagsTable,
   type Article,
   type InsertArticle,
+  type Service,
+  type InsertService,
+  selectServiceSchema,
+  testimonialsTable,
+  type Testimonial,
+  type InsertTestimonial,
 } from "../shared/schema.js";
 
 // ================= STORAGE INTERFACE =================
@@ -63,6 +70,20 @@ export interface IStorage {
   createExperience(exp: InsertExperience): Promise<Experience>;
   updateExperience(id: number, exp: Partial<InsertExperience>): Promise<Experience>;
   deleteExperience(id: number): Promise<void>;
+
+  // Services
+  getServices(): Promise<Service[]>;
+  getServiceById(id: number): Promise<Service | null>;
+  createService(service: InsertService): Promise<Service>;
+  updateService(id: number, service: Partial<InsertService>): Promise<Service>;
+  deleteService(id: number): Promise<void>;
+
+  // Testimonials
+  getTestimonials(): Promise<Testimonial[]>;
+  getTestimonialById(id: number): Promise<Testimonial | null>;
+  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  updateTestimonial(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial>;
+  deleteTestimonial(id: number): Promise<void>;
 
   // Messages
   getMessages(): Promise<Message[]>;
@@ -149,6 +170,9 @@ function transformProject(dbProject: any): Project {
     systemDesign: dbProject.systemDesign ?? null,
     challenges: dbProject.challenges ?? null,
     learnings: dbProject.learnings ?? null,
+    isFlagship: Boolean(dbProject.isFlagship),
+    impact: dbProject.impact ?? null,
+    role: dbProject.role ?? null,
   };
 }
 
@@ -174,6 +198,32 @@ function transformExperience(dbExp: any): Experience {
     period: dbExp.period ?? "",
     description: dbExp.description ?? "",
     type: dbExp.type ?? "",
+  };
+}
+
+function transformService(dbService: any): Service {
+  return {
+    id: dbService.id,
+    title: dbService.title ?? "",
+    summary: dbService.summary ?? "",
+    category: dbService.category ?? "",
+    tags: safeJsonParse<string[]>(dbService.tags, []),
+    displayOrder: dbService.displayOrder ?? 0,
+    isFeatured: Boolean(dbService.isFeatured),
+  };
+}
+
+function transformTestimonial(dbTestimonial: any): Testimonial {
+  return {
+    id: dbTestimonial.id,
+    name: dbTestimonial.name ?? "",
+    role: dbTestimonial.role ?? "",
+    company: dbTestimonial.company ?? "",
+    quote: dbTestimonial.quote ?? "",
+    relationship: dbTestimonial.relationship ?? "Colleague",
+    avatarUrl: dbTestimonial.avatarUrl ?? null,
+    displayOrder: dbTestimonial.displayOrder ?? 0,
+    createdAt: dbTestimonial.createdAt ?? new Date().toISOString(),
   };
 }
 
@@ -266,6 +316,8 @@ function transformArticle(dbArticle: any): Article {
 export class DatabaseStorage implements IStorage {
   private skillsCache: Skill[] | null = null;
   private experiencesCache: Experience[] | null = null;
+  private servicesCache: Service[] | null = null;
+  private testimonialsCache: Testimonial[] | null = null;
   private cacheTimestamp: Record<string, number> = {};
   private CACHE_TTL = 5 * 60 * 1000;
 
@@ -277,6 +329,16 @@ export class DatabaseStorage implements IStorage {
   private invalidateExperiencesCache() {
     this.experiencesCache = null;
     delete this.cacheTimestamp["experiences"];
+  }
+
+  private invalidateServicesCache() {
+    this.servicesCache = null;
+    delete this.cacheTimestamp["services"];
+  }
+
+  private invalidateTestimonialsCache() {
+    this.testimonialsCache = null;
+    delete this.cacheTimestamp["testimonials"];
   }
 
   async getProjects(): Promise<Project[]> {
@@ -327,6 +389,9 @@ export class DatabaseStorage implements IStorage {
           challenges: project.challenges ?? null,
           learnings: project.learnings ?? null,
           techStack: project.techStack ?? [],
+          isFlagship: project.isFlagship ?? false,
+          impact: project.impact ?? null,
+          role: project.role ?? null,
         })
         .returning();
 
@@ -345,6 +410,9 @@ export class DatabaseStorage implements IStorage {
       const updates: Record<string, any> = { ...project };
       if (project.techStack) {
         updates.techStack = project.techStack;
+      }
+      if (typeof project.isFlagship !== "undefined") {
+        updates.isFlagship = project.isFlagship;
       }
 
       const [updated] = await db
@@ -675,6 +743,231 @@ export class DatabaseStorage implements IStorage {
       logStorage(`Deleted experience: ${exp.role}`);
     } catch (error) {
       logStorage(`Failed to delete experience ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async getServices(): Promise<Service[]> {
+    try {
+      const now = Date.now();
+      if (
+        this.servicesCache &&
+        this.cacheTimestamp["services"] &&
+        now - this.cacheTimestamp["services"] < this.CACHE_TTL
+      ) {
+        logStorage("Returning cached services");
+        return this.servicesCache;
+      }
+
+      const start = Date.now();
+      const result = await db.select().from(servicesTable).orderBy(asc(servicesTable.displayOrder));
+      const duration = Date.now() - start;
+
+      const transformed = result.map(transformService);
+      this.servicesCache = transformed;
+      this.cacheTimestamp["services"] = now;
+
+      logStorage(`Fetched ${result.length} services in ${duration}ms`);
+      return transformed;
+    } catch (error) {
+      logStorage(`Failed to get services: ${error}`, "error");
+      throw new Error("Failed to fetch services from database");
+    }
+  }
+
+  async getServiceById(id: number): Promise<Service | null> {
+    try {
+      const [result] = await db
+        .select()
+        .from(servicesTable)
+        .where(eq(servicesTable.id, id))
+        .limit(1);
+      return result ? transformService(result) : null;
+    } catch (error) {
+      logStorage(`Failed to get service ${id}: ${error}`, "error");
+      throw new Error(`Failed to fetch service with id ${id}`);
+    }
+  }
+
+  async createService(service: InsertService): Promise<Service> {
+    try {
+      if (!service.title || !service.summary) {
+        throw new Error("Title and summary are required");
+      }
+
+      const [inserted] = await db
+        .insert(servicesTable)
+        .values({
+          title: service.title,
+          summary: service.summary,
+          category: service.category,
+          tags: service.tags ?? [],
+          displayOrder: service.displayOrder ?? 0,
+          isFeatured: service.isFeatured ?? false,
+        })
+        .returning();
+
+      if (!inserted) throw new Error("Failed to create service");
+
+      this.invalidateServicesCache();
+      logStorage(`Created service: ${inserted.title}`);
+      return transformService(inserted);
+    } catch (error) {
+      logStorage(`Failed to create service: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async updateService(id: number, service: Partial<InsertService>): Promise<Service> {
+    try {
+      const [updated] = await db
+        .update(servicesTable)
+        .set(service)
+        .where(eq(servicesTable.id, id))
+        .returning();
+
+      if (!updated) {
+        throw new Error(`Service with id ${id} not found after update`);
+      }
+
+      this.invalidateServicesCache();
+      logStorage(`Updated service: ${updated.title}`);
+      return transformService(updated);
+    } catch (error) {
+      logStorage(`Failed to update service ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async deleteService(id: number): Promise<void> {
+    try {
+      const service = await this.getServiceById(id);
+      if (!service) {
+        throw new Error(`Service with id ${id} not found`);
+      }
+
+      await db
+        .delete(servicesTable)
+        .where(eq(servicesTable.id, id));
+
+      this.invalidateServicesCache();
+      logStorage(`Deleted service: ${service.title}`);
+    } catch (error) {
+      logStorage(`Failed to delete service ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  // ================= TESTIMONIALS =================
+
+  async getTestimonials(): Promise<Testimonial[]> {
+    try {
+      const now = Date.now();
+      if (
+        this.testimonialsCache &&
+        this.cacheTimestamp["testimonials"] &&
+        now - this.cacheTimestamp["testimonials"] < this.CACHE_TTL
+      ) {
+        logStorage("Returning cached testimonials");
+        return this.testimonialsCache;
+      }
+
+      const start = Date.now();
+      const result = await db.select().from(testimonialsTable).orderBy(asc(testimonialsTable.displayOrder));
+      const duration = Date.now() - start;
+
+      const transformed = result.map(transformTestimonial);
+      this.testimonialsCache = transformed;
+      this.cacheTimestamp["testimonials"] = now;
+
+      logStorage(`Fetched ${result.length} testimonials in ${duration}ms`);
+      return transformed;
+    } catch (error) {
+      logStorage(`Failed to get testimonials: ${error}`, "error");
+      throw new Error("Failed to fetch testimonials from database");
+    }
+  }
+
+  async getTestimonialById(id: number): Promise<Testimonial | null> {
+    try {
+      const [result] = await db
+        .select()
+        .from(testimonialsTable)
+        .where(eq(testimonialsTable.id, id))
+        .limit(1);
+      return result ? transformTestimonial(result) : null;
+    } catch (error) {
+      logStorage(`Failed to get testimonial ${id}: ${error}`, "error");
+      throw new Error(`Failed to fetch testimonial with id ${id}`);
+    }
+  }
+
+  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
+    try {
+      if (!testimonial.name || !testimonial.quote) {
+        throw new Error("Name and quote are required");
+      }
+
+      const [inserted] = await db
+        .insert(testimonialsTable)
+        .values({
+          name: testimonial.name,
+          role: testimonial.role,
+          company: testimonial.company ?? "",
+          quote: testimonial.quote,
+          relationship: testimonial.relationship ?? "Colleague",
+          avatarUrl: testimonial.avatarUrl ?? null,
+          displayOrder: testimonial.displayOrder ?? 0,
+        })
+        .returning();
+
+      if (!inserted) throw new Error("Failed to create testimonial");
+
+      this.invalidateTestimonialsCache();
+      logStorage(`Created testimonial from: ${inserted.name}`);
+      return transformTestimonial(inserted);
+    } catch (error) {
+      logStorage(`Failed to create testimonial: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async updateTestimonial(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial> {
+    try {
+      const [updated] = await db
+        .update(testimonialsTable)
+        .set(testimonial)
+        .where(eq(testimonialsTable.id, id))
+        .returning();
+
+      if (!updated) {
+        throw new Error(`Testimonial with id ${id} not found after update`);
+      }
+
+      this.invalidateTestimonialsCache();
+      logStorage(`Updated testimonial from: ${updated.name}`);
+      return transformTestimonial(updated);
+    } catch (error) {
+      logStorage(`Failed to update testimonial ${id}: ${error}`, "error");
+      throw error;
+    }
+  }
+
+  async deleteTestimonial(id: number): Promise<void> {
+    try {
+      const testimonial = await this.getTestimonialById(id);
+      if (!testimonial) {
+        throw new Error(`Testimonial with id ${id} not found`);
+      }
+
+      await db
+        .delete(testimonialsTable)
+        .where(eq(testimonialsTable.id, id));
+
+      this.invalidateTestimonialsCache();
+      logStorage(`Deleted testimonial from: ${testimonial.name}`);
+    } catch (error) {
+      logStorage(`Failed to delete testimonial ${id}: ${error}`, "error");
       throw error;
     }
   }

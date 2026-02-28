@@ -20,6 +20,9 @@ export const projectsTable = pgTable("projects", {
   systemDesign: text("systemDesign"),
   challenges: text("challenges"),
   learnings: text("learnings"),
+  isFlagship: boolean("isFlagship").notNull().default(false),
+  impact: text("impact"),
+  role: text("role"),
 });
 
 export const skillsTable = pgTable("skills", {
@@ -128,6 +131,28 @@ export const articleTagsTable = pgTable("article_tags", {
   tag: varchar("tag", { length: 100 }).notNull(),
 });
 
+export const servicesTable = pgTable("services", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  summary: text("summary").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  tags: jsonb("tags").notNull(),
+  displayOrder: integer("displayOrder").notNull().default(0),
+  isFeatured: boolean("isFeatured").notNull().default(false),
+});
+
+export const testimonialsTable = pgTable("testimonials", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }).notNull(),
+  company: varchar("company", { length: 255 }).notNull().default(""),
+  quote: text("quote").notNull(),
+  relationship: varchar("relationship", { length: 100 }).notNull().default("Colleague"),
+  avatarUrl: varchar("avatarUrl", { length: 500 }),
+  displayOrder: integer("displayOrder").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
 
 export const selectProjectSchema = createSelectSchema(projectsTable);
@@ -160,6 +185,12 @@ export const insertArticleSchema = createInsertSchema(articlesTable);
 export const selectArticleTagSchema = createSelectSchema(articleTagsTable);
 export const insertArticleTagSchema = createInsertSchema(articleTagsTable);
 
+export const selectServiceSchema = createSelectSchema(servicesTable);
+export const insertServiceSchema = createInsertSchema(servicesTable);
+
+export const selectTestimonialSchema = createSelectSchema(testimonialsTable);
+export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
+
 // ================= CUSTOM API SCHEMAS =================
 
 function isValidUrl(url: string | null | undefined): boolean {
@@ -188,6 +219,9 @@ export const projectSchema = z.object({
   systemDesign: z.string().max(5000).nullish(),
   challenges: z.string().max(5000).nullish(),
   learnings: z.string().max(5000).nullish(),
+  isFlagship: z.boolean().default(false),
+  impact: z.string().max(5000).nullish(),
+  role: z.string().max(5000).nullish(),
 });
 
 export const insertProjectApiSchema = z.object({
@@ -204,6 +238,9 @@ export const insertProjectApiSchema = z.object({
   systemDesign: z.string().max(5000).nullable().optional(),
   challenges: z.string().max(5000).nullable().optional(),
   learnings: z.string().max(5000).nullable().optional(),
+  isFlagship: z.boolean().default(false).optional(),
+  impact: z.string().max(5000).nullable().optional(),
+  role: z.string().max(5000).nullable().optional(),
 });
 
 export const skillSchema = z.object({
@@ -259,12 +296,53 @@ export const experienceSchema = z.object({
   type: z.string().max(100),
 });
 
+export const serviceSchema = z.object({
+  id: z.number(),
+  title: z.string().min(1).max(255),
+  summary: z.string().min(1).max(5000),
+  category: z.string().min(1).max(100),
+  tags: z.array(z.string()).default([]),
+  displayOrder: z.number().default(0),
+  isFeatured: z.boolean().default(false),
+});
+
 export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().min(1).max(100),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
+});
+
+export const insertServiceApiSchema = z.object({
+  title: z.string().min(1).max(255),
+  summary: z.string().min(1).max(5000),
+  category: z.string().min(1).max(100),
+  tags: z.array(z.string()).default([]),
+  displayOrder: z.number().default(0),
+  isFeatured: z.boolean().default(false),
+});
+
+export const testimonialSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(255),
+  role: z.string().min(1).max(255),
+  company: z.string().max(255),
+  quote: z.string().min(1).max(5000),
+  relationship: z.string().max(100),
+  avatarUrl: z.string().max(500).nullable().optional(),
+  displayOrder: z.number().default(0),
+  createdAt: z.string(),
+});
+
+export const insertTestimonialApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  role: z.string().min(1).max(255),
+  company: z.string().max(255).default(""),
+  quote: z.string().min(1).max(5000),
+  relationship: z.string().max(100).default("Colleague"),
+  avatarUrl: z.string().max(500).nullable().optional(),
+  displayOrder: z.number().default(0),
 });
 
 export const messageSchema = z.object({
@@ -391,22 +469,26 @@ export type Project = z.infer<typeof projectSchema>;
 export type Skill = z.infer<typeof skillSchema>;
 export type SkillConnection = z.infer<typeof skillConnectionSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
+export type Service = z.infer<typeof serviceSchema>;
 export type Message = z.infer<typeof messageSchema>;
 export type Mindset = z.infer<typeof mindsetSchema>;
 export type Analytics = z.infer<typeof analyticsSchema>;
 export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
 export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
+export type Testimonial = z.infer<typeof testimonialSchema>;
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
+export type InsertService = z.infer<typeof insertServiceApiSchema>;
 export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateApiSchema>;
 export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
+export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 
 // ================= TYPE GUARDS =================
 
@@ -431,4 +513,6 @@ export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
 export function isSeoSettings(obj: unknown): obj is SeoSettings {
   return seoSettingsSchema.safeParse(obj).success;
 }
-
+export function isTestimonial(obj: unknown): obj is Testimonial {
+  return testimonialSchema.safeParse(obj).success;
+}
