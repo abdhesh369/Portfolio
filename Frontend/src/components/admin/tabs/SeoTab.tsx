@@ -116,7 +116,7 @@ export function SeoTab({ token }: { token: string | null }) {
             </div>
 
             {isEditing ? (
-                <Card className="border-primary/20 bg-background/50 backdrop-blur">
+                <Card className="border-primary/20 bg-[#0a0520]/80 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>{editingSeo ? "Edit SEO Settings" : "New SEO Settings"}</CardTitle>
                         <CardDescription>
@@ -218,7 +218,7 @@ export function SeoTab({ token }: { token: string | null }) {
                                         id="twitterCard"
                                         name="twitterCard"
                                         defaultValue={editingSeo?.twitterCard || "summary_large_image"}
-                                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 bg-background"
+                                        className="flex h-9 w-full rounded-md border border-input bg-white/5 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         <option value="summary">Summary</option>
                                         <option value="summary_large_image">Summary Large Image</option>

@@ -54,7 +54,7 @@ const PrincipleCard = ({
           borderColor: isActive ? "rgba(124,58,237,0.5)" : "rgba(0,0,0,0.1)",
           boxShadow: isActive ? "0 20px 40px -10px rgba(124,58,237,0.3)" : "0 0 0 0 transparent"
         }}
-        className={`relative p-8 bg-card rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-border hover:border-primary/30'}`}
+        className={`relative p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-white/10 hover:border-primary/30'}`}
       >
         {/* Number badge */}
         <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold shadow-lg">
@@ -241,7 +241,7 @@ export default function EngineeringMindset() {
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl" />
 
-          <div className="relative p-12 bg-card rounded-3xl border border-border text-center">
+          <div className="relative p-12 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10 text-center">
             {/* Animated quote icon */}
             <m.div
               animate={{ rotate: [0, 10, -10, 0] }}

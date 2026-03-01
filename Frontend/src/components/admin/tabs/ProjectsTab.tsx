@@ -65,7 +65,7 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
             style={style}
             {...attributes}
             {...listeners}
-            className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-card/50 cursor-move touch-none"
+            className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-[#0a0520]/80 backdrop-blur-sm cursor-move touch-none"
         >
             <div className="flex items-center gap-3 pl-2">
                 <div

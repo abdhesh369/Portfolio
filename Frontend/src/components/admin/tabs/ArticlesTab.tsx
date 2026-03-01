@@ -35,7 +35,7 @@ function ArticleItem({ article, onEdit, onDelete }: {
     };
 
     return (
-        <div className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-card/50">
+        <div className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-[#0a0520]/80 backdrop-blur-sm">
             {article.featuredImage && (
                 <img src={article.featuredImage} alt={article.title} className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5" />
             )}
@@ -161,7 +161,7 @@ export function ArticlesTab({ token }: { token: string | null }) {
                                 <select
                                     value={editing.status}
                                     onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
-                                    className="w-full px-3 py-2 rounded-lg text-white text-sm bg-background border border-white/10 focus:border-purple-500 outline-none transition-all"
+                                    className="w-full px-3 py-2 rounded-lg text-white text-sm bg-white/5 border border-white/10 focus:border-purple-500 outline-none transition-all"
                                 >
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
