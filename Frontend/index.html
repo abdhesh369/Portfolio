@@ -92,16 +92,17 @@
   <!-- Load only the weights actually used, with display=swap -->
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet" media="print" onload="this.media='all'">
+    rel="stylesheet">
 
   <!-- CSP -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;
+    script-src 'self' https://www.googletagmanager.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https: http:;
     font-src 'self' https://fonts.gstatic.com;
     connect-src 'self' https://backend-jmfc.onrender.com https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com http://localhost:5000;
+    object-src 'none';
     frame-ancestors 'none';
   ">
 
@@ -146,27 +147,7 @@
   <script type="module" src="/src/main.tsx"></script>
 
   <!-- Defer Google Analytics to idle time — not render-blocking -->
-  <script>
-    (function() {
-      function loadGA() {
-        var s = document.createElement('script');
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3Q2BQ64DRC';
-        s.async = true;
-        document.head.appendChild(s);
-        s.onload = function() {
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag('js', new Date());
-          gtag('config', 'G-3Q2BQ64DRC', { send_page_view: false });
-        };
-      }
-      if (typeof requestIdleCallback === 'function') {
-        requestIdleCallback(loadGA, { timeout: 4000 });
-      } else {
-        setTimeout(loadGA, 3500);
-      }
-    })();
-  </script>
+  <script src="/ga-loader.js" defer></script>
 </body>
 
 </html>

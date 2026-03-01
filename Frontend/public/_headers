@@ -21,3 +21,8 @@
 
 /index.html
   Cache-Control: no-cache, must-revalidate
+
+# HSTS rollout: start at 5 min, then bump to 604800 (1 week), 2592000 (1 month),
+# then 63072000 (2 years) + preload. Submit to hstspreload.org at that final stage.
+/*
+  Strict-Transport-Security: max-age=300; includeSubDomains

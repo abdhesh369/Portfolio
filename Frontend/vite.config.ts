@@ -1,9 +1,13 @@
 ﻿import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -47,21 +51,83 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core framework — always needed
-          'vendor-core': ['react', 'react-dom', 'wouter', '@tanstack/react-query'],
-          // Motion is heavy but used on hero, keep separate
-          'vendor-animation': ['framer-motion'],
-          // UI primitives — shared across many components  
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-toast', 'lucide-react'],
-          // Admin-only: rich text editor
-          'vendor-editor': ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extension-code-block-lowlight', '@tiptap/extension-image', '@tiptap/extension-link'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          const nm = id.split('node_modules/').pop()?.split('/').slice(0, id.includes('@') ? 2 : 1).join('/');
+
+          // Admin-only: rich text editor + all prosemirror/tiptap deps
+          if (
+            id.includes('/@tiptap/') ||
+            id.includes('/prosemirror') ||
+            id.includes('/lowlight/') ||
+            id.includes('/highlight.js/') ||
+            id.includes('/@lezer/') ||
+            id.includes('/y-prosemirror/') ||
+            id.includes('/orderedmap/')
+          ) return 'vendor-editor';
+
           // Admin-only: 3D background
-          'vendor-three': ['three'],
-          // Admin-only: charts + drag-and-drop
-          'vendor-admin': ['recharts', 'react-is', '@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+          if (id.includes('/three/')) return 'vendor-three';
+
+          // Admin-only: charts + drag-and-drop + their transitive deps
+          // Intentionally routed to vendor-misc (not a separate chunk) to avoid
+          // Rollup placing the CJS interop helper here and creating a cross-dep
+          // from vendor-core → vendor-admin that forces 400KB on every page.
+          if (
+            id.includes('/recharts/') ||
+            id.includes('/d3-') ||
+            id.includes('/internmap/') ||
+            id.includes('/react-redux/') ||
+            id.includes('/redux/') ||
+            id.includes('/@redux') ||
+            id.includes('/victory-vendor/') ||
+            id.includes('/react-smooth/') ||
+            id.includes('/decimal.js-light/') ||
+            id.includes('/eventemitter3/') ||
+            id.includes('/es-toolkit/') ||
+            id.includes('/immer/') ||
+            id.includes('/reselect/') ||
+            id.includes('/@dnd-kit/')
+          ) return 'vendor-misc';
+
+          // Core framework — always needed
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/wouter/') ||
+            id.includes('/@tanstack/react-query') ||
+            id.includes('/@tanstack/query-core') ||
+            id.includes('/react-is/') ||
+            id.includes('/use-sync-external-store/') ||
+            id.includes('/scheduler/') ||
+            id.includes('/regexparam/')
+          ) return 'vendor-core';
+
+          // Motion — used on hero, keep separate
+          if (
+            id.includes('/framer-motion/') ||
+            id.includes('/motion-dom/') ||
+            id.includes('/motion-utils/')
+          ) return 'vendor-animation';
+
+          // UI primitives — shared across many components
+          if (
+            id.includes('/@radix-ui/') ||
+            id.includes('/lucide-react/') ||
+            id.includes('/clsx/') ||
+            id.includes('/class-variance-authority/') ||
+            id.includes('/tailwind-merge/')
+          ) return 'vendor-ui';
+
           // Forms: used by Contact (lazy-loaded public page)
-          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          if (
+            id.includes('/react-hook-form/') ||
+            id.includes('/@hookform/') ||
+            id.includes('/zod/')
+          ) return 'vendor-forms';
+
+          // Catch-all: keep remaining node_modules out of index chunk
+          return 'vendor-misc';
         },
       },
     },

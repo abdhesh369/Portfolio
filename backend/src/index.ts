@@ -94,7 +94,8 @@ app.use(
       useDefaults: true,
       directives: {
         "default-src": ["'self'"],
-        "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
+        "script-src": ["'self'", "https://www.googletagmanager.com"],
+        "object-src": ["'none'"],
         "connect-src": ["'self'", "https://api.github.com", "https://backend-jmfc.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
         "img-src": [
           "'self'",
@@ -113,10 +114,13 @@ app.use(
     crossOriginEmbedderPolicy: true,
     crossOriginOpenerPolicy: true,
     crossOriginResourcePolicy: { policy: "cross-origin" },
+    // HSTS rollout: start at 5 min, then 1 week (604800), 1 month (2592000),
+    // then 1 year + preload (63072000). Bump maxAge after each period passes
+    // with no issues, then add preload: true and submit to hstspreload.org.
     strictTransportSecurity: {
-      maxAge: 31536000,
+      maxAge: 300,
       includeSubDomains: true,
-      preload: true,
+      preload: false,
     },
   })
 );
