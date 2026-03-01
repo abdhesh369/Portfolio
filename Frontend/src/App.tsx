@@ -1,4 +1,4 @@
-import { Switch, Route, useRoute } from "wouter";
+import { Switch, Route, useRoute, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy, Component, type ReactNode, useEffect, useState } from "react";
 import { queryClient } from "./lib/queryClient";
@@ -60,27 +60,35 @@ function DeferredAnalytics() {
 
 // Router component
 function Router() {
+  const [location] = useLocation();
   return (
     <Suspense fallback={<PageLoader />}>
-      <Switch>
-        {/* Public routes */}
-        <Route path="/" component={Home} />
-        <Route path="/project/:id" component={ProjectDetail} />
-        <Route path="/blog" component={BlogList} />
-        <Route path="/blog/:slug" component={BlogPost} />
+      <m.div
+        key={location}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        <Switch>
+          {/* Public routes */}
+          <Route path="/" component={Home} />
+          <Route path="/project/:id" component={ProjectDetail} />
+          <Route path="/blog" component={BlogList} />
+          <Route path="/blog/:slug" component={BlogPost} />
 
-        {/* Admin routes */}
-        <Route path="/admin/login" component={AdminLogin} />
-        <Route path="/admin">
-          {() => (
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          )}
-        </Route>
+          {/* Admin routes */}
+          <Route path="/admin/login" component={AdminLogin} />
+          <Route path="/admin">
+            {() => (
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            )}
+          </Route>
 
-        <Route component={NotFound} />
-      </Switch>
+          <Route component={NotFound} />
+        </Switch>
+      </m.div>
     </Suspense>
   );
 }
@@ -135,7 +143,7 @@ function DeferredChatbot() {
   );
 }
 
-import { LazyMotion, domAnimation } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Main App component
 function App() {

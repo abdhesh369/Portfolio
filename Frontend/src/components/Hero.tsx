@@ -130,7 +130,7 @@ const ProfileCard = () => {
           decoding="async"
           width={800}
           height={800}
-          className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay grayscale hover:grayscale-0 transition-all duration-700"
+          className="absolute inset-0 w-full h-full object-cover opacity-85 mix-blend-luminosity grayscale-[30%] hover:grayscale-0 transition-all duration-700"
         />
 
         {/* HUD Overlay */}
@@ -249,6 +249,25 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8 text-center lg:text-left"
           >
+            {/* Mobile Profile Avatar — visible on small screens only */}
+            <m.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, type: "spring", damping: 15 }}
+              className="flex justify-center lg:hidden"
+            >
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-60 blur-md animate-pulse" />
+                <img
+                  src="/images/Myphoto-500.webp"
+                  alt="Abdhesh Sah"
+                  width={120}
+                  height={120}
+                  className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-white/20 shadow-xl"
+                />
+              </div>
+            </m.div>
+
             {/* Status Pill */}
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -333,14 +352,22 @@ export default function Hero() {
               <SocialLink href="https://github.com/abdhesh369" icon={Github} label="GitHub" />
               <SocialLink href="https://www.linkedin.com/in/abdhesh369" icon={Linkedin} label="LinkedIn" />
               <div className="h-4 w-[1px] bg-white/10" />
-              <div className="flex -space-x-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-[#050510] bg-gray-700 flex items-center justify-center text-[10px] text-white">
-                    Dev
-                  </div>
-                ))}
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <span className="text-sm font-bold text-white">10+</span>
+                  <p className="text-[10px] text-gray-500">Projects</p>
+                </div>
+                <div className="h-4 w-[1px] bg-white/10" />
+                <div className="text-center">
+                  <span className="text-sm font-bold text-white">12+</span>
+                  <p className="text-[10px] text-gray-500">Technologies</p>
+                </div>
+                <div className="h-4 w-[1px] bg-white/10" />
+                <div className="text-center">
+                  <span className="text-sm font-bold text-white">100%</span>
+                  <p className="text-[10px] text-gray-500">Dedication</p>
+                </div>
               </div>
-              <span className="text-xs text-gray-500 font-medium">Trusted by peers</span>
             </m.div>
 
           </m.div>

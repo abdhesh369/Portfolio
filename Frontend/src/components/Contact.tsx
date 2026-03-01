@@ -111,6 +111,8 @@ export default function Contact() {
   const { mutate: sendMessage, isPending } = useSendMessage();
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Auto-dismiss success message
+  const dismissSuccess = () => setShowSuccess(false);
   const form = useForm<InsertMessage>({
     resolver: zodResolver(insertMessageApiSchema),
     defaultValues: {
@@ -126,6 +128,8 @@ export default function Contact() {
       onSuccess: () => {
         form.reset();
         setShowSuccess(true);
+        // Auto-dismiss after 8 seconds
+        setTimeout(() => setShowSuccess(false), 8000);
       },
     });
   };
@@ -241,16 +245,33 @@ export default function Contact() {
                 <AnimatePresence>
                   {showSuccess ? (
                     <m.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      key="success"
+                      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                      transition={{ type: "spring", damping: 20, stiffness: 300 }}
                       className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050510]/95 rounded-b-xl"
                     >
-                      <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6 border border-green-500/20">
+                      <m.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", delay: 0.15, damping: 12 }}
+                        className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6 border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
+                      >
                         <CheckCircle className="w-10 h-10 text-green-500" />
-                      </div>
+                      </m.div>
                       <h3 className="text-2xl font-bold text-white mb-2">Transmission Successful</h3>
-                      <p className="text-gray-400 mb-8 font-mono text-sm">Target received packet. Awaiting response.</p>
-                      <Button onClick={() => setShowSuccess(false)} variant="outline" className="border-green-500/30 text-green-400 hover:bg-green-500/10">
+                      <p className="text-gray-400 mb-4 font-mono text-sm">Target received packet. Awaiting response.</p>
+                      {/* Auto-dismiss countdown bar */}
+                      <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mb-6">
+                        <m.div
+                          initial={{ width: "100%" }}
+                          animate={{ width: "0%" }}
+                          transition={{ duration: 8, ease: "linear" }}
+                          className="h-full bg-green-500/50 rounded-full"
+                        />
+                      </div>
+                      <Button onClick={dismissSuccess} variant="outline" className="border-green-500/30 text-green-400 hover:bg-green-500/10">
                         Send Another Packet
                       </Button>
                     </m.div>

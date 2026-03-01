@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Code2, Terminal, Cpu } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useScrollSpy } from "@/hooks/use-scroll-spy";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -17,15 +18,13 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location, setLocation] = useLocation();
+  const activeSection = useScrollSpy(["hero", "about", "skills", "projects", "experience", "contact"], 80);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   const handleNavClick = (href: string) => {
     setIsOpen(false);
     if (href.startsWith("#")) {
@@ -85,12 +84,20 @@ export default function Navbar() {
               <button
                 key={item.name}
                 onClick={() => handleNavClick(item.href)}
-                className="relative px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors rounded-full group overflow-hidden"
+                className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full group overflow-hidden ${(item.href === "/" && activeSection === "hero") ||
+                  (item.href.startsWith("#") && activeSection === item.href.slice(1))
+                  ? "text-white"
+                  : "text-gray-300 hover:text-white"
+                  }`}
               >
                 <span className="relative z-10">{item.name}</span>
                 {/* Hover Glow Background */}
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-cyan-400 group-hover:w-[60%] transition-all duration-300 shadow-[0_0_10px_#22d3ee]" />
+                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_#22d3ee] ${(item.href === "/" && activeSection === "hero") ||
+                  (item.href.startsWith("#") && activeSection === item.href.slice(1))
+                  ? "w-[60%]"
+                  : "w-0 group-hover:w-[60%]"
+                  }`} />
               </button>
             ))}
 
