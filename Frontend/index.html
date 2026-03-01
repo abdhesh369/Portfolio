@@ -107,23 +107,64 @@
 </head>
 
 <body class="dark" style="background-color: #020817;">
-  <div id="root"></div>
+  <div id="root">
+    <!-- Inline skeleton for instant first paint — replaced when React mounts -->
+    <style>
+      .sk{position:relative;overflow:hidden;background:rgba(255,255,255,.04);border-radius:6px}
+      .sk::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);animation:sk-sh 1.5s infinite}
+      @keyframes sk-sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    </style>
+    <div style="min-height:100vh;background:#020817;color:#94a3b8;font-family:system-ui,sans-serif">
+      <!-- Navbar skeleton -->
+      <nav style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:rgba(2,8,23,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.05)">
+        <div class="sk" style="width:120px;height:24px"></div>
+        <div style="display:flex;gap:24px">
+          <div class="sk" style="width:48px;height:14px"></div>
+          <div class="sk" style="width:56px;height:14px"></div>
+          <div class="sk" style="width:52px;height:14px"></div>
+          <div class="sk" style="width:60px;height:14px"></div>
+        </div>
+      </nav>
+      <!-- Hero skeleton -->
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:0 32px;gap:48px">
+        <div style="flex:1;max-width:560px">
+          <div class="sk" style="width:180px;height:16px;margin-bottom:16px"></div>
+          <div class="sk" style="width:340px;height:36px;margin-bottom:12px"></div>
+          <div class="sk" style="width:280px;height:36px;margin-bottom:24px"></div>
+          <div class="sk" style="width:100%;height:14px;margin-bottom:8px"></div>
+          <div class="sk" style="width:80%;height:14px;margin-bottom:32px"></div>
+          <div style="display:flex;gap:12px">
+            <div class="sk" style="width:140px;height:42px;border-radius:8px"></div>
+            <div class="sk" style="width:140px;height:42px;border-radius:8px"></div>
+          </div>
+        </div>
+        <div class="sk" style="width:280px;height:340px;border-radius:16px;flex-shrink:0"></div>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 
-  <!-- Defer Google Analytics to after page load — not render-blocking -->
+  <!-- Defer Google Analytics to idle time — not render-blocking -->
   <script>
-    window.addEventListener('load', function() {
-      var s = document.createElement('script');
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3Q2BQ64DRC';
-      s.async = true;
-      document.head.appendChild(s);
-      s.onload = function() {
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-3Q2BQ64DRC');
-      };
-    });
+    (function() {
+      function loadGA() {
+        var s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3Q2BQ64DRC';
+        s.async = true;
+        document.head.appendChild(s);
+        s.onload = function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-3Q2BQ64DRC', { send_page_view: false });
+        };
+      }
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(loadGA, { timeout: 4000 });
+      } else {
+        setTimeout(loadGA, 3500);
+      }
+    })();
   </script>
 </body>
 

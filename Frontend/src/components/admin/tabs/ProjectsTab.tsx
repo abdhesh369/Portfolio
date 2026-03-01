@@ -3,7 +3,7 @@ import { useProjects } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { apiFetch } from "@/lib/api-helpers";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";

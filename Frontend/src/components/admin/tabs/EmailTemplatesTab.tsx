@@ -2,7 +2,7 @@ import React, { useState, useEffect, type FormEvent } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { EmailTemplate } from "@shared/schema";

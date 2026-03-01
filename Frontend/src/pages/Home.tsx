@@ -1,7 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import { motion, useScroll, useSpring } from "framer-motion";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 
@@ -23,21 +22,43 @@ function SectionFallback() {
   return <div className="min-h-[200px]" />;
 }
 
-export default function Home() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+// Lightweight scroll progress bar — no framer-motion needed
+function ScrollProgressBar() {
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+        if (barRef.current) {
+          barRef.current.style.transform = `scaleX(${progress})`;
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
+    <div
+      ref={barRef}
+      className="fixed top-0 left-0 right-0 h-1 bg-primary z-[100] origin-left"
+      style={{ transform: "scaleX(0)", willChange: "transform" }}
+    />
+  );
+}
+
+export default function Home() {
+  return (
     <div className="min-h-screen selection:bg-primary/20">
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-primary z-[100] origin-left"
-        style={{ scaleX }}
-      />
+      {/* Scroll Progress Bar — pure JS, no framer-motion */}
+      <ScrollProgressBar />
 
 
       <SEO

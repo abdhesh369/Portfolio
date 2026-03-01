@@ -11,8 +11,8 @@ const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then
 const AnalyticsTracker = lazy(() => import("@/components/AnalyticsTracker").then(m => ({ default: m.AnalyticsTracker })));
 const Chatbot = lazy(() => import("@/components/Chatbot").then(m => ({ default: m.Chatbot })));
 
-// Lazy load pages for better performance
-const Home = lazy(() => import("@/pages/Home"));
+// Eager-load Home for fast LCP — it no longer imports framer-motion directly
+import Home from "@/pages/Home";
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));

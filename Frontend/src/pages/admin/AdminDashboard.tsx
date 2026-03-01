@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/auth-context";
+import "@/styles/admin.css"; // Admin-only styles — code-split, not loaded on public pages
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
