@@ -142,6 +142,39 @@ Default: `http://localhost:5000` (or `process.env.PORT`)
 
 ---
 
+## 🤖 Chatbot API (AI Assistant)
+
+The portfolio includes an AI-powered assistant driven by Google's **Gemini 2.0 Flash** model.
+
+### 1. Send a Message to AI
+- **Path**: `/api/chat`
+- **Method**: `POST`
+- **Description**: Sends a message to the AI assistant. The AI has access to the portfolio's projects, skills, and experiences to provide informed answers.
+- **Request Body**:
+  ```json
+  {
+    "message": "What are your top projects?",
+    "history": [
+      { "role": "user", "content": "Hello" },
+      { "role": "model", "content": "Hi there! How can I help you today?" }
+    ]
+  }
+  ```
+- **Response (200 OK)**:
+  ```json
+  {
+    "text": "Based on my records, some of the top projects include [Project Name]..."
+  }
+  ```
+- **Error Responses**:
+  - **429 Too Many Requests**: Returned when the Gemini API free tier quota is reached.
+  - **500 Internal Server Error**: Returned for general AI processing failures.
+
+---
+
+
+---
+
 ## 🛡️ Validation Rules (Zod)
 
 - **Projects**: `title` (max 255), `description` (max 5000), `imageUrl` (must be valid URL).

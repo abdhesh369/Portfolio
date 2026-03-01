@@ -10,6 +10,7 @@ A robust and scalable backend for a personal portfolio website, built with Node.
 - **Database**: MySQL (via `mysql2`)
 - **ORM**: Drizzle ORM
 - **Validation**: Zod
+- **AI**: Google Gemini 2.0 Flash (via `@google/generative-ai`)
 - **Email**: Nodemailer (Gmail integration)
 
 ## 📁 Project Structure
@@ -34,6 +35,7 @@ A robust and scalable backend for a personal portfolio website, built with Node.
 
 - **Project Management**: CRUD operations for portfolio projects.
 - **Skills & Experiences**: Manage technical skills and professional history with caching.
+- **AI Assistant**: Context-aware chatbot trained on portfolio data using Gemini 2.0 Flash.
 - **Contact Form**: Secure message submission with automatic Gmail notifications.
 - **Database Migrations**: Managed via Drizzle Kit for easy schema updates.
 - **Type Safety**: End-to-end type safety using shared schemas and Zod validation.

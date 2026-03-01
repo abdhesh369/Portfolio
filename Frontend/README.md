@@ -31,6 +31,7 @@ This project is not just a portfolio, but a digital experience. It uses advanced
   - **Skills**: Visualized tech stack with progress bars and glowing highlights.
   - **Projects**: Detailed project showcase with deep-dive technical breakdowns.
   - **Experience**: Chronological professional timeline with cyberpunk styling.
+  - **AI Assistant**: Interactive cyberpunk terminal for chatting with my AI twin.
   - **Engineering Mindset**: Showcasing problem-solving approaches.
 - **Interactive UI**:
   - **Floating Particles**: Background depth and movement.
