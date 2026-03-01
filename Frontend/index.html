@@ -89,10 +89,13 @@
 
   <!-- Font Loading is already handled at the top -->
 
-  <!-- Load only the weights actually used, with display=swap -->
+  <!-- Load fonts asynchronously to prevent render blocking -->
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+    rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
 
   <!-- CSP -->
   <meta http-equiv="Content-Security-Policy" content="
@@ -114,6 +117,7 @@
 </head>
 
 <body class="dark" style="background-color: #020817;">
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
   <div id="root">
     <!-- Static hero for instant FCP/LCP — replaced when React mounts -->
     <div style="min-height:100vh;background:#020817;color:#94a3b8;font-family:'Space Grotesk',system-ui,sans-serif">
@@ -143,7 +147,7 @@
           </div>
         </div>
         <div style="width:280px;height:340px;border-radius:16px;flex-shrink:0;background:rgba(10,5,32,.8);border:1px solid rgba(255,255,255,.1);overflow:hidden;position:relative">
-          <img src="/images/Myphoto-500.webp" alt="Abdhesh Sah" width="280" height="340" style="width:100%;height:100%;object-fit:cover;opacity:.5;filter:grayscale(1)" fetchpriority="high">
+          <img src="/images/Myphoto-500.webp" alt="Abdhesh Sah" width="280" height="340" style="width:100%;height:100%;object-fit:cover;opacity:.85;filter:grayscale(.2)" fetchpriority="high">
         </div>
       </div>
     </div>

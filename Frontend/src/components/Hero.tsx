@@ -379,11 +379,11 @@ export default function Hero() {
         {/* Scroll Indicator */}
         <m.div
           animate={{ y: [0, 10, 0], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer hidden md:block"
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer hidden md:block group"
           onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: 'smooth' })}
         >
-          <ChevronDown className="w-8 h-8 text-cyan-500/50" />
+          <ChevronDown className="w-8 h-8 text-cyan-500/50 group-hover:text-cyan-400 transition-colors" />
         </m.div>
       </div>
     </section>

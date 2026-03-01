@@ -180,6 +180,11 @@
 
 @layer components {
 
+  /* Accessibility */
+  .skip-to-content {
+    @apply sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-b-md focus:shadow-lg focus:left-4 focus:top-0 transition-opacity;
+  }
+
   /* Container */
   .section-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24;

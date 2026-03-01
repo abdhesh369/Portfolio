@@ -132,7 +132,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a0520]/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
+            className="md:hidden bg-[#0a0520]/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navItems.map((item) => (

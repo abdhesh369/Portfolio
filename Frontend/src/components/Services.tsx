@@ -100,7 +100,7 @@ export default function Services() {
               transition={
                 shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05 }
               }
-              className="relative rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(34,197,94,0.12),_transparent_55%),_rgba(15,23,42,0.9)] p-5 flex flex-col"
+              className="relative rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(34,197,94,0.12),_transparent_55%),_rgba(15,23,42,0.9)] p-5 flex flex-col group card-glow-hover transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-3 gap-2">
                 <div className="flex items-center gap-2">

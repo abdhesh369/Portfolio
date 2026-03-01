@@ -150,10 +150,11 @@ export default function Footer() {
             whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={scrollToTop}
-            className="p-3 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-full border border-cyan-500/30 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] group"
+            className="p-3 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-full border border-cyan-500/30 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] group relative"
             aria-label="Scroll to top"
           >
-            <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+            <div className="absolute inset-0 rounded-full border border-cyan-400/50 animate-ping opacity-20" style={{ animationDuration: '2s' }} />
+            <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform relative z-10" />
           </m.button>
         </div>
       </div>
