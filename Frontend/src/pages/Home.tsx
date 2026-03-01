@@ -71,9 +71,9 @@ export default function Home() {
           name: "Abdhesh Sah",
           url: "https://abdheshsah.com.np",
           sameAs: [
-            "https://github.com/abdheshnayak",
-            "https://linkedin.com/in/abdhesh-sah-06900a266",
-            "https://twitter.com/SahAbdhesh",
+            "https://github.com/abdhesh369",
+            "https://linkedin.com/in/abdhesh369",
+            "https://twitter.com/abdhesh369",
           ],
           jobTitle: "Full Stack Developer",
           worksFor: {

@@ -233,12 +233,12 @@ export default function BlogPost() {
                             <div className="text-center md:text-left">
                                 <h4 className="text-xl font-bold text-white mb-2">Written by Abdhesh Sah</h4>
                                 <p className="text-white/50 mb-4">
-                                    Full-stack engineer passionate about building high-performance web applications and sharing knowledge with the community.
+                                    Engineer passionate about building high-performance web applications and sharing knowledge with the community.
                                 </p>
                                 <div className="flex justify-center md:justify-start gap-4">
-                                    <a href="https://twitter.com/SahAbdhesh" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
-                                    <a href="https://linkedin.com/in/abdhesh-sah-06900a266" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
-                                    <a href="https://github.com/abdheshnayak" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
+                                    <a href="https://twitter.com/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
+                                    <a href="https://linkedin.com/in/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
+                                    <a href="https://github.com/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
                                 </div>
                             </div>
                         </div>
