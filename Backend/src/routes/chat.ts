@@ -67,11 +67,11 @@ export const registerChatRoutes = (router: Router) => {
                 ...messages
             ];
 
-            console.log("DEBUG: Sending request to OpenRouter (nvidia/nemotron-3-nano-30b-a3b:free)...");
+            console.log("DEBUG: Sending request to OpenRouter (arcee-ai/trinity-large-preview:free)...");
 
             const response = await openrouter.chat.send({
                 chatGenerationParams: {
-                    model: "nvidia/nemotron-3-nano-30b-a3b:free",
+                    model: "arcee-ai/trinity-large-preview:free",
                     messages: finalMessages,
                     stream: false // Using non-streaming for the unified response
                 }
