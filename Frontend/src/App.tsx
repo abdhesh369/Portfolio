@@ -17,7 +17,6 @@ const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 import NotFound from "@/pages/not-found";
-import CustomCursor from "@/components/CustomCursor";
 
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
@@ -154,7 +153,6 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={domAnimation}>
-              <CustomCursor />
               <DeferredAnalytics />
               <Router />
               <DeferredBackground />
