@@ -1,99 +1,101 @@
 import { Router } from "express";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
 import { env } from "../env.js";
 
+const chatSchema = z.object({
+    messages: z.array(z.object({
+        role: z.enum(["user", "model"]),
+        parts: z.array(z.object({
+            text: z.string()
+        }))
+    }))
+});
+
 export const registerChatRoutes = (router: Router) => {
     router.post("/chat", async (req, res) => {
         try {
-            if (!env.GEMINI_API_KEY) {
-                return res.status(503).json({ error: "AI Chatbot is currently unavailable (API key missing)." });
+            console.log("DEBUG: CHAT ROUTE - FINAL STABLE VERSION (Gemini 2.0 Flash)");
+
+            const apiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
+
+            if (!apiKey) {
+                console.error("Chat API Error: GEMINI_API_KEY is missing");
+                return res.status(500).json({ message: "Gemini API key is not configured." });
             }
 
-            const schema = z.object({
-                messages: z.array(z.object({
-                    role: z.enum(["user", "model"]),
-                    parts: z.array(z.object({ text: z.string() }))
-                }))
-            });
+            const body = chatSchema.safeParse(req.body);
+            if (!body.success) {
+                return res.status(400).json({ message: "Invalid request body", details: body.error });
+            }
 
-            const { messages } = schema.parse(req.body);
-
-            // Fetch context data from the database to inject into the system prompt
-            const [projects, skills, experiences, articles] = await Promise.all([
-                db.select().from(projectsTable).limit(5),
+            // Fetch context for system prompt
+            const [articles, projects, skills, experiences] = await Promise.all([
+                db.select().from(articlesTable),
+                db.select().from(projectsTable),
                 db.select().from(skillsTable),
                 db.select().from(experiencesTable),
-                db.select().from(articlesTable).where(eq(articlesTable.status, "published")).limit(5)
             ]);
 
-            const systemInstruction = `You are a helpful and professional AI assistant representing Abdhesh Sah on his personal portfolio website.
-Here is information about Abdhesh you must use to answer questions:
+            const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.
+            Your goal is to answer questions about Abdhesh based on the following information:
+            - Skills: ${skills.map(s => s.name).join(", ")}
+            - Projects: ${projects.map(p => `${p.title}: ${p.description}`).join("; ")}
+            - Experiences: ${experiences.map(e => `${e.role} at ${e.organization}`).join("; ")}
+            - Articles: ${articles.map(a => a.title).join(", ")}
+            
+            Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
 
-SKILLS:
-${skills.map(s => `- ${s.name} (${s.category})`).join("\n")}
+            const genAI = new GoogleGenerativeAI(apiKey);
 
-PROJECTS:
-${projects.map(p => `- ${p.title}: ${p.description} (Built with: ${(p.techStack as string[])?.join(", ")})`).join("\n")}
+            // Use gemini-2.0-flash which we verified exists for this key
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-EXPERIENCE:
-${experiences.map(e => `- ${e.role} at ${e.organization} (${e.period})`).join("\n")}
-
-RECENT BLOG ARTICLES:
-${articles.map(a => `- ${a.title}: ${a.excerpt}`).join("\n")}
-
-INSTRUCTIONS:
-- You must answer questions as if you are Abdhesh's personal assistant. Be polite and professional.
-- Use markdown for formatting your answers to make them readable (e.g., bullet points, bold text).
-- Do not make up information that is not provided in the context above. If you don't know the answer based on the context, politely state that you're an AI assistant and recommend the user reach out to Abdhesh directly via the contact form.
-- Keep answers concise and relevant.`;
-
-            const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
-
-            // Extract the last user message and build history from the rest
-            // Filter out any initial "model" greeting messages not from Gemini
-            const firstUserIdx = messages.findIndex(m => m.role === "user");
-            const relevantMessages = firstUserIdx >= 0 ? messages.slice(firstUserIdx) : messages;
-
-            // The last message is the current user message, and everything before is history
-            const lastMessage = relevantMessages[relevantMessages.length - 1];
-            const history = relevantMessages.slice(0, -1);
-
-            // Use the chats API for multi-turn conversations (proven pattern)
-            const chat = ai.chats.create({
-                model: "gemini-2.0-flash",
-                config: {
-                    systemInstruction,
+            // Robust history management (prepend system prompt as context)
+            const chatHistory = [
+                {
+                    role: "user",
+                    parts: [{ text: "System Instructions: " + systemPrompt }]
                 },
-                history: history,
+                {
+                    role: "model",
+                    parts: [{ text: "Acknowledged. I am Abdhesh's AI portfolio assistant and I will answer questions based on the provided criteria." }]
+                },
+                ...body.data.messages.slice(0, -1) // All previous messages
+            ];
+
+            const userMessage = body.data.messages[body.data.messages.length - 1].parts[0].text;
+
+            const chat = model.startChat({
+                history: chatHistory,
+                generationConfig: {
+                    maxOutputTokens: 1000,
+                },
             });
 
-            const response = await chat.sendMessage({
-                message: lastMessage.parts[0].text,
-            });
+            console.log("DEBUG: Sending user message to Gemini 2.0 Flash...");
+            const result = await chat.sendMessage(userMessage);
+            const response = await result.response;
+            const text = response.text();
 
-            res.json({ message: response.text });
+            return res.json({ message: text });
         } catch (error: any) {
-            const errMsg = error?.message || String(error);
-            const statusCode = error?.status || error?.statusCode;
-            console.error("Chat API Error:", errMsg);
+            console.error("Chat API Error:", error.message);
 
-            if (statusCode === 429) {
+            // Handle quota errors gracefully
+            if (error.message.includes("429") || error.message.toLowerCase().includes("quota")) {
                 return res.status(429).json({
-                    error: "The AI assistant is receiving too many requests. Please try again in a moment."
+                    message: "The AI is currently receiving too many requests. Please try again in 10-15 seconds.",
+                    details: "Quota exceeded"
                 });
             }
 
-            if (statusCode === 403) {
-                return res.status(503).json({
-                    error: "The AI assistant is temporarily unavailable. The API key may be invalid or restricted."
-                });
-            }
-
-            res.status(500).json({ error: "Failed to generate AI response. Please try again." });
+            return res.status(500).json({
+                message: "Internal server error during chat processing.",
+                details: error.message
+            });
         }
     });
 };
