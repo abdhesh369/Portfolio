@@ -144,7 +144,7 @@ Default: `http://localhost:5000` (or `process.env.PORT`)
 
 ## 🤖 Chatbot API (AI Assistant)
 
-The portfolio includes an AI-powered assistant driven by Google's **Gemini 2.0 Flash** model.
+The portfolio includes an AI-powered assistant driven by **OpenRouter** (Default: `nvidia/nemotron-nano-12b-v2-vl:free`).
 
 ### 1. Send a Message to AI
 - **Path**: `/api/chat`
@@ -167,7 +167,7 @@ The portfolio includes an AI-powered assistant driven by Google's **Gemini 2.0 F
   }
   ```
 - **Error Responses**:
-  - **429 Too Many Requests**: Returned when the Gemini API free tier quota is reached.
+  - **429 Too Many Requests**: Returned when the OpenRouter API limits or free tier quota is reached.
   - **500 Internal Server Error**: Returned for general AI processing failures.
 
 ---

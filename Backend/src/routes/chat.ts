@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
 import { db } from "../db.js";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
@@ -17,13 +17,13 @@ const chatSchema = z.object({
 export const registerChatRoutes = (router: Router) => {
     router.post("/chat", async (req, res) => {
         try {
-            console.log("DEBUG: CHAT ROUTE - FINAL STABLE VERSION (Gemini 2.0 Flash)");
+            console.log("DEBUG: CHAT ROUTE - OpenRouter Migration");
 
-            const apiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
+            const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
 
             if (!apiKey) {
-                console.error("Chat API Error: GEMINI_API_KEY is missing");
-                return res.status(500).json({ message: "Gemini API key is not configured." });
+                console.error("Chat API Error: OPENROUTER_API_KEY is missing");
+                return res.status(500).json({ message: "OpenRouter API key is not configured." });
             }
 
             const body = chatSchema.safeParse(req.body);
@@ -48,53 +48,57 @@ export const registerChatRoutes = (router: Router) => {
             
             Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
 
-            const genAI = new GoogleGenerativeAI(apiKey);
-
-            // Use gemini-2.0-flash which we verified exists for this key
-            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-            // Robust history management (prepend system prompt as context)
-            const chatHistory = [
-                {
-                    role: "user",
-                    parts: [{ text: "System Instructions: " + systemPrompt }]
-                },
-                {
-                    role: "model",
-                    parts: [{ text: "Acknowledged. I am Abdhesh's AI portfolio assistant and I will answer questions based on the provided criteria." }]
-                },
-                ...body.data.messages.slice(0, -1) // All previous messages
-            ];
-
-            const userMessage = body.data.messages[body.data.messages.length - 1].parts[0].text;
-
-            const chat = model.startChat({
-                history: chatHistory,
-                generationConfig: {
-                    maxOutputTokens: 1000,
-                },
+            const openrouter = new OpenRouter({
+                apiKey: apiKey
             });
 
-            console.log("DEBUG: Sending user message to Gemini 2.0 Flash...");
-            const result = await chat.sendMessage(userMessage);
-            const response = await result.response;
-            const text = response.text();
+            // Map internal history to OpenRouter messages format { role, content }
+            const messages = body.data.messages.map(msg => ({
+                role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
+                content: msg.parts.map(p => p.text).join("\n")
+            }));
+
+            // Prepend system prompt
+            const finalMessages = [
+                {
+                    role: "system" as const,
+                    content: systemPrompt
+                },
+                ...messages
+            ];
+
+            console.log("DEBUG: Sending request to OpenRouter (nemotron-nano-12b-v2-vl:free)...");
+
+            const response = await openrouter.chat.send({
+                chatGenerationParams: {
+                    model: "openai/gpt-oss-120b:free",
+                    messages: finalMessages,
+                    stream: false // Using non-streaming for the unified response
+                }
+            });
+
+            // Handle the response based on SDK structure
+            // Usually response.choices[0].message.content
+            const text = response.choices?.[0]?.message?.content || "No response generated.";
 
             return res.json({ message: text });
         } catch (error: any) {
-            console.error("Chat API Error:", error.message);
+            console.error("Chat API Error:", error);
+            if (error.response) {
+                console.error("OpenRouter Response Error Data:", JSON.stringify(error.response.data, null, 2));
+            }
 
-            // Handle quota errors gracefully
-            if (error.message.includes("429") || error.message.toLowerCase().includes("quota")) {
+            if (error.status === 429 || error.message.includes("429")) {
                 return res.status(429).json({
-                    message: "The AI is currently receiving too many requests. Please try again in 10-15 seconds.",
+                    message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
                     details: "Quota exceeded"
                 });
             }
 
             return res.status(500).json({
                 message: "Internal server error during chat processing.",
-                details: error.message
+                details: error.message,
+                rawError: error.response?.data || error.message
             });
         }
     });

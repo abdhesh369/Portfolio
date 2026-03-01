@@ -15,7 +15,7 @@
     "db:status": "echo 'Check Neon Dashboard'"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
+    "@openrouter/sdk": "^0.9.11",
     "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
