@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const login = (newToken: string) => {
+        localStorage.removeItem("auth_last_exit");
         setToken(newToken);
         setIsAuthenticated(true);
     };

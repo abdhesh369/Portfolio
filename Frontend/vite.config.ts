@@ -36,15 +36,20 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Group core frameworks together to reduce initial request waterfall
+          // Core framework — always needed
           'vendor-core': ['react', 'react-dom', 'wouter', '@tanstack/react-query'],
-          // Motion is heavy but critical for hero, keep separate but fewer chunks overall
+          // Motion is heavy but used on hero, keep separate
           'vendor-animation': ['framer-motion'],
-          // Truly non-critical/heavy libraries should be separate
+          // UI primitives — shared across many components  
           'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-toast', 'lucide-react'],
+          // Admin-only: rich text editor
           'vendor-editor': ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extension-code-block-lowlight', '@tiptap/extension-image', '@tiptap/extension-link'],
+          // Admin-only: 3D background
           'vendor-three': ['three'],
-          'vendor-utils': ['recharts', '@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities', 'react-hook-form', '@hookform/resolvers', 'zod'],
+          // Admin-only: charts + drag-and-drop
+          'vendor-admin': ['recharts', 'react-is', '@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+          // Forms: used by Contact (lazy-loaded public page)
+          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
         },
       },
     },

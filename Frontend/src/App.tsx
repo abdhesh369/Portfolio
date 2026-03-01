@@ -12,7 +12,7 @@ const AnalyticsTracker = lazy(() => import("@/components/AnalyticsTracker").then
 const Chatbot = lazy(() => import("@/components/Chatbot").then(m => ({ default: m.Chatbot })));
 
 // Lazy load pages for better performance
-import Home from "@/pages/Home";
+const Home = lazy(() => import("@/pages/Home"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
@@ -90,9 +90,14 @@ function DeferredBackground() {
   const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
-    // Delay loading the 3D background briefly to let content render first
-    const timer = setTimeout(() => setShouldLoad(true), 500);
-    return () => clearTimeout(timer);
+    // Use requestIdleCallback to load 3D background after browser is idle
+    const schedule = typeof requestIdleCallback === "function"
+      ? requestIdleCallback
+      : (cb: () => void) => setTimeout(cb, 800);
+    const id = schedule(() => setShouldLoad(true));
+    return () => {
+      if (typeof cancelIdleCallback === "function") cancelIdleCallback(id as number);
+    };
   }, []);
 
   if (!shouldLoad) return null;
@@ -103,17 +108,23 @@ function DeferredBackground() {
   );
 }
 
-// Only show ChatBot on public routes and defer loading
+// Only show ChatBot on public routes — load on idle, not fixed timeout
 function DeferredChatbot() {
   const [isAdmin] = useRoute("/admin/*?");
   const [isAdminLogin] = useRoute("/admin/login");
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // Wait longer to load chatbot so main content finishes first
-    const t = setTimeout(() => setShow(true), 2500);
-    return () => clearTimeout(t);
-  }, []);
+    if (isAdmin || isAdminLogin) return;
+    // Use requestIdleCallback to load chatbot when browser is idle
+    const schedule = typeof requestIdleCallback === "function"
+      ? requestIdleCallback
+      : (cb: () => void) => setTimeout(cb, 3000);
+    const id = schedule(() => setShow(true));
+    return () => {
+      if (typeof cancelIdleCallback === "function") cancelIdleCallback(id as number);
+    };
+  }, [isAdmin, isAdminLogin]);
 
   if (isAdmin || isAdminLogin || !show) return null;
 

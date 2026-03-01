@@ -55,8 +55,12 @@ const deviceData = [
 
 const COLORS = ["#22d3ee", "#a78bfa", "#f59e0b", "#f472b6"];
 
-export function AnalyticsOverview() {
-    const { data, isLoading, error } = useAnalyticsSummary();
+interface AnalyticsOverviewProps {
+    token?: string | null;
+}
+
+export function AnalyticsOverview({ token }: AnalyticsOverviewProps) {
+    const { data, isLoading, error } = useAnalyticsSummary(token ?? null);
     const summary = data as AnalyticsSummary;
     const mockViews = useMemo(() => generateMockViews(), []);
 

@@ -130,6 +130,10 @@ module.exports = {
           from: { transform: "translateX(100%)" },
           to: { transform: "translateX(0)" },
         },
+        "blink": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -140,6 +144,7 @@ module.exports = {
         "slide-in-from-bottom": "slide-in-from-bottom 0.3s ease-out",
         "slide-in-from-left": "slide-in-from-left 0.3s ease-out",
         "slide-in-from-right": "slide-in-from-right 0.3s ease-out",
+        "blink": "blink 1s step-end infinite",
       },
     },
   },

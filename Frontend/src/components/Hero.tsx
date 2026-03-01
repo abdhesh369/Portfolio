@@ -1,8 +1,6 @@
 import { m, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe } from "lucide-react";
-import Typewriter from "typewriter-effect";
-// ...existing code... (profile image moved to public/images/hero.svg)
 import { Button } from "@/components/ui/button";
 
 // Mouse Follower Gradient
@@ -38,27 +36,68 @@ const MouseGradient = () => {
   );
 };
 
+// Lightweight rotating text — replaces heavy typewriter-effect library
+const RotatingText = ({ strings }: { strings: string[] }) => {
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = strings[index];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting && displayed === current) {
+      // pause at full text
+      timeout = setTimeout(() => setIsDeleting(true), 2000);
+    } else if (isDeleting && displayed === "") {
+      // move to next string
+      setIsDeleting(false);
+      setIndex((i) => (i + 1) % strings.length);
+    } else {
+      const speed = isDeleting ? 20 : 40;
+      timeout = setTimeout(() => {
+        setDisplayed(
+          isDeleting
+            ? current.slice(0, displayed.length - 1)
+            : current.slice(0, displayed.length + 1)
+        );
+      }, speed);
+    }
+    return () => clearTimeout(timeout);
+  }, [displayed, isDeleting, index, strings]);
+
+  return (
+    <span className="inline-flex items-center">
+      {displayed}
+      <span className="ml-0.5 w-[0.6em] h-[1.1em] bg-gray-400 inline-block animate-blink" />
+    </span>
+  );
+};
+
 // Profile Image with Sci-Fi Hologram Effect
 const ProfileCard = () => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const rafRef = useRef<number>(0);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateXValue = (e.clientY - centerY) / 20;
-    const rotateYValue = (centerX - e.clientX) / 20;
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-  };
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (rafRef.current) return; // throttle to animation frame
+    rafRef.current = requestAnimationFrame(() => {
+      if (!cardRef.current) { rafRef.current = 0; return; }
+      const rect = cardRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      setRotateX((e.clientY - centerY) / 20);
+      setRotateY((centerX - e.clientX) / 20);
+      rafRef.current = 0;
+    });
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setRotateX(0);
     setRotateY(0);
-  };
+  }, []);
 
   return (
     <m.div
@@ -200,7 +239,6 @@ export default function Hero() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
       <MouseGradient />
-      <MouseGradient />
 
       <div className="section-container relative z-10 w-full px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -244,20 +282,13 @@ export default function Hero() {
                 className="text-xl md:text-2xl text-gray-400 font-light h-[60px] flex items-center justify-center lg:justify-start"
               >
                 <span className="text-cyan-400 mr-2">{">"}</span>
-                <Typewriter
-                  options={{
-                    strings: [
-                      "Engineering scalable systems.",
-                      "Crafting intuitive interfaces.",
-                      "Bridging hardware & software.",
-                      "Solving complex problems."
-                    ],
-                    autoStart: true,
-                    loop: true,
-                    delay: 40,
-                    deleteSpeed: 20,
-                    cursor: "█"
-                  }}
+                <RotatingText
+                  strings={[
+                    "Engineering scalable systems.",
+                    "Crafting intuitive interfaces.",
+                    "Bridging hardware & software.",
+                    "Solving complex problems."
+                  ]}
                 />
               </m.div>
             </div>

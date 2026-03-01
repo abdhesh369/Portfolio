@@ -252,15 +252,24 @@ export function useLogin() {
   });
 }
 
-export function useAnalyticsSummary() {
+export function useAnalyticsSummary(token: string | null = null) {
   return useQuery({
     queryKey: ["analytics-summary"],
-    queryFn: () => {
-      return fetchAndParse(
-        "/api/analytics/summary",
-        { parse: (d) => d },
-        "Failed to fetch analytics summary"
-      );
+    queryFn: async () => {
+      const url = `${API_BASE_URL}/api/analytics/summary`;
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(url, {
+        credentials: 'include',
+        headers,
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(errData.message || `Failed to fetch analytics summary (${res.status})`);
+      }
+      return res.json();
     },
   });
 }

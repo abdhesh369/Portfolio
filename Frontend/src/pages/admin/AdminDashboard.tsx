@@ -447,7 +447,7 @@ export default function AdminDashboard() {
                 {/* Content */}
                 <div className="admin-content flex-1 p-7 admin-animate-in" key={tab}>
                     {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
-                    {tab === "analytics" && <AnalyticsOverview />}
+                    {tab === "analytics" && <AnalyticsOverview token={token} />}
                     {tab === "messages" && <MessagesTab token={token} />}
                     {tab === "templates" && <EmailTemplatesTab token={token} />}
                     {tab === "projects" && <ProjectsTab token={token} />}
