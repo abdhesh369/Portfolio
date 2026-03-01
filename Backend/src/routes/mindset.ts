@@ -93,6 +93,11 @@ export function registerMindsetRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid mindset ID" });
                 return;
             }
+            const existing = await storage.getMindsetById(id);
+            if (!existing) {
+                res.status(404).json({ message: "Mindset entry not found" });
+                return;
+            }
             await storage.deleteMindset(id);
             res.status(204).send();
         })

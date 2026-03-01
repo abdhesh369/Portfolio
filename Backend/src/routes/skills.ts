@@ -76,8 +76,8 @@ export function registerSkillRoutes(app: Router) {
         })
     );
 
-    // PATCH /skills/:id - Update skill
-    app.patch(
+    // PUT /skills/:id - Update skill
+    app.put(
         "/skills/:id",
         isAuthenticated,
         validateBody(insertSkillApiSchema.partial()),

@@ -51,13 +51,13 @@ export function TestimonialsTab({ token }: { token: string | null }) {
             };
 
             if (editing.id) {
-                await apiFetch(`/api/v1/testimonials/${editing.id}`, token, {
+                await apiFetch(`/api/testimonials/${editing.id}`, token, {
                     method: "PATCH",
                     body: JSON.stringify(body),
                 });
                 toast({ title: "Testimonial updated" });
             } else {
-                await apiFetch("/api/v1/testimonials", token, {
+                await apiFetch("/api/testimonials", token, {
                     method: "POST",
                     body: JSON.stringify(body),
                 });
@@ -74,7 +74,7 @@ export function TestimonialsTab({ token }: { token: string | null }) {
     async function remove(id: number) {
         if (!confirm("Delete this testimonial?")) return;
         try {
-            await apiFetch(`/api/v1/testimonials/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/testimonials/${id}`, token, { method: "DELETE" });
             toast({ title: "Testimonial deleted" });
             refetch();
         } catch (err: any) {

@@ -22,6 +22,9 @@ const envSchema = z.object({
     CONTACT_EMAIL: z.string().email().default("contact@abdheshsah.com.np"),
     GEMINI_API_KEY: z.string().optional(),
     OPENROUTER_API_KEY: z.string().optional(),
+    CLOUDINARY_CLOUD_NAME: z.string().optional(),
+    CLOUDINARY_API_KEY: z.string().optional(),
+    CLOUDINARY_API_SECRET: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

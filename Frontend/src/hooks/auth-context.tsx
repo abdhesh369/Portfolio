@@ -86,7 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (document.visibilityState === 'hidden') {
                 localStorage.setItem("auth_last_exit", Date.now().toString());
             } else {
-                localStorage.removeItem("auth_last_exit");
+                // Tab became visible — check timeout, then clear the marker
+                if (!checkTimeout()) {
+                    localStorage.removeItem("auth_last_exit");
+                }
             }
         };
 

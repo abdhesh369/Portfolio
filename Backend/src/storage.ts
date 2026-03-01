@@ -2,7 +2,7 @@
 // ============================================================
 // FILE: src/storage.ts
 // ============================================================
-import { eq, asc, desc, inArray } from "drizzle-orm";
+import { eq, asc, desc, inArray, count, sql } from "drizzle-orm";
 import { db } from "./db.js";
 import {
   projectsTable,
@@ -1151,14 +1151,17 @@ export class DatabaseStorage implements IStorage {
 
   async getAnalyticsSummary(): Promise<any> {
     try {
-      // Basic summary logic - can be expanded
-      const allEvents = await db.select().from(analyticsTable);
+      const [totalResult] = await db
+        .select({ value: count() })
+        .from(analyticsTable);
+      const [viewsResult] = await db
+        .select({ value: count() })
+        .from(analyticsTable)
+        .where(eq(analyticsTable.type, "page_view"));
 
       return {
-        totalViews: allEvents.filter((e: any) => e.type === 'page_view').length,
-        // Aggregation logic would go here
-        // For now returning basic stats
-        events: allEvents.length
+        totalViews: viewsResult?.value ?? 0,
+        events: totalResult?.value ?? 0,
       };
     } catch (error) {
       logStorage(`Failed to get analytics summary: ${error}`, "error");

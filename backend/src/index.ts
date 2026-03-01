@@ -55,26 +55,26 @@ const allowedOrigins = [
 app.use(compression());
 app.use(cookieParser());
 
-// Global Rate Limiter
+// Global Rate Limiter — applied to /api/v1 only (not /api shim) to avoid double-counting
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 300,
   message: { message: "Too many requests from this IP, please try again later" },
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use("/api", globalLimiter);
+app.use("/api/v1", globalLimiter);
 
 // Harden CORS
 app.use(
   cors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      // In production, require origin header
-      if (process.env.NODE_ENV === 'production' && !origin) {
-        callback(new Error("Origin header required"));
+      // Allow non-browser requests (health checks, monitoring, cURL) — they have no Origin
+      if (!origin) {
+        callback(null, true);
         return;
       }
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         console.warn(`CORS blocked origin: ${origin}`);
@@ -171,6 +171,13 @@ function setupGracefulShutdown() {
       log("HTTP server closed", "shutdown");
     });
 
+    // Force exit if shutdown takes too long (must be set before any await)
+    const forceTimer = setTimeout(() => {
+      log("Forced shutdown due to timeout", "shutdown");
+      process.exit(1);
+    }, 10000);
+    forceTimer.unref();
+
     try {
       // Close database pool
       const { closePool } = await import("./db.js");
@@ -182,12 +189,6 @@ function setupGracefulShutdown() {
       log(`Error during shutdown: ${err}`, "error");
       process.exit(1);
     }
-
-    // Force exit if shutdown takes too long
-    setTimeout(() => {
-      log("Forced shutdown due to timeout", "shutdown");
-      process.exit(1);
-    }, 10000);
   };
 
   process.on("SIGTERM", () => shutdown("SIGTERM"));

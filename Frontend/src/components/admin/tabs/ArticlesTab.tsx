@@ -76,6 +76,7 @@ export function ArticlesTab({ token }: { token: string | null }) {
     };
 
     const openEdit = (a: Article) => {
+        const articleTags = (a as ArticleWithTags).tags || [];
         setEditing({
             ...a,
             status: a.status as any,
@@ -83,18 +84,9 @@ export function ArticlesTab({ token }: { token: string | null }) {
             featuredImage: a.featuredImage ?? null,
             metaTitle: a.metaTitle ?? null,
             metaDescription: a.metaDescription ?? null,
-            tags: [], // Tags fetch might be needed if they were separate but they are returned with article in storage.ts
+            tags: articleTags,
         } as any);
-        // If storage.ts transformArticle included tags, we'd use them. 
-        // Wait, DatabaseStorage.getArticles does a left join and aggregates tags.
-        // Let's assume Article type has tags or we fetch them.
-        // Actually Article type in schema.ts doesn't have tags field because it's a separate table.
-        // But the storage implementation returns them as an array in the object.
-        // I should check if I added tags to the Article interface or if it's dynamic.
-        // In my implementation of getArticles, I added tags to the result.
-        // Let's check the Article type in schema.ts again to be sure.
-        // Ah, Article type is typeof articlesTable.$inferSelect. It DOES NOT have a tags array.
-        // I should probably add a type ArticlesWithTags = Article & { tags: string[] }.
+        setTagInput(articleTags.join(", "));
     };
 
     const save = async (e: FormEvent) => {

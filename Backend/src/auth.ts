@@ -5,6 +5,21 @@ import jwt from "jsonwebtoken";
 // In-memory token blacklist (use Redis in production)
 const tokenBlacklist = new Set<string>();
 
+// Periodically purge expired tokens from blacklist (every 30 minutes)
+setInterval(() => {
+    for (const token of tokenBlacklist) {
+        try {
+            const decoded = jwt.decode(token) as { exp?: number } | null;
+            if (decoded?.exp && decoded.exp * 1000 < Date.now()) {
+                tokenBlacklist.delete(token);
+            }
+        } catch {
+            // Malformed token — remove it
+            tokenBlacklist.delete(token);
+        }
+    }
+}, 30 * 60 * 1000);
+
 /**
  * Revokes a JWT token by adding it to the blacklist
  */

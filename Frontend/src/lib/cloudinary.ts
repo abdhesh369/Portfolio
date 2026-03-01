@@ -1,4 +1,4 @@
-const CLOUD_NAME = "dc2wtllnz";
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dc2wtllnz";
 
 /**
  * Generates a Cloudinary dynamic OpenGraph image URL.

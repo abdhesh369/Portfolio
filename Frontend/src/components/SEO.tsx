@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "@/lib/api-helpers";
 
 interface SeoProps {
     slug?: string;
@@ -26,7 +27,7 @@ export function SEO({
         queryKey: ["seo", slug],
         queryFn: async () => {
             if (!slug) return null;
-            const res = await fetch(`/api/seo/${slug}`);
+            const res = await fetch(`${API_BASE_URL}/api/seo/${slug}`);
             if (!res.ok) return null;
             return res.json();
         },

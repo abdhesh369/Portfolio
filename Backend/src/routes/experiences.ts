@@ -65,8 +65,8 @@ export function registerExperienceRoutes(app: Router) {
         })
     );
 
-    // PATCH /experiences/:id - Update experience
-    app.patch(
+    // PUT /experiences/:id - Update experience
+    app.put(
         "/experiences/:id",
         isAuthenticated,
         validateBody(insertExperienceApiSchema.partial()),

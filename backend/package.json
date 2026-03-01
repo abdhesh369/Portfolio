@@ -22,7 +22,7 @@
     "@types/express": "^4.17.25",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^20.19.30",
+    "@types/node": "^22.15.0",
     "@types/nodemailer": "^7.0.4",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",

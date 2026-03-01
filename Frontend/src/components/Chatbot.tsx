@@ -42,7 +42,7 @@ export function Chatbot() {
         setIsLoading(true);
 
         try {
-            const data = await apiFetch("/api/v1/chat", null, {
+            const data = await apiFetch("/api/chat", null, {
                 method: "POST",
                 body: JSON.stringify({ messages: newMessages })
             });

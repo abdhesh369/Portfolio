@@ -3,7 +3,6 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./Resources/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     container: {

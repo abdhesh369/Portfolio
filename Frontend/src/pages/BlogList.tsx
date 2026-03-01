@@ -36,7 +36,7 @@ function BlogCard({ article }: { article: any }) {
                     <CardContent className="p-6 flex-1 flex flex-col">
                         <div className="flex items-center gap-2 mb-3">
                             <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-primary/20">
-                                {new Date(article.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Draft"}
                             </Badge>
                             <span className="text-[10px] text-white/30">•</span>
                             <span className="text-[10px] text-white/30">{article.readTimeMinutes || 5} min read</span>

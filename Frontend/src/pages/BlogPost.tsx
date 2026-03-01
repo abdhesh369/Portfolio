@@ -132,7 +132,7 @@ export default function BlogPost() {
                             className="flex flex-wrap items-center gap-4 mb-6"
                         >
                             <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                                {new Date(article.publishedAt!).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
                             </Badge>
                             <span className="text-white/30 text-sm">{article.readTimeMinutes || 5} min read</span>
                             {(article as any).tags?.map((tag: string) => (

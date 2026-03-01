@@ -72,10 +72,10 @@ export default function Home() {
           url: "https://abdheshsah.com.np",
           sameAs: [
             "https://github.com/abdhesh369",
-            "https://linkedin.com/in/abdhesh369",
-            "https://twitter.com/abdhesh369",
+            "https://www.linkedin.com/in/abdhesh369",
+            "https://x.com/abdhesh369",
           ],
-          jobTitle: "Full Stack Developer",
+          jobTitle: "Full-Stack Engineer",
           worksFor: {
             "@type": "Organization",
             name: "Freelance",

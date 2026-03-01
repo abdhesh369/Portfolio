@@ -17,7 +17,7 @@ const chatSchema = z.object({
 export const registerChatRoutes = (router: Router) => {
     router.post("/chat", async (req, res) => {
         try {
-            console.log("DEBUG: CHAT ROUTE - OpenRouter Migration");
+
 
             const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
 
@@ -67,7 +67,7 @@ export const registerChatRoutes = (router: Router) => {
                 ...messages
             ];
 
-            console.log("DEBUG: Sending request to OpenRouter (arcee-ai/trinity-large-preview:free)...");
+
 
             const response = await openrouter.chat.send({
                 chatGenerationParams: {
@@ -96,9 +96,7 @@ export const registerChatRoutes = (router: Router) => {
             }
 
             return res.status(500).json({
-                message: "Internal server error during chat processing.",
-                details: error.message,
-                rawError: error.response?.data || error.message
+                message: "Internal server error during chat processing."
             });
         }
     });

@@ -1,11 +1,21 @@
 import { Router } from "express";
 import { storage } from "../storage.js";
 
+/** Escape special XML characters to prevent injection */
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const baseUrl = process.env.VITE_PUBLIC_URL || "https://abdheshsah.com.np";
+    const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
     const seoSettings = await storage.getSeoSettings();
     const projects = await storage.getProjects();
 
@@ -18,8 +28,8 @@ router.get("/", async (req, res) => {
       if (page.noindex) return;
 
       const slug = page.pageSlug === "home" ? "" : page.pageSlug;
-      const url = `${baseUrl}/${slug}`;
-      const lastMod = new Date(page.updatedAt || new Date()).toISOString();
+      const url = escapeXml(`${baseUrl}/${slug}`);
+      const lastMod = escapeXml(new Date(page.updatedAt || new Date()).toISOString());
       const priority = page.pageSlug === "home" ? "1.0" : "0.8";
 
       xml += `
@@ -33,7 +43,7 @@ router.get("/", async (req, res) => {
 
     // Dynamic project pages
     projects.forEach((project) => {
-      const url = `${baseUrl}/project/${project.id}`;
+      const url = escapeXml(`${baseUrl}/project/${project.id}`);
       const priority = "0.7";
 
       xml += `
@@ -47,8 +57,8 @@ router.get("/", async (req, res) => {
     // Dynamic blog articles
     const articles = await storage.getArticles("published");
     articles.forEach((article) => {
-      const url = `${baseUrl}/blog/${article.slug}`;
-      const lastMod = new Date(article.updatedAt || new Date()).toISOString();
+      const url = escapeXml(`${baseUrl}/blog/${article.slug}`);
+      const lastMod = escapeXml(new Date(article.updatedAt || new Date()).toISOString());
       const priority = "0.6";
 
       xml += `

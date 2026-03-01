@@ -16,6 +16,8 @@ import {
     insertServiceApiSchema,
     testimonialSchema,
     insertTestimonialApiSchema,
+    articleSchema,
+    insertArticleApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -500,6 +502,67 @@ export const api = {
             method: "DELETE" as const,
             path: "/api/testimonials/:id",
             description: "Delete testimonial by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- ARTICLES ----------
+    articles: {
+        list: {
+            method: "GET" as const,
+            path: "/api/articles",
+            description: "List all articles (public/admin)",
+            responses: {
+                200: z.array(articleSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/articles/:slug",
+            description: "Get single article by slug (public)",
+            responses: {
+                200: articleSchema,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/articles",
+            description: "Create new article (admin only)",
+            input: insertArticleApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: articleSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/articles/:id",
+            description: "Update article by ID (admin only)",
+            input: insertArticleApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: articleSchema,
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/articles/:id",
+            description: "Delete article by ID (admin only)",
             requiresAuth: true,
             responses: {
                 204: z.void(),
