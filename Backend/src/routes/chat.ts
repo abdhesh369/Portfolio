@@ -67,11 +67,11 @@ export const registerChatRoutes = (router: Router) => {
                 ...messages
             ];
 
-            console.log("DEBUG: Sending request to OpenRouter (openai/gpt-oss-120b:free)...");
+            console.log("DEBUG: Sending request to OpenRouter (nvidia/nemotron-3-nano-30b-a3b:free)...");
 
             const response = await openrouter.chat.send({
                 chatGenerationParams: {
-                    model: "openai/gpt-oss-120b:free",
+                    model: "nvidia/nemotron-3-nano-30b-a3b:free",
                     messages: finalMessages,
                     stream: false // Using non-streaming for the unified response
                 }
