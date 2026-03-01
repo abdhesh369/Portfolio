@@ -266,6 +266,11 @@ export default function Contact() {
                   <CyberInput id="subject" label="Header / Subject" register={form.register} error={form.formState.errors.subject?.message} required />
                   <CyberInput id="message" label="Packet Payload" isTextarea register={form.register} error={form.formState.errors.message?.message} required />
 
+                  {/* Honeypot field for spam protection */}
+                  <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
+                    <input type="text" tabIndex={-1} autoComplete="off" {...form.register("website")} />
+                  </div>
+
                   <Button
                     type="submit"
                     disabled={isPending}

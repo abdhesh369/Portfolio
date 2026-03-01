@@ -33,12 +33,17 @@ function PostSkeleton() {
     );
 }
 
+import { getDynamicOgImage } from "@/lib/cloudinary";
+
 export default function BlogPost() {
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
     const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
     const [copied, setCopied] = useState(false);
+
+    // Dynamic OG image generation
+    const ogImage = article ? getDynamicOgImage(article.title, article.featuredImage || undefined) : undefined;
 
     useEffect(() => {
         if (!slug) return;
@@ -88,7 +93,7 @@ export default function BlogPost() {
                 slug={`blog/${article.slug}`}
                 title={`${article.title} | Abdhesh Sah`}
                 description={article.excerpt || article.title}
-                image={article.featuredImage ?? undefined}
+                image={ogImage}
                 structuredData={{
                     "@context": "https://schema.org",
                     "@type": "BlogPosting",

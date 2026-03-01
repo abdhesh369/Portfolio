@@ -20,6 +20,7 @@ const envSchema = z.object({
     ADMIN_PASSWORD: z.string().min(8, "ADMIN_PASSWORD must be at least 8 characters"),
     ADMIN_EMAIL: z.string().email().default("abdheshshah111@gmail.com"),
     CONTACT_EMAIL: z.string().email().default("contact@abdheshsah.com.np"),
+    GEMINI_API_KEY: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

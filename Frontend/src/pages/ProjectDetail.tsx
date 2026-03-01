@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
+import { getDynamicOgImage } from "@/lib/cloudinary";
 
 // Floating particles (reused from main components)
 const FloatingParticles = () => {
@@ -239,7 +240,7 @@ export default function ProjectDetail() {
         slug={`project-${project.id}`}
         title={project.title ? `${project.title} - Abdhesh Sah` : "Project Detail"}
         description={project.description || "Project details and overview."}
-        image={project.imageUrl || undefined}
+        image={getDynamicOgImage(project.title || "Project Detail", project.imageUrl || "")}
         keywords={project.techStack?.join(", ")}
         structuredData={{
           "@context": "https://schema.org",
@@ -421,23 +422,23 @@ export default function ProjectDetail() {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">
-              {/* Motivation */}
-              <SectionCard title="Motivation" icon={Lightbulb} accentColor="#00d4ff">
+                {/* Motivation */}
+                <SectionCard title="Motivation" icon={Lightbulb} accentColor="#00d4ff">
                   <div
                     className="prose prose-invert max-w-none text-gray-300"
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.motivation || project.description) }}
                   />
                 </SectionCard>
 
-              {/* Impact */}
-              {project.impact && (
-                <SectionCard title="Impact" icon={Sparkles} accentColor="#22c55e" variant="success">
-                  <div
-                    className="prose prose-invert max-w-none text-gray-300"
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.impact) }}
-                  />
-                </SectionCard>
-              )}
+                {/* Impact */}
+                {project.impact && (
+                  <SectionCard title="Impact" icon={Sparkles} accentColor="#22c55e" variant="success">
+                    <div
+                      className="prose prose-invert max-w-none text-gray-300"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.impact) }}
+                    />
+                  </SectionCard>
+                )}
 
                 {/* The Problem */}
                 <SectionCard title="The Problem" icon={AlertCircle} accentColor="#ef4444" variant="warning">

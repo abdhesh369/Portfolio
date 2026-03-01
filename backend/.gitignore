@@ -24,6 +24,15 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+server_logs.txt
+
+# Debug / Temp files
+headers*.txt
+db_report*.txt
+test_storage*.txt
+check_db.ts
+seed_extra.ts
+test-connection.ts
 
 # OS Files
 .DS_Store

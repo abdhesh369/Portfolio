@@ -93,7 +93,23 @@ export function registerMessageRoutes(app: Router) {
         contactFormLimiter,
         validateBody(insertMessageApiSchema),
         asyncHandler(async (req, res) => {
-            const message = await storage.createMessage(req.body);
+            // Honeypot check for spam prevention
+            if (req.body.website) {
+                log(`Spam blocked (Honeypot filled): ${req.body.email}`, "warn");
+                // Fake success to trick the bot
+                res.status(201).json({
+                    success: true,
+                    message: "Message sent! We'll get back to you soon.",
+                    data: { id: 0, name: req.body.name, email: req.body.email, subject: req.body.subject, message: "blocked", createdAt: new Date().toISOString() },
+                });
+                return;
+            }
+
+            // Clean data
+            const dataToSave = { ...req.body };
+            delete dataToSave.website;
+
+            const message = await storage.createMessage(dataToSave);
             log(`New message from: ${message.name} (${message.email})`);
 
             // Send response immediately

@@ -95,7 +95,7 @@ app.use(
       directives: {
         "default-src": ["'self'"],
         "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
-        "connect-src": ["'self'", "https://backend-jmfc.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
+        "connect-src": ["'self'", "https://api.github.com", "https://backend-jmfc.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
         "img-src": [
           "'self'",
           "data:",

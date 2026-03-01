@@ -359,6 +359,7 @@ export const insertMessageApiSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500).default(""),
   message: z.string().min(1).max(5000),
+  website: z.string().optional(), // Honeypot field for spam prevention
 });
 
 export const analyticsSchema = z.object({

@@ -14,6 +14,7 @@ import seoRoutes from "./routes/seo.js";
 import sitemapRoutes from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
+import { registerChatRoutes } from "./routes/chat.js";
 
 export function registerRoutes(app: Express) {
   const v1Router = Router();
@@ -35,6 +36,7 @@ export function registerRoutes(app: Express) {
   registerAnalyticsRoutes(v1Router);
   registerEmailTemplateRoutes(v1Router);
   registerTestimonialRoutes(v1Router);
+  registerChatRoutes(v1Router);
 
   // Main API versioning
   app.use("/api/v1", v1Router);

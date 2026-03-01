@@ -9,6 +9,7 @@ import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
 // Lazy load heavy components
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
 const AnalyticsTracker = lazy(() => import("@/components/AnalyticsTracker").then(m => ({ default: m.AnalyticsTracker })));
+const Chatbot = lazy(() => import("@/components/Chatbot").then(m => ({ default: m.Chatbot })));
 
 // Lazy load pages for better performance
 import Home from "@/pages/Home";
@@ -102,6 +103,27 @@ function DeferredBackground() {
   );
 }
 
+// Only show ChatBot on public routes and defer loading
+function DeferredChatbot() {
+  const [isAdmin] = useRoute("/admin/*?");
+  const [isAdminLogin] = useRoute("/admin/login");
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    // Wait longer to load chatbot so main content finishes first
+    const t = setTimeout(() => setShow(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (isAdmin || isAdminLogin || !show) return null;
+
+  return (
+    <Suspense fallback={null}>
+      <Chatbot />
+    </Suspense>
+  );
+}
+
 import { LazyMotion, domAnimation } from "framer-motion";
 
 // Main App component
@@ -115,6 +137,7 @@ function App() {
               <DeferredAnalytics />
               <Router />
               <DeferredBackground />
+              <DeferredChatbot />
               <Toaster />
             </LazyMotion>
           </AuthProvider>

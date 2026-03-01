@@ -1,42 +1,6 @@
 # Dependencies
 node_modules/
 
-# Production
-dist/
-build/
-
-# Environment
-.env
-.env.local
-.env.production
-
-# Database
-*.sqlite
-*.sqlite-shm
-*.sqlite-wal
-
-# Logs
-*.log
-npm-debug.log*
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Temp
-*.tmp
-.cache/
-
-
-# Dependencies
-node_modules/
-
 # Build / Production
 dist/
 build/
@@ -75,3 +39,13 @@ Thumbs.db
 # TypeScript / Tooling
 *.tsbuildinfo
 .eslintcache
+
+# Debug / Temp files
+server_logs.txt
+headers*.txt
+db_report*.txt
+test_storage*.txt
+ts_errors.txt
+tsc_output.txt
+*.tmp
+.cache/
