@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
 import { SkillNode } from './SkillTypes';
 
@@ -16,7 +16,7 @@ export const StatPanel = ({
     icon
 }: StatPanelProps) => {
     return (
-        <motion.div
+        <m.div
             className={`absolute ${position === 'left' ? 'left-3 md:left-4' : 'right-3 md:right-4'} 
         bottom-3 md:bottom-4 w-40 md:w-52 p-3 md:p-4 rounded-xl z-20`}
             style={{
@@ -37,7 +37,7 @@ export const StatPanel = ({
                 </h4>
             </div>
             {children}
-        </motion.div>
+        </m.div>
     );
 };
 
@@ -62,7 +62,7 @@ export const ProficiencyChart = ({ skillNodes }: { skillNodes: SkillNode[] }) =>
                 <div key={cat.name} className="flex items-center gap-2">
                     <span className="text-[10px] w-14 md:w-16 text-gray-500 font-medium">{cat.name}</span>
                     <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(30, 30, 50, 0.8)' }}>
-                        <motion.div
+                        <m.div
                             className="h-full rounded-full"
                             style={{
                                 background: `linear-gradient(90deg, ${cat.bgColor} 0%, ${cat.color} 100%)`,
@@ -99,7 +99,7 @@ export const CategorySummary = ({ skillNodes }: { skillNodes: SkillNode[] }) => 
     return (
         <div className="grid grid-cols-2 gap-1.5">
             {categories.map((cat, i) => (
-                <motion.div
+                <m.div
                     key={cat.name}
                     className="flex items-center gap-1.5 p-1.5 rounded-lg"
                     style={{ background: cat.color }}
@@ -113,7 +113,7 @@ export const CategorySummary = ({ skillNodes }: { skillNodes: SkillNode[] }) => 
                         <div className="text-[9px] text-gray-500 truncate">{cat.name}</div>
                         <div className="text-xs font-bold text-white">{cat.count}</div>
                     </div>
-                </motion.div>
+                </m.div>
             ))}
         </div>
     );

@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { useExperiences } from "@/hooks/use-portfolio";
 import type { Experience as ExperienceType } from "@shared/schema";
@@ -8,14 +8,14 @@ import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin, ExternalLink }
 const TimelineLine = ({ isActive }: { isActive: boolean }) => (
   <div className="absolute left-0 top-0 h-full w-1 overflow-hidden">
     <div className="absolute inset-0 bg-border/50" />
-    <motion.div
+    <m.div
       initial={{ height: 0 }}
       animate={{ height: isActive ? "100%" : "0%" }}
       transition={{ duration: 1, ease: "easeOut" }}
       className="absolute top-0 left-0 w-full bg-gradient-to-b from-primary via-primary to-primary/50"
     />
     {/* Glow effect */}
-    <motion.div
+    <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: isActive ? 1 : 0 }}
       className="absolute top-0 left-0 w-full h-full bg-primary/30 blur-sm"
@@ -25,7 +25,7 @@ const TimelineLine = ({ isActive }: { isActive: boolean }) => (
 
 // Timeline Dot with Pulse
 const TimelineDot = ({ isActive, delay }: { isActive: boolean; delay: number }) => (
-  <motion.div
+  <m.div
     initial={{ scale: 0 }}
     animate={{ scale: 1 }}
     transition={{ delay, type: "spring", stiffness: 200 }}
@@ -33,7 +33,7 @@ const TimelineDot = ({ isActive, delay }: { isActive: boolean; delay: number }) 
   >
     {/* Outer pulse ring */}
     {isActive && (
-      <motion.div
+      <m.div
         animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
         className="absolute inset-0 w-[21px] h-[21px] rounded-full bg-primary"
@@ -45,7 +45,7 @@ const TimelineDot = ({ isActive, delay }: { isActive: boolean; delay: number }) 
         <div className="absolute inset-1 rounded-full bg-primary-foreground/30" />
       )}
     </div>
-  </motion.div>
+  </m.div>
 );
 
 // Expandable Timeline Item
@@ -71,7 +71,7 @@ const TimelineItem = ({
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial={{ opacity: 0, x: -30 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -81,7 +81,7 @@ const TimelineItem = ({
       <TimelineLine isActive={isInView} />
       <TimelineDot isActive={isInView} delay={delay} />
 
-      <motion.div
+      <m.div
         whileHover={{ x: 5 }}
         onClick={() => setIsExpanded(!isExpanded)}
         className="bg-[#0a0520]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
@@ -103,17 +103,17 @@ const TimelineItem = ({
               </span>
             </div>
           </div>
-          <motion.div
+          <m.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.3 }}
             className="p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors"
           >
             <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Expandable Content */}
-        <motion.div
+        <m.div
           initial={false}
           animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
           transition={{ duration: 0.3 }}
@@ -135,37 +135,37 @@ const TimelineItem = ({
               </div>
             )}
           </div>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </m.div>
+      </m.div>
+    </m.div>
   );
 };
 
 // Section Header with Icon
 const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     className="flex items-center gap-4 mb-8"
   >
-    <motion.div
+    <m.div
       whileHover={{ rotate: 360, scale: 1.1 }}
       transition={{ duration: 0.5 }}
       className="p-4 bg-primary/10 rounded-2xl text-primary"
     >
       <Icon className="w-7 h-7" />
-    </motion.div>
+    </m.div>
     <div>
       <h3 className="text-2xl font-bold">{title}</h3>
       {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
     </div>
-  </motion.div>
+  </m.div>
 );
 
 // Current Status Badge
 const CurrentStatusBadge = () => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, scale: 0.8 }}
     whileInView={{ opacity: 1, scale: 1 }}
     viewport={{ once: true }}
@@ -176,7 +176,7 @@ const CurrentStatusBadge = () => (
       <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
     </span>
     Currently Learning
-  </motion.div>
+  </m.div>
 );
 
 export default function Experience() {
@@ -190,22 +190,22 @@ export default function Experience() {
     <section id="experience" className="section-container overflow-hidden">
       {/* Section Header */}
       <div className="text-center mb-16">
-        <motion.h2
+        <m.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
           My Journey
-        </motion.h2>
-        <motion.div
+        </m.h2>
+        <m.div
           initial={{ width: 0 }}
           whileInView={{ width: "5rem" }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="h-1.5 bg-primary mx-auto rounded-full mb-6"
         />
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -213,7 +213,7 @@ export default function Experience() {
           className="text-muted-foreground max-w-xl mx-auto"
         >
           A timeline of my educational background and professional experiences
-        </motion.p>
+        </m.p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 max-w-6xl mx-auto">
@@ -263,7 +263,7 @@ export default function Experience() {
           </div>
 
           {/* Current Status */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -271,7 +271,7 @@ export default function Experience() {
             className="mt-8 pl-10"
           >
             <CurrentStatusBadge />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Experience Column */}
@@ -290,40 +290,40 @@ export default function Experience() {
                 ))}
               </div>
             ) : work.length === 0 ? (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 className="relative"
               >
                 {/* Open to Opportunities Card */}
-                <motion.div
+                <m.div
                   whileHover={{ scale: 1.02 }}
                   className="p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl border-2 border-dashed border-primary/30 text-center"
                 >
-                  <motion.div
+                  <m.div
                     animate={{ y: [0, -5, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                     className="w-16 h-16 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center"
                   >
                     <Briefcase className="w-8 h-8 text-primary" />
-                  </motion.div>
+                  </m.div>
                   <h4 className="text-xl font-bold mb-2">Open to Opportunities</h4>
                   <p className="text-muted-foreground mb-4">
                     I'm actively seeking internships and entry-level opportunities to apply my skills and grow professionally.
                   </p>
-                  <motion.button
+                  <m.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
                     className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 hover:shadow-xl transition-all"
                   >
                     Get In Touch
-                  </motion.button>
-                </motion.div>
+                  </m.button>
+                </m.div>
 
                 {/* What I'm Looking For */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -341,7 +341,7 @@ export default function Experience() {
                       "System Design",
                       "Remote/Hybrid"
                     ].map((item, i) => (
-                      <motion.div
+                      <m.div
                         key={i}
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -351,11 +351,11 @@ export default function Experience() {
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                         {item}
-                      </motion.div>
+                      </m.div>
                     ))}
                   </div>
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             ) : (
               work.map((exp, idx) => (
                 <TimelineItem

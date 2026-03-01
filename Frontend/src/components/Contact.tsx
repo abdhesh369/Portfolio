@@ -2,7 +2,7 @@ import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,14 +68,14 @@ const CyberInput = ({
 
       <AnimatePresence>
         {error && (
-          <motion.p
+          <m.p
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             className="absolute right-2 top-2 text-[10px] text-red-400 font-mono bg-red-950/30 px-2 py-0.5 rounded border border-red-500/30"
           >
             ! ERROR: {error}
-          </motion.p>
+          </m.p>
         )}
       </AnimatePresence>
     </div>
@@ -84,7 +84,7 @@ const CyberInput = ({
 
 // Data Card
 const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.ElementType; label: string; value: string; href?: string; delay: number }) => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, x: -20 }}
     whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true }}
@@ -104,7 +104,7 @@ const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.Eleme
       </div>
       {href && <Copy className="w-4 h-4 text-gray-600 group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" />}
     </a>
-  </motion.div>
+  </m.div>
 );
 
 export default function Contact() {
@@ -137,7 +137,7 @@ export default function Contact() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -145,16 +145,16 @@ export default function Contact() {
           >
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             COMM_LINK_OPEN
-          </motion.div>
+          </m.div>
 
-          <motion.h2
+          <m.h2
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-bold font-display text-white mb-4"
           >
             Initialize <span className="text-cyan-400">Connection</span>
-          </motion.h2>
+          </m.h2>
 
           <p className="text-gray-400 max-w-lg mx-auto">
             Ready to collaborate on high-performance systems? Transmit your data below.
@@ -193,7 +193,7 @@ export default function Contact() {
             </div>
 
             {/* Availability Block */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -215,11 +215,11 @@ export default function Contact() {
                   <p className="text-xs text-gray-400 mt-1">Open to Full-Time & Freelance</p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
 
           {/* Form Terminal */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -240,7 +240,7 @@ export default function Contact() {
               <div className="p-6 md:p-8 relative">
                 <AnimatePresence>
                   {showSuccess ? (
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050510]/95 rounded-b-xl"
@@ -253,7 +253,7 @@ export default function Contact() {
                       <Button onClick={() => setShowSuccess(false)} variant="outline" className="border-green-500/30 text-green-400 hover:bg-green-500/10">
                         Send Another Packet
                       </Button>
-                    </motion.div>
+                    </m.div>
                   ) : null}
                 </AnimatePresence>
 
@@ -296,7 +296,7 @@ export default function Contact() {
                 <span>LATENCY: 12ms</span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>
@@ -304,7 +304,7 @@ export default function Contact() {
 }
 
 const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: React.ElementType; label: string; delay: number }) => (
-  <motion.a
+  <m.a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
@@ -318,5 +318,5 @@ const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: Re
     aria-label={label}
   >
     <Icon className="w-5 h-5" />
-  </motion.a>
+  </m.a>
 );

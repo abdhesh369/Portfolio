@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
 import { useMindset } from "@/hooks/use-portfolio";
 import type { Mindset } from "@shared/schema";
@@ -30,7 +30,7 @@ const PrincipleCard = ({
   const isInView = useInView(ref, { once: true });
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -40,7 +40,7 @@ const PrincipleCard = ({
     >
       {/* Connection line to next card */}
       {index < 3 && (
-        <motion.div
+        <m.div
           initial={{ width: 0 }}
           animate={isInView ? { width: "100%" } : {}}
           transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
@@ -48,7 +48,7 @@ const PrincipleCard = ({
         />
       )}
 
-      <motion.div
+      <m.div
         whileHover={{ scale: 1.02, y: -5 }}
         animate={{
           borderColor: isActive ? "rgba(124,58,237,0.5)" : "rgba(0,0,0,0.1)",
@@ -62,7 +62,7 @@ const PrincipleCard = ({
         </div>
 
         {/* Icon */}
-        <motion.div
+        <m.div
           animate={{ rotate: isActive ? 360 : 0 }}
           transition={{ duration: 0.5 }}
           className={`mb-6 p-4 rounded-2xl w-fit transition-all duration-300 ${isActive
@@ -74,7 +74,7 @@ const PrincipleCard = ({
             const Icon = principle.icon;
             return <Icon className="w-7 h-7" />;
           })()}
-        </motion.div>
+        </m.div>
 
         {/* Content */}
         <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -85,20 +85,20 @@ const PrincipleCard = ({
         </p>
 
         {/* Expand indicator */}
-        <motion.div
+        <m.div
           animate={{ x: isActive ? 5 : 0, opacity: isActive ? 1 : 0.5 }}
           className="absolute bottom-6 right-6"
         >
           <ChevronRight className="w-5 h-5 text-primary" />
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </m.div>
+      </m.div>
+    </m.div>
   );
 };
 
 // Expanded Detail Panel
 const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon: React.ElementType } }) => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, height: 0 }}
     animate={{ opacity: 1, height: "auto" }}
     exit={{ opacity: 0, height: 0 }}
@@ -127,7 +127,7 @@ const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon:
         </div>
       </div>
     </div>
-  </motion.div>
+  </m.div>
 );
 
 const principles = [
@@ -177,7 +177,7 @@ export default function EngineeringMindset() {
     <section id="mindset" className="section-container bg-muted/30 overflow-hidden">
       {/* Header */}
       <div className="text-center mb-16">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -185,23 +185,23 @@ export default function EngineeringMindset() {
         >
           <Brain className="w-4 h-4" />
           Philosophy
-        </motion.div>
-        <motion.h2
+        </m.div>
+        <m.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
           Engineering Mindset
-        </motion.h2>
-        <motion.div
+        </m.h2>
+        <m.div
           initial={{ width: 0 }}
           whileInView={{ width: "5rem" }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="h-1.5 bg-primary mx-auto rounded-full mb-6"
         />
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -209,7 +209,7 @@ export default function EngineeringMindset() {
           className="text-muted-foreground max-w-xl mx-auto"
         >
           Core principles that guide my approach to software development
-        </motion.p>
+        </m.p>
       </div>
 
       <div className="max-w-6xl mx-auto">
@@ -232,7 +232,7 @@ export default function EngineeringMindset() {
         )}
 
         {/* Quote Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -243,7 +243,7 @@ export default function EngineeringMindset() {
 
           <div className="relative p-12 bg-card rounded-3xl border border-border text-center">
             {/* Animated quote icon */}
-            <motion.div
+            <m.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
               className="flex justify-center mb-6"
@@ -251,9 +251,9 @@ export default function EngineeringMindset() {
               <div className="p-4 bg-primary/10 rounded-full">
                 <Brain className="w-10 h-10 text-primary" />
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.blockquote
+            <m.blockquote
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -265,7 +265,7 @@ export default function EngineeringMindset() {
               <span className="text-primary font-semibold">scalable</span>, and{" "}
               <span className="text-primary font-semibold">maintainable</span>{" "}
               for years to come."
-            </motion.blockquote>
+            </m.blockquote>
 
             {/* Decorative sparkles */}
             <div className="absolute top-8 left-8">
@@ -275,16 +275,16 @@ export default function EngineeringMindset() {
               <Sparkles className="w-6 h-6 text-primary/30" />
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* CTA */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
-          <motion.button
+          <m.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' })}
@@ -292,8 +292,8 @@ export default function EngineeringMindset() {
           >
             See my principles in action
             <ArrowRight className="w-4 h-4" />
-          </motion.button>
-        </motion.div>
+          </m.button>
+        </m.div>
       </div>
     </section>
   );

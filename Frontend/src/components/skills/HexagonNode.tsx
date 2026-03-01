@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { SkillNode, NodeColors } from './SkillTypes';
 
 const statusColors: Record<string, NodeColors> = {
@@ -41,7 +41,7 @@ export const HexagonNode = ({
     const hexSize = 'clamp(44px, 7vw, 64px)';
 
     return (
-        <motion.div
+        <m.div
             className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10"
             style={{ left: `${node.x}%`, top: `${node.y}%` }}
             initial={{ scale: 0, opacity: 0 }}
@@ -59,7 +59,7 @@ export const HexagonNode = ({
             whileTap={{ scale: 0.95 }}
         >
             {/* Outer glow pulse ring */}
-            <motion.div
+            <m.div
                 className="absolute inset-0 -m-2"
                 style={{
                     width: `calc(${hexSize} + 16px)`,
@@ -77,7 +77,7 @@ export const HexagonNode = ({
             />
 
             {/* Main hexagon */}
-            <motion.div
+            <m.div
                 className="relative flex items-center justify-center"
                 style={{
                     width: hexSize,
@@ -126,10 +126,10 @@ export const HexagonNode = ({
                         filter: isActive ? `drop-shadow(0 0 8px ${colors.glow})` : 'none'
                     }}
                 />
-            </motion.div>
+            </m.div>
 
             {/* Label */}
-            <motion.div
+            <m.div
                 className="absolute left-1/2 -translate-x-1/2 text-center whitespace-nowrap"
                 style={{
                     bottom: '-22px',
@@ -146,7 +146,7 @@ export const HexagonNode = ({
                 transition={{ duration: 1.5, repeat: Infinity }}
             >
                 {node.name}
-            </motion.div>
-        </motion.div>
+            </m.div>
+        </m.div>
     );
 };

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { SkillNode, Connection } from './SkillTypes';
 
 interface SkillsTreeSVGProps {
@@ -58,7 +58,7 @@ export const SkillsTreeSVG = ({
             </defs>
 
             {/* Main tree trunk */}
-            <motion.path
+            <m.path
                 d="M 50 98 C 50 92, 48 88, 49 82 C 50 76, 52 70, 51 64 C 50 58, 48 52, 50 46 C 52 40, 50 34, 50 28"
                 stroke="url(#trunkGradient)"
                 strokeWidth="2.5"
@@ -80,7 +80,7 @@ export const SkillsTreeSVG = ({
                 const midY = (start.y + end.y) / 2 - 3;
 
                 return (
-                    <motion.path
+                    <m.path
                         key={i}
                         d={`M ${start.x} ${start.y} Q ${midX} ${midY}, ${end.x} ${end.y}`}
                         stroke={isHighlighted ? '#00d4ff' : 'rgba(100, 100, 160, 0.25)'}
@@ -98,7 +98,7 @@ export const SkillsTreeSVG = ({
 
             {/* Crystalline roots */}
             <g filter="url(#treeGlow)">
-                <motion.polygon
+                <m.polygon
                     points="50,88 46,98 50,100 54,98"
                     fill="url(#crystalGradient)"
                     initial={{ opacity: 0, scaleY: 0 }}

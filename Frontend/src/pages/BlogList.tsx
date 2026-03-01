@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useArticles } from "@/hooks/use-portfolio";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 function BlogCard({ article }: { article: any }) {
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -57,7 +57,7 @@ function BlogCard({ article }: { article: any }) {
                     </CardContent>
                 </Card>
             </Link>
-        </motion.div>
+        </m.div>
     );
 }
 
@@ -108,22 +108,22 @@ export default function BlogList() {
 
             <main className="container mx-auto px-6 pt-32 pb-24">
                 <header className="max-w-2xl mb-16">
-                    <motion.h1
+                    <m.h1
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="text-4xl md:text-5xl font-bold text-white mb-4"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
                         Thoughts & <span className="text-primary italic">Insights</span>
-                    </motion.h1>
-                    <motion.p
+                    </m.h1>
+                    <m.p
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 }}
                         className="text-white/60 text-lg"
                     >
                         Deep dives into full-stack development, software architecture, and the engineering mindset.
-                    </motion.p>
+                    </m.p>
                 </header>
 
                 <section className="mb-12 space-y-4">
@@ -140,7 +140,7 @@ export default function BlogList() {
 
                     {/* Tag filter chips */}
                     {allTags.length > 0 && (
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
@@ -167,7 +167,7 @@ export default function BlogList() {
                                     #{tag}
                                 </button>
                             ))}
-                        </motion.div>
+                        </m.div>
                     )}
                 </section>
 

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { X, BookOpen } from 'lucide-react';
 import { SkillNode } from './SkillTypes';
 
@@ -20,7 +20,7 @@ export const SkillTooltip = ({
     const colors = statusColors[node.status];
 
     return (
-        <motion.div
+        <m.div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -31,7 +31,7 @@ export const SkillTooltip = ({
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
             {/* Tooltip card */}
-            <motion.div
+            <m.div
                 className="relative w-full max-w-sm p-6 rounded-2xl overflow-hidden"
                 style={{
                     background: 'linear-gradient(135deg, rgba(15, 10, 35, 0.85) 0%, rgba(30, 15, 50, 0.8) 100%)',
@@ -94,7 +94,7 @@ export const SkillTooltip = ({
                         Category: <span className="text-gray-400 font-medium">{node.category}</span>
                     </span>
                 </div>
-            </motion.div>
-        </motion.div>
+            </m.div>
+        </m.div>
     );
 };

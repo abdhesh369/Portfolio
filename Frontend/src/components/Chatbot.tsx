@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, Send, User, Minimize2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
@@ -62,7 +62,7 @@ export function Chatbot() {
         <>
             <AnimatePresence>
                 {!isOpen && (
-                    <motion.button
+                    <m.button
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
@@ -74,13 +74,13 @@ export function Chatbot() {
                         <span className="absolute -top-10 right-0 bg-background/80 backdrop-blur-md border border-border px-3 py-1 rounded-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                             Ask AI Assistant
                         </span>
-                    </motion.button>
+                    </m.button>
                 )}
             </AnimatePresence>
 
             <AnimatePresence>
                 {isOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -176,7 +176,7 @@ export function Chatbot() {
                                 <span className="text-[10px] text-muted-foreground">AI can make mistakes. Verify important info.</span>
                             </div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
         </>

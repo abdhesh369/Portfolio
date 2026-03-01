@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { Quote } from "lucide-react";
 
@@ -57,7 +57,7 @@ export default function Testimonials() {
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -83,10 +83,10 @@ export default function Testimonials() {
                     <p className="mt-3 text-white/50 max-w-xl mx-auto text-sm sm:text-base">
                         Kind words from colleagues, mentors, and clients I've had the privilege to work with.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Testimonial Cards */}
-                <motion.div
+                <m.div
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -94,7 +94,7 @@ export default function Testimonials() {
                     className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                     {testimonials.map((t) => (
-                        <motion.div
+                        <m.div
                             key={t.id}
                             variants={cardVariants}
                             whileHover={{ y: -4, transition: { duration: 0.2 } }}
@@ -168,9 +168,9 @@ export default function Testimonials() {
                                     </span>
                                 )}
                             </div>
-                        </motion.div>
+                        </m.div>
                     ))}
-                </motion.div>
+                </m.div>
             </div>
         </section>
     );

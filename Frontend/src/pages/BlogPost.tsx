@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useArticle } from "@/hooks/use-portfolio";
 import { useRoute } from "wouter";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
@@ -112,7 +112,7 @@ export default function BlogPost() {
 
             <main className="container mx-auto px-6 pt-32 pb-24">
                 <div className="max-w-4xl mx-auto">
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="mb-8"
@@ -123,10 +123,10 @@ export default function BlogPost() {
                                 Back to Blog
                             </Button>
                         </Link>
-                    </motion.div>
+                    </m.div>
 
                     <header className="mb-12">
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="flex flex-wrap items-center gap-4 mb-6"
@@ -138,9 +138,9 @@ export default function BlogPost() {
                             {(article as any).tags?.map((tag: string) => (
                                 <span key={tag} className="text-xs text-white/40">#{tag}</span>
                             ))}
-                        </motion.div>
+                        </m.div>
 
-                        <motion.h1
+                        <m.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
@@ -148,10 +148,10 @@ export default function BlogPost() {
                             style={{ fontFamily: "var(--font-display)" }}
                         >
                             {article.title}
-                        </motion.h1>
+                        </m.h1>
 
                         {article.featuredImage && (
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.2 }}
@@ -163,7 +163,7 @@ export default function BlogPost() {
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
-                            </motion.div>
+                            </m.div>
                         )}
                     </header>
 
@@ -201,7 +201,7 @@ export default function BlogPost() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {relatedArticles.map((related: any) => (
                                     <Link key={related.id} href={`/blog/${related.slug}`}>
-                                        <motion.div
+                                        <m.div
                                             whileHover={{ y: -4 }}
                                             className="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 hover:border-primary/20 transition-all bg-white/[0.02]"
                                         >
@@ -218,7 +218,7 @@ export default function BlogPost() {
                                                 </h4>
                                                 <p className="text-xs text-white/40 line-clamp-2">{related.excerpt}</p>
                                             </div>
-                                        </motion.div>
+                                        </m.div>
                                     </Link>
                                 ))}
                             </div>

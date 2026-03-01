@@ -1,6 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { useProjects } from "@/hooks/use-portfolio";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   ArrowLeft,
   Github,
@@ -33,7 +33,7 @@ const FloatingParticles = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {particles.map((p) => (
-        <motion.div
+        <m.div
           key={p.id}
           className="absolute rounded-full"
           style={{
@@ -86,7 +86,7 @@ const SectionCard = ({
   };
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -122,7 +122,7 @@ const SectionCard = ({
         </h3>
         <div className="text-gray-300 leading-relaxed w-full">{children}</div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -145,7 +145,7 @@ const TechBadge = ({ tech }: { tech: string }) => {
   const color = colors[tech] || { bg: 'rgba(100, 100, 140, 0.1)', text: '#8b8ba0', border: 'rgba(100, 100, 140, 0.3)' };
 
   return (
-    <motion.span
+    <m.span
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
@@ -157,7 +157,7 @@ const TechBadge = ({ tech }: { tech: string }) => {
       }}
     >
       {tech}
-    </motion.span>
+    </m.span>
   );
 };
 
@@ -202,7 +202,7 @@ export default function ProjectDetail() {
         className="min-h-screen pt-24 px-4 flex flex-col items-center justify-center"
         style={{ background: 'linear-gradient(180deg, #050510 0%, #0a0520 50%, #050510 100%)' }}
       >
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
@@ -222,7 +222,7 @@ export default function ProjectDetail() {
               Back to Home
             </button>
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function ProjectDetail() {
 
       <div className="relative z-10 pt-24 pb-20 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-10"
@@ -283,7 +283,7 @@ export default function ProjectDetail() {
             {/* Breadcrumb & Back Button */}
             <div className="flex items-center gap-3">
               <Link href="/">
-                <motion.button
+                <m.button
                   whileHover={{ x: -3 }}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all"
                   style={{
@@ -294,7 +294,7 @@ export default function ProjectDetail() {
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Home
-                </motion.button>
+                </m.button>
               </Link>
               <ChevronRight className="w-4 h-4 text-gray-600" />
               <span className="text-gray-500">Projects</span>
@@ -306,7 +306,7 @@ export default function ProjectDetail() {
             <div className="space-y-6">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
@@ -319,9 +319,9 @@ export default function ProjectDetail() {
                     <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: catColor.text }}>
                       {project.category}
                     </span>
-                  </motion.div>
+                  </m.div>
 
-                  <motion.h1
+                  <m.h1
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="text-4xl md:text-5xl font-bold mb-2"
@@ -332,13 +332,13 @@ export default function ProjectDetail() {
                     }}
                   >
                     {project.title}
-                  </motion.h1>
+                  </m.h1>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   {project.githubUrl && (
-                    <motion.a
+                    <m.a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -353,10 +353,10 @@ export default function ProjectDetail() {
                     >
                       <Github className="w-4 h-4" />
                       Source Code
-                    </motion.a>
+                    </m.a>
                   )}
                   {project.liveUrl && (
-                    <motion.a
+                    <m.a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -372,13 +372,13 @@ export default function ProjectDetail() {
                     >
                       <ExternalLink className="w-4 h-4" />
                       Live Demo
-                    </motion.a>
+                    </m.a>
                   )}
                 </div>
               </div>
 
               {/* Hero Image */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -415,7 +415,7 @@ export default function ProjectDetail() {
                 {/* Corner decorations */}
                 <div className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 rounded-tl-2xl" style={{ borderColor: `${catColor.text}40` }} />
                 <div className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 rounded-br-2xl" style={{ borderColor: `${catColor.text}40` }} />
-              </motion.div>
+              </m.div>
             </div>
 
             {/* Content Grid */}
@@ -486,7 +486,7 @@ export default function ProjectDetail() {
               {/* Sidebar */}
               <div className="space-y-6">
                 {/* Technologies */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
@@ -526,19 +526,19 @@ export default function ProjectDetail() {
                       </div>
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               </div>
             </div>
 
             {/* Back to Projects */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               className="text-center pt-8 border-t border-gray-800/30"
             >
               <Link href="/#projects">
-                <motion.button
+                <m.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all"
@@ -550,10 +550,10 @@ export default function ProjectDetail() {
                 >
                   <ArrowLeft className="w-4 h-4" />
                   View All Projects
-                </motion.button>
+                </m.button>
               </Link>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </div>
     </div>

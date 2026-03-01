@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,12 +31,12 @@ const AnimatedCounter = ({ value, suffix = "", label }: { value: number; suffix?
   }, [isInView, value]);
 
   return (
-    <motion.div ref={ref} className="text-center">
+    <m.div ref={ref} className="text-center">
       <div className="text-4xl md:text-5xl font-bold text-primary mb-1">
         {count}{suffix}
       </div>
       <div className="text-sm text-muted-foreground">{label}</div>
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -46,7 +46,7 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
   const isInView = useInView(ref, { once: true });
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial={{ opacity: 0, x: -20 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -58,14 +58,14 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
         <span className="text-sm text-muted-foreground">{level}%</span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <motion.div
+        <m.div
           initial={{ width: 0 }}
           animate={isInView ? { width: `${level}%` } : {}}
           transition={{ delay: delay + 0.3, duration: 1, ease: "easeOut" }}
           className={`h-full rounded-full ${color}`}
         />
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -80,7 +80,7 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -90,14 +90,14 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
       className="relative group"
     >
       {/* Glow Effect */}
-      <motion.div
+      <m.div
         animate={{ opacity: isHovered ? 0.6 : 0 }}
         className="absolute -inset-2 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-3xl blur-xl"
       />
 
       <div className="relative p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-300 h-full hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
         {/* Icon */}
-        <motion.div
+        <m.div
           animate={{
             rotate: isHovered ? 360 : 0,
             scale: isHovered ? 1.1 : 1
@@ -106,7 +106,7 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
           className="p-4 bg-primary/10 rounded-2xl text-primary w-fit mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
         >
           <point.icon className="w-7 h-7" />
-        </motion.div>
+        </m.div>
 
         {/* Content */}
         <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -117,15 +117,15 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
         </p>
 
         {/* Hover Indicator */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
           className="absolute bottom-8 right-8"
         >
           <ArrowRight className="w-5 h-5 text-primary" />
-        </motion.div>
+        </m.div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -164,7 +164,7 @@ export default function WhyHireMe() {
     <section id="why-hire-me" className="section-container overflow-hidden">
       {/* Header */}
       <div className="text-center mb-16">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -172,16 +172,16 @@ export default function WhyHireMe() {
         >
           <Sparkles className="w-4 h-4" />
           Why Choose Me
-        </motion.div>
-        <motion.h2
+        </m.div>
+        <m.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
           Why Hire Me as a Student Engineer
-        </motion.h2>
-        <motion.div
+        </m.h2>
+        <m.div
           initial={{ width: 0 }}
           whileInView={{ width: "5rem" }}
           viewport={{ once: true }}
@@ -192,7 +192,7 @@ export default function WhyHireMe() {
 
       <div className="max-w-6xl mx-auto">
         {/* Stats Row */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -202,7 +202,7 @@ export default function WhyHireMe() {
           <AnimatedCounter value={5} suffix="+" label="Projects Built" />
           <AnimatedCounter value={500} suffix="+" label="Hours Coding" />
           <AnimatedCounter value={100} suffix="%" label="Dedication" />
-        </motion.div>
+        </m.div>
 
         {/* Points Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -212,7 +212,7 @@ export default function WhyHireMe() {
         </div>
 
         {/* Skills Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -243,7 +243,7 @@ export default function WhyHireMe() {
                 "Quick learner with adaptability",
                 "Proactive problem-solving approach"
               ].map((item, i) => (
-                <motion.li
+                <m.li
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -253,14 +253,14 @@ export default function WhyHireMe() {
                 >
                   <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span className="text-muted-foreground">{item}</span>
-                </motion.li>
+                </m.li>
               ))}
             </ul>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Tech Stack Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -274,7 +274,7 @@ export default function WhyHireMe() {
 
             <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
               {["TypeScript", "React", "Node.js", "Express", "PostgreSQL", "Drizzle ORM", "Tailwind CSS", "Framer Motion", "Vite", "Docker", "REST APIs", "Git"].map((tech, i) => (
-                <motion.div
+                <m.div
                   key={tech}
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -284,14 +284,14 @@ export default function WhyHireMe() {
                   className="px-4 py-2 bg-primary/5 hover:bg-primary/20 border border-primary/20 hover:border-primary/50 text-gray-200 hover:text-white rounded-xl transition-all font-mono text-sm cursor-default shadow-sm"
                 >
                   {tech}
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* CTA Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -304,13 +304,13 @@ export default function WhyHireMe() {
           </div>
 
           <div className="relative">
-            <motion.div
+            <m.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="w-16 h-16 mx-auto mb-6 bg-primary/20 rounded-full flex items-center justify-center"
             >
               <Sparkles className="w-8 h-8 text-primary" />
-            </motion.div>
+            </m.div>
 
             <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to contribute to your team</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
@@ -318,7 +318,7 @@ export default function WhyHireMe() {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -335,9 +335,9 @@ export default function WhyHireMe() {
                   <Download className="w-5 h-5" />
                   Download My Resume
                 </Button>
-              </motion.div>
+              </m.div>
 
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
@@ -345,10 +345,10 @@ export default function WhyHireMe() {
               >
                 Let's Talk
                 <ArrowRight className="w-5 h-5" />
-              </motion.button>
+              </m.button>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

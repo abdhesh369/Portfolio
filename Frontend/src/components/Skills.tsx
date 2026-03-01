@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
 
@@ -75,14 +75,14 @@ export default function SkillsTree() {
     >
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <motion.div
+        <m.div
           className="text-center mb-8 md:mb-12"
           initial={{ opacity: 0, y: -30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <motion.h2
+          <m.h2
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
             style={{
               background: 'linear-gradient(135deg, #00d4ff 0%, #a855f7 40%, #ec4899 80%, #00d4ff 100%)',
@@ -93,7 +93,7 @@ export default function SkillsTree() {
             }}
           >
             Skill Tree
-          </motion.h2>
+          </m.h2>
           <div className="flex flex-col items-center gap-2">
             <p className="text-gray-400 max-w-md mx-auto text-sm md:text-base">
               A verified map of my technical abilities
@@ -107,10 +107,10 @@ export default function SkillsTree() {
               {lowPowerMode ? 'High Performance Mode Off' : 'Low Power Mode'}
             </button>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Tree Container */}
-        <motion.div
+        <m.div
           className="relative w-full max-w-5xl mx-auto"
           style={{
             aspectRatio: '16 / 12'
@@ -158,10 +158,10 @@ export default function SkillsTree() {
               <CategorySummary skillNodes={skillNodes} />
             </StatPanel>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Legend */}
-        <motion.div
+        <m.div
           className="flex justify-center gap-4 md:gap-8 mt-6 md:mt-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -184,7 +184,7 @@ export default function SkillsTree() {
               <span className="text-xs text-gray-500 font-medium">{item.label}</span>
             </div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Tooltip Modal */}

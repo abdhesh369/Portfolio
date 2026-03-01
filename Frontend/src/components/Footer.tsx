@@ -1,6 +1,6 @@
 import { Github, Linkedin, Twitter, Facebook, Instagram, ArrowUp, Mail, Code2, Cpu, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useLocation } from "wouter";
 
 const footerNavItems = [
@@ -69,7 +69,7 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className="md:col-span-5 space-y-6">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -82,7 +82,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold font-display tracking-tight text-white">
                 Abdhesh<span className="text-cyan-400">.</span>Dev
               </h3>
-            </motion.div>
+            </m.div>
 
             <p className="text-base text-gray-400 leading-relaxed max-w-sm">
               Crafting robust digital systems with a focus on performance, scalability, and intuitive user experiences.
@@ -146,7 +146,7 @@ export default function Footer() {
             <p>© 2025–{currentYear} Abdhesh Sah. All rights reserved.</p>
           </div>
 
-          <motion.button
+          <m.button
             whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={scrollToTop}
@@ -154,7 +154,7 @@ export default function Footer() {
             aria-label="Scroll to top"
           >
             <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-          </motion.button>
+          </m.button>
         </div>
       </div>
     </footer>
@@ -178,7 +178,7 @@ function Badge({ icon: Icon, text, color }: { icon: React.ElementType, text: str
 
 function FooterLink({ href, icon: Icon, label, color }: { href: string, icon: React.ElementType, label: string, color: string }) {
   return (
-    <motion.a
+    <m.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
@@ -193,6 +193,6 @@ function FooterLink({ href, icon: Icon, label, color }: { href: string, icon: Re
         style={{ backgroundColor: color }}
       />
       <Icon className="w-5 h-5 relative z-10 group-hover:text-[var(--hover-color)] transition-colors" />
-    </motion.a>
+    </m.a>
   );
 }
