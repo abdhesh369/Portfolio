@@ -25,6 +25,18 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
     target: 'es2020',
     cssCodeSplit: true,
+    // Only preload chunks needed on every page — skip admin-only heavy chunks
+    modulePreload: {
+      resolveDependencies: (_filename: string, deps: string[]) => {
+        return deps.filter(dep =>
+          !dep.includes('vendor-editor') &&
+          !dep.includes('vendor-admin') &&
+          !dep.includes('vendor-three') &&
+          !dep.includes('AdminDashboard') &&
+          !dep.includes('RichTextEditor')
+        );
+      },
+    },
     minify: 'terser',
     terserOptions: {
       compress: {

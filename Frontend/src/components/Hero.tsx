@@ -293,14 +293,10 @@ export default function Hero() {
               </m.div>
             </div>
 
-            <m.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 leading-relaxed"
-            >
+            {/* LCP element — no animation delay so it paints immediately */}
+            <p className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
               I'm <strong className="text-white">Abdhesh Sah</strong>, a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive.
-            </m.p>
+            </p>
 
             {/* CTA Buttons */}
             <m.div

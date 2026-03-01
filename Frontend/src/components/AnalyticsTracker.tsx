@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useLocation } from "wouter";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 export function AnalyticsTracker() {
     const [location] = useLocation();
@@ -32,28 +31,12 @@ export function AnalyticsTracker() {
 
         trackPageView();
 
-        // 2. Log to Google Analytics if configured
-        if (GA_MEASUREMENT_ID) {
-            // Load script if not already present
-            if (!(window as any).gtag) {
-                const script = document.createElement("script");
-                script.async = true;
-                script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-                document.head.appendChild(script);
-
-                (window as any).dataLayer = (window as any).dataLayer || [];
-                (window as any).gtag = function () {
-                    (window as any).dataLayer.push(arguments);
-                };
-                (window as any).gtag("js", new Date());
-            }
-
-            // Track page view
-            (window as any).gtag("config", GA_MEASUREMENT_ID, {
+        // 2. Log to Google Analytics if gtag is available
+        // GTM script is loaded once by index.html via requestIdleCallback — no duplicate here
+        if ((window as any).gtag) {
+            (window as any).gtag("event", "page_view", {
                 page_path: location,
             });
-
-            console.log(`[GA] Tracking page view: ${location}`);
         }
     }, [location]);
 
