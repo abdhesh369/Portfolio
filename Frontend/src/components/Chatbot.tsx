@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Bot, User, Minimize2 } from "lucide-react";
+import { X, Send, User, Minimize2 } from "lucide-react";
+import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/api-helpers";
 
@@ -69,7 +70,7 @@ export function Chatbot() {
                         className="fixed bottom-6 right-6 z-50 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-primary/25 hover:-translate-y-1 transition-all duration-300 group"
                         aria-label="Open AI Assistant"
                     >
-                        <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        <ChatbotIcon className="w-6 h-6 group-hover:scale-110 transition-transform" innerColor="hsl(var(--primary))" />
                         <span className="absolute -top-10 right-0 bg-background/80 backdrop-blur-md border border-border px-3 py-1 rounded-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                             Ask AI Assistant
                         </span>
@@ -90,7 +91,7 @@ export function Chatbot() {
                         <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-primary/10 rounded-full text-primary">
-                                    <Bot className="w-5 h-5" />
+                                    <ChatbotIcon className="w-5 h-5" innerColor="hsl(var(--background))" />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-sm">AI Assistant</h3>
@@ -118,7 +119,7 @@ export function Chatbot() {
                                     className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                                 >
                                     <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground border border-border"}`}>
-                                        {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                                        {msg.role === "user" ? <User className="w-4 h-4" /> : <ChatbotIcon className="w-4 h-4" innerColor="hsl(var(--muted))" />}
                                     </div>
                                     <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-muted/50 border border-border rounded-tl-sm text-foreground"}`}>
                                         <div className="prose prose-sm dark:prose-invert max-w-none break-words">
@@ -137,7 +138,7 @@ export function Chatbot() {
                             {isLoading && (
                                 <div className="flex gap-3 flex-row">
                                     <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-muted text-foreground border border-border">
-                                        <Bot className="w-4 h-4" />
+                                        <ChatbotIcon className="w-4 h-4" innerColor="hsl(var(--muted))" />
                                     </div>
                                     <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-muted/50 border border-border rounded-tl-sm text-foreground flex items-center gap-1">
                                         <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>

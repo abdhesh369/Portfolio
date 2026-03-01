@@ -67,7 +67,7 @@ export const registerChatRoutes = (router: Router) => {
                 ...messages
             ];
 
-            console.log("DEBUG: Sending request to OpenRouter (nemotron-nano-12b-v2-vl:free)...");
+            console.log("DEBUG: Sending request to OpenRouter (openai/gpt-oss-120b:free)...");
 
             const response = await openrouter.chat.send({
                 chatGenerationParams: {
