@@ -18,6 +18,7 @@
 
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
+import { useTheme } from './theme-provider';
 
 // ============================================
 // TYPES & INTERFACES
@@ -82,13 +83,6 @@ const SCIFI_COLORS = {
 // UTILITY FUNCTIONS
 // ============================================
 
-/**
- * Check if user prefers reduced motion
- */
-const prefersReducedMotion = (): boolean => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
 
 /**
  * Check if device is mobile
@@ -109,6 +103,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     sciFiTheme = true,
     static: isStatic = false
 }) => {
+    const { reducedMotion } = useTheme();
     const containerRef = useRef<HTMLDivElement>(null);
     const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
@@ -127,7 +122,6 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
 
     // Build configuration with props, responsive adjustments, and accessibility
     const config = useMemo((): PlexusConfig => {
-        const reducedMotion = prefersReducedMotion();
         const isMobile = isMobileDevice();
 
         // Determine colors
@@ -154,7 +148,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
             // Reduce connection distance on mobile for performance
             connectionDistance: isMobile ? 100 : DEFAULT_CONFIG.connectionDistance
         };
-    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic]);
+    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic, reducedMotion]);
 
     // Create particle cloud with BufferGeometry
     const createParticleCloud = useCallback((): THREE.Points => {
