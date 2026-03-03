@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
   ],
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -41,17 +44,9 @@ export default defineConfig({
         );
       },
     },
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.warn', 'console.info', 'console.debug'],
-        // Prevent TDZ errors in Zod v3/v4 dual-bundle (vendor-forms chunk)
-        reduce_vars: false,
-        collapse_vars: false,
-      },
-    },
+    // Use esbuild (Vite default) instead of Terser — Terser's variable
+    // collapsing breaks Zod v3/v4 dual-bundle TDZ semantics.
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks(id) {
