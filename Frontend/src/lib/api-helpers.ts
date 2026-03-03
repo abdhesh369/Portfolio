@@ -1,6 +1,7 @@
 export const API_BASE_URL = (() => {
     if (import.meta.env.DEV) {
-        return "http://localhost:5000";
+        // Use relative paths to leverage Vite proxy in development
+        return "";
     }
 
     const prodUrl = import.meta.env.VITE_API_URL;

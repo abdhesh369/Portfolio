@@ -46,6 +46,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5174",
   "http://localhost:4173",
   "https://abdheshsah.com.np",
   "https://www.abdheshsah.com.np",
@@ -55,7 +56,15 @@ const allowedOrigins = [
 app.use(compression());
 app.use(cookieParser());
 
-// Global Rate Limiter — applied to /api/v1 only (not /api shim) to avoid double-counting
+// Backward-compatible URL rewrite: /api/* → /api/v1/*
+// Avoids 307 redirects which cause double round-trips, cookie/body loss, and CORS issues.
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.url.startsWith('/api/') && !req.url.startsWith('/api/v1')) {
+    req.url = '/api/v1' + req.url.slice(4);
+  }
+  next();
+});
+
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
@@ -74,7 +83,7 @@ app.use(
         callback(null, true);
         return;
       }
-      if (allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(origin) || (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:"))) {
         callback(null, true);
       } else {
         console.warn(`CORS blocked origin: ${origin}`);
@@ -90,7 +99,7 @@ app.use(
 // Tighten Helmet CSP
 app.use(
   helmet({
-    contentSecurityPolicy: {
+    contentSecurityPolicy: process.env.NODE_ENV === "production" ? {
       useDefaults: true,
       directives: {
         "default-src": ["'self'"],
@@ -110,18 +119,15 @@ app.use(
         "frame-ancestors": ["'none'"],
         "form-action": ["'self'"],
       },
-    },
-    crossOriginEmbedderPolicy: true,
-    crossOriginOpenerPolicy: true,
+    } : false,
+    crossOriginEmbedderPolicy: process.env.NODE_ENV === "production",
+    crossOriginOpenerPolicy: process.env.NODE_ENV === "production",
     crossOriginResourcePolicy: { policy: "cross-origin" },
-    // HSTS rollout: start at 5 min, then 1 week (604800), 1 month (2592000),
-    // then 1 year + preload (63072000). Bump maxAge after each period passes
-    // with no issues, then add preload: true and submit to hstspreload.org.
-    strictTransportSecurity: {
-      maxAge: 300,
+    strictTransportSecurity: process.env.NODE_ENV === "production" ? {
+      maxAge: 63072000,
       includeSubDomains: true,
-      preload: false,
-    },
+      preload: true,
+    } : false,
   })
 );
 

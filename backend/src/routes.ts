@@ -41,13 +41,6 @@ export function registerRoutes(app: Express) {
   // Main API versioning
   app.use("/api/v1", v1Router);
 
-  // Compatibility shim: Forward /api/* to /api/v1/* if not explicitly v1
-  app.use("/api", (req, res, next) => {
-    if (req.path.startsWith("/v1")) {
-      return next();
-    }
-    // Remove /api from originalUrl and prepend /api/v1
-    const targetPath = req.url.startsWith('/') ? req.url : `/${req.url}`;
-    res.redirect(307, `/api/v1${targetPath}`);
-  });
+  // Note: /api/* → /api/v1/* rewrite is handled in index.ts (before rate limiter)
+  // to avoid 307 redirects that cause double round-trips and break cookies/CORS.
 }

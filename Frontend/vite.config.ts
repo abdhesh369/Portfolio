@@ -25,6 +25,10 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       },
+      '/health': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
     },
   },
   build: {
@@ -89,6 +93,8 @@ export default defineConfig({
           ) return 'vendor-misc';
 
           // Core framework — always needed
+          // react-hook-form + @hookform MUST live here with React to avoid
+          // Rollup cross-chunk TDZ errors (vendor-forms → vendor-core circular).
           if (
             id.includes('/react/') ||
             id.includes('/react-dom/') ||
@@ -98,7 +104,9 @@ export default defineConfig({
             id.includes('/react-is/') ||
             id.includes('/use-sync-external-store/') ||
             id.includes('/scheduler/') ||
-            id.includes('/regexparam/')
+            id.includes('/regexparam/') ||
+            id.includes('/react-hook-form/') ||
+            id.includes('/@hookform/')
           ) return 'vendor-core';
 
           // Motion — used on hero, keep separate
@@ -117,12 +125,8 @@ export default defineConfig({
             id.includes('/tailwind-merge/')
           ) return 'vendor-ui';
 
-          // Forms: used by Contact (lazy-loaded public page)
-          if (
-            id.includes('/react-hook-form/') ||
-            id.includes('/@hookform/') ||
-            id.includes('/zod/')
-          ) return 'vendor-forms';
+          // Zod — pure JS, no React dependency, safe in its own chunk
+          if (id.includes('/zod/')) return 'vendor-forms';
 
           // Catch-all: keep remaining node_modules out of index chunk
           return 'vendor-misc';
