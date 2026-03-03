@@ -181,28 +181,39 @@ export async function seedDatabase() {
     logSeed(`Skills: ${successCount} succeeded, ${failCount} failed`);
 
     // Add Skill Connections
-    const connections = [
-      { fromSkillId: "C", toSkillId: "C++" },
-      { fromSkillId: "HTML", toSkillId: "CSS" },
-      { fromSkillId: "CSS", toSkillId: "JavaScript" },
-      { fromSkillId: "JavaScript", toSkillId: "React" },
-      { fromSkillId: "Git", toSkillId: "GitHub" },
-      { fromSkillId: "Node.js", toSkillId: "Express" },
-      { fromSkillId: "Express", toSkillId: "PostgreSQL" },
+    const connectionData = [
+      { fromName: "C", toName: "C++" },
+      { fromName: "HTML", toName: "CSS" },
+      { fromName: "CSS", toName: "JavaScript" },
+      { fromName: "JavaScript", toName: "React" },
+      { fromName: "Git", toName: "GitHub" },
+      { fromName: "Node.js", toName: "Express" },
+      { fromName: "Express", toName: "PostgreSQL" },
     ];
 
+    const allSkillsAfterSeeding = await storage2.getSkills();
+    const skillNameToId = new Map(allSkillsAfterSeeding.map(s => [s.name, s.id]));
+
     const existingConnections = await storage2.getSkillConnections();
-    for (const conn of connections) {
+    for (const data of connectionData) {
       try {
-        const exists = existingConnections.some(
-          c => c.fromSkillId === conn.fromSkillId && c.toSkillId === conn.toSkillId
-        );
-        if (exists) {
-          logSeed(`Connection already exists: ${conn.fromSkillId} -> ${conn.toSkillId}, skipping... `);
+        const fromSkillId = skillNameToId.get(data.fromName);
+        const toSkillId = skillNameToId.get(data.toName);
+
+        if (!fromSkillId || !toSkillId) {
+          logSeed(`Could not find skills for connection: ${data.fromName} -> ${data.toName}, skipping...`, "warn");
           continue;
         }
-        await storage2.createSkillConnection(conn);
-        logSeed(`Seeded connection: ${conn.fromSkillId} -> ${conn.toSkillId} `);
+
+        const exists = existingConnections.some(
+          c => c.fromSkillId === fromSkillId && c.toSkillId === toSkillId
+        );
+        if (exists) {
+          logSeed(`Connection already exists: ${data.fromName} -> ${data.toName}, skipping... `);
+          continue;
+        }
+        await storage2.createSkillConnection({ fromSkillId, toSkillId });
+        logSeed(`Seeded connection: ${data.fromName} -> ${data.toName} `);
       } catch (err) {
         logSeed(`Failed to seed connection: ${err} `, "error");
       }
