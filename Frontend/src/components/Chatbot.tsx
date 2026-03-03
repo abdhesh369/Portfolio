@@ -135,7 +135,7 @@ export function Chatbot() {
                                     <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center border ${msg.role === "user" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.1)]" : "bg-[#0a0520] text-purple-400 border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.1)]"}`}>
                                         {msg.role === "user" ? <User className="w-4 h-4" /> : <ChatbotIcon className="w-4 h-4" innerColor="currentColor" />}
                                     </div>
-                                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 border ${msg.role === "user" ? "bg-gradient-to-r from-cyan-600 to-blue-600 border-transparent text-white rounded-tr-sm shadow-lg" : "bg-white/5 border-white/10 rounded-tl-sm text-gray-200 backdrop-blur-md"}`}>
+                                    <div className={`max-w-[80%] px-4 py-3 border ${msg.role === "user" ? "bg-gradient-to-r from-cyan-600 to-blue-600 border-transparent text-white rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl shadow-lg" : "bg-white/5 border-white/10 rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl text-gray-200 backdrop-blur-md"}`}>
                                         <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10">
                                             {msg.role === 'model' ? (
                                                 <ReactMarkdown>
@@ -154,7 +154,7 @@ export function Chatbot() {
                                     <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[#0a0520] text-purple-400 border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.1)] border">
                                         <ChatbotIcon className="w-4 h-4" innerColor="currentColor" />
                                     </div>
-                                    <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-white/5 border border-white/10 rounded-tl-sm text-gray-200 backdrop-blur-md flex items-center gap-1.5 h-11">
+                                    <div className="max-w-[80%] rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl px-4 py-3 bg-white/5 border border-white/10 text-gray-200 backdrop-blur-md flex items-center gap-1.5 h-11">
                                         <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
                                         <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
                                         <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
