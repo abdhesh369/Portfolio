@@ -128,7 +128,7 @@ export function Chatbot() {
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed bottom-6 right-6 z-50 group pointer-events-auto"
+                        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 group pointer-events-auto"
                         aria-label="Initialize AI Assistant"
                     >
                         {/* Outer Pulsing Ring */}
@@ -178,7 +178,7 @@ export function Chatbot() {
                         initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                         exit={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
-                        className="fixed bottom-6 right-6 z-50 w-[380px] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-[#0a0520]/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
+                        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-[#0a0520]/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
                     >
                         {/* Sci-Fi Accent Lines */}
                         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50 z-20" />

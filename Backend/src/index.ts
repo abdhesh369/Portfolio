@@ -27,7 +27,7 @@ declare module "http" {
   }
 }
 
-function log(message: string, source = "express") {
+function log(message: string, source = "express", level: "INFO" | "WARN" | "ERROR" = "INFO") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
@@ -35,7 +35,8 @@ function log(message: string, source = "express") {
     hour12: true,
   });
   const sanitizedMessage = message.replace(/\n|\r/g, " ");
-  console.log(`${formattedTime} [${source}] ${sanitizedMessage}`);
+  const levelTag = level.padEnd(5);
+  console.log(`${formattedTime} [${source}] [${levelTag}] ${sanitizedMessage}`);
 }
 
 // Request Tracing
@@ -193,6 +194,16 @@ app.get("/health", async (_req: Request, res: Response) => {
   });
 });
 
+// Formal API Health Check for monitoring tools
+app.get("/api/v1/health", async (_req: Request, res: Response) => {
+  const dbHealth = await checkDatabaseHealth();
+  res.status(200).json({
+    status: dbHealth.healthy ? "healthy" : "degraded",
+    database: dbHealth.healthy ? "connected" : "reconnecting",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {
     log(`${signal} received, shutting down...`, "shutdown");
@@ -225,7 +236,7 @@ function setupGracefulShutdown() {
 
       process.exit(0);
     } catch (err) {
-      log(`Error during shutdown: ${err}`, "error");
+      log(`Error during shutdown: ${err}`, "error", "ERROR");
       process.exit(1);
     }
   };
@@ -289,7 +300,7 @@ async function startServer() {
         const status = err.status || err.statusCode || 500;
         const message = status === 500 ? "Internal Server Error" : err.message;
 
-        log(`[${(req as any).id}] Error ${status}: ${err.message}`, "error");
+        log(`[${(req as any).id}] Error ${status}: ${err.message}`, "error", "ERROR");
 
         res.status(status).json({
           error: {
@@ -306,7 +317,7 @@ async function startServer() {
 
     log("✓ Server fully ready", "startup");
   } catch (error) {
-    log(`❌ STARTUP FAILED: ${error}`, "error");
+    log(`❌ STARTUP FAILED: ${error}`, "error", "ERROR");
     process.exit(1);
   }
 }

@@ -23,7 +23,7 @@ function BlogCard({ article }: { article: any }) {
                         {article.featuredImage ? (
                             <img
                                 src={article.featuredImage}
-                                alt={`${article.title} - Blog post featured image`}
+                                alt={article.imageAlt || `Cover illustration for the article "${article.title}": ${article.excerpt?.substring(0, 100)}...`}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                         ) : (

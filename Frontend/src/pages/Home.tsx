@@ -94,22 +94,38 @@ export default function Home() {
         slug="home"
         title="Abdhesh Sah - Full-Stack Engineer Portfolio"
         description="Portfolio of Abdhesh Sah, a Full Stack Developer specializing in modern web technologies."
-        structuredData={{
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: "Abdhesh Sah",
-          url: "https://abdheshsah.com.np",
-          sameAs: [
-            "https://github.com/abdhesh369",
-            "https://www.linkedin.com/in/abdhesh369",
-            "https://x.com/abdhesh369",
-          ],
-          jobTitle: "Full-Stack Engineer",
-          worksFor: {
-            "@type": "Organization",
-            name: "Freelance",
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Abdhesh Sah",
+            url: "https://abdheshsah.com.np",
+            sameAs: [
+              "https://github.com/abdhesh369",
+              "https://www.linkedin.com/in/abdhesh369",
+              "https://x.com/abdhesh369",
+            ],
+            jobTitle: "Full-Stack Engineer",
+            worksFor: {
+              "@type": "Organization",
+              name: "Freelance",
+            },
           },
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Abdhesh Sah Portfolio",
+            url: "https://abdheshsah.com.np",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: "https://abdheshsah.com.np/blog?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ]}
       />
 
       <Navbar />

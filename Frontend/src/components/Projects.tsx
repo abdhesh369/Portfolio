@@ -151,7 +151,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             <>
               <m.img
                 src={project.imageUrl}
-                alt={project.imageAlt || `${project.title} - ${project.category} Project Thumbnail`}
+                alt={project.imageAlt || `Screenshot of ${project.title}: ${project.description.substring(0, 100)}...`}
                 loading="lazy"
                 decoding="async"
                 width={600}
@@ -492,7 +492,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
             <div className="relative rounded-xl overflow-hidden mb-5">
               <img
                 src={project.imageUrl}
-                alt={`${project.title} - Detailed Preview`}
+                alt={project.imageAlt || `Detailed view of the ${project.title} project interface and key features`}
                 loading="lazy"
                 decoding="async"
                 width={600}

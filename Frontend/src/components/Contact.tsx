@@ -260,6 +260,8 @@ export default function Contact() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -20, scale: 0.95 }}
                       transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                      role="status"
+                      aria-live="polite"
                       className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050510]/95 rounded-b-xl"
                     >
                       <m.div
@@ -303,7 +305,7 @@ export default function Contact() {
                   </div>
 
                   {apiError && (
-                    <div className="p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-mono flex items-start gap-2">
+                    <div role="alert" aria-live="assertive" className="p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-mono flex items-start gap-2">
                       <span className="shrink-0 mt-0.5">! ERROR:</span>
                       <span>{apiError instanceof Error ? apiError.message : "Transmission failed. Try again."}</span>
                     </div>
