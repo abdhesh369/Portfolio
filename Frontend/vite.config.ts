@@ -3,14 +3,14 @@ import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
   ],
-  esbuild: {
+  esbuild: mode === 'production' ? {
     drop: ['console', 'debugger'],
-  },
+  } : {},
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -137,4 +137,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))
