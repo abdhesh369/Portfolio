@@ -8,11 +8,13 @@ if (!process.env.DATABASE_URL) {
 }
 
 // Configure Pool for Production
+// Neon free-tier databases hibernate after ~5 min of inactivity.
+// Cold starts take 3-7 s, so connectionTimeoutMillis must be generous.
 export const pool = new pg.Pool({
     connectionString: env.DATABASE_URL,
-    max: env.NODE_ENV === 'production' ? 20 : 5, // Max connections
+    max: env.NODE_ENV === 'production' ? 20 : 5,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 10000, // 10 s — handles Neon cold starts
 });
 
 export const db = drizzle(pool, { schema });

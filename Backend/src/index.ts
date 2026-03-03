@@ -164,14 +164,21 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-// Health check with database connectivity verification
+// Lightweight liveness probe — used by Render's deploy health check.
+// Must NOT touch the database so it stays fast even when Neon is cold.
+app.get("/ping", (_req: Request, res: Response) => {
+  res.status(200).json({ status: "ok" });
+});
+
+// Readiness / deep health check — includes database connectivity.
+// Returns 200 even if DB is waking up, with a "degraded" flag,
+// so Render doesn't mark the deploy as failed during Neon cold starts.
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const status = dbHealth.healthy ? 200 : 503;
 
-  res.status(status).json({
-    status: dbHealth.healthy ? "healthy" : "unhealthy",
-    database: dbHealth.healthy ? "connected" : "disconnected",
+  res.status(200).json({
+    status: dbHealth.healthy ? "healthy" : "degraded",
+    database: dbHealth.healthy ? "connected" : "reconnecting",
     environment: process.env.NODE_ENV || "development",
     timestamp: new Date().toISOString(),
     ...(process.env.NODE_ENV === "development" && { details: dbHealth.message })
@@ -216,6 +223,20 @@ async function startServer() {
   try {
     log("Starting server...", "startup");
 
+    // ── 1. Bind the port FIRST so Render detects the service immediately ──
+    //    Static routes (/, /ping) are already registered above and will respond
+    //    while the rest of the startup continues in the background.
+    const port = parseInt(process.env.PORT || "5000", 10);
+    const host = "0.0.0.0";
+
+    await new Promise<void>((resolve) => {
+      httpServer.listen(port, host, () => {
+        log(`✓ Server listening on ${host}:${port}`, "startup");
+        resolve();
+      });
+    });
+
+    // ── 2. Database health check ──
     log("📍 Checking database health...", "startup");
     const health = await checkDatabaseHealth();
 
@@ -241,6 +262,7 @@ async function startServer() {
       log("ℹ️ Skipping auto-seeding in production environment", "startup");
     }
 
+    // ── 3. Register API routes ──
     log("📍 Registering API routes...", "startup");
     registerRoutes(app);
     log("✓ API routes registered", "startup");
@@ -266,13 +288,7 @@ async function startServer() {
     // SETUP GRACEFUL SHUTDOWN
     setupGracefulShutdown();
 
-    // START HTTP SERVER
-    const port = parseInt(process.env.PORT || "5000", 10);
-    const host = "0.0.0.0";
-
-    httpServer.listen(port, host, () => {
-      log(`✓ Server running on ${host}:${port}`, "startup");
-    });
+    log("✓ Server fully ready", "startup");
   } catch (error) {
     log(`❌ STARTUP FAILED: ${error}`, "error");
     process.exit(1);
