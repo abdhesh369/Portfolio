@@ -33,9 +33,21 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         return res.status(400).json({ message: "Password is required" });
     }
 
-    const isValid = await bcrypt.compare(password, await bcrypt.hash(env.ADMIN_PASSWORD, 10));
+    const normalizedInput = password.trim();
+    const normalizedSecret = env.ADMIN_PASSWORD.trim();
+
+    // Debugging (Remove after resolution)
+    console.log(`[AUTH] Login attempt. Input: "${password.length}" chars, Normalized: "${normalizedInput.length}" chars`);
+    console.log(`[AUTH] Environment Secret: "${env.ADMIN_PASSWORD.length}" chars, Normalized: "${normalizedSecret.length}" chars`);
+
+    // Direct comparison as fallback for debugging environment mismatches
+    const isDirectMatch = normalizedInput === normalizedSecret;
+    const isBcryptMatch = await bcrypt.compare(normalizedInput, await bcrypt.hash(normalizedSecret, 10));
+
+    const isValid = isDirectMatch || isBcryptMatch;
 
     if (!isValid) {
+        console.warn(`[AUTH] Invalid login. Direct: ${isDirectMatch}, Bcrypt: ${isBcryptMatch}`);
         // Delay to prevent timing attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
         return res.status(401).json({ message: "Invalid credentials" });
