@@ -7,27 +7,7 @@ import { isAuthenticated, asyncHandler } from "../auth.js";
 
 const router = Router();
 
-// Validation middleware factory
-function validateBody<T extends z.ZodType>(schema: T) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    try {
-      req.body = schema.parse(req.body);
-      next();
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        res.status(400).json({
-          message: "Validation failed",
-          errors: err.errors.map((e) => ({
-            path: e.path.join("."),
-            message: e.message,
-          })),
-        });
-        return;
-      }
-      next(err);
-    }
-  };
-}
+import { validateBody } from "../middleware/validate.js";
 
 export function registerProjectRoutes(app: Router) {
   // GET /api/projects - Get all projects

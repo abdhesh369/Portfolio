@@ -28,27 +28,7 @@ const contactFormLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Validation middleware factory
-function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        try {
-            req.body = schema.parse(req.body);
-            next();
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                res.status(400).json({
-                    message: "Validation failed",
-                    errors: err.errors.map((e) => ({
-                        path: e.path.join("."),
-                        message: e.message,
-                    })),
-                });
-                return;
-            }
-            next(err);
-        }
-    };
-}
+import { validateBody } from "../middleware/validate.js";
 
 // Logger helper
 function log(message: string, level: "info" | "error" | "warn" = "info") {
@@ -100,7 +80,7 @@ export function registerMessageRoutes(app: Router) {
                 res.status(201).json({
                     success: true,
                     message: "Message sent! We'll get back to you soon.",
-                    data: { id: 0, name: req.body.name, email: req.body.email, subject: req.body.subject, message: "blocked", createdAt: new Date().toISOString() },
+                    data: { id: 0, message: "blocked" },
                 });
                 return;
             }

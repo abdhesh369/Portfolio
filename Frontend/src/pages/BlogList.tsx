@@ -92,7 +92,7 @@ export default function BlogList() {
             a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             a.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        const matchesTag = !selectedTag || (a.tags as string[] | undefined)?.includes(selectedTag);
+        const matchesTag = !selectedTag || (a.tags as string[] | undefined)?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
 
         return matchesSearch && matchesTag;
     }) || [];
@@ -149,8 +149,8 @@ export default function BlogList() {
                             <button
                                 onClick={() => setSelectedTag(null)}
                                 className={`text-xs px-3 py-1.5 rounded-full border transition-all ${!selectedTag
-                                        ? "bg-primary/20 text-primary border-primary/30"
-                                        : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
+                                    ? "bg-primary/20 text-primary border-primary/30"
+                                    : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
                                     }`}
                             >
                                 All
@@ -160,8 +160,8 @@ export default function BlogList() {
                                     key={tag}
                                     onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
                                     className={`text-xs px-3 py-1.5 rounded-full border transition-all ${selectedTag === tag
-                                            ? "bg-primary/20 text-primary border-primary/30"
-                                            : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
+                                        ? "bg-primary/20 text-primary border-primary/30"
+                                        : "bg-white/5 text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
                                         }`}
                                 >
                                     #{tag}

@@ -1267,10 +1267,15 @@ export class DatabaseStorage implements IStorage {
 
   async updateSeoSettings(id: number, settings: Partial<InsertSeoSettings>): Promise<SeoSettings> {
     try {
+      const updates = {
+        ...settings,
+        updatedAt: new Date(),
+      };
+
       // Atomic update + return using .returning()
       const [updated] = await db
         .update(seoSettingsTable)
-        .set(settings)
+        .set(updates)
         .where(eq(seoSettingsTable.id, id))
         .returning();
 
@@ -1299,11 +1304,15 @@ export class DatabaseStorage implements IStorage {
   async getArticles(status?: string): Promise<Article[]> {
     try {
       const start = Date.now();
-      const baseQuery = db.select().from(articlesTable).orderBy(desc(articlesTable.createdAt));
 
-      const result = status
-        ? await baseQuery.where(eq(articlesTable.status, status))
-        : await baseQuery;
+      // Build query conditionally to avoid @ts-ignore
+      let query = db.select().from(articlesTable);
+
+      if (status) {
+        query = query.where(eq(articlesTable.status, status)) as any;
+      }
+
+      const result = await query.orderBy(desc(articlesTable.createdAt));
 
       if (result.length === 0) return [];
 
@@ -1441,18 +1450,23 @@ export class DatabaseStorage implements IStorage {
   async updateArticle(id: number, article: Partial<InsertArticle>): Promise<Article> {
     try {
       const { tags, ...articleData } = article;
+      const now = new Date();
 
-      return await db.transaction(async (tx: any) => {
+      return await db.transaction(async (tx) => {
+        let updatedArticle: any;
+
         if (Object.keys(articleData).length > 0) {
-          const updateData: any = { ...articleData };
+          const updateData: any = { ...articleData, updatedAt: now };
           if (updateData.publishedAt) {
             updateData.publishedAt = new Date(updateData.publishedAt);
           }
 
-          await tx
+          const [result] = await tx
             .update(articlesTable)
             .set(updateData)
-            .where(eq(articlesTable.id, id));
+            .where(eq(articlesTable.id, id))
+            .returning();
+          updatedArticle = result;
         }
 
         if (tags) {
@@ -1465,15 +1479,39 @@ export class DatabaseStorage implements IStorage {
               }))
             );
           }
+
+          // If only tags changed, we still need to fetch or update the article
+          if (!updatedArticle) {
+            const [result] = await tx
+              .update(articlesTable)
+              .set({ updatedAt: now })
+              .where(eq(articlesTable.id, id))
+              .returning();
+            updatedArticle = result;
+          }
         }
 
-        const updated = await this.getArticleById(id);
-        if (!updated) {
-          throw new Error(`Article with id ${id} not found after update`);
+        if (!updatedArticle) {
+          updatedArticle = await tx.query.articlesTable.findFirst({
+            where: eq(articlesTable.id, id)
+          });
         }
 
-        logStorage(`Updated article: ${updated.title}`);
-        return updated;
+        if (!updatedArticle) throw new Error(`Article ${id} not found`);
+
+        // Get the current tags for this article
+        const currentTags = await tx
+          .select()
+          .from(articleTagsTable)
+          .where(eq(articleTagsTable.articleId, id));
+
+        const result: Article = {
+          ...transformArticle(updatedArticle),
+          tags: currentTags.map((t: any) => t.tag)
+        };
+
+        logStorage(`Updated article: ${result.title}`);
+        return result;
       });
     } catch (error) {
       logStorage(`Failed to update article ${id}: ${error}`, "error");

@@ -16,6 +16,9 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
+    if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {
+      console.warn("Sitemap: No PUBLIC_URL or FRONTEND_URL found, falling back to abdheshsah.com.np");
+    }
     const seoSettings = await storage.getSeoSettings();
     const projects = await storage.getProjects();
 

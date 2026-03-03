@@ -147,6 +147,18 @@ export function useArticles(status?: string) {
   });
 }
 
+export function useMessages() {
+  return useQuery({
+    queryKey: ["messages"],
+    queryFn: () =>
+      fetchAndParse(
+        api.messages.list.path,
+        api.messages.list.responses[200],
+        "Failed to fetch messages"
+      ),
+  });
+}
+
 export function useArticle(slug: string) {
   return useQuery({
     queryKey: ["article", slug],

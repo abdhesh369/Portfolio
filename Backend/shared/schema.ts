@@ -39,8 +39,8 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: varchar("from_skill_id", { length: 100 }).notNull(),
-  toSkillId: varchar("to_skill_id", { length: 100 }).notNull(),
+  fromSkillId: integer("from_skill_id").notNull(),
+  toSkillId: integer("to_skill_id").notNull(),
 });
 
 export const experiencesTable = pgTable("experiences", {
@@ -127,7 +127,7 @@ export const articlesTable = pgTable("articles", {
 
 export const articleTagsTable = pgTable("article_tags", {
   id: serial("id").primaryKey(),
-  articleId: integer("articleId").notNull(),
+  articleId: integer("articleId").notNull().references(() => articlesTable.id, { onDelete: 'cascade' }),
   tag: varchar("tag", { length: 100 }).notNull(),
 });
 
@@ -268,8 +268,8 @@ export const insertSkillApiSchema = z.object({
 
 export const skillConnectionSchema = z.object({
   id: z.number(),
-  fromSkillId: z.string().min(1),
-  toSkillId: z.string().min(1),
+  fromSkillId: z.number(),
+  toSkillId: z.number(),
 });
 
 export const mindsetSchema = z.object({

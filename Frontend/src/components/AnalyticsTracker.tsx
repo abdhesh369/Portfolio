@@ -1,11 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
 
 export function AnalyticsTracker() {
     const [location] = useLocation();
 
+    const lastTrackedPath = useRef<string | null>(null);
+
     useEffect(() => {
+        // Prevent duplicate tracking for the same path in strict mode or rapid navigation
+        if (lastTrackedPath.current === location) return;
+        lastTrackedPath.current = location;
+
         // 1. Log to our own backend
         const trackPageView = async () => {
             try {
@@ -31,7 +37,6 @@ export function AnalyticsTracker() {
         trackPageView();
 
         // 2. Log to Google Analytics if gtag is available
-        // GTM script is loaded once by index.html via requestIdleCallback — no duplicate here
         if ((window as any).gtag) {
             (window as any).gtag("event", "page_view", {
                 page_path: location,

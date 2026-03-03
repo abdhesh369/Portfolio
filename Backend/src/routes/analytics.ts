@@ -1,23 +1,26 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { storage } from "../storage.js";
 import { insertAnalyticsSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
-import { z } from "zod";
+import { validateBody } from "../middleware/validate.js";
 
-const router = Router();
+const analyticsLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { message: "Too many analytics events" },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 export function registerAnalyticsRoutes(app: Router) {
     // POST /analytics/track - Log an analytics event
     app.post(
         "/analytics/track",
+        analyticsLimiter,
+        validateBody(insertAnalyticsSchema),
         asyncHandler(async (req, res) => {
-            const parsed = insertAnalyticsSchema.safeParse(req.body);
-            if (!parsed.success) {
-                res.status(400).json({ message: "Invalid analytics data", errors: parsed.error.errors });
-                return;
-            }
-
-            const event = await storage.logAnalyticsEvent(parsed.data);
+            const event = await storage.logAnalyticsEvent(req.body);
             res.status(201).json(event);
         })
     );

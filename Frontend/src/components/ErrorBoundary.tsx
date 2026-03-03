@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
 /* ------------------------------------------------------------------ */
-/*  Terminal command definitions — lightweight Map, zero dependencies   */
+/*  Constants & Configuration                                         */
 /* ------------------------------------------------------------------ */
+
+const CONTACT_EMAIL = "abdheshshah111@gmail.com";
+const GITHUB_URL = "github.com/abdhesh369";
+const LINKEDIN_URL = "linkedin.com/in/abdhesh369";
 
 interface TerminalLine {
   type: "input" | "output" | "error" | "info" | "ascii";
@@ -51,12 +55,12 @@ const COMMANDS: Record<string, (args: string[], error?: Error) => string[]> = {
       `  Message : ${error.message}`,
       ...(error.stack
         ? [
-            "  Stack   :",
-            ...error.stack
-              .split("\n")
-              .slice(1, 6)
-              .map((l) => `    ${l.trim()}`),
-          ]
+          "  Stack   :",
+          ...error.stack
+            .split("\n")
+            .slice(1, 6)
+            .map((l) => `    ${l.trim()}`),
+        ]
         : []),
       "",
     ];
@@ -66,9 +70,9 @@ const COMMANDS: Record<string, (args: string[], error?: Error) => string[]> = {
     "",
     "  Contact Information",
     "  ─────────────────────────────────────",
-    "  Email    : abdheshshah111@gmail.com",
-    "  GitHub   : github.com/abdhesh369",
-    "  LinkedIn : linkedin.com/in/abdhesh369",
+    `  Email    : ${CONTACT_EMAIL}`,
+    `  GitHub   : ${GITHUB_URL}`,
+    `  LinkedIn : ${LINKEDIN_URL}`,
     "",
   ],
 
@@ -91,10 +95,10 @@ const BOOT_LINES: TerminalLine[] = [
   { type: "ascii", text: "  ╔══════════════════════════════════════╗" },
   { type: "ascii", text: "  ║     PORTFOLIO  RECOVERY  TERMINAL    ║" },
   { type: "ascii", text: "  ╚══════════════════════════════════════╝" },
-  { type: "info",  text: "" },
+  { type: "info", text: "" },
   { type: "error", text: "  [CRASH] The application encountered a fatal error." },
-  { type: "info",  text: '  Type "help" to see available commands.' },
-  { type: "info",  text: "" },
+  { type: "info", text: '  Type "help" to see available commands.' },
+  { type: "info", text: "" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -184,9 +188,9 @@ function TerminalFallback({ error }: { error?: Error }) {
     switch (type) {
       case "input": return "text-emerald-400";
       case "error": return "text-red-400";
-      case "info":  return "text-zinc-500";
+      case "info": return "text-zinc-500";
       case "ascii": return "text-cyan-400";
-      default:      return "text-zinc-300";
+      default: return "text-zinc-300";
     }
   };
 

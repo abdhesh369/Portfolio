@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/auth-context";
+import { useMessages } from "@/hooks/use-portfolio";
 import "@/styles/admin.css"; // Admin-only styles — code-split, not loaded on public pages
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
 import {
@@ -65,14 +66,14 @@ export default function AdminDashboard() {
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
-    // Fetch unread message count for badge
+    // Fetch message count for badge using custom hook
+    const { data: messages } = useMessages();
+
     useEffect(() => {
-        import("@/lib/api-helpers").then(({ apiFetch }) => {
-            apiFetch("/api/messages", token)
-                .then((msgs: any[]) => setMsgCount(msgs?.length ?? 0))
-                .catch(() => setMsgCount(0));
-        });
-    }, [token]);
+        if (messages) {
+            setMsgCount(messages.length);
+        }
+    }, [messages]);
 
     // Close dropdowns on outside click
     useEffect(() => {
