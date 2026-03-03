@@ -3,6 +3,7 @@ import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertTestimonialApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { cachePublic } from "../middleware/cache.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -30,6 +31,7 @@ export function registerTestimonialRoutes(app: Router) {
     // GET /testimonials - public list
     app.get(
         "/testimonials",
+        cachePublic(300),
         asyncHandler(async (_req, res) => {
             const testimonials = await storage.getTestimonials();
             res.json(testimonials);
@@ -39,6 +41,7 @@ export function registerTestimonialRoutes(app: Router) {
     // GET /testimonials/:id - public single
     app.get(
         "/testimonials/:id",
+        cachePublic(300),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {

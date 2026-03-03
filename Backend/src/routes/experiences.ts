@@ -4,6 +4,7 @@ import { storage } from "../storage.js";
 import { insertExperienceApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { cachePublic } from "../middleware/cache.js";
 
 function validateBody<T extends z.ZodType>(schema: T) {
     return (req: Request, res: Response, next: NextFunction): void => {
@@ -30,6 +31,7 @@ export function registerExperienceRoutes(app: Router) {
     // GET /experiences - Get all experiences
     app.get(
         "/experiences",
+        cachePublic(600),
         asyncHandler(async (_req, res) => {
             const experiences = await storage.getExperiences();
             res.json(experiences);
@@ -39,6 +41,7 @@ export function registerExperienceRoutes(app: Router) {
     // GET /experiences/:id - Get experience by ID
     app.get(
         "/experiences/:id",
+        cachePublic(600),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {

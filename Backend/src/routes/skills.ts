@@ -1,9 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import { skillService } from "../services/skill.service.js";
 import { storage } from "../storage.js";
 import { insertSkillApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { cachePublic } from "../middleware/cache.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -32,7 +34,9 @@ export function registerSkillRoutes(app: Router) {
     // (Defined BEFORE :id to avoid conflict)
     app.get(
         "/skills/connections",
+        cachePublic(3600), // Cache connections for 1 hour (rarely change)
         asyncHandler(async (_req, res) => {
+            // TODO: Extract SkillConnectionRepository/Service
             const connections = await storage.getSkillConnections();
             res.json(connections);
         })
@@ -41,8 +45,9 @@ export function registerSkillRoutes(app: Router) {
     // GET /skills - Get all skills
     app.get(
         "/skills",
+        cachePublic(600),
         asyncHandler(async (_req, res) => {
-            const skills = await storage.getSkills();
+            const skills = await skillService.getAll();
             res.json(skills);
         })
     );
@@ -50,13 +55,14 @@ export function registerSkillRoutes(app: Router) {
     // GET /skills/:id - Get skill by ID
     app.get(
         "/skills/:id",
+        cachePublic(600),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
                 res.status(400).json({ message: "Invalid skill ID" });
                 return;
             }
-            const skill = await storage.getSkillById(id);
+            const skill = await skillService.getById(id);
             if (!skill) {
                 res.status(404).json({ message: "Skill not found" });
                 return;
@@ -71,7 +77,7 @@ export function registerSkillRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertSkillApiSchema),
         asyncHandler(async (req, res) => {
-            const skill = await storage.createSkill(req.body);
+            const skill = await skillService.create(req.body);
             res.status(201).json(skill);
         })
     );
@@ -87,7 +93,7 @@ export function registerSkillRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid skill ID" });
                 return;
             }
-            const skill = await storage.updateSkill(id, req.body);
+            const skill = await skillService.update(id, req.body);
             res.json(skill);
         })
     );
@@ -102,7 +108,7 @@ export function registerSkillRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid skill ID" });
                 return;
             }
-            await storage.deleteSkill(id);
+            await skillService.delete(id);
             res.status(204).send();
         })
     );
@@ -114,7 +120,7 @@ export function registerSkillRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const schema = z.object({ ids: z.array(z.number()) });
             const { ids } = schema.parse(req.body);
-            await storage.bulkDeleteSkills(ids);
+            await skillService.bulkDelete(ids);
             res.status(204).send();
         })
     );

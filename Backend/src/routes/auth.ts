@@ -80,7 +80,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     res.cookie("auth_token", token, {
         httpOnly: true,
         secure: isProd,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
@@ -123,7 +123,7 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
     res.clearCookie("auth_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: isProd ? "none" : "lax"
+        sameSite: "lax"
     });
 
     res.json({ message: "Logged out successfully" });

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertServiceApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { cachePublic } from "../middleware/cache.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -30,6 +31,7 @@ export function registerServiceRoutes(app: Router) {
   // GET /services - public list
   app.get(
     "/services",
+    cachePublic(600),
     asyncHandler(async (_req, res) => {
       const services = await storage.getServices();
       res.json(services);
@@ -39,6 +41,7 @@ export function registerServiceRoutes(app: Router) {
   // GET /services/:id - public single
   app.get(
     "/services/:id",
+    cachePublic(600),
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {

@@ -1,4 +1,4 @@
-import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -23,6 +23,11 @@ export const projectsTable = pgTable("projects", {
   isFlagship: boolean("isFlagship").notNull().default(false),
   impact: text("impact"),
   role: text("role"),
+}, (table) => {
+  return {
+    categoryIdx: index("projects_category_idx").on(table.category),
+    orderIdx: index("projects_order_idx").on(table.displayOrder),
+  };
 });
 
 export const skillsTable = pgTable("skills", {
@@ -80,6 +85,11 @@ export const analyticsTable = pgTable("analytics", {
   country: varchar("country", { length: 100 }),
   city: varchar("city", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    typeIdx: index("analytics_type_idx").on(table.type),
+    createdIdx: index("analytics_created_at_idx").on(table.createdAt),
+  };
 });
 
 export const emailTemplatesTable = pgTable("email_templates", {
@@ -123,6 +133,11 @@ export const articlesTable = pgTable("articles", {
   authorId: integer("authorId"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    statusIdx: index("articles_status_idx").on(table.status),
+    slugIdx: index("articles_slug_idx").on(table.slug), // though unique, status filtering is common
+  };
 });
 
 export const articleTagsTable = pgTable("article_tags", {
@@ -139,6 +154,11 @@ export const servicesTable = pgTable("services", {
   tags: jsonb("tags").notNull(),
   displayOrder: integer("displayOrder").notNull().default(0),
   isFeatured: boolean("isFeatured").notNull().default(false),
+}, (table) => {
+  return {
+    categoryIdx: index("services_category_idx").on(table.category),
+    orderIdx: index("services_order_idx").on(table.displayOrder),
+  };
 });
 
 export const testimonialsTable = pgTable("testimonials", {
@@ -151,6 +171,10 @@ export const testimonialsTable = pgTable("testimonials", {
   avatarUrl: varchar("avatarUrl", { length: 500 }),
   displayOrder: integer("displayOrder").notNull().default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    orderIdx: index("testimonials_order_idx").on(table.displayOrder),
+  };
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { storage } from "../storage.js";
+import { projectService } from "../services/project.service.js";
 import { insertProjectApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
@@ -8,13 +8,15 @@ import { isAuthenticated, asyncHandler } from "../auth.js";
 const router = Router();
 
 import { validateBody } from "../middleware/validate.js";
+import { cachePublic } from "../middleware/cache.js";
 
 export function registerProjectRoutes(app: Router) {
   // GET /api/projects - Get all projects
   app.get(
     "/projects",
+    cachePublic(600), // Cache for 10 minutes
     asyncHandler(async (_req, res) => {
-      const projects = await storage.getProjects();
+      const projects = await projectService.getAll();
       res.json(projects);
     })
   );
@@ -22,13 +24,14 @@ export function registerProjectRoutes(app: Router) {
   // GET /api/projects/:id - Get project by ID
   app.get(
     "/projects/:id",
+    cachePublic(600),
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
         res.status(400).json({ message: "Invalid project ID" });
         return;
       }
-      const project = await storage.getProjectById(id);
+      const project = await projectService.getById(id);
       if (!project) {
         res.status(404).json({ message: "Project not found" });
         return;
@@ -43,7 +46,7 @@ export function registerProjectRoutes(app: Router) {
     isAuthenticated,
     validateBody(insertProjectApiSchema),
     asyncHandler(async (req, res) => {
-      const project = await storage.createProject(req.body);
+      const project = await projectService.create(req.body);
       res.status(201).json(project);
     })
   );
@@ -55,7 +58,7 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const schema = z.object({ orderedIds: z.array(z.number()) });
       const { orderedIds } = schema.parse(req.body);
-      await storage.reorderProjects(orderedIds);
+      await projectService.updateReorder(orderedIds);
       res.status(204).send();
     })
   );
@@ -67,7 +70,7 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const schema = z.object({ ids: z.array(z.number()) });
       const { ids } = schema.parse(req.body);
-      await storage.bulkDeleteProjects(ids);
+      await projectService.bulkDelete(ids);
       res.status(204).send();
     })
   );
@@ -82,7 +85,7 @@ export function registerProjectRoutes(app: Router) {
         status: z.enum(["In Progress", "Completed", "Archived"]),
       });
       const { ids, status } = schema.parse(req.body);
-      await storage.bulkUpdateProjectStatus(ids, status);
+      await projectService.bulkUpdateStatus(ids, status);
       res.status(204).send();
     })
   );
@@ -98,7 +101,7 @@ export function registerProjectRoutes(app: Router) {
         res.status(400).json({ message: "Invalid project ID" });
         return;
       }
-      const project = await storage.updateProject(id, req.body);
+      const project = await projectService.update(id, req.body);
       res.json(project);
     })
   );
@@ -113,7 +116,7 @@ export function registerProjectRoutes(app: Router) {
         res.status(400).json({ message: "Invalid project ID" });
         return;
       }
-      await storage.deleteProject(id);
+      await projectService.delete(id);
       res.status(204).send();
     })
   );

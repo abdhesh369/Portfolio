@@ -3,12 +3,14 @@ import { storage } from "../storage.js";
 import { insertArticleApiSchema, updateArticleApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
+import { cachePublic } from "../middleware/cache.js";
 
 export const articlesRouter = Router();
 
 // GET /articles - List all articles
 articlesRouter.get(
     "/",
+    cachePublic(300),
     asyncHandler(async (req, res) => {
         const status = req.query.status as string | undefined;
         const articles = await storage.getArticles(status);
@@ -19,6 +21,7 @@ articlesRouter.get(
 // GET /articles/related/:slug - Get related articles based on overlapping tags
 articlesRouter.get(
     "/related/:slug",
+    cachePublic(300),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
         const article = await storage.getArticleBySlug(slug);
@@ -56,6 +59,7 @@ articlesRouter.get(
 // GET /articles/:slug - Get article by slug
 articlesRouter.get(
     "/:slug",
+    cachePublic(300),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
         const article = await storage.getArticleBySlug(slug);

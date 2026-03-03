@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
 import rateLimit from "express-rate-limit";
-import { storage } from "../storage.js";
+import { messageService } from "../services/message.service.js";
 import { insertMessageApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
 import { env } from "../env.js";
@@ -43,7 +43,7 @@ export function registerMessageRoutes(app: Router) {
         "/messages",
         isAuthenticated,
         asyncHandler(async (_req, res) => {
-            const messages = await storage.getMessages();
+            const messages = await messageService.getAll();
             res.json(messages);
         })
     );
@@ -58,7 +58,7 @@ export function registerMessageRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid message ID" });
                 return;
             }
-            const message = await storage.getMessageById(id);
+            const message = await messageService.getById(id);
             if (!message) {
                 res.status(404).json({ message: "Message not found" });
                 return;
@@ -73,50 +73,35 @@ export function registerMessageRoutes(app: Router) {
         contactFormLimiter,
         validateBody(insertMessageApiSchema),
         asyncHandler(async (req, res) => {
-            // Honeypot check for spam prevention
-            if (req.body.website) {
-                log(`Spam blocked (Honeypot filled): ${req.body.email}`, "warn");
-                // Fake success to trick the bot
+            try {
+                const message = await messageService.create(req.body);
+                log(`New message from: ${message.name} (${message.email})`);
+
+                // Send response immediately
                 res.status(201).json({
                     success: true,
                     message: "Message sent! We'll get back to you soon.",
-                    data: { id: 0, message: "blocked" },
+                    data: message,
                 });
-                return;
-            }
 
-            // Clean data
-            const dataToSave = { ...req.body };
-            delete dataToSave.website;
+                // Email Notification Integration (Fire-and-forget)
+                (async () => {
+                    try {
+                        if (!env.RESEND_API_KEY) {
+                            log("Skipping email: RESEND_API_KEY not set", "warn");
+                            return;
+                        }
 
-            const message = await storage.createMessage(dataToSave);
-            log(`New message from: ${message.name} (${message.email})`);
+                        const resend = new Resend(env.RESEND_API_KEY);
 
-            // Send response immediately
-            res.status(201).json({
-                success: true,
-                message: "Message sent! We'll get back to you soon.",
-                data: message,
-            });
+                        // The verified domain is now used as the sender
+                        const targetEmail = env.ADMIN_EMAIL;
 
-            // Email Notification Integration (Fire-and-forget)
-            (async () => {
-                try {
-                    if (!env.RESEND_API_KEY) {
-                        log("Skipping email: RESEND_API_KEY not set", "warn");
-                        return;
-                    }
-
-                    const resend = new Resend(env.RESEND_API_KEY);
-
-                    // The verified domain is now used as the sender
-                    const targetEmail = env.ADMIN_EMAIL;
-
-                    const { data, error } = await resend.emails.send({
-                        from: env.CONTACT_EMAIL,
-                        to: targetEmail,
-                        subject: `Portfolio Message: ${escapeHtml(message.subject || "No Subject")}`,
-                        html: `
+                        const { data, error } = await resend.emails.send({
+                            from: env.CONTACT_EMAIL,
+                            to: targetEmail,
+                            subject: `Portfolio Message: ${escapeHtml(message.subject || "No Subject")}`,
+                            html: `
 <h3>New Message from Portfolio</h3>
 <p><strong>Name:</strong> ${escapeHtml(message.name)}</p>
 <p><strong>Email:</strong> ${escapeHtml(message.email)}</p>
@@ -125,18 +110,31 @@ export function registerMessageRoutes(app: Router) {
 <p><strong>Message:</strong></p>
 <p style="white-space: pre-wrap;">${escapeHtml(message.message)}</p>
             `,
-                    });
+                        });
 
-                    if (error) {
-                        log(`Failed to send email notification: ${error.message}`, "error");
-                    } else {
-                        log(`Email notification sent successfully. ID: ${data?.id}`);
+                        if (error) {
+                            log(`Failed to send email notification: ${error.message}`, "error");
+                        } else {
+                            log(`Email notification sent successfully. ID: ${data?.id}`);
+                        }
+
+                    } catch (emailError) {
+                        log(`Failed to send email notification: ${emailError}`, "error");
                     }
-
-                } catch (emailError) {
-                    log(`Failed to send email notification: ${emailError}`, "error");
+                })();
+            } catch (error: any) {
+                if (error.message === "Message rejected") {
+                    log(`Spam blocked (Honeypot filled): ${req.body.email}`, "warn");
+                    // Fake success to trick the bot
+                    res.status(201).json({
+                        success: true,
+                        message: "Message sent! We'll get back to you soon.",
+                        data: { id: 0, message: "blocked" },
+                    });
+                    return;
                 }
-            })();
+                throw error;
+            }
         })
     );
 
@@ -147,7 +145,7 @@ export function registerMessageRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const schema = z.object({ ids: z.array(z.number()) });
             const { ids } = schema.parse(req.body);
-            await storage.bulkDeleteMessages(ids);
+            await messageService.bulkDelete(ids);
             res.status(204).send();
         })
     );
@@ -170,7 +168,7 @@ export function registerMessageRoutes(app: Router) {
 
             const { subject, body } = schema.parse(req.body);
 
-            const message = await storage.getMessageById(id);
+            const message = await messageService.getById(id);
             if (!message) {
                 res.status(404).json({ message: "Message not found" });
                 return;
@@ -223,7 +221,7 @@ export function registerMessageRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid message ID" });
                 return;
             }
-            await storage.deleteMessage(id);
+            await messageService.delete(id);
             res.status(204).send();
         })
     );

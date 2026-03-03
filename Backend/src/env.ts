@@ -32,6 +32,7 @@ const envSchema = z.object({
     PORT: z.string().transform(Number).default("5000"),
     DATABASE_URL: z.string().url("Valid DATABASE_URL is required"),
     RESEND_API_KEY: z.string().optional(),
+    REDIS_URL: z.string().optional(),
     FRONTEND_URL: z.string().optional(),
     ADMIN_API_KEY: z.string().min(32, "ADMIN_API_KEY must be at least 32 characters"),
     JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),

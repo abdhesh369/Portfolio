@@ -3,6 +3,7 @@ import { storage } from "../storage.js";
 import { insertSeoSettingsApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
+import { cachePublic } from "../middleware/cache.js";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.get(
 // GET /seo/:slug - Get SEO settings by slug
 router.get(
     "/:slug",
+    cachePublic(3600),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
         const settings = await storage.getSeoSettingsBySlug(slug);
