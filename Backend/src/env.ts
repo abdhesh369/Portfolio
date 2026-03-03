@@ -9,15 +9,21 @@ const __dirname = path.dirname(__filename);
 
 // In production (e.g. Render), env vars come from the platform — .env files are gitignored.
 // Only load .env files if they exist on disk (local development).
-const envFile = process.env.NODE_ENV === "production" ? "../.env.production" : "../.env";
-const envPath = path.resolve(__dirname, envFile);
+const rootDir = process.cwd();
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
+const envPath = path.join(rootDir, envFile);
+
 if (fs.existsSync(envPath)) {
+    console.log(`[ENV] Loading variables from: ${envPath}`);
     dotenv.config({ path: envPath });
 } else {
-    // Try fallback .env for local dev; in production, platform env vars are already set.
-    const fallback = path.resolve(__dirname, "../.env");
+    // Try fallback .env in root
+    const fallback = path.join(rootDir, ".env");
     if (fs.existsSync(fallback)) {
+        console.log(`[ENV] Loading variables from fallback: ${fallback}`);
         dotenv.config({ path: fallback });
+    } else {
+        console.warn("[ENV] No .env file found in root. Relying on platform environment variables.");
     }
 }
 
