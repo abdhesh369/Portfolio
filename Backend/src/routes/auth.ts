@@ -36,18 +36,21 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     const normalizedInput = password.trim();
     const normalizedSecret = env.ADMIN_PASSWORD.trim();
 
-    // Debugging (Remove after resolution)
-    console.log(`[AUTH] Login attempt. Input: "${password.length}" chars, Normalized: "${normalizedInput.length}" chars`);
-    console.log(`[AUTH] Environment Secret: "${env.ADMIN_PASSWORD.length}" chars, Normalized: "${normalizedSecret.length}" chars`);
-
-    // Direct comparison as fallback for debugging environment mismatches
+    // Robust comparison: check for direct match (plain text) or bcrypt match (if secret holds a hash)
+    // This allows the user to store either the plain password or its hash in the environment.
     const isDirectMatch = normalizedInput === normalizedSecret;
-    const isBcryptMatch = await bcrypt.compare(normalizedInput, await bcrypt.hash(normalizedSecret, 10));
+    let isBcryptMatch = false;
+    if (normalizedSecret.startsWith("$2")) { // Quick check for bcrypt hash format
+        try {
+            isBcryptMatch = await bcrypt.compare(normalizedInput, normalizedSecret);
+        } catch {
+            isBcryptMatch = false;
+        }
+    }
 
     const isValid = isDirectMatch || isBcryptMatch;
 
     if (!isValid) {
-        console.warn(`[AUTH] Invalid login. Direct: ${isDirectMatch}, Bcrypt: ${isBcryptMatch}`);
         // Delay to prevent timing attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
         return res.status(401).json({ message: "Invalid credentials" });
