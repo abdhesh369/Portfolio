@@ -331,46 +331,48 @@ export default function About() {
               <InfoCard icon={Target} label="Goal" value="Software Engineer" delay={0.4} />
             </div>
 
-            {/* Timeline */}
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-[#0a0520]/50 p-8 rounded-3xl border border-white/5 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-4 opacity-5">
-                <Calendar className="w-32 h-32 text-white" />
-              </div>
-
-              <h3 className="text-lg font-bold text-white mb-8 flex items-center gap-3 relative z-10">
-                <Calendar className="w-5 h-5 text-purple-400" />
-                Development Log
-              </h3>
-
-              <div className="relative z-10">
-                <TimelineItem
-                  year="2024 - Present"
-                  title="Advanced System Design"
-                  description="Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications."
-                  delay={0}
-                />
-                <TimelineItem
-                  year="2023"
-                  title="Engineering Core"
-                  description="Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University."
-                  delay={0.1}
-                />
-                <TimelineItem
-                  year="2022"
-                  title="Hello World"
-                  description="Started the journey with Python scripting and basic web development. Built my first static websites."
-                  delay={0.2}
-                />
-              </div>
-            </m.div>
-
           </div>
         </div>
+
+        {/* Centered Timeline (Development Log) */}
+        <m.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-20 max-w-4xl mx-auto"
+        >
+          <div className="bg-[#0a0520]/50 p-8 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <Calendar className="w-32 h-32 text-white" />
+            </div>
+
+            <h3 className="text-2xl font-bold text-white mb-10 flex items-center gap-3 relative z-10">
+              <Calendar className="w-6 h-6 text-purple-400" />
+              Development Log
+            </h3>
+
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <TimelineItem
+                year="2024 - Present"
+                title="Advanced System Design"
+                description="Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications."
+                delay={0}
+              />
+              <TimelineItem
+                year="2023"
+                title="Engineering Core"
+                description="Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University."
+                delay={0.1}
+              />
+              <TimelineItem
+                year="2022"
+                title="Hello World"
+                description="Started the journey with Python scripting and basic web development. Built my first static websites."
+                delay={0.2}
+              />
+            </div>
+          </div>
+        </m.div>
       </div>
     </section>
   );

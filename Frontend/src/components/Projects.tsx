@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { useTheme } from "./theme-provider";
 
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
@@ -28,8 +27,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     setRotateY(rotateYValue);
   };
 
-  const { reducedMotion } = useTheme();
-  const shouldReduceMotion = useReducedMotion() || reducedMotion;
+  const shouldReduceMotion = useReducedMotion();
   const transitionConfig = shouldReduceMotion ? { duration: 0 } : { duration: 0.4, delay: index * 0.1 };
 
   const handleMouseLeave = () => {
@@ -94,11 +92,11 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
       onMouseLeave={handleMouseLeave}
       className="relative group"
       style={{
-        transform: reducedMotion
+        transform: shouldReduceMotion
           ? "none"
           : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transformStyle: "preserve-3d",
-        transition: reducedMotion ? "none" : "transform 0.1s ease-out",
+        transition: shouldReduceMotion ? "none" : "transform 0.1s ease-out",
       }}
     >
       {/* Outer Glow */}
@@ -639,30 +637,27 @@ export default function Projects() {
 
         {/* Projects Grid - Bento Style */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-wrap justify-center gap-8">
             {[1, 2, 3].map(i => (
               <div
                 key={i}
-                className="h-[400px] rounded-2xl animate-pulse"
-                style={{ background: 'rgba(20, 15, 40, 0.5)' }}
+                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] h-[450px] rounded-3xl animate-pulse"
+                style={{ background: 'rgba(20, 15, 40, 0.5)', border: '1px solid rgba(255,255,255,0.05)' }}
               />
             ))}
           </div>
         ) : (
           <m.div
             layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 auto-rows-max"
+            className="flex flex-wrap justify-center gap-8"
           >
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project, index) => {
-                // Bento Logic: Flagships take more space
-                const isLarge = project.isFlagship;
-                const gridSpan = isLarge
-                  ? "lg:col-span-8 md:col-span-2 col-span-1 row-span-2"
-                  : "lg:col-span-4 md:col-span-1 col-span-1";
-
                 return (
-                  <div key={project.id} className={gridSpan}>
+                  <div
+                    key={project.id}
+                    className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm"
+                  >
                     <ProjectCard
                       project={project}
                       onPreview={setPreviewProject}

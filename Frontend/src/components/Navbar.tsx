@@ -4,7 +4,6 @@ import { Menu, X, Code2, Terminal, Cpu } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
-import { AccessibilityToggle } from "./AccessibilityToggle";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -103,7 +102,6 @@ export default function Navbar() {
             ))}
 
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-4">
-              <AccessibilityToggle />
               <Button
                 onClick={() => handleNavClick("#contact")}
                 className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-full px-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all"
@@ -146,10 +144,6 @@ export default function Navbar() {
                   {item.name}
                 </button>
               ))}
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-sm text-gray-400">Appearance & Accessibility</span>
-                <AccessibilityToggle />
-              </div>
               <Button
                 onClick={() => handleNavClick("#contact")}
                 className="w-full mt-4 bg-cyan-500 text-black hover:bg-cyan-400"

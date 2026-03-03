@@ -101,18 +101,6 @@
   --ring: 263 70% 50%;
 }
 
-.high-contrast {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --primary: 0 0% 100%;
-  --primary-foreground: 0 0% 0%;
-  --card: 0 0% 5%;
-  --border: 0 0% 40%;
-  --muted-foreground: 0 0% 100%;
-  --accent: 0 0% 100%;
-  --accent-foreground: 0 0% 0%;
-}
-
 /* ==================== BASE STYLES ==================== */
 
 @layer base {
