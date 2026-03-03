@@ -8,8 +8,7 @@ import rateLimit from "express-rate-limit";
 
 const router = Router();
 
-// Hash once at module load time for efficiency
-const adminHash = await bcrypt.hash(env.ADMIN_PASSWORD, 10);
+// Rate limit is already module-scoped
 
 /**
  * Login Rate Limiter: 5 attempts per 15 minutes
@@ -34,7 +33,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         return res.status(400).json({ message: "Password is required" });
     }
 
-    const isValid = await bcrypt.compare(password, adminHash);
+    const isValid = await bcrypt.compare(password, await bcrypt.hash(env.ADMIN_PASSWORD, 10));
 
     if (!isValid) {
         // Delay to prevent timing attacks
