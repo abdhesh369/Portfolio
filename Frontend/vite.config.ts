@@ -128,8 +128,11 @@ export default defineConfig({
           // Zod — pure JS, no React dependency, safe in its own chunk
           if (id.includes('/zod/')) return 'vendor-forms';
 
-          // Catch-all: keep remaining node_modules out of index chunk
-          return 'vendor-misc';
+          // Let Rollup auto-split remaining node_modules — DO NOT use a
+          // catch-all here. Forcing unrelated packages into one chunk
+          // causes TDZ (Temporal Dead Zone) errors when esbuild reorders
+          // minified variable declarations across modules.
+          return;
         },
       },
     },
