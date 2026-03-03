@@ -638,3 +638,75 @@
 .hljs-strong {
   @apply font-bold;
 }
+
+/* ==================== SERVER STATUS BANNER ==================== */
+
+.server-status-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #fff;
+  text-align: center;
+  animation: banner-slide-in 0.35s ease-out;
+}
+
+.server-status-banner--waking {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.server-status-banner--offline {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.server-status-banner__icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.server-status-banner__text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Pulsing dot to indicate ongoing retry */
+.server-status-banner__pulse {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  animation: status-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes banner-slide-in {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}

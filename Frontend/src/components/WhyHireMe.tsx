@@ -2,6 +2,7 @@ import { m, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useProjects, useSkills, useArticles, useExperiences } from "@/hooks/use-portfolio";
 
 // Animated Counter
 const AnimatedCounter = ({ value, suffix = "", label }: { value: number; suffix?: string; label: string }) => {
@@ -55,7 +56,6 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
     >
       <div className="flex justify-between mb-2">
         <span className="text-sm font-medium">{skill}</span>
-        <span className="text-sm text-muted-foreground">{level}%</span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <m.div
@@ -160,6 +160,11 @@ const skills = [
 ];
 
 export default function WhyHireMe() {
+  const { data: projects } = useProjects();
+  const { data: allSkills } = useSkills();
+  const { data: articles } = useArticles("published");
+  const { data: experiences } = useExperiences();
+
   return (
     <section id="why-hire-me" className="section-container overflow-hidden">
       {/* Header */}
@@ -198,10 +203,10 @@ export default function WhyHireMe() {
           viewport={{ once: true }}
           className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10 mb-12"
         >
-          <AnimatedCounter value={10} suffix="+" label="Skills Learned" />
-          <AnimatedCounter value={5} suffix="+" label="Projects Built" />
-          <AnimatedCounter value={500} suffix="+" label="Hours Coding" />
-          <AnimatedCounter value={100} suffix="%" label="Dedication" />
+          <AnimatedCounter value={allSkills?.length ?? 0} suffix="+" label="Tech Stack" />
+          <AnimatedCounter value={projects?.length ?? 0} suffix="+" label="Systems Built" />
+          <AnimatedCounter value={articles?.length ?? 0} suffix="+" label="Technical Articles" />
+          <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" />
         </m.div>
 
         {/* Points Grid */}

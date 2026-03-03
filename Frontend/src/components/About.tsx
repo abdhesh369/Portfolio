@@ -1,6 +1,7 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { User, GraduationCap, MapPin, Mail, Code, Calendar, Zap, Heart, Target, BookOpen, Layers, Monitor, Terminal, Cpu, Sparkles } from "lucide-react";
+import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 // ...existing code... (profile image moved to public/images/hero.svg)
 
 // Glitch Text Component
@@ -176,6 +177,10 @@ const Highlight = ({ children, color = "cyan" }: { children: React.ReactNode, co
 );
 
 export default function About() {
+  const { data: projects } = useProjects();
+  const { data: skills } = useSkills();
+  const { data: experiences } = useExperiences();
+  const scrollRef = useRef(null);
   return (
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-24 relative">
       <div className="text-center mb-20 relative z-10">
@@ -312,9 +317,10 @@ export default function About() {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <AnimatedCounter value={10} suffix="+" label="Skills" icon={Zap} />
-              <AnimatedCounter value={5} suffix="+" label="Projects" icon={Layers} />
-              <AnimatedCounter value={100} suffix="%" label="Uptime" icon={Monitor} />
+              <AnimatedCounter value={skills?.length ?? 0} suffix="+" label="Skills" icon={Zap} />
+              <AnimatedCounter value={projects?.length ?? 0} suffix="+" label="Projects" icon={Layers} />
+              <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" icon={Target} />
+
             </div>
 
             {/* Info Cards Grid */}

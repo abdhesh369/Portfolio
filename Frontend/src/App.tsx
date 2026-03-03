@@ -35,6 +35,7 @@ function PageLoader() {
 }
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ServerStatusBanner } from "@/components/ServerStatusBanner";
 
 // Only show PlexusBackground on public routes
 function ConditionalBackground() {
@@ -153,6 +154,7 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={domAnimation}>
+              <ServerStatusBanner />
               <DeferredAnalytics />
               <Router />
               <DeferredBackground />

@@ -2,6 +2,7 @@ import { m, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {
@@ -229,6 +230,10 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
 }
 
 export default function Hero() {
+  const { data: projects } = useProjects();
+  const { data: skills } = useSkills();
+  const { data: experiences } = useExperiences();
+
   const scrollToProjects = () => {
     document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -354,18 +359,18 @@ export default function Hero() {
               <div className="h-4 w-[1px] bg-white/10" />
               <div className="flex items-center gap-4">
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">10+</span>
+                  <span className="text-sm font-bold text-white">{(projects?.length ?? 0)}+</span>
                   <p className="text-[10px] text-gray-500">Projects</p>
                 </div>
                 <div className="h-4 w-[1px] bg-white/10" />
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">12+</span>
+                  <span className="text-sm font-bold text-white">{(skills?.length ?? 0)}+</span>
                   <p className="text-[10px] text-gray-500">Technologies</p>
                 </div>
                 <div className="h-4 w-[1px] bg-white/10" />
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">100%</span>
-                  <p className="text-[10px] text-gray-500">Dedication</p>
+                  <span className="text-sm font-bold text-white">{(experiences?.length ?? 0)}+</span>
+                  <p className="text-[10px] text-gray-500">Experiences</p>
                 </div>
               </div>
             </m.div>
