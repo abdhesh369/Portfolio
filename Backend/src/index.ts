@@ -104,6 +104,7 @@ app.use(
 // Tighten Helmet CSP
 app.use(
   helmet({
+    hidePoweredBy: true, // Remove X-Powered-By in all environments
     contentSecurityPolicy: process.env.NODE_ENV === "production" ? {
       useDefaults: true,
       directives: {

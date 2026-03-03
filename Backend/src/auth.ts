@@ -5,6 +5,11 @@ import jwt from "jsonwebtoken";
 // In-memory token blacklist (use Redis in production)
 const tokenBlacklist = new Set<string>();
 
+// Warn if running in production without a persistent store for token revocation
+if (process.env.NODE_ENV === "production") {
+    console.warn("⚠️  [AUTH] Token blacklist is in-memory. Revoked tokens will be valid again after server restart. Consider using Redis for persistent token revocation.");
+}
+
 // Periodically purge expired tokens from blacklist (every 30 minutes)
 setInterval(() => {
     for (const token of tokenBlacklist) {

@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
 import { db } from "../db.js";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
 import { env } from "../env.js";
+
+const MAX_CHAT_MESSAGES = 20; // Sliding window limit to prevent token abuse
 
 const chatSchema = z.object({
     messages: z.array(z.object({
@@ -14,11 +17,20 @@ const chatSchema = z.object({
     }))
 });
 
+/**
+ * Chat Rate Limiter: 20 requests per minute per IP
+ */
+const chatLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 20,
+    message: { message: "Too many chat requests. Please wait a moment before sending another message." },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 export const registerChatRoutes = (router: Router) => {
-    router.post("/chat", async (req, res) => {
+    router.post("/chat", chatLimiter, async (req, res) => {
         try {
-
-
             const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
 
             if (!apiKey) {
@@ -53,10 +65,12 @@ export const registerChatRoutes = (router: Router) => {
             });
 
             // Map internal history to OpenRouter messages format { role, content }
-            const messages = body.data.messages.map(msg => ({
+            // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
+            const allMessages = body.data.messages.map(msg => ({
                 role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
                 content: msg.parts.map(p => p.text).join("\n")
             }));
+            const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
 
             // Prepend system prompt
             const finalMessages = [

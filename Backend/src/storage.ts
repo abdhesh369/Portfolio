@@ -148,10 +148,8 @@ function safeJsonParse<T>(json: any, fallback: T): T {
   }
 }
 
-function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
+// Removed redundant isValidEmail — Zod schema validation handles this
+
 
 function transformProject(dbProject: any): Project {
   return {
@@ -453,14 +451,14 @@ export class DatabaseStorage implements IStorage {
 
   async reorderProjects(orderedIds: number[]): Promise<void> {
     try {
-      // Using Promise.all for parallel updates is fine for this scale
-      const updates = orderedIds.map((id, index) =>
-        db
-          .update(projectsTable)
-          .set({ displayOrder: index })
-          .where(eq(projectsTable.id, id))
-      );
-      await Promise.all(updates);
+      await db.transaction(async (tx) => {
+        for (let index = 0; index < orderedIds.length; index++) {
+          await tx
+            .update(projectsTable)
+            .set({ displayOrder: index })
+            .where(eq(projectsTable.id, orderedIds[index]));
+        }
+      });
       logStorage(`Reordered ${orderedIds.length} projects`);
     } catch (error) {
       logStorage(`Failed to reorder projects: ${error}`, "error");
@@ -1005,9 +1003,8 @@ export class DatabaseStorage implements IStorage {
         throw new Error("Name, email, and message are required");
       }
 
-      if (!isValidEmail(message.email)) {
-        throw new Error("Invalid email format");
-      }
+      // Zod schema already validates email format via .email() — no redundant check needed
+
 
       const sanitized = {
         name: message.name.trim().slice(0, 255),
@@ -1270,18 +1267,12 @@ export class DatabaseStorage implements IStorage {
 
   async updateSeoSettings(id: number, settings: Partial<InsertSeoSettings>): Promise<SeoSettings> {
     try {
-      await db
+      // Atomic update + return using .returning()
+      const [updated] = await db
         .update(seoSettingsTable)
         .set(settings)
-        .where(eq(seoSettingsTable.id, id));
-
-      // To return the updated object, we need to fetch it.
-      // But I didn't verify if I have getSeoSettingsById. 
-      // I only have getSeoSettingsBySlug. 
-      // Using slug might be risky if slug was changed.
-      // But wait, I can add getSeoSettingsById if needed, or query directly here.
-
-      const [updated] = await db.select().from(seoSettingsTable).where(eq(seoSettingsTable.id, id)).limit(1);
+        .where(eq(seoSettingsTable.id, id))
+        .returning();
 
       if (!updated) throw new Error(`SEO settings ${id} not found after update`);
 
@@ -1308,14 +1299,11 @@ export class DatabaseStorage implements IStorage {
   async getArticles(status?: string): Promise<Article[]> {
     try {
       const start = Date.now();
-      let query = db.select().from(articlesTable).orderBy(desc(articlesTable.createdAt));
+      const baseQuery = db.select().from(articlesTable).orderBy(desc(articlesTable.createdAt));
 
-      if (status) {
-        // @ts-ignore - Status inference might be tricky
-        query = query.where(eq(articlesTable.status, status));
-      }
-
-      const result = await query;
+      const result = status
+        ? await baseQuery.where(eq(articlesTable.status, status))
+        : await baseQuery;
 
       if (result.length === 0) return [];
 
@@ -1404,7 +1392,13 @@ export class DatabaseStorage implements IStorage {
       }
 
       const { tags, ...articleData } = article;
-      const slug = articleData.slug || articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      let slug = articleData.slug || articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+      // Ensure slug uniqueness by appending a short suffix if needed
+      const existing = await db.select({ id: articlesTable.id }).from(articlesTable).where(eq(articlesTable.slug, slug)).limit(1);
+      if (existing.length > 0) {
+        slug = `${slug}-${Date.now().toString(36)}`;
+      }
 
       return await db.transaction(async (tx: any) => {
         const [inserted] = await tx.insert(articlesTable).values({

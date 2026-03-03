@@ -23,6 +23,15 @@ export function registerUploadRoutes(app: Router) {
                     return res.status(400).json({ message: "No file uploaded" });
                 }
 
+                // Validate MIME type — only allow safe image formats
+                const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+                if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+                    console.error(`Upload Rejected: Invalid MIME type "${file.mimetype}"`);
+                    return res.status(400).json({
+                        message: `Invalid file type "${file.mimetype}". Allowed: JPEG, PNG, WebP, GIF, AVIF.`
+                    });
+                }
+
                 console.log(`Upload Successful: ${file.originalname} -> ${file.path}`);
                 res.json({ url: file.path });
             });

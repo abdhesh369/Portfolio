@@ -1,14 +1,13 @@
 import { Router, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { env } from "../env.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 
 import rateLimit from "express-rate-limit";
 
 const router = Router();
-
-// Rate limit is already module-scoped
 
 /**
  * Login Rate Limiter: 5 attempts per 15 minutes
@@ -21,6 +20,18 @@ const loginLimiter = rateLimit({
     legacyHeaders: false,
     skipSuccessfulRequests: true,
 });
+
+/**
+ * Constant-time string comparison to prevent timing attacks.
+ */
+function safeCompare(a: string, b: string): boolean {
+    if (a.length !== b.length) {
+        // Compare against itself to consume the same time regardless of length mismatch
+        crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a));
+        return false;
+    }
+    return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
 
 /**
  * POST /api/auth/login
@@ -36,22 +47,22 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     const normalizedInput = password.trim();
     const normalizedSecret = env.ADMIN_PASSWORD.trim();
 
-    // Robust comparison: check for direct match (plain text) or bcrypt match (if secret holds a hash)
-    // This allows the user to store either the plain password or its hash in the environment.
-    const isDirectMatch = normalizedInput === normalizedSecret;
-    let isBcryptMatch = false;
-    if (normalizedSecret.startsWith("$2")) { // Quick check for bcrypt hash format
+    let isValid = false;
+
+    if (normalizedSecret.startsWith("$2")) {
+        // Secret is a bcrypt hash — use bcrypt.compare (already constant-time)
         try {
-            isBcryptMatch = await bcrypt.compare(normalizedInput, normalizedSecret);
+            isValid = await bcrypt.compare(normalizedInput, normalizedSecret);
         } catch {
-            isBcryptMatch = false;
+            isValid = false;
         }
+    } else {
+        // Secret is plain text — use constant-time comparison
+        isValid = safeCompare(normalizedInput, normalizedSecret);
     }
 
-    const isValid = isDirectMatch || isBcryptMatch;
-
     if (!isValid) {
-        // Delay to prevent timing attacks
+        // Delay to further prevent brute-force attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
         return res.status(401).json({ message: "Invalid credentials" });
     }

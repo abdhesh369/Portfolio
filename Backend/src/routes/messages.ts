@@ -203,17 +203,23 @@ export function registerMessageRoutes(app: Router) {
 
             const resend = new Resend(env.RESEND_API_KEY);
 
-            // Sanitize HTML before sending
+            // Sanitize HTML before sending — block javascript: URIs and enforce secure links
             const sanitizedBody = DOMPurify.sanitize(body, {
                 ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li'],
-                ALLOWED_ATTR: ['href', 'target']
+                ALLOWED_ATTR: ['href', 'target', 'rel'],
+                FORBID_ATTR: [],
+                ALLOW_DATA_ATTR: false,
             });
+            // Post-process: strip javascript: hrefs and enforce rel="noopener noreferrer"
+            const safeSanitizedBody = sanitizedBody
+                .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
+                .replace(/<a\s/gi, '<a rel="noopener noreferrer" ');
 
             const { error } = await resend.emails.send({
                 from: env.CONTACT_EMAIL,
                 to: message.email,
                 subject: subject,
-                html: sanitizedBody,
+                html: safeSanitizedBody,
             });
 
             if (error) {

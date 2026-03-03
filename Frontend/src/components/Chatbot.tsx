@@ -7,15 +7,18 @@ import { apiFetch } from "@/lib/api-helpers";
 
 type Role = "user" | "model";
 
+const MAX_CLIENT_MESSAGES = 20; // Cap messages sent to API
+
 interface ChatMessage {
     role: Role;
     parts: { text: string }[];
+    timestamp: number; // Unix ms when message was created
 }
 
 export function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { role: "model", parts: [{ text: "Hi there! I'm Abdhesh's AI assistant. How can I help you today?" }] }
+        { role: "model", parts: [{ text: "Hi there! I'm Abdhesh's AI assistant. How can I help you today?" }], timestamp: Date.now() }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +37,7 @@ export function Chatbot() {
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
-        const userMsg: ChatMessage = { role: "user", parts: [{ text: input.trim() }] };
+        const userMsg: ChatMessage = { role: "user", parts: [{ text: input.trim() }], timestamp: Date.now() };
         const newMessages = [...messages, userMsg];
 
         setMessages(newMessages);
@@ -42,16 +45,18 @@ export function Chatbot() {
         setIsLoading(true);
 
         try {
+            // Only send the last N messages to avoid unbounded payload
+            const recentMessages = newMessages.slice(-MAX_CLIENT_MESSAGES);
             const data = await apiFetch("/api/chat", null, {
                 method: "POST",
-                body: JSON.stringify({ messages: newMessages })
+                body: JSON.stringify({ messages: recentMessages })
             });
 
-            setMessages([...newMessages, { role: "model", parts: [{ text: data.message }] }]);
+            setMessages([...newMessages, { role: "model", parts: [{ text: data.message }], timestamp: Date.now() }]);
         } catch (error: any) {
             setMessages([
                 ...newMessages,
-                { role: "model", parts: [{ text: error.message || "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form." }] }
+                { role: "model", parts: [{ text: error.message || "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form." }], timestamp: Date.now() }
             ]);
         } finally {
             setIsLoading(false);
@@ -142,6 +147,7 @@ export function Chatbot() {
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
+                                aria-label="Close chat"
                                 className="group p-2 text-gray-500 hover:text-cyan-400 transition-all hover:bg-cyan-500/5 rounded-lg border border-transparent hover:border-cyan-500/20"
                             >
                                 <Minimize2 className="w-4 h-4 group-hover:scale-90 transition-transform" />
@@ -158,16 +164,16 @@ export function Chatbot() {
                                     className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse text-right" : "flex-row text-left"}`}
                                 >
                                     <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border font-mono text-[10px] font-bold ${msg.role === "user"
-                                            ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
-                                            : "bg-purple-500/10 text-purple-400 border-purple-500/30"
+                                        ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
+                                        : "bg-purple-500/10 text-purple-400 border-purple-500/30"
                                         }`}>
                                         {msg.role === "user" ? "USR" : "SYS"}
                                     </div>
 
                                     <div className={`max-w-[85%] relative group/msg`}>
                                         <div className={`px-5 py-3.5 border transition-all duration-300 ${msg.role === "user"
-                                                ? "bg-cyan-600/10 border-cyan-500/20 text-cyan-50 rounded-2xl rounded-tr-none hover:border-cyan-500/40"
-                                                : "bg-white/5 border-white/5 text-gray-300 rounded-2xl rounded-tl-none hover:bg-white/[0.07] hover:border-white/10"
+                                            ? "bg-cyan-600/10 border-cyan-500/20 text-cyan-50 rounded-2xl rounded-tr-none hover:border-cyan-500/40"
+                                            : "bg-white/5 border-white/5 text-gray-300 rounded-2xl rounded-tl-none hover:bg-white/[0.07] hover:border-white/10"
                                             }`}>
                                             <div className={`prose prose-sm dark:prose-invert max-w-none break-words prose-p:leading-relaxed ${msg.role === 'model' ? 'font-mono text-[13px] tracking-tight' : 'font-sans'
                                                 }`}>
@@ -182,7 +188,7 @@ export function Chatbot() {
                                         </div>
                                         {/* Timestamp/Status subtle text on hover */}
                                         <div className={`absolute -bottom-5 ${msg.role === 'user' ? 'right-0' : 'left-0'} opacity-0 group-hover/msg:opacity-100 transition-opacity font-mono text-[8px] text-gray-500 uppercase tracking-widest`}>
-                                            {msg.role === 'user' ? 'PACKET_SENT' : 'DATA_RECEIVED'} // {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {msg.role === 'user' ? 'PACKET_SENT' : 'DATA_RECEIVED'} // {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </div>
                                     </div>
                                 </m.div>

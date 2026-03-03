@@ -3,6 +3,7 @@ import type { InsertMessage } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api-helpers";
+import { queryClient } from "@/lib/queryClient";
 
 /* ---------------------------------- */
 /* Generic fetch helper */
@@ -240,7 +241,8 @@ export function useLogin() {
         title: "Login Successful",
         description: "Welcome back, Admin!",
       });
-      window.location.reload();
+      // Invalidate auth state to trigger re-render instead of hard reload
+      queryClient.invalidateQueries({ queryKey: ["auth-status"] });
     },
     onError: (error) => {
       toast({
@@ -252,18 +254,13 @@ export function useLogin() {
   });
 }
 
-export function useAnalyticsSummary(token: string | null = null) {
+export function useAnalyticsSummary() {
   return useQuery({
     queryKey: ["analytics-summary"],
     queryFn: async () => {
       const url = `${API_BASE_URL}/api/analytics/summary`;
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
       const res = await fetch(url, {
         credentials: 'include',
-        headers,
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({ message: res.statusText }));
@@ -284,7 +281,10 @@ export async function logout() {
       credentials: 'include'
     });
   } finally {
-    window.location.reload();
+    // Invalidate auth state rather than hard page reload
+    queryClient.invalidateQueries({ queryKey: ["auth-status"] });
+    // Navigate to login page
+    window.location.href = "/admin/login";
   }
 }
 

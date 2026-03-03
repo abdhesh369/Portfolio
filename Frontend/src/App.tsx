@@ -5,6 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Lazy load heavy components
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
@@ -100,13 +101,13 @@ function DeferredBackground() {
 
   useEffect(() => {
     // Use requestIdleCallback to load 3D background after browser is idle
-    const schedule = typeof requestIdleCallback === "function"
-      ? requestIdleCallback
-      : (cb: () => void) => setTimeout(cb, 800);
-    const id = schedule(() => setShouldLoad(true));
-    return () => {
-      if (typeof cancelIdleCallback === "function") cancelIdleCallback(id as number);
-    };
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(() => setShouldLoad(true));
+      return () => cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(() => setShouldLoad(true), 800);
+      return () => clearTimeout(id);
+    }
   }, []);
 
   if (!shouldLoad) return null;
@@ -125,14 +126,13 @@ function DeferredChatbot() {
 
   useEffect(() => {
     if (isAdmin || isAdminLogin) return;
-    // Use requestIdleCallback to load chatbot when browser is idle
-    const schedule = typeof requestIdleCallback === "function"
-      ? requestIdleCallback
-      : (cb: () => void) => setTimeout(cb, 3000);
-    const id = schedule(() => setShow(true));
-    return () => {
-      if (typeof cancelIdleCallback === "function") cancelIdleCallback(id as number);
-    };
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(() => setShow(true));
+      return () => cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(() => setShow(true), 3000);
+      return () => clearTimeout(id);
+    }
   }, [isAdmin, isAdminLogin]);
 
   if (isAdmin || isAdminLogin || !show) return null;
@@ -144,7 +144,7 @@ function DeferredChatbot() {
   );
 }
 
-import { LazyMotion, domAnimation, m } from "framer-motion";
+// framer-motion import moved to top of file
 
 // Main App component
 function App() {

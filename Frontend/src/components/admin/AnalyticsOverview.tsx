@@ -14,11 +14,11 @@ interface AnalyticsSummary {
 }
 
 interface AnalyticsOverviewProps {
-    token?: string | null;
+    // Token no longer needed — credentials are sent via cookies
 }
 
-export function AnalyticsOverview({ token }: AnalyticsOverviewProps) {
-    const { data, isLoading, error } = useAnalyticsSummary(token ?? null);
+export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
+    const { data, isLoading, error } = useAnalyticsSummary();
     const summary = data as AnalyticsSummary;
 
 
