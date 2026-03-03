@@ -546,7 +546,7 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
 };
 
 export default function Projects() {
-  const { data: projects, isLoading, error } = useProjects();
+  const { data: projects, isLoading, error, refetch } = useProjects();
   const [filter, setFilter] = useState("All");
   const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
@@ -678,9 +678,15 @@ export default function Projects() {
         {error && (
           <div className="text-center py-16">
             <p className="text-red-400 mb-2">Failed to load projects.</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mb-4">
               {error instanceof Error ? error.message : 'Please try again later.'}
             </p>
+            <Button
+              onClick={() => refetch()}
+              className="bg-cyan-600 hover:bg-cyan-700 text-white"
+            >
+              Try Again
+            </Button>
           </div>
         )}
 

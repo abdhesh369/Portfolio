@@ -49,10 +49,30 @@ export const queryClient = new QueryClient({
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
-      retry: false,
+      retry: (failureCount, error: any) => {
+        // Don't retry 401 errors
+        if (error?.message?.includes('401')) {
+          return false;
+        }
+        // Retry up to 3 times for network/5xx errors (handles cold starts)
+        // Wait 1s, 3s, 7s between attempts
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => {
+        // Exponential backoff: 1s, 3s, 7s
+        return Math.pow(2, attemptIndex) * 1000 + Math.random() * 1000;
+      },
     },
     mutations: {
-      retry: false,
+      retry: (failureCount, error: any) => {
+        if (error?.message?.includes('401')) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+      retryDelay: (attemptIndex) => {
+        return Math.pow(2, attemptIndex) * 1000 + Math.random() * 1000;
+      },
     },
   },
 });

@@ -14,7 +14,8 @@ export const pool = new pg.Pool({
     connectionString: env.DATABASE_URL,
     max: env.NODE_ENV === 'production' ? 20 : 5,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000, // 10 s — handles Neon cold starts
+    connectionTimeoutMillis: 15000, // 15 s — handles Neon cold starts (increased from 10s)
+    query_timeout: 15000, // Per-query timeout
 });
 
 export const db = drizzle(pool, { schema });
