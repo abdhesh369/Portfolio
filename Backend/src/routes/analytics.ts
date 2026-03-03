@@ -1,6 +1,6 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { storage } from "../storage.js";
+import { analyticsService } from "../services/analytics.service.js";
 import { insertAnalyticsSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { validateBody } from "../middleware/validate.js";
@@ -20,7 +20,7 @@ export function registerAnalyticsRoutes(app: Router) {
         analyticsLimiter,
         validateBody(insertAnalyticsSchema),
         asyncHandler(async (req, res) => {
-            const event = await storage.logAnalyticsEvent(req.body);
+            const event = await analyticsService.logEvent(req.body);
             res.status(201).json(event);
         })
     );
@@ -30,7 +30,7 @@ export function registerAnalyticsRoutes(app: Router) {
         "/analytics/summary",
         isAuthenticated,
         asyncHandler(async (_req, res) => {
-            const summary = await storage.getAnalyticsSummary();
+            const summary = await analyticsService.getSummary();
             res.json(summary);
         })
     );

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Code2, Terminal, Cpu } from "lucide-react";
+import { Menu, X, Code2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
@@ -19,12 +19,14 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [location, setLocation] = useLocation();
   const activeSection = useScrollSpy(["hero", "about", "skills", "projects", "experience", "contact"], 80);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const handleNavClick = (href: string) => {
     setIsOpen(false);
     if (href.startsWith("#")) {
@@ -52,6 +54,41 @@ export default function Navbar() {
     }
   };
 
+  // Focus trap for mobile menu
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && mobileMenuRef.current) {
+        const focusableElements = mobileMenuRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      } else if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${scrolled
@@ -62,21 +99,21 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Brand Logo */}
-          <div
-            className="flex-shrink-0 flex items-center gap-2 cursor-pointer"
+          <button
+            className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050510] rounded-xl transition-all group"
             onClick={() => handleNavClick("/")}
-            aria-label="Abdhesh Sah Portfolio"
+            aria-label="Abdhesh Sah Portfolio - Home"
           >
-            <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30 overflow-hidden group">
+            <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30 overflow-hidden">
               <Code2 className="w-6 h-6 text-cyan-400 relative z-10 group-hover:scale-110 transition-transform" />
               <div className="absolute inset-0 bg-cyan-500/20 blur-md opacity-50 group-hover:opacity-100 transition-opacity" />
               {/* Scanline effect */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight text-white group">
+            <span className="font-display font-bold text-xl tracking-tight text-white">
               Abdhesh<span className="text-cyan-400">.</span>Dev
             </span>
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
@@ -129,6 +166,7 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <m.div
+            ref={mobileMenuRef}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}

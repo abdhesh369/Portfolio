@@ -9,7 +9,9 @@ import type { Skill } from "@shared/schema";
 
 const emptySkill = { name: "", category: "", status: "Core", icon: "Code", description: "", proof: "", x: 50, y: 50 };
 
-export function SkillsTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function SkillsTab({ token }: AdminTabProps) {
     const { data: skills, refetch } = useSkills();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Skill> & typeof emptySkill) | null>(null);

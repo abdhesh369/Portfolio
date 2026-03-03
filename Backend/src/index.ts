@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
+import { emailQueue, emailWorker } from "./lib/queue.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -124,6 +125,7 @@ app.use(
         "font-src": ["'self'", "https://fonts.gstatic.com"],
         "frame-ancestors": ["'none'"],
         "form-action": ["'self'"],
+        "report-uri": ["/api/v1/csp-report"],
       },
     } : false,
     crossOriginEmbedderPolicy: process.env.NODE_ENV === "production",
@@ -212,6 +214,14 @@ function setupGracefulShutdown() {
       const { closePool } = await import("./db.js");
       await closePool();
       log("Database pool closed", "shutdown");
+
+      try {
+        if (emailQueue) await emailQueue.close();
+        if (emailWorker) await emailWorker.close();
+        log("Email queue and worker closed", "shutdown");
+      } catch (qErr) {
+        log(`Error closing queue: ${qErr}`, "error");
+      }
 
       process.exit(0);
     } catch (err) {

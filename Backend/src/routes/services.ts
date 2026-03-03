@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { storage } from "../storage.js";
+import { portfolioServiceService } from "../services/portfolio-service.service.js";
 import { insertServiceApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
-import { cachePublic } from "../middleware/cache.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -31,9 +30,8 @@ export function registerServiceRoutes(app: Router) {
   // GET /services - public list
   app.get(
     "/services",
-    cachePublic(600),
     asyncHandler(async (_req, res) => {
-      const services = await storage.getServices();
+      const services = await portfolioServiceService.getAll();
       res.json(services);
     })
   );
@@ -41,14 +39,13 @@ export function registerServiceRoutes(app: Router) {
   // GET /services/:id - public single
   app.get(
     "/services/:id",
-    cachePublic(600),
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
         res.status(400).json({ message: "Invalid service ID" });
         return;
       }
-      const service = await storage.getServiceById(id);
+      const service = await portfolioServiceService.getById(id);
       if (!service) {
         res.status(404).json({ message: "Service not found" });
         return;
@@ -63,7 +60,7 @@ export function registerServiceRoutes(app: Router) {
     isAuthenticated,
     validateBody(insertServiceApiSchema),
     asyncHandler(async (req, res) => {
-      const service = await storage.createService(req.body);
+      const service = await portfolioServiceService.create(req.body);
       res.status(201).json(service);
     })
   );
@@ -79,7 +76,7 @@ export function registerServiceRoutes(app: Router) {
         res.status(400).json({ message: "Invalid service ID" });
         return;
       }
-      const service = await storage.updateService(id, req.body);
+      const service = await portfolioServiceService.update(id, req.body);
       res.json(service);
     })
   );
@@ -94,9 +91,10 @@ export function registerServiceRoutes(app: Router) {
         res.status(400).json({ message: "Invalid service ID" });
         return;
       }
-      await storage.deleteService(id);
+      await portfolioServiceService.delete(id);
       res.status(204).send();
     })
   );
 }
+
 

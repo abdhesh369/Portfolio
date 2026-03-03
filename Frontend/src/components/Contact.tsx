@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
 import { m, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -108,8 +108,9 @@ const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.Eleme
 );
 
 export default function Contact() {
-  const { mutate: sendMessage, isPending } = useSendMessage();
+  const { mutate: sendMessage, isPending, error: apiError } = useSendMessage();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   // Auto-dismiss success message
   const dismissSuccess = () => setShowSuccess(false);
@@ -124,15 +125,24 @@ export default function Contact() {
   });
 
   const onSubmit = (data: InsertMessage) => {
+    if (cooldown > 0) return;
     sendMessage(data, {
       onSuccess: () => {
         form.reset();
         setShowSuccess(true);
+        setCooldown(60); // 60 seconds cooldown
         // Auto-dismiss after 8 seconds
         setTimeout(() => setShowSuccess(false), 8000);
       },
     });
   };
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setInterval(() => setCooldown((c) => c - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [cooldown]);
 
   return (
     <section id="contact" className="section-container relative overflow-hidden py-24">
@@ -292,14 +302,25 @@ export default function Contact() {
                     <input type="text" tabIndex={-1} autoComplete="off" {...form.register("website")} />
                   </div>
 
+                  {apiError && (
+                    <div className="p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-mono flex items-start gap-2">
+                      <span className="shrink-0 mt-0.5">! ERROR:</span>
+                      <span>{apiError instanceof Error ? apiError.message : "Transmission failed. Try again."}</span>
+                    </div>
+                  )}
+
                   <Button
                     type="submit"
-                    disabled={isPending}
-                    className="w-full h-14 bg-cyan-600 hover:bg-cyan-500 text-white font-mono uppercase tracking-widest rounded-lg relative overflow-hidden group"
+                    disabled={isPending || cooldown > 0}
+                    className="w-full h-14 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-mono uppercase tracking-widest rounded-lg relative overflow-hidden group"
                   >
                     {isPending ? (
                       <span className="flex items-center gap-2">
                         <span className="animate-spin">/</span> UPLOADING...
+                      </span>
+                    ) : cooldown > 0 ? (
+                      <span className="flex items-center gap-2">
+                        TRANSMISSION_COOLDOWN [{cooldown}s]
                       </span>
                     ) : (
                       <span className="relative z-10 flex items-center gap-2 group-hover:gap-4 transition-all">

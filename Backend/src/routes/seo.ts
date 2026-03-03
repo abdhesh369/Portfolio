@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { storage } from "../storage.js";
+import { seoSettingsService } from "../services/seo-settings.service.js";
 import { insertSeoSettingsApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
@@ -12,7 +12,7 @@ router.get(
     "/",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-        const settings = await storage.getSeoSettings();
+        const settings = await seoSettingsService.getAll();
         res.json(settings);
     })
 );
@@ -23,7 +23,7 @@ router.get(
     cachePublic(3600),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
-        const settings = await storage.getSeoSettingsBySlug(slug);
+        const settings = await seoSettingsService.getBySlug(slug);
         if (!settings) {
             res.status(404).json({ message: "SEO settings not found" });
             return;
@@ -38,12 +38,12 @@ router.post(
     isAuthenticated,
     asyncHandler(async (req, res) => {
         const data = insertSeoSettingsApiSchema.parse(req.body);
-        const existing = await storage.getSeoSettingsBySlug(data.pageSlug);
+        const existing = await seoSettingsService.getBySlug(data.pageSlug);
         if (existing) {
             res.status(409).json({ message: "SEO settings for this slug already exist" });
             return;
         }
-        const settings = await storage.createSeoSettings(data);
+        const settings = await seoSettingsService.create(data);
         res.status(201).json(settings);
     })
 );
@@ -59,7 +59,7 @@ router.patch(
             return;
         }
         const data = insertSeoSettingsApiSchema.partial().parse(req.body);
-        const updated = await storage.updateSeoSettings(id, data);
+        const updated = await seoSettingsService.update(id, data);
         res.json(updated);
     })
 );
@@ -74,7 +74,7 @@ router.delete(
             res.status(400).json({ message: "Invalid ID" });
             return;
         }
-        await storage.deleteSeoSettings(id);
+        await seoSettingsService.delete(id);
         res.status(204).send();
     })
 );

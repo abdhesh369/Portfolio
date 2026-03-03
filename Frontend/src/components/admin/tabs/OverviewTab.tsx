@@ -26,12 +26,9 @@ const ACCENTS = {
 
 type TabKey = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials";
 
-interface OverviewTabProps {
-    token: string | null;
-    onNavigate?: (tab: TabKey) => void;
-}
+import type { AdminTabProps } from "./types";
 
-export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
+export function OverviewTab({ token, onNavigate }: AdminTabProps) {
     const { data: projects } = useProjects();
     const { data: skills } = useSkills();
     const { data: experiences } = useExperiences();

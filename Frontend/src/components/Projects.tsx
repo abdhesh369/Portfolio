@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
@@ -90,7 +90,17 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="relative group"
+      onClick={() => onPreview(project)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPreview(project);
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for ${project.title}`}
+      className="relative group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-2xl"
       style={{
         transform: shouldReduceMotion
           ? "none"
@@ -141,7 +151,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             <>
               <m.img
                 src={project.imageUrl}
-                alt={project.title}
+                alt={project.imageAlt || `${project.title} - ${project.category} Project Thumbnail`}
                 loading="lazy"
                 decoding="async"
                 width={600}
@@ -371,6 +381,59 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
 
 // Enhanced Preview Modal
 const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // Store last focused element
+    lastFocusedRef.current = document.activeElement as HTMLElement;
+
+    // Focus close button on open
+    const closeButton = containerRef.current?.querySelector('button');
+    closeButton?.focus();
+
+    return () => {
+      // Return focus on close
+      lastFocusedRef.current?.focus();
+    };
+  }, []);
+
+  // Focus Trap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab' && containerRef.current) {
+        const focusableElements = containerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const catColors: Record<string, { glow: string; text: string }> = {
     System: { glow: 'rgba(0, 212, 255, 0.3)', text: '#00d4ff' },
     Academic: { glow: 'rgba(168, 85, 247, 0.3)', text: '#a855f7' },
@@ -393,10 +456,14 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
 
       {/* Modal */}
       <m.div
+        ref={containerRef}
         initial={{ scale: 0.9, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 30 }}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className="relative w-full max-w-3xl rounded-2xl overflow-hidden"
         style={{
           background: 'linear-gradient(180deg, rgba(15, 10, 40, 0.98) 0%, rgba(10, 8, 30, 0.98) 100%)',
@@ -407,7 +474,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(100, 100, 140, 0.2)' }}>
           <div>
-            <h3 className="text-xl font-bold text-white">{project.title}</h3>
+            <h3 id="modal-title" className="text-xl font-bold text-white">{project.title}</h3>
             <span className="text-sm font-medium" style={{ color: catColor.text }}>{project.category}</span>
           </div>
           <button
@@ -425,7 +492,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
             <div className="relative rounded-xl overflow-hidden mb-5">
               <img
                 src={project.imageUrl}
-                alt={project.title}
+                alt={`${project.title} - Detailed Preview`}
                 loading="lazy"
                 decoding="async"
                 width={600}

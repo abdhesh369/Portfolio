@@ -168,6 +168,12 @@ export default function ProjectDetail() {
 
   const project = projects?.find(p => p.id === parseInt(params?.id || "0"));
 
+  // Calculate other projects for the recommendation section
+  const otherProjects = projects
+    ?.filter(p => p.id !== project?.id)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
 
 
   // Category colors
@@ -243,19 +249,45 @@ export default function ProjectDetail() {
         description={project.description || "Project details and overview."}
         image={getDynamicOgImage(project.title || "Project Detail", project.imageUrl || "")}
         keywords={project.techStack?.join(", ")}
-        structuredData={{
-          "@context": "https://schema.org",
-          "@type": "SoftwareSourceCode",
-          "name": project.title,
-          "description": project.description,
-          "codeRepository": project.githubUrl,
-          "programmingLanguage": project.techStack,
-          "author": {
-            "@type": "Person",
-            "name": "Abdhesh Sah"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareSourceCode",
+            "name": project.title,
+            "description": project.description,
+            "codeRepository": project.githubUrl,
+            "programmingLanguage": project.techStack,
+            "author": {
+              "@type": "Person",
+              "name": "Abdhesh Sah"
+            },
+            "dateCreated": new Date().toISOString().split('T')[0],
           },
-          "dateCreated": new Date().toISOString().split('T')[0], // Approximated
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://abdheshsah.com.np"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Projects",
+                "item": "https://abdheshsah.com.np/#projects"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": project.title,
+                "item": `https://abdheshsah.com.np/project/${project.id}`
+              }
+            ]
+          }
+        ]}
       />
 
       {/* Background */}
@@ -274,7 +306,7 @@ export default function ProjectDetail() {
         />
       </div>
 
-      <div className="relative z-10 pt-24 pb-20 px-4 md:px-8">
+      <main className="relative z-10 pt-24 pb-20 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -540,6 +572,68 @@ export default function ProjectDetail() {
               </div>
             </div>
 
+            {/* Other Projects Section */}
+            {otherProjects && otherProjects.length > 0 && (
+              <m.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mt-20 pt-12 border-t border-gray-800/20"
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
+                      More Projects
+                    </h2>
+                    <p className="text-gray-400 mt-1">Discover other solutions I've built</p>
+                  </div>
+                  <Link href="/#projects">
+                    <button className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1 group">
+                      View full portfolio
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {otherProjects.map((p) => (
+                    <Link key={p.id} href={`/project/${p.id}`}>
+                      <m.div
+                        whileHover={{ y: -8 }}
+                        className="group relative cursor-pointer"
+                      >
+                        <div
+                          className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"
+                        />
+                        <div
+                          className="relative h-full rounded-2xl p-4 overflow-hidden"
+                          style={{
+                            background: 'rgba(15, 10, 35, 0.6)',
+                            border: '1px solid rgba(100, 100, 140, 0.2)'
+                          }}
+                        >
+                          <div className="aspect-video rounded-xl overflow-hidden mb-4">
+                            <img
+                              src={p.imageUrl}
+                              alt={`Thumbnail of ${p.title}`}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            />
+                          </div>
+                          <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors">
+                            {p.title}
+                          </h4>
+                          <p className="text-sm text-gray-400 mt-1 line-clamp-2">
+                            {p.description}
+                          </p>
+                        </div>
+                      </m.div>
+                    </Link>
+                  ))}
+                </div>
+              </m.div>
+            )}
+
             {/* Back to Projects */}
             <m.div
               initial={{ opacity: 0 }}
@@ -565,7 +659,7 @@ export default function ProjectDetail() {
             </m.div>
           </m.div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

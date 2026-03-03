@@ -9,7 +9,9 @@ import type { Experience } from "@shared/schema";
 
 const emptyExperience = { role: "", organization: "", period: "", description: "", type: "Experience" };
 
-export function ExperiencesTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function ExperiencesTab({ token }: AdminTabProps) {
     const { data: experiences, refetch } = useExperiences();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Experience> & typeof emptyExperience) | null>(null);

@@ -24,7 +24,7 @@ export class ArticleService {
 
     async getAll(status?: string): Promise<Article[]> {
         const cacheKey = status ? `${CACHE_KEY}:status:${status}` : CACHE_KEY;
-        const cached = await redis.get(cacheKey);
+        const cached = redis ? await redis.get(cacheKey) : null;
 
         if (cached) {
             console.log(`Cache Hit: ${cacheKey}`);
@@ -33,13 +33,15 @@ export class ArticleService {
 
         console.log(`Cache Miss: ${cacheKey}`);
         const articles = await articleRepository.findAll(status);
-        await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
+        if (redis) {
+            await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
+        }
         return articles;
     }
 
     async getBySlug(slug: string): Promise<Article | null> {
         const cacheKey = `${ARTICLE_CACHE_PREFIX}${slug}`;
-        const cached = await redis.get(cacheKey);
+        const cached = redis ? await redis.get(cacheKey) : null;
 
         if (cached) {
             console.log(`Cache Hit: ${cacheKey}`);
@@ -48,7 +50,7 @@ export class ArticleService {
 
         console.log(`Cache Miss: ${cacheKey}`);
         const article = await articleRepository.findBySlug(slug);
-        if (article) {
+        if (article && redis) {
             await redis.setex(cacheKey, 3600, JSON.stringify(article));
         }
         return article;
@@ -88,7 +90,7 @@ export class ArticleService {
 
         const article = await articleRepository.update(id, updateData);
         await this.invalidateCache(current.slug); // Invalidate old slug
-        if (article.slug !== current.slug) {
+        if (article.slug !== current.slug && redis) {
             await redis.del(`${ARTICLE_CACHE_PREFIX}${article.slug}`); // Ensure new slug is also clear
         }
         return article;
@@ -108,9 +110,11 @@ export class ArticleService {
 
         // Invalidate cache for all deleted articles
         await this.invalidateCache();
-        for (const article of articles) {
-            if (article) {
-                await redis?.del(`${ARTICLE_CACHE_PREFIX}${article.slug}`);
+        if (redis) {
+            for (const article of articles) {
+                if (article) {
+                    await redis.del(`${ARTICLE_CACHE_PREFIX}${article.slug}`);
+                }
             }
         }
     }

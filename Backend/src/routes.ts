@@ -15,6 +15,8 @@ import sitemapRoutes from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
+import feedRoutes from "./routes/feed.js";
+import express from "express";
 
 export function registerRoutes(app: Express) {
   const v1Router = Router();
@@ -24,6 +26,17 @@ export function registerRoutes(app: Express) {
   v1Router.use("/seo", seoRoutes);
   v1Router.use("/sitemap", sitemapRoutes);
   v1Router.use("/articles", articlesRouter);
+  v1Router.use("/feed", feedRoutes);
+
+  // CSP violation reporting route
+  v1Router.post(
+    "/csp-report",
+    express.json({ type: "application/csp-report" }),
+    (req, res) => {
+      console.warn("CSP Violation:", JSON.stringify(req.body, null, 2));
+      res.status(204).end();
+    }
+  );
 
   // Register routes that use the functional registration pattern
   registerProjectRoutes(v1Router);

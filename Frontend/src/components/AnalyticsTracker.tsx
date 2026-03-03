@@ -12,6 +12,11 @@ export function AnalyticsTracker() {
         if (lastTrackedPath.current === location) return;
         lastTrackedPath.current = location;
 
+        // 0. Bot Filtering: Don't track crawlers or automated tools
+        if (/bot|crawler|spider|preview|lighthouse|googlebot|bingbot|yandex|slurp|duckduckgo/i.test(navigator.userAgent)) {
+            return;
+        }
+
         // 1. Log to our own backend
         const trackPageView = async () => {
             try {

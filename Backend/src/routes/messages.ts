@@ -8,8 +8,7 @@ import { api } from "../../shared/routes.js";
 import { env } from "../env.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import DOMPurify from 'isomorphic-dompurify';
-
-// Simple HTML escaping helper to prevent XSS in email templates
+import { emailQueue } from "../lib/queue.js";
 function escapeHtml(text: string): string {
     return text
         .replace(/&/g, "&amp;")
@@ -84,44 +83,18 @@ export function registerMessageRoutes(app: Router) {
                     data: message,
                 });
 
-                // Email Notification Integration (Fire-and-forget)
-                (async () => {
-                    try {
-                        if (!env.RESEND_API_KEY) {
-                            log("Skipping email: RESEND_API_KEY not set", "warn");
-                            return;
+                // Email Notification Integration (Fire-and-forget via Queue)
+                if (emailQueue) {
+                    emailQueue.add("send-contact-email", {
+                        type: "contact-notification",
+                        payload: {
+                            message,
+                            targetEmail: env.ADMIN_EMAIL,
                         }
-
-                        const resend = new Resend(env.RESEND_API_KEY);
-
-                        // The verified domain is now used as the sender
-                        const targetEmail = env.ADMIN_EMAIL;
-
-                        const { data, error } = await resend.emails.send({
-                            from: env.CONTACT_EMAIL,
-                            to: targetEmail,
-                            subject: `Portfolio Message: ${escapeHtml(message.subject || "No Subject")}`,
-                            html: `
-<h3>New Message from Portfolio</h3>
-<p><strong>Name:</strong> ${escapeHtml(message.name)}</p>
-<p><strong>Email:</strong> ${escapeHtml(message.email)}</p>
-<p><strong>Subject:</strong> ${escapeHtml(message.subject || "")}</p>
-<hr/>
-<p><strong>Message:</strong></p>
-<p style="white-space: pre-wrap;">${escapeHtml(message.message)}</p>
-            `,
-                        });
-
-                        if (error) {
-                            log(`Failed to send email notification: ${error.message}`, "error");
-                        } else {
-                            log(`Email notification sent successfully. ID: ${data?.id}`);
-                        }
-
-                    } catch (emailError) {
-                        log(`Failed to send email notification: ${emailError}`, "error");
-                    }
-                })();
+                    }).catch(err => log(`Failed to queue email: ${err}`, "error"));
+                } else {
+                    log("Skipping email notification: Queue not initialized", "warn");
+                }
             } catch (error: any) {
                 if (error.message === "Message rejected") {
                     log(`Spam blocked (Honeypot filled): ${req.body.email}`, "warn");
@@ -193,21 +166,25 @@ export function registerMessageRoutes(app: Router) {
                 .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
                 .replace(/<a\s/gi, '<a rel="noopener noreferrer" ');
 
-            const { error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL,
-                to: message.email,
-                subject: subject,
-                html: safeSanitizedBody,
-            });
-
-            if (error) {
-                log(`Failed to send reply to ${message.email}: ${error.message}`, "error");
-                res.status(500).json({ message: `Failed to send email: ${error.message}` });
-                return;
+            if (emailQueue) {
+                try {
+                    await emailQueue.add("send-reply-email", {
+                        type: "admin-reply",
+                        payload: {
+                            to: message.email,
+                            subject: subject,
+                            html: safeSanitizedBody,
+                        }
+                    });
+                    log(`Queued reply to ${message.email}`);
+                    res.json({ success: true, message: "Reply queued successfully" });
+                } catch (queueError: any) {
+                    log(`Failed to queue reply to ${message.email}: ${queueError.message}`, "error");
+                    res.status(500).json({ message: `Failed to queue email: ${queueError.message}` });
+                }
+            } else {
+                res.status(500).json({ message: "Email queue not configured (Redis required)" });
             }
-
-            log(`Reply sent to ${message.email}`);
-            res.json({ success: true, message: "Reply sent successfully" });
         })
     );
 

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
 import rateLimit from "express-rate-limit";
+import DOMPurify from 'isomorphic-dompurify';
 import { db } from "../db.js";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
 import { env } from "../env.js";
@@ -12,7 +13,7 @@ const chatSchema = z.object({
     messages: z.array(z.object({
         role: z.enum(["user", "model"]),
         parts: z.array(z.object({
-            text: z.string()
+            text: z.string().transform(str => DOMPurify.sanitize(str))
         }))
     }))
 });

@@ -9,7 +9,9 @@ import type { EmailTemplate } from "@shared/schema";
 
 const emptyTemplate = { name: "", subject: "", body: "" };
 
-export function EmailTemplatesTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function EmailTemplatesTab({ token }: AdminTabProps) {
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState<(Partial<EmailTemplate> & typeof emptyTemplate) | null>(null);

@@ -12,10 +12,13 @@ const empty = {
     quote: "",
     relationship: "Colleague",
     avatarUrl: "",
+    linkedinUrl: "",
     displayOrder: 0,
 };
 
-export function TestimonialsTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function TestimonialsTab({ token }: AdminTabProps) {
     const { data: testimonials, refetch } = useTestimonials();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(typeof empty & { id?: number }) | null>(null);
@@ -33,6 +36,7 @@ export function TestimonialsTab({ token }: { token: string | null }) {
             quote: t.quote,
             relationship: t.relationship ?? "Colleague",
             avatarUrl: t.avatarUrl ?? "",
+            linkedinUrl: t.linkedinUrl ?? "",
             displayOrder: t.displayOrder ?? 0,
         });
     }
@@ -47,6 +51,7 @@ export function TestimonialsTab({ token }: { token: string | null }) {
                 quote: editing.quote,
                 relationship: editing.relationship,
                 avatarUrl: editing.avatarUrl || null,
+                linkedinUrl: editing.linkedinUrl || null,
                 displayOrder: editing.displayOrder,
             };
 
@@ -148,6 +153,15 @@ export function TestimonialsTab({ token }: { token: string | null }) {
                                 value={editing.avatarUrl}
                                 onChange={(e) => setEditing({ ...editing, avatarUrl: e.target.value })}
                                 placeholder="https://..."
+                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-white/50 mb-1">LinkedIn URL</label>
+                            <input
+                                value={editing.linkedinUrl}
+                                onChange={(e) => setEditing({ ...editing, linkedinUrl: e.target.value })}
+                                placeholder="https://linkedin.com/in/..."
                                 className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
                             />
                         </div>

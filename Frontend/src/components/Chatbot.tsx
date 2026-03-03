@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { X, Send, User, Minimize2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
@@ -23,6 +23,10 @@ export function Chatbot() {
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const lastFocusedRef = useRef<HTMLElement | null>(null);
+    const fabRef = useRef<HTMLButtonElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,8 +35,59 @@ export function Chatbot() {
     useEffect(() => {
         if (isOpen) {
             scrollToBottom();
+            // Store last focused element to return focus later
+            lastFocusedRef.current = document.activeElement as HTMLElement;
+            // Focus input shortly after opening for animation
+            setTimeout(() => inputRef.current?.focus(), 100);
+        } else {
+            // Return focus when closing
+            if (lastFocusedRef.current) {
+                lastFocusedRef.current.focus();
+            } else if (fabRef.current) {
+                fabRef.current.focus();
+            }
         }
     }, [messages, isOpen]);
+
+    // Focus Trap and Escape Key
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setIsOpen(false);
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                if (!containerRef.current) return;
+
+                const focusableElements = containerRef.current.querySelectorAll<HTMLElement>(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+
+                if (focusableElements.length === 0) return;
+
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen]);
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -68,6 +123,7 @@ export function Chatbot() {
             <AnimatePresence>
                 {!isOpen && (
                     <m.button
+                        ref={fabRef}
                         initial={{ scale: 0, opacity: 0, rotate: -180 }}
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
@@ -115,6 +171,10 @@ export function Chatbot() {
             <AnimatePresence>
                 {isOpen && (
                     <m.div
+                        ref={containerRef}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="chatbot-title"
                         initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                         exit={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
@@ -138,7 +198,7 @@ export function Chatbot() {
                                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0a0520] shadow-[0_0_8px_#10b981]" />
                                 </div>
                                 <div>
-                                    <h3 className="font-mono font-black text-[11px] tracking-[0.2em] text-cyan-400 uppercase">SYS.TERMINAL // CORE_V2</h3>
+                                    <h3 id="chatbot-title" className="font-mono font-black text-[11px] tracking-[0.2em] text-cyan-400 uppercase">SYS.TERMINAL // CORE_V2</h3>
                                     <p className="text-[9px] font-mono text-gray-500 tracking-wider flex items-center gap-2 mt-1 uppercase">
                                         <span className="inline-block w-1.5 h-[1px] bg-cyan-500/50"></span>
                                         SECURE_UPLINK.ACTIVE
@@ -155,7 +215,11 @@ export function Chatbot() {
                         </div>
 
                         {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth relative z-10 custom-scrollbar">
+                        <div
+                            className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth relative z-10 custom-scrollbar"
+                            aria-live="polite"
+                            aria-relevant="additions"
+                        >
                             {messages.map((msg, i) => (
                                 <m.div
                                     key={i}
@@ -231,6 +295,7 @@ export function Chatbot() {
                                     {">"}
                                 </div>
                                 <input
+                                    ref={inputRef}
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}

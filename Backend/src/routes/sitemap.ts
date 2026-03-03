@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { storage } from "../storage.js";
-
+import { seoSettingsService } from "../services/seo-settings.service.js";
+import { projectService } from "../services/project.service.js";
+import { articleService } from "../services/article.service.js";
 /** Escape special XML characters to prevent injection */
 function escapeXml(str: string): string {
   return str
@@ -19,8 +20,8 @@ router.get("/", async (req, res) => {
     if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {
       console.warn("Sitemap: No PUBLIC_URL or FRONTEND_URL found, falling back to abdheshsah.com.np");
     }
-    const seoSettings = await storage.getSeoSettings();
-    const projects = await storage.getProjects();
+    const seoSettings = await seoSettingsService.getAll();
+    const projects = await projectService.getAll();
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
@@ -58,7 +59,7 @@ router.get("/", async (req, res) => {
     });
 
     // Dynamic blog articles
-    const articles = await storage.getArticles("published");
+    const articles = await articleService.getAll("published");
     articles.forEach((article) => {
       const url = escapeXml(`${baseUrl}/blog/${article.slug}`);
       const lastMod = escapeXml(new Date(article.updatedAt || new Date()).toISOString());

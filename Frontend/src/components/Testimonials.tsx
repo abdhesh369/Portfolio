@@ -1,6 +1,6 @@
 import { m } from "framer-motion";
 import { useTestimonials } from "@/hooks/use-portfolio";
-import { Quote } from "lucide-react";
+import { Quote, Linkedin } from "lucide-react";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -146,9 +146,22 @@ export default function Testimonials() {
                                                 .slice(0, 2)}
                                         </div>
                                     )}
-                                    <div>
-                                        <p className="text-white text-sm font-medium">{t.name}</p>
-                                        <p className="text-white/40 text-xs">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <p className="text-white text-sm font-medium truncate">{t.name}</p>
+                                            {t.linkedinUrl && (
+                                                <a
+                                                    href={t.linkedinUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-white/40 hover:text-[#0077b5] transition-colors"
+                                                    title={`View ${t.name}'s LinkedIn profile`}
+                                                >
+                                                    <Linkedin className="w-3.5 h-3.5" />
+                                                </a>
+                                            )}
+                                        </div>
+                                        <p className="text-white/40 text-xs truncate">
                                             {t.role}
                                             {t.company ? ` · ${t.company}` : ""}
                                         </p>

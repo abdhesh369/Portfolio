@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { storage } from "../storage.js";
 import { insertArticleApiSchema, updateArticleApiSchema } from "../../shared/schema.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated, asyncHandler, checkAuthStatus } from "../auth.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
+import { articleService } from "../services/article.service.js";
 
 export const articlesRouter = Router();
 
@@ -12,8 +12,17 @@ articlesRouter.get(
     "/",
     cachePublic(300),
     asyncHandler(async (req, res) => {
-        const status = req.query.status as string | undefined;
-        const articles = await storage.getArticles(status);
+        const isAdmin = checkAuthStatus(req);
+        let status = req.query.status as string | undefined;
+
+        if (!isAdmin) {
+            status = "published";
+        } else {
+            // Prevent caching sensitive draft data
+            res.setHeader("Cache-Control", "no-store");
+        }
+
+        const articles = await articleService.getAll(status);
         res.json(articles);
     })
 );
@@ -24,27 +33,27 @@ articlesRouter.get(
     cachePublic(300),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
-        const article = await storage.getArticleBySlug(slug);
+        const article = await articleService.getBySlug(slug);
         if (!article) {
             res.status(404).json({ error: "Article not found" });
             return;
         }
 
         // Get all published articles with tags
-        const allArticles = await storage.getArticles("published");
+        const allArticles = await articleService.getAll("published");
 
         // Find articles with overlapping tags, excluding the current one
-        const currentTags = new Set((article.tags as string[]) || []);
+        const currentTags = new Set(article.tags || []);
         if (currentTags.size === 0) {
             res.json([]);
             return;
         }
 
         const scored = allArticles
-            .filter((a: any) => a.slug !== slug)
-            .map((a: any) => {
-                const articleTags = (a.tags as string[]) || [];
-                const overlap = articleTags.filter((t: string) => currentTags.has(t)).length;
+            .filter((a) => a.slug !== slug)
+            .map((a) => {
+                const articleTags = a.tags || [];
+                const overlap = articleTags.filter((t) => currentTags.has(t)).length;
                 return { article: a, score: overlap };
             })
             .filter(({ score }) => score > 0)
@@ -62,11 +71,23 @@ articlesRouter.get(
     cachePublic(300),
     asyncHandler(async (req, res) => {
         const slug = req.params.slug;
-        const article = await storage.getArticleBySlug(slug);
+        const article = await articleService.getBySlug(slug);
+
         if (!article) {
             res.status(404).json({ error: "Article not found" });
             return;
         }
+
+        const isAdmin = checkAuthStatus(req);
+        if (article.status !== "published" && !isAdmin) {
+            res.status(403).json({ error: "Access denied" });
+            return;
+        }
+
+        if (isAdmin) {
+            res.setHeader("Cache-Control", "no-store");
+        }
+
         res.json(article);
     })
 );
@@ -77,7 +98,7 @@ articlesRouter.post(
     isAuthenticated,
     asyncHandler(async (req, res) => {
         const data = insertArticleApiSchema.parse(req.body);
-        const article = await storage.createArticle(data);
+        const article = await articleService.create(data);
         res.status(201).json(article);
     })
 );
@@ -88,7 +109,7 @@ articlesRouter.post(
     isAuthenticated,
     asyncHandler(async (req, res) => {
         const { ids } = z.object({ ids: z.array(z.number()) }).parse(req.body);
-        await storage.bulkDeleteArticles(ids);
+        await articleService.bulkDelete(ids);
         res.status(204).send();
     })
 );
@@ -104,7 +125,7 @@ articlesRouter.patch(
             return;
         }
         const data = updateArticleApiSchema.parse(req.body);
-        const article = await storage.updateArticle(id, data);
+        const article = await articleService.update(id, data);
         res.json(article);
     })
 );
@@ -119,7 +140,7 @@ articlesRouter.delete(
             res.status(400).json({ error: "Invalid article ID" });
             return;
         }
-        await storage.deleteArticle(id);
+        await articleService.delete(id);
         res.status(204).send();
     })
 );

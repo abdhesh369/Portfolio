@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { apiFetch } from "@/lib/api-helpers";
+import { queryClient } from "@/lib/queryClient";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Article } from "@shared/schema";
 
@@ -55,6 +56,9 @@ function ArticleItem({ article, onEdit, onDelete }: {
                 </div>
             </div>
             <div className="flex gap-2 shrink-0">
+                {article.status === 'draft' && (
+                    <Button variant="outline" size="sm" onClick={() => window.open(`/blog/${article.slug}`, '_blank')} className="text-white/60">Preview</Button>
+                )}
                 <Button variant="outline" size="sm" onClick={() => onEdit(article)} className="text-white/60">Edit</Button>
                 <Button variant="destructive" size="sm" onClick={() => onDelete(article.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
             </div>
@@ -62,7 +66,9 @@ function ArticleItem({ article, onEdit, onDelete }: {
     );
 }
 
-export function ArticlesTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function ArticlesTab({ token }: AdminTabProps) {
     const { data: articles, refetch, isLoading } = useArticles();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Article> & typeof emptyArticle) | null>(null);
@@ -103,8 +109,16 @@ export function ArticlesTab({ token }: { token: string | null }) {
             excerpt: articleData.excerpt || null,
         };
 
+        // Optimistic UI update
+        const previousArticles = queryClient.getQueryData<Article[]>(["articles"]);
+
         try {
             if (editing.id) {
+                // Optimistic Update
+                queryClient.setQueryData<Article[]>(["articles"], old =>
+                    old ? old.map(a => a.id === editing.id ? { ...a, ...body } as Article : a) : []
+                );
+
                 await apiFetch(`/api/articles/${editing.id}`, token, { method: "PATCH", body: JSON.stringify(body) });
                 toast({ title: "Article updated" });
             } else {
@@ -114,6 +128,8 @@ export function ArticlesTab({ token }: { token: string | null }) {
             setEditing(null);
             refetch();
         } catch (err: any) {
+            // Revert on error
+            if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
         } finally {
             setSaving(false);
@@ -122,11 +138,20 @@ export function ArticlesTab({ token }: { token: string | null }) {
 
     const deleteArticle = async (id: number) => {
         if (!confirm("Delete this article?")) return;
+
+        // Optimistic UI update
+        const previousArticles = queryClient.getQueryData<Article[]>(["articles"]);
+        queryClient.setQueryData<Article[]>(["articles"], old =>
+            old ? old.filter(a => a.id !== id) : []
+        );
+
         try {
             await apiFetch(`/api/articles/${id}`, token, { method: "DELETE" });
             toast({ title: "Article deleted" });
             refetch();
         } catch (err: any) {
+            // Revert on error
+            if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });
         }
     };

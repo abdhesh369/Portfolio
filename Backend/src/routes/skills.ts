@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { skillService } from "../services/skill.service.js";
-import { storage } from "../storage.js";
+import { skillConnectionService } from "../services/skill-connection.service.js";
 import { insertSkillApiSchema } from "../../shared/schema.js";
-import { api } from "../../shared/routes.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 
@@ -31,13 +30,11 @@ function validateBody<T extends z.ZodType>(schema: T) {
 
 export function registerSkillRoutes(app: Router) {
     // GET /api/skills/connections - List all skill connections
-    // (Defined BEFORE :id to avoid conflict)
     app.get(
         "/skills/connections",
-        cachePublic(3600), // Cache connections for 1 hour (rarely change)
+        cachePublic(3600), // Cache connections for 1 hour
         asyncHandler(async (_req, res) => {
-            // TODO: Extract SkillConnectionRepository/Service
-            const connections = await storage.getSkillConnections();
+            const connections = await skillConnectionService.getAll();
             res.json(connections);
         })
     );

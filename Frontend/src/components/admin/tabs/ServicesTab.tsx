@@ -16,7 +16,9 @@ const emptyService = {
   isFeatured: false,
 };
 
-export function ServicesTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function ServicesTab({ token }: AdminTabProps) {
   const { data: services, refetch } = useServices();
   const { toast } = useToast();
   const [editing, setEditing] = useState<(Partial<Service> & typeof emptyService) | null>(null);

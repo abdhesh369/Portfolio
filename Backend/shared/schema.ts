@@ -23,6 +23,7 @@ export const projectsTable = pgTable("projects", {
   isFlagship: boolean("isFlagship").notNull().default(false),
   impact: text("impact"),
   role: text("role"),
+  imageAlt: text("imageAlt"),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),
@@ -131,6 +132,7 @@ export const articlesTable = pgTable("articles", {
   metaTitle: varchar("metaTitle", { length: 255 }),
   metaDescription: text("metaDescription"),
   authorId: integer("authorId"),
+  featuredImageAlt: text("featuredImageAlt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => {
@@ -169,6 +171,7 @@ export const testimonialsTable = pgTable("testimonials", {
   quote: text("quote").notNull(),
   relationship: varchar("relationship", { length: 100 }).notNull().default("Colleague"),
   avatarUrl: varchar("avatarUrl", { length: 500 }),
+  linkedinUrl: varchar("linkedinUrl", { length: 500 }),
   displayOrder: integer("displayOrder").notNull().default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => {
@@ -246,6 +249,7 @@ export const projectSchema = z.object({
   isFlagship: z.boolean().default(false),
   impact: z.string().max(5000).nullish(),
   role: z.string().max(5000).nullish(),
+  imageAlt: z.string().max(500).nullish(),
 });
 
 export const insertProjectApiSchema = z.object({
@@ -265,6 +269,7 @@ export const insertProjectApiSchema = z.object({
   isFlagship: z.boolean().default(false).optional(),
   impact: z.string().max(5000).nullable().optional(),
   role: z.string().max(5000).nullable().optional(),
+  imageAlt: z.string().max(500).nullable().optional(),
 });
 
 export const skillSchema = z.object({
@@ -355,8 +360,9 @@ export const testimonialSchema = z.object({
   quote: z.string().min(1).max(5000),
   relationship: z.string().max(100),
   avatarUrl: z.string().max(500).nullable().optional(),
+  linkedinUrl: z.string().url().max(500).nullable().optional(),
   displayOrder: z.number().default(0),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertTestimonialApiSchema = z.object({
@@ -366,6 +372,7 @@ export const insertTestimonialApiSchema = z.object({
   quote: z.string().min(1).max(5000),
   relationship: z.string().max(100).default("Colleague"),
   avatarUrl: z.string().max(500).nullable().optional(),
+  linkedinUrl: z.string().url().max(500).nullable().optional(),
   displayOrder: z.number().default(0),
 });
 
@@ -375,7 +382,7 @@ export const messageSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500),
   message: z.string().min(1).max(5000),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertMessageApiSchema = z.object({
@@ -396,7 +403,7 @@ export const analyticsSchema = z.object({
   device: z.string().max(50).nullable().optional(),
   country: z.string().max(100).nullable().optional(),
   city: z.string().max(100).nullable().optional(),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertAnalyticsSchema = z.object({
@@ -415,7 +422,7 @@ export const emailTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   subject: z.string().min(1).max(500),
   body: z.string().min(1).max(10000),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertEmailTemplateApiSchema = z.object({
@@ -436,8 +443,8 @@ export const seoSettingsSchema = z.object({
   canonicalUrl: z.string().url().max(500).nullable().optional(),
   noindex: z.boolean().default(false),
   twitterCard: z.string().default("summary_large_image"),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const insertSeoSettingsApiSchema = z.object({
@@ -467,6 +474,7 @@ export const articleSchema = z.object({
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
+  featuredImageAlt: z.string().max(500).nullable().optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   tags: z.array(z.string()).optional(),
@@ -484,6 +492,7 @@ export const insertArticleApiSchema = z.object({
   metaTitle: z.string().max(255).nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   tags: z.array(z.string()).optional(),
+  featuredImageAlt: z.string().max(500).nullable().optional(),
 });
 
 export const updateArticleApiSchema = insertArticleApiSchema.partial();
@@ -502,6 +511,7 @@ export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
 export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
+export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type InsertSkill = z.infer<typeof insertSkillApiSchema>;

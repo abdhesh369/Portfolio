@@ -129,7 +129,7 @@ const ProfileCard = () => {
           src="/images/Myphoto.webp"
           srcSet="/images/Myphoto-500.webp 500w, /images/Myphoto-800.webp 800w, /images/Myphoto.webp 1080w"
           sizes="(max-width: 1024px) 80vw, 450px"
-          alt="Abdhesh Sah - Full Stack Engineer & System Designer"
+          alt="Portrait of Abdhesh Sah - Senior Full Stack Engineer & System Designer"
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -273,9 +273,11 @@ export default function Hero() {
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-60 blur-md animate-pulse" />
                 <img
                   src="/images/Myphoto-500.webp"
-                  alt="Abdhesh Sah"
+                  alt="Abdhesh Sah Avatar"
                   width={120}
                   height={120}
+                  loading="eager"
+                  fetchPriority="high"
                   className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-white/20 shadow-xl"
                 />
               </div>

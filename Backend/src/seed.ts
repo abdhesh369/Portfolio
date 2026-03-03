@@ -2,7 +2,14 @@
 // FILE: src/seed.ts
 // ============================================================
 import "dotenv/config";
-import { storage as storage2 } from "./storage.js";
+import { projectService } from "./services/project.service.js";
+import { skillService } from "./services/skill.service.js";
+import { skillConnectionService } from "./services/skill-connection.service.js";
+import { mindsetService } from "./services/mindset.service.js";
+import { experienceService } from "./services/experience.service.js";
+import { messageService } from "./services/message.service.js";
+import { emailTemplateService } from "./services/email-template.service.js";
+import { seoSettingsService } from "./services/seo-settings.service.js";
 import type { Project, InsertProject, InsertSeoSettings } from "../shared/schema.js";
 
 function logSeed(message: string, level: "info" | "error" | "warn" = "info") {
@@ -15,7 +22,7 @@ export async function seedDatabase() {
   try {
     let existingProjects: Project[] = [];
     try {
-      existingProjects = await storage2.getProjects();
+      existingProjects = await projectService.getAll();
     } catch (err) {
       logSeed("Tables don't exist yet or database empty, proceeding with seeding...");
     }
@@ -126,10 +133,10 @@ export async function seedDatabase() {
       try {
         const existing = existingProjects.find(p => p.title === proj.title);
         if (existing) {
-          await storage2.updateProject(existing.id, proj);
+          await projectService.update(existing.id, proj);
           logSeed(`Updated project: ${proj.title} `);
         } else {
-          await storage2.createProject(proj);
+          await projectService.create(proj);
           logSeed(`Seeded project: ${proj.title} `);
         }
         successCount++;
@@ -160,15 +167,15 @@ export async function seedDatabase() {
       { name: "GitHub", category: "Tools", icon: "GitBranch", status: "Core", x: 30, y: 70, description: "Code hosting", proof: "All projects" },
     ];
 
-    const existingSkills = await storage2.getSkills();
+    const existingSkills = await skillService.getAll();
     for (const skill of skillList) {
       try {
         const existing = existingSkills.find(s => s.name === skill.name);
         if (existing) {
-          await storage2.updateSkill(existing.id, skill);
+          await skillService.update(existing.id, skill as any);
           logSeed(`Updated skill: ${skill.name} `);
         } else {
-          await storage2.createSkill(skill);
+          await skillService.create(skill as any);
           logSeed(`Seeded skill: ${skill.name} `);
         }
         successCount++;
@@ -191,10 +198,10 @@ export async function seedDatabase() {
       { fromName: "Express", toName: "PostgreSQL" },
     ];
 
-    const allSkillsAfterSeeding = await storage2.getSkills();
+    const allSkillsAfterSeeding = await skillService.getAll();
     const skillNameToId = new Map(allSkillsAfterSeeding.map(s => [s.name, s.id]));
 
-    const existingConnections = await storage2.getSkillConnections();
+    const existingConnections = await skillConnectionService.getAll();
     for (const data of connectionData) {
       try {
         const fromSkillId = skillNameToId.get(data.fromName);
@@ -212,7 +219,7 @@ export async function seedDatabase() {
           logSeed(`Connection already exists: ${data.fromName} -> ${data.toName}, skipping... `);
           continue;
         }
-        await storage2.createSkillConnection({ fromSkillId, toSkillId });
+        await skillConnectionService.create(fromSkillId, toSkillId);
         logSeed(`Seeded connection: ${data.fromName} -> ${data.toName} `);
       } catch (err) {
         logSeed(`Failed to seed connection: ${err} `, "error");
@@ -240,7 +247,7 @@ export async function seedDatabase() {
       }
     ];
 
-    const currentMindsets = await storage2.getMindset();
+    const currentMindsets = await mindsetService.getAll();
     for (const mindset of mindsetList) {
       try {
         const existing = currentMindsets.find(i => i.title === mindset.title);
@@ -248,7 +255,7 @@ export async function seedDatabase() {
           logSeed(`Mindset already exists, skipping: ${mindset.title} `);
           continue;
         }
-        await storage2.createMindset(mindset);
+        await mindsetService.create(mindset);
         logSeed(`Seeded mindset: ${mindset.title} `);
       } catch (err) {
         logSeed(`Failed to seed mindset: ${err} `, "error");
@@ -272,7 +279,7 @@ export async function seedDatabase() {
       },
     ];
 
-    const currentExperiences = await storage2.getExperiences();
+    const currentExperiences = await experienceService.getAll();
     successCount = 0;
     failCount = 0;
 
@@ -283,7 +290,7 @@ export async function seedDatabase() {
           logSeed(`Experience already exists, skipping: ${exp.role} `);
           continue;
         }
-        await storage2.createExperience(exp);
+        await experienceService.create(exp);
         logSeed(`Seeded experience: ${exp.role} `);
         successCount++;
       } catch (err) {
@@ -294,10 +301,10 @@ export async function seedDatabase() {
 
     logSeed(`Experiences: ${successCount} seeded`);
 
-    const existingMessages = await storage2.getMessages();
+    const existingMessages = await messageService.getAll();
     if (existingMessages.length === 0) {
       try {
-        await storage2.createMessage({
+        await messageService.create({
           name: "Portfolio System",
           email: "system@portfolio.local",
           subject: "Database Initialized",
@@ -324,7 +331,7 @@ export async function seedDatabase() {
       },
     ];
 
-    const currentTemplates = await storage2.getEmailTemplates();
+    const currentTemplates = await emailTemplateService.getAll();
     for (const template of emailTemplates) {
       try {
         const existing = currentTemplates.find(t => t.name === template.name);
@@ -332,7 +339,7 @@ export async function seedDatabase() {
           logSeed(`Email template already exists, skipping: ${template.name}`);
           continue;
         }
-        await storage2.createEmailTemplate(template);
+        await emailTemplateService.create(template);
         logSeed(`Seeded email template: ${template.name}`);
       } catch (err) {
         logSeed(`Failed to seed email template: ${template.name} - ${err}`, "error");
@@ -376,12 +383,12 @@ export async function seedDatabase() {
 
     for (const settings of seoSettings) {
       try {
-        const existing = await storage2.getSeoSettingsBySlug(settings.pageSlug);
+        const existing = await seoSettingsService.getBySlug(settings.pageSlug);
         if (existing) {
           logSeed(`SEO settings already exist for: ${settings.pageSlug}, skipping...`);
           continue;
         }
-        await storage2.createSeoSettings(settings);
+        await seoSettingsService.create(settings);
         logSeed(`Seeded SEO settings for: ${settings.pageSlug}`);
       } catch (err) {
         logSeed(`Failed to seed SEO settings for: ${settings.pageSlug} - ${err}`, "error");

@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { apiFetch } from "@/lib/api-helpers";
 
-export function SeoTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function SeoTab({ token }: AdminTabProps) {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);

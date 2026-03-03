@@ -4,14 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "env:validate": "node scripts/validate-env.js",
+    "predev": "npm run env:validate",
     "dev": "tsx --watch src/index.ts",
     "build": "tsc --project tsconfig.json",
+    "prestart": "npm run env:validate",
     "start": "node dist/src/index.js",
     "migrate": "npx drizzle-kit migrate",
     "generate": "npx drizzle-kit generate",
     "db:backup": "cd scripts && ./backup-db.sh",
     "db:restore": "cd scripts && ./restore-db.sh",
     "db:test": "tsc --noEmit",
+    "db:validate": "node scripts/validate-migrations.js",
     "db:status": "echo 'Check Neon Dashboard'"
   },
   "dependencies": {
@@ -27,6 +31,7 @@
     "@types/nodemailer": "^7.0.4",
     "@types/pg": "^8.16.0",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.70.1",
     "cloudinary": "^2.9.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",

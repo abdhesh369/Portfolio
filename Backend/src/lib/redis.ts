@@ -1,5 +1,5 @@
 import { Redis } from "ioredis";
-import { env } from "./env.js";
+import { env } from "../env.js";
 
 const DEFAULT_REDIS_URL = "redis://localhost:6379";
 

@@ -7,7 +7,9 @@ import { apiFetch } from "@/lib/api-helpers";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@shared/schema";
 
-export function MessagesTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function MessagesTab({ token }: AdminTabProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { apiFetch } from "@/lib/api-helpers";
+import { queryClient } from "@/lib/queryClient";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";
 import type { Project } from "@shared/schema";
 import {
@@ -108,7 +109,9 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
     );
 }
 
-export function ProjectsTab({ token }: { token: string | null }) {
+import type { AdminTabProps } from "./types";
+
+export function ProjectsTab({ token }: AdminTabProps) {
     const { data: projects, refetch } = useProjects();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Project> & typeof emptyProject) | null>(null);
@@ -205,17 +208,28 @@ export function ProjectsTab({ token }: { token: string | null }) {
             githubUrl: editing.githubUrl || null,
             liveUrl: editing.liveUrl || null,
         };
+
+        // Optimistic UI update
+        const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
+
         try {
             if (editing.id) {
+                // Optimistic Update
+                queryClient.setQueryData<Project[]>(["projects"], old =>
+                    old ? old.map(p => p.id === editing.id ? { ...p, ...body } as Project : p) : []
+                );
                 await apiFetch(`/api/projects/${editing.id}`, token, { method: "PUT", body: JSON.stringify(body) });
                 toast({ title: "Project updated" });
             } else {
+                // For creates, we don't have an ID yet, so we just wait for the refetch
                 await apiFetch("/api/projects", token, { method: "POST", body: JSON.stringify(body) });
                 toast({ title: "Project created" });
             }
             setEditing(null);
             refetch();
         } catch (err: any) {
+            // Revert on error
+            if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
         } finally {
             setSaving(false);
@@ -224,11 +238,20 @@ export function ProjectsTab({ token }: { token: string | null }) {
 
     const deleteProject = async (id: number) => {
         if (!confirm("Delete this project?")) return;
+
+        // Optimistic UI update
+        const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
+        queryClient.setQueryData<Project[]>(["projects"], old =>
+            old ? old.filter(p => p.id !== id) : []
+        );
+
         try {
             await apiFetch(`/api/projects/${id}`, token, { method: "DELETE" });
             toast({ title: "Project deleted" });
             refetch();
         } catch (err: any) {
+            // Revert on error
+            if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });
         }
     };

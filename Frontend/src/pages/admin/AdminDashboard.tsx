@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useAuth } from "@/hooks/auth-context";
 import { useMessages } from "@/hooks/use-portfolio";
 import "@/styles/admin.css"; // Admin-only styles — code-split, not loaded on public pages
@@ -9,17 +9,17 @@ import {
     PanelLeftClose, PanelLeft, Bell, LogOut, ChevronRight, User, X,
 } from "lucide-react";
 
-// Modular Tab Components
-import { OverviewTab } from "@/components/admin/tabs/OverviewTab";
-import { EmailTemplatesTab } from "@/components/admin/tabs/EmailTemplatesTab";
-import { MessagesTab } from "@/components/admin/tabs/MessagesTab";
-import { ProjectsTab } from "@/components/admin/tabs/ProjectsTab";
-import { SkillsTab } from "@/components/admin/tabs/SkillsTab";
-import { ExperiencesTab } from "@/components/admin/tabs/ExperiencesTab";
-import { ServicesTab } from "@/components/admin/tabs/ServicesTab";
-import { SeoTab } from "@/components/admin/tabs/SeoTab";
-import { ArticlesTab } from "@/components/admin/tabs/ArticlesTab";
-import { TestimonialsTab } from "@/components/admin/tabs/TestimonialsTab";
+// Lazy-loaded Tab Components
+const OverviewTab = lazy(() => import("@/components/admin/tabs/OverviewTab").then(m => ({ default: m.OverviewTab })));
+const EmailTemplatesTab = lazy(() => import("@/components/admin/tabs/EmailTemplatesTab").then(m => ({ default: m.EmailTemplatesTab })));
+const MessagesTab = lazy(() => import("@/components/admin/tabs/MessagesTab").then(m => ({ default: m.MessagesTab })));
+const ProjectsTab = lazy(() => import("@/components/admin/tabs/ProjectsTab").then(m => ({ default: m.ProjectsTab })));
+const SkillsTab = lazy(() => import("@/components/admin/tabs/SkillsTab").then(m => ({ default: m.SkillsTab })));
+const ExperiencesTab = lazy(() => import("@/components/admin/tabs/ExperiencesTab").then(m => ({ default: m.ExperiencesTab })));
+const ServicesTab = lazy(() => import("@/components/admin/tabs/ServicesTab").then(m => ({ default: m.ServicesTab })));
+const SeoTab = lazy(() => import("@/components/admin/tabs/SeoTab").then(m => ({ default: m.SeoTab })));
+const ArticlesTab = lazy(() => import("@/components/admin/tabs/ArticlesTab").then(m => ({ default: m.ArticlesTab })));
+const TestimonialsTab = lazy(() => import("@/components/admin/tabs/TestimonialsTab").then(m => ({ default: m.TestimonialsTab })));
 
 type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials";
 
@@ -53,7 +53,15 @@ const TAB_LABELS: Record<Tab, string> = {
 
 export default function AdminDashboard() {
     const [tab, setTab] = useState<Tab>("overview");
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+        const stored = localStorage.getItem("admin:sidebarCollapsed");
+        return stored === "true";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("admin:sidebarCollapsed", String(sidebarCollapsed));
+    }, [sidebarCollapsed]);
+
     const [msgCount, setMsgCount] = useState(0);
     const { logout, token } = useAuth();
 
@@ -448,17 +456,23 @@ export default function AdminDashboard() {
 
                 {/* Content */}
                 <div className="admin-content flex-1 p-7 admin-animate-in" key={tab}>
-                    {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
-                    {tab === "analytics" && <AnalyticsOverview />}
-                    {tab === "messages" && <MessagesTab token={token} />}
-                    {tab === "templates" && <EmailTemplatesTab token={token} />}
-                    {tab === "projects" && <ProjectsTab token={token} />}
-                    {tab === "skills" && <SkillsTab token={token} />}
-                    {tab === "experiences" && <ExperiencesTab token={token} />}
-                    {tab === "seo" && <SeoTab token={token} />}
-                    {tab === "services" && <ServicesTab token={token} />}
-                    {tab === "articles" && <ArticlesTab token={token} />}
-                    {tab === "testimonials" && <TestimonialsTab token={token} />}
+                    <Suspense fallback={
+                        <div className="flex justify-center py-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                        </div>
+                    }>
+                        {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
+                        {tab === "analytics" && <AnalyticsOverview />}
+                        {tab === "messages" && <MessagesTab token={token} />}
+                        {tab === "templates" && <EmailTemplatesTab token={token} />}
+                        {tab === "projects" && <ProjectsTab token={token} />}
+                        {tab === "skills" && <SkillsTab token={token} />}
+                        {tab === "experiences" && <ExperiencesTab token={token} />}
+                        {tab === "seo" && <SeoTab token={token} />}
+                        {tab === "services" && <ServicesTab token={token} />}
+                        {tab === "articles" && <ArticlesTab token={token} />}
+                        {tab === "testimonials" && <TestimonialsTab token={token} />}
+                    </Suspense>
                 </div>
 
                 {/* Footer */}

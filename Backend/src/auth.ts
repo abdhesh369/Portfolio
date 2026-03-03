@@ -33,6 +33,37 @@ export function revokeToken(token: string) {
 }
 
 /**
+ * Checks if the request is authenticated via JWT or API Key without throwing an error
+ */
+export const checkAuthStatus = (req: Request): boolean => {
+    let token: string | undefined;
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7);
+    } else if (req.cookies && req.cookies.auth_token) {
+        token = req.cookies.auth_token;
+    }
+
+    if (token) {
+        if (tokenBlacklist.has(token)) return false;
+        try {
+            jwt.verify(token, env.JWT_SECRET);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    const apiKey = req.headers["x-api-key"];
+    if (apiKey === env.ADMIN_API_KEY) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
  * Middleware to check for admin authentication via JWT or API Key
  */
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {

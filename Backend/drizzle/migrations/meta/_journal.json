@@ -8,6 +8,13 @@
       "when": 1772563638945,
       "tag": "0000_futuristic_layla_miller",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772568840730,
+      "tag": "0001_heavy_pretty_boy",
+      "breakpoints": true
     }
   ]
 }

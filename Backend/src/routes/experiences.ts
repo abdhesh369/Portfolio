@@ -1,31 +1,8 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { z } from "zod";
-import { storage } from "../storage.js";
+import { Router } from "express";
 import { insertExperienceApiSchema } from "../../shared/schema.js";
-import { api } from "../../shared/routes.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
-
-function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        try {
-            req.body = schema.parse(req.body);
-            next();
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                res.status(400).json({
-                    message: "Validation failed",
-                    errors: err.errors.map((e) => ({
-                        path: e.path.join("."),
-                        message: e.message,
-                    })),
-                });
-                return;
-            }
-            next(err);
-        }
-    };
-}
+import { experienceService } from "../services/experience.service.js";
 
 export function registerExperienceRoutes(app: Router) {
     // GET /experiences - Get all experiences
@@ -33,7 +10,7 @@ export function registerExperienceRoutes(app: Router) {
         "/experiences",
         cachePublic(600),
         asyncHandler(async (_req, res) => {
-            const experiences = await storage.getExperiences();
+            const experiences = await experienceService.getAll();
             res.json(experiences);
         })
     );
@@ -48,7 +25,7 @@ export function registerExperienceRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid experience ID" });
                 return;
             }
-            const experience = await storage.getExperienceById(id);
+            const experience = await experienceService.getById(id);
             if (!experience) {
                 res.status(404).json({ message: "Experience not found" });
                 return;
@@ -61,9 +38,9 @@ export function registerExperienceRoutes(app: Router) {
     app.post(
         "/experiences",
         isAuthenticated,
-        validateBody(insertExperienceApiSchema),
         asyncHandler(async (req, res) => {
-            const experience = await storage.createExperience(req.body);
+            const data = insertExperienceApiSchema.parse(req.body);
+            const experience = await experienceService.create(data);
             res.status(201).json(experience);
         })
     );
@@ -72,14 +49,14 @@ export function registerExperienceRoutes(app: Router) {
     app.put(
         "/experiences/:id",
         isAuthenticated,
-        validateBody(insertExperienceApiSchema.partial()),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
                 res.status(400).json({ message: "Invalid experience ID" });
                 return;
             }
-            const experience = await storage.updateExperience(id, req.body);
+            const data = insertExperienceApiSchema.partial().parse(req.body);
+            const experience = await experienceService.update(id, data);
             res.json(experience);
         })
     );
@@ -94,7 +71,7 @@ export function registerExperienceRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid experience ID" });
                 return;
             }
-            await storage.deleteExperience(id);
+            await experienceService.delete(id);
             res.status(204).send();
         })
     );

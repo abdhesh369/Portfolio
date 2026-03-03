@@ -94,19 +94,45 @@ export default function BlogPost() {
                 title={`${article.title} | Abdhesh Sah`}
                 description={article.excerpt || article.title}
                 image={ogImage}
-                structuredData={{
-                    "@context": "https://schema.org",
-                    "@type": "BlogPosting",
-                    "headline": (article as any).title as string,
-                    "image": article.featuredImage ? [article.featuredImage] : [],
-                    "datePublished": article.publishedAt,
-                    "dateModified": article.updatedAt,
-                    "author": {
-                        "@type": "Person",
-                        "name": "Abdhesh Sah",
-                        "url": "https://abdheshsah.com.np"
+                structuredData={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "BlogPosting",
+                        "headline": article.title,
+                        "image": article.featuredImage ? [article.featuredImage] : [],
+                        "datePublished": article.publishedAt,
+                        "dateModified": article.updatedAt,
+                        "author": {
+                            "@type": "Person",
+                            "name": "Abdhesh Sah",
+                            "url": "https://abdheshsah.com.np"
+                        }
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        "itemListElement": [
+                            {
+                                "@type": "ListItem",
+                                "position": 1,
+                                "name": "Home",
+                                "item": "https://abdheshsah.com.np"
+                            },
+                            {
+                                "@type": "ListItem",
+                                "position": 2,
+                                "name": "Blog",
+                                "item": "https://abdheshsah.com.np/blog"
+                            },
+                            {
+                                "@type": "ListItem",
+                                "position": 3,
+                                "name": article.title,
+                                "item": `https://abdheshsah.com.np/blog/${article.slug}`
+                            }
+                        ]
                     }
-                }}
+                ]}
             />
             <Navbar />
 
@@ -159,7 +185,7 @@ export default function BlogPost() {
                             >
                                 <img
                                     src={article.featuredImage}
-                                    alt={article.title}
+                                    alt={article.featuredImageAlt || `${article.title} - Featured image for blog post`}
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
@@ -207,7 +233,7 @@ export default function BlogPost() {
                                         >
                                             <div className="aspect-video bg-white/5 relative overflow-hidden">
                                                 {related.featuredImage ? (
-                                                    <img src={related.featuredImage} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                    <img src={related.featuredImage} alt={`${related.title} - Related article thumbnail`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📝</div>
                                                 )}

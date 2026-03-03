@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { storage } from "../storage.js";
+import { mindsetService } from "../services/mindset.service.js";
 import { insertMindsetApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
-import { cachePublic } from "../middleware/cache.js";
 
 const router = Router();
 
@@ -33,9 +32,8 @@ export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset - Get mindset data
     app.get(
         "/mindset",
-        cachePublic(3600),
         asyncHandler(async (req, res) => {
-            const mindset = await storage.getMindset();
+            const mindset = await mindsetService.getAll();
             res.json(mindset);
         })
     );
@@ -46,7 +44,7 @@ export function registerMindsetRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertMindsetApiSchema),
         asyncHandler(async (req, res) => {
-            const mindset = await storage.createMindset(req.body);
+            const mindset = await mindsetService.create(req.body);
             res.status(201).json(mindset);
         })
     );
@@ -54,14 +52,13 @@ export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset/:id - Get single mindset principle
     app.get(
         "/mindset/:id",
-        cachePublic(3600),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
                 res.status(400).json({ message: "Invalid mindset ID" });
                 return;
             }
-            const mindset = await storage.getMindsetById(id);
+            const mindset = await mindsetService.getById(id);
             if (!mindset) {
                 res.status(404).json({ message: "Mindset principle not found" });
                 return;
@@ -81,7 +78,7 @@ export function registerMindsetRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid mindset ID" });
                 return;
             }
-            const mindset = await storage.updateMindset(id, req.body);
+            const mindset = await mindsetService.update(id, req.body);
             res.json(mindset);
         })
     );
@@ -96,13 +93,9 @@ export function registerMindsetRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid mindset ID" });
                 return;
             }
-            const existing = await storage.getMindsetById(id);
-            if (!existing) {
-                res.status(404).json({ message: "Mindset entry not found" });
-                return;
-            }
-            await storage.deleteMindset(id);
+            await mindsetService.delete(id);
             res.status(204).send();
         })
     );
 }
+

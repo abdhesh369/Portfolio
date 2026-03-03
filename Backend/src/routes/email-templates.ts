@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { storage } from "../storage.js";
+import { emailTemplateService } from "../services/email-template.service.js";
 import { insertEmailTemplateApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
@@ -10,7 +10,7 @@ export function registerEmailTemplateRoutes(app: Router) {
         "/email-templates",
         isAuthenticated,
         asyncHandler(async (_req, res) => {
-            const templates = await storage.getEmailTemplates();
+            const templates = await emailTemplateService.getAll();
             res.json(templates);
         })
     );
@@ -25,7 +25,7 @@ export function registerEmailTemplateRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid template ID" });
                 return;
             }
-            const template = await storage.getEmailTemplateById(id);
+            const template = await emailTemplateService.getById(id);
             if (!template) {
                 res.status(404).json({ message: "Template not found" });
                 return;
@@ -44,7 +44,7 @@ export function registerEmailTemplateRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid template data", errors: parsed.error.errors });
                 return;
             }
-            const template = await storage.createEmailTemplate(parsed.data);
+            const template = await emailTemplateService.create(parsed.data);
             res.status(201).json(template);
         })
     );
@@ -64,7 +64,7 @@ export function registerEmailTemplateRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid template data", errors: parsed.error.errors });
                 return;
             }
-            const template = await storage.updateEmailTemplate(id, parsed.data);
+            const template = await emailTemplateService.update(id, parsed.data);
             res.json(template);
         })
     );
@@ -79,7 +79,7 @@ export function registerEmailTemplateRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid template ID" });
                 return;
             }
-            await storage.deleteEmailTemplate(id);
+            await emailTemplateService.delete(id);
             res.status(204).send();
         })
     );
