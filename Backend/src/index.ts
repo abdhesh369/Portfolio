@@ -154,6 +154,16 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Root route — friendly landing for direct visits
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    name: "Portfolio API",
+    version: "1.0.0",
+    status: "running",
+    docs: "/health for health check, /api/* for API endpoints",
+  });
+});
+
 // Health check with database connectivity verification
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();

@@ -2,12 +2,24 @@ import { z } from "zod";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// In production (e.g. Render), env vars come from the platform — .env files are gitignored.
+// Only load .env files if they exist on disk (local development).
 const envFile = process.env.NODE_ENV === "production" ? "../.env.production" : "../.env";
-dotenv.config({ path: path.resolve(__dirname, envFile) });
+const envPath = path.resolve(__dirname, envFile);
+if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+} else {
+    // Try fallback .env for local dev; in production, platform env vars are already set.
+    const fallback = path.resolve(__dirname, "../.env");
+    if (fs.existsSync(fallback)) {
+        dotenv.config({ path: fallback });
+    }
+}
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
