@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch, API_BASE_URL } from "@/lib/api-helpers";
 import type { Message } from "@shared/schema";
 import {
     Rocket, Mail, Zap, Briefcase, PenTool, FolderKanban,
-    Plus, ArrowUpRight, Clock,
+    Plus, ArrowUpRight, Clock, Database, Server, Shield, Activity,
 } from "lucide-react";
 
-// Sparkline SVG component
-function Sparkline({ accent }: { accent: string }) {
-    const points = [3, 7, 4, 9, 6, 11, 8, 13, 10, 15]
-        .map((y, i) => `${i * 11},${20 - y}`)
-        .join(" ");
-    return (
-        <svg width="100" height="24" viewBox="0 0 99 24">
-            <polyline
-                points={points}
-                fill="none"
-                stroke={accent}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity="0.8"
-            />
-        </svg>
-    );
+interface HealthData {
+    status: string;
+    database: string;
+    environment: string;
+    timestamp: string;
+    responseTimeMs: number;
 }
 
 // Color config
@@ -49,6 +37,8 @@ export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
     const { data: experiences } = useExperiences();
     const [messages, setMessages] = useState<Message[]>([]);
     const [msgCount, setMsgCount] = useState<number | null>(null);
+    const [healthData, setHealthData] = useState<HealthData | null>(null);
+    const [healthLoading, setHealthLoading] = useState(true);
 
     useEffect(() => {
         apiFetch("/api/messages", token)
@@ -61,6 +51,31 @@ export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
                 setMsgCount(0);
             });
     }, [token]);
+
+    const fetchHealth = useCallback(async () => {
+        setHealthLoading(true);
+        try {
+            const start = performance.now();
+            const res = await fetch(`${API_BASE_URL}/health`);
+            const elapsed = Math.round(performance.now() - start);
+            const data = await res.json();
+            setHealthData({ ...data, responseTimeMs: elapsed });
+        } catch {
+            setHealthData({
+                status: "unreachable",
+                database: "unknown",
+                environment: "unknown",
+                timestamp: new Date().toISOString(),
+                responseTimeMs: -1,
+            });
+        } finally {
+            setHealthLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchHealth();
+    }, [fetchHealth]);
 
     const stats = [
         {
@@ -122,11 +137,48 @@ export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
         }
     }
 
+    // Compute content coverage: how many sections have data
+    const sections = [
+        { name: "Projects", hasData: (projects?.length ?? 0) > 0 },
+        { name: "Skills", hasData: (skills?.length ?? 0) > 0 },
+        { name: "Experiences", hasData: (experiences?.length ?? 0) > 0 },
+        { name: "Messages", hasData: (msgCount ?? 0) > 0 },
+    ];
+    const filledSections = sections.filter((s) => s.hasData).length;
+    const coveragePct = Math.round((filledSections / sections.length) * 100);
+
+    const apiMs = healthData?.responseTimeMs ?? 0;
+    const apiBarValue = apiMs > 0 ? Math.max(5, Math.min(100, 100 - apiMs)) : 0;
+
     const systemBars = [
-        { label: "API Response Time", value: 98, accent: ACCENTS.cyan.hex, text: "42ms" },
-        { label: "Uptime", value: 100, accent: ACCENTS.green.hex, text: "99.9%" },
-        { label: "Storage Used", value: 34, accent: ACCENTS.purple.hex, text: "34%" },
-        { label: "Active Sessions", value: 60, accent: ACCENTS.amber.hex, text: "1 active" },
+        {
+            label: "API Response Time",
+            value: apiBarValue,
+            accent: ACCENTS.cyan.hex,
+            text: healthLoading ? "pinging..." : apiMs > 0 ? `${apiMs}ms` : "offline",
+            icon: Activity,
+        },
+        {
+            label: "Database",
+            value: healthData?.database === "connected" ? 100 : 0,
+            accent: ACCENTS.green.hex,
+            text: healthLoading ? "checking..." : healthData?.database ?? "unknown",
+            icon: Database,
+        },
+        {
+            label: "Content Coverage",
+            value: coveragePct,
+            accent: ACCENTS.purple.hex,
+            text: `${filledSections}/${sections.length} sections`,
+            icon: Shield,
+        },
+        {
+            label: "Environment",
+            value: healthData?.environment ? 100 : 0,
+            accent: ACCENTS.amber.hex,
+            text: healthLoading ? "checking..." : healthData?.environment ?? "unknown",
+            icon: Server,
+        },
     ];
 
     return (
@@ -189,7 +241,7 @@ export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
                                 >
                                     {stat.delta}
                                 </span>
-                                <Sparkline accent={stat.accent.hex} />
+
                             </div>
                         </div>
                     );
@@ -314,44 +366,59 @@ export function OverviewTab({ token, onNavigate }: OverviewTabProps) {
                         &gt; SYSTEM_STATUS
                     </div>
 
-                    {systemBars.map((bar) => (
-                        <div key={bar.label} className="mb-4">
-                            <div className="flex justify-between mb-1.5">
-                                <span
-                                    className="text-[11px]"
-                                    style={{
-                                        color: "rgba(148,163,184,0.6)",
-                                        letterSpacing: "0.05em",
-                                    }}
-                                >
-                                    {bar.label}
-                                </span>
-                                <span className="text-[11px]" style={{ color: bar.accent }}>
-                                    {bar.text}
-                                </span>
+                    {systemBars.map((bar) => {
+                        const BarIcon = bar.icon;
+                        return (
+                            <div key={bar.label} className="mb-4">
+                                <div className="flex justify-between items-center mb-1.5">
+                                    <span
+                                        className="text-[11px] flex items-center gap-1.5"
+                                        style={{
+                                            color: "rgba(148,163,184,0.6)",
+                                            letterSpacing: "0.05em",
+                                        }}
+                                    >
+                                        <BarIcon size={11} style={{ color: bar.accent, opacity: 0.7 }} />
+                                        {bar.label}
+                                    </span>
+                                    <span className="text-[11px] font-mono" style={{ color: bar.accent }}>
+                                        {bar.text}
+                                    </span>
+                                </div>
+                                <div className="admin-progress-bar">
+                                    <div
+                                        className="admin-progress-fill"
+                                        style={{
+                                            width: `${bar.value}%`,
+                                            background: `linear-gradient(90deg, ${bar.accent}80, ${bar.accent})`,
+                                            boxShadow: `0 0 8px ${bar.accent}60`,
+                                            transition: "width 0.6s ease",
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="admin-progress-bar">
-                                <div
-                                    className="admin-progress-fill"
-                                    style={{
-                                        width: `${bar.value}%`,
-                                        background: `linear-gradient(90deg, ${bar.accent}80, ${bar.accent})`,
-                                        boxShadow: `0 0 8px ${bar.accent}60`,
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
 
                     {/* Terminal-style footer */}
                     <div className="admin-terminal">
                         <div className="text-cyan-400 mb-1">&gt; system.check()</div>
-                        <div className="text-emerald-400">✓ All systems operational</div>
+                        <div className={healthData?.status === "healthy" ? "text-emerald-400" : "text-red-400"}>
+                            {healthLoading
+                                ? "⏳ Checking..."
+                                : healthData?.status === "healthy"
+                                    ? "✓ All systems operational"
+                                    : healthData?.status === "unreachable"
+                                        ? "✗ API unreachable"
+                                        : "⚠ System degraded"}
+                        </div>
                         <div
                             className="mt-1"
                             style={{ color: "rgba(148,163,184,0.4)" }}
                         >
-                            Last checked: just now_
+                            {healthData?.timestamp
+                                ? `Last checked: ${new Date(healthData.timestamp).toLocaleTimeString()}`
+                                : "Last checked: --"}
                         </div>
                     </div>
                 </div>
