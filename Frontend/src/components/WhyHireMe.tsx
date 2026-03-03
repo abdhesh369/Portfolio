@@ -182,11 +182,11 @@ export default function WhyHireMe() {
           Why Hire Me as a Student Engineer
         </m.h2>
         <m.div
-          initial={{ width: 0 }}
-          whileInView={{ width: "5rem" }}
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="h-1.5 bg-primary mx-auto rounded-full"
+          className="h-1.5 w-20 bg-primary mx-auto rounded-full origin-center"
         />
       </div>
 

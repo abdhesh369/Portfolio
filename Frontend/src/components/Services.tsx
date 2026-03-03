@@ -57,12 +57,12 @@ export default function Services() {
           <div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4"
             style={{
-              background: "rgba(34,197,94,0.1)",
-              border: "1px solid rgba(34,197,94,0.3)",
+              background: "rgba(6,182,212,0.1)",
+              border: "1px solid rgba(6,182,212,0.3)",
             }}
           >
-            <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-400">
+            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <span className="text-sm font-medium text-cyan-400">
               How I can help
             </span>
           </div>
@@ -70,7 +70,7 @@ export default function Services() {
             className="text-3xl md:text-4xl font-bold mb-3"
             style={{
               background:
-                "linear-gradient(135deg, #bbf7d0 0%, #4ade80 40%, #22c55e 80%)",
+                "linear-gradient(135deg, #a5f3fc 0%, #06b6d4 40%, #3b82f6 80%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -100,18 +100,18 @@ export default function Services() {
               transition={
                 shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05 }
               }
-              className="relative rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(34,197,94,0.12),_transparent_55%),_rgba(15,23,42,0.9)] p-5 flex flex-col group card-glow-hover transition-all duration-300 hover:-translate-y-1"
+              className="relative rounded-2xl border border-white/10 bg-[#0a0520]/80 backdrop-blur-sm p-5 flex flex-col group card-glow-hover transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)]"
             >
               <div className="flex items-center justify-between mb-3 gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                    <Layers className="w-4 h-4 text-emerald-300" />
+                  <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+                    <Layers className="w-4 h-4 text-cyan-400" />
                   </span>
                   <div>
                     <h3 className="text-sm font-semibold text-white">
                       {svc.title}
                     </h3>
-                    <p className="text-[11px] text-emerald-300/80 uppercase tracking-wide">
+                    <p className="text-[11px] text-cyan-400/80 uppercase tracking-wide">
                       {svc.category}
                     </p>
                   </div>
@@ -131,14 +131,14 @@ export default function Services() {
                 {(svc.tags ?? []).slice(0, 5).map((tag: string) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/10 text-emerald-200 border border-emerald-400/30"
+                    className="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/10 text-cyan-200 border border-cyan-500/30"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="pt-2 border-t border-emerald-500/15 flex items-center justify-between text-[11px] text-emerald-200/80">
+              <div className="pt-2 border-t border-cyan-500/15 flex items-center justify-between text-[11px] text-cyan-200/80">
                 <span>Ideal for teams who need a builder–architect hybrid.</span>
                 <ChevronRight className="w-3 h-3" />
               </div>

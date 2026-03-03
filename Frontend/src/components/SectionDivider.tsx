@@ -13,7 +13,7 @@ export default function SectionDivider() {
             className="relative py-2"
         >
             <div className="h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
-            <div className="absolute inset-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent blur-sm top-1/2" />
+            <div className="absolute inset-x-0 top-1/2 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent blur-sm" />
         </m.div>
     );
 }
