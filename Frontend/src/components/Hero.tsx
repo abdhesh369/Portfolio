@@ -1,8 +1,9 @@
 import { m, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
+import { useTheme } from "./theme-provider";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {
@@ -77,6 +78,7 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
 
 // Profile Image with Sci-Fi Hologram Effect
 const ProfileCard = () => {
+  const { reducedMotion } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -110,9 +112,11 @@ const ProfileCard = () => {
       transition={{ duration: 0.8, delay: 0.2 }}
       className="relative hidden lg:block perspective-1000"
       style={{
-        transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transform: reducedMotion
+          ? "none"
+          : `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transformStyle: "preserve-3d",
-        transition: "transform 0.1s ease-out",
+        transition: reducedMotion ? "none" : "transform 0.1s ease-out",
       }}
     >
       {/* Glow Ring */}
@@ -157,7 +161,7 @@ const ProfileCard = () => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
               >
-                {`> initializing module_0${i + 1} ... OK`}
+                {`> initializing module_0${i + 1} ...OK`}
               </m.div>
             ))}
           </div>
@@ -189,9 +193,13 @@ const ProfileCard = () => {
       </div>
 
       {/* Floating Orbital Elements */}
-      <OrbitItem icon={Cpu} label="System Arch" color="cyan" delay={0} x={-20} y={-20} />
-      <OrbitItem icon={Globe} label="Full Stack" color="purple" delay={1} x={20} y={20} />
-      <OrbitItem icon={Terminal} label="DevOps" color="pink" delay={2} x={-20} y={20} />
+      {!reducedMotion && (
+        <>
+          <OrbitItem icon={Cpu} label="System Arch" color="cyan" delay={0} x={-20} y={-20} />
+          <OrbitItem icon={Globe} label="Full Stack" color="purple" delay={1} x={20} y={20} />
+          <OrbitItem icon={Terminal} label="DevOps" color="pink" delay={2} x={-20} y={20} />
+        </>
+      )}
 
     </m.div>
   );

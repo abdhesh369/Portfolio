@@ -27,4 +27,19 @@ Navigate to the `Frontend` directory, install dependencies, and launch Vite. Com
 - **Premium User Experience:** Implements complex visual features like glitch hover artifacts, floating ambient particles, responsive layout morphing, and a completely custom-styled interactive cursor to match the cyberpunk theme.
 
 ---
+
+## 🤝 Community & Contributions
+
+Contributions are welcome! Whether it's a bug report, feature request, or code contribution, your involvement is appreciated.
+
+- **[Contributing Guidelines](./CONTRIBUTING.md)**: How to get started with contributing.
+- **[Code of Conduct](./CODE_OF_CONDUCT.md)**: Our commitment to a welcoming environment.
+- **[Security Policy](./SECURITY.md)**: How to report security vulnerabilities.
+
+---
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+---
 Designed and Developed by [Abdhesh Sah](mailto:abdheshshah111@gmail.com)

@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
+import { useTheme } from "./theme-provider";
 
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
 import { type Project } from "@shared/schema";
-import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu } from "lucide-react";
+import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu, Eye, Zap, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
@@ -27,7 +28,8 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     setRotateY(rotateYValue);
   };
 
-  const shouldReduceMotion = useReducedMotion();
+  const { reducedMotion } = useTheme();
+  const shouldReduceMotion = useReducedMotion() || reducedMotion;
   const transitionConfig = shouldReduceMotion ? { duration: 0 } : { duration: 0.4, delay: index * 0.1 };
 
   const handleMouseLeave = () => {
@@ -92,9 +94,11 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
       onMouseLeave={handleMouseLeave}
       className="relative group"
       style={{
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transform: reducedMotion
+          ? "none"
+          : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transformStyle: "preserve-3d",
-        transition: "transform 0.1s ease-out",
+        transition: reducedMotion ? "none" : "transform 0.1s ease-out",
       }}
     >
       {/* Outer Glow */}
@@ -156,14 +160,19 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             </>
           ) : (
             <div
-              className="w-full h-full flex items-center justify-center"
+              className="w-full h-full flex items-center justify-center p-8 text-center"
               style={{ background: 'linear-gradient(135deg, rgba(20, 15, 40, 1) 0%, rgba(30, 20, 50, 1) 100%)' }}
             >
               <m.div
-                animate={{ rotate: isHovered ? 360 : 0 }}
-                transition={{ duration: shouldReduceMotion ? 0 : 1.5, ease: 'easeInOut' }}
+                animate={{ rotate: isHovered && !shouldReduceMotion ? 360 : 0 }}
+                transition={{ duration: 1.5, ease: 'easeInOut' }}
+                className="flex flex-col items-center gap-4"
               >
-                <Folder className="w-16 h-16 text-gray-600" />
+                <Folder className="w-16 h-16 text-gray-700" />
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-gray-500 uppercase tracking-widest">Repository</div>
+                  <div className="text-xs text-gray-600">Assets restricted or unavailable</div>
+                </div>
               </m.div>
             </div>
           )}
@@ -219,7 +228,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
               }}
               aria-label="Quick Preview"
             >
-              <Layers className="w-5 h-5 text-pink-400" />
+              <Eye className="w-5 h-5 text-pink-400" />
             </m.button>
           </m.div>
 
@@ -326,6 +335,29 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
               >
                 {project.isFlagship ? "Read case study" : "Details"}
                 <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </Link>
+            {/* API badge — proves data is from a live REST API */}
+            <Link href={`/project/${project.id}`}>
+              <button
+                className="flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg text-[10px] font-bold font-mono transition-all"
+                style={{
+                  background: 'rgba(34, 197, 94, 0.08)',
+                  border: '1px solid rgba(34, 197, 94, 0.25)',
+                  color: 'rgba(34, 197, 94, 0.7)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.6)';
+                  e.currentTarget.style.color = '#22c55e';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.25)';
+                  e.currentTarget.style.color = 'rgba(34, 197, 94, 0.7)';
+                }}
+                title="View live API response"
+              >
+                <Terminal className="w-3 h-3" />
+                API
               </button>
             </Link>
           </div>
@@ -556,7 +588,7 @@ export default function Projects() {
               border: '1px solid rgba(0, 212, 255, 0.3)'
             }}
           >
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <Zap className="w-4 h-4 text-cyan-400" />
             <span className="text-sm font-medium text-cyan-400">Featured Work</span>
           </m.div>
 
@@ -605,9 +637,9 @@ export default function Projects() {
           ))}
         </m.div>
 
-        {/* Projects Grid */}
+        {/* Projects Grid - Bento Style */}
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
               <div
                 key={i}
@@ -619,17 +651,26 @@ export default function Projects() {
         ) : (
           <m.div
             layout
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 auto-rows-max"
           >
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onPreview={setPreviewProject}
-                  index={index}
-                />
-              ))}
+              {filteredProjects.map((project, index) => {
+                // Bento Logic: Flagships take more space
+                const isLarge = project.isFlagship;
+                const gridSpan = isLarge
+                  ? "lg:col-span-8 md:col-span-2 col-span-1 row-span-2"
+                  : "lg:col-span-4 md:col-span-1 col-span-1";
+
+                return (
+                  <div key={project.id} className={gridSpan}>
+                    <ProjectCard
+                      project={project}
+                      onPreview={setPreviewProject}
+                      index={index}
+                    />
+                  </div>
+                );
+              })}
             </AnimatePresence>
           </m.div>
         )}

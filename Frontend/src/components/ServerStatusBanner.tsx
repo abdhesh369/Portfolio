@@ -1,4 +1,5 @@
 import { useServerStatus, type ServerStatus } from "@/hooks/use-server-status";
+import { m, AnimatePresence } from "framer-motion";
 
 const MESSAGES: Record<Exclude<ServerStatus, "online" | "checking">, { text: string; icon: string }> = {
   waking: {
@@ -13,25 +14,31 @@ const MESSAGES: Record<Exclude<ServerStatus, "online" | "checking">, { text: str
 
 /**
  * Fixed-top banner that shows while the backend is cold-starting or unreachable.
- * Automatically disappears when /health returns 200 OK.
+ * Automatically disappears with a smooth exit when /health returns 200 OK.
  */
 export function ServerStatusBanner() {
   const status = useServerStatus();
 
-  // Nothing to show when the server is online or during the initial check
-  if (status === "online" || status === "checking") return null;
-
-  const { text, icon } = MESSAGES[status];
+  const visible = status === "waking" || status === "offline";
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={`server-status-banner ${status === "offline" ? "server-status-banner--offline" : "server-status-banner--waking"}`}
-    >
-      <span className="server-status-banner__icon">{icon}</span>
-      <span className="server-status-banner__text">{text}</span>
-      <span className="server-status-banner__pulse" />
-    </div>
+    <AnimatePresence>
+      {visible && (
+        <m.div
+          key="server-status"
+          role="status"
+          aria-live="polite"
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -20, opacity: 0 }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className={`server-status-banner ${status === "offline" ? "server-status-banner--offline" : "server-status-banner--waking"}`}
+        >
+          <span className="server-status-banner__icon">{MESSAGES[status].icon}</span>
+          <span className="server-status-banner__text">{MESSAGES[status].text}</span>
+          <span className="server-status-banner__pulse" />
+        </m.div>
+      )}
+    </AnimatePresence>
   );
 }

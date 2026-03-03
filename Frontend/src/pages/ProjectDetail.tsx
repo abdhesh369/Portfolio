@@ -17,6 +17,7 @@ import {
 import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
 import { getDynamicOgImage } from "@/lib/cloudinary";
+import { ApiResponseViewer } from "@/components/ApiResponseViewer";
 
 // Floating particles (reused from main components)
 const FloatingParticles = () => {
@@ -525,6 +526,15 @@ export default function ProjectDetail() {
                         </span>
                       </div>
                     )}
+                  </div>
+
+                  {/* API Response Viewer — "Proof of Work" */}
+                  <div className="mt-6 pt-6 border-t border-gray-800/50">
+                    <ApiResponseViewer
+                      endpoint={`/api/projects/${project.id}`}
+                      data={project}
+                      accentColor={catColor.text}
+                    />
                   </div>
                 </m.div>
               </div>

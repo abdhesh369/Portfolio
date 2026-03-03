@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { hydrateFromCache, subscribeToQueryCache } from "./query-cache-persister";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -55,3 +56,8 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Hydrate from localStorage so returning users see cached data instantly,
+// then subscribe to persist future successful fetches.
+hydrateFromCache(queryClient);
+subscribeToQueryCache(queryClient);

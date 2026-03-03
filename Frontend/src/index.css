@@ -101,6 +101,18 @@
   --ring: 263 70% 50%;
 }
 
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+  --card: 0 0% 5%;
+  --border: 0 0% 40%;
+  --muted-foreground: 0 0% 100%;
+  --accent: 0 0% 100%;
+  --accent-foreground: 0 0% 0%;
+}
+
 /* ==================== BASE STYLES ==================== */
 
 @layer base {
@@ -657,7 +669,7 @@
   line-height: 1.25;
   color: #fff;
   text-align: center;
-  animation: banner-slide-in 0.35s ease-out;
+  /* Entry/exit handled by Framer Motion AnimatePresence */
 }
 
 .server-status-banner--waking {
@@ -709,4 +721,38 @@
     opacity: 0.4;
     transform: scale(0.75);
   }
+}
+
+/* ==================== API RESPONSE VIEWER ==================== */
+
+/* JSON syntax highlighting — lightweight, no external lib */
+.json-string {
+  color: #a5d6ff;
+}
+
+.json-number {
+  color: #79c0ff;
+}
+
+.json-bool {
+  color: #ff7b72;
+}
+
+/* Thin scrollbar inside the viewer */
+.api-viewer pre.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.api-viewer pre.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.api-viewer pre.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 140, 0.3);
+  border-radius: 2px;
+}
+
+.api-viewer pre.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 140, 0.5);
 }
