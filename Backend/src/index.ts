@@ -105,7 +105,7 @@ app.use(
         "default-src": ["'self'"],
         "script-src": ["'self'", "https://www.googletagmanager.com"],
         "object-src": ["'none'"],
-        "connect-src": ["'self'", "https://api.github.com", "https://backend-jmfc.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
+        "connect-src": ["'self'", "https://api.github.com", "https://portfolio-b7nz.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
         "img-src": [
           "'self'",
           "data:",
