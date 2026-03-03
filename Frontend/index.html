@@ -97,18 +97,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </noscript>
 
-  <!-- CSP -->
+  <!-- CSP (frame-ancestors must be set via HTTP header, not meta tag) -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;
+    script-src 'self' 'unsafe-inline' blob: https://www.googletagmanager.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https: http:;
     font-src 'self' https://fonts.gstatic.com;
     connect-src 'self' https://backend-jmfc.onrender.com http://localhost:5000 https://api.github.com https://www.google-analytics.com https://region1.google-analytics.com;
+    worker-src 'self' blob:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-ancestors 'none';
     upgrade-insecure-requests;
   ">
 

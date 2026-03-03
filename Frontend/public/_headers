@@ -22,6 +22,11 @@
 /index.html
   Cache-Control: no-cache, must-revalidate
 
+# Prevent clickjacking (must be HTTP header — ignored in <meta> CSP)
+/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+
 # HSTS rollout: start at 5 min, then bump to 604800 (1 week), 2592000 (1 month),
 # then 63072000 (2 years) + preload. Submit to hstspreload.org at that final stage.
 /*

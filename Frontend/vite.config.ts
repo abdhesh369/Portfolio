@@ -47,6 +47,9 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.warn', 'console.info', 'console.debug'],
+        // Prevent TDZ errors in Zod v3/v4 dual-bundle (vendor-forms chunk)
+        reduce_vars: false,
+        collapse_vars: false,
       },
     },
     rollupOptions: {
