@@ -3,7 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 
 const MESSAGES: Record<Exclude<ServerStatus, "online" | "checking">, { text: string; icon: string }> = {
   waking: {
-    text: "Server is waking up — hang tight, this usually takes ~30 seconds…",
+    text: "Server is waking up — hang tight, this usually takes ~50-60 seconds…",
     icon: "⏳",
   },
   offline: {

@@ -83,7 +83,12 @@ app.use(
         callback(null, true);
         return;
       }
-      if (allowedOrigins.includes(origin) || (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:"))) {
+
+      const isAllowed = allowedOrigins.includes(origin) ||
+        (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:")) ||
+        origin.endsWith(".onrender.com");
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         console.warn(`CORS blocked origin: ${origin}`);
@@ -105,7 +110,7 @@ app.use(
         "default-src": ["'self'"],
         "script-src": ["'self'", "https://www.googletagmanager.com"],
         "object-src": ["'none'"],
-        "connect-src": ["'self'", "https://api.github.com", "https://portfolio-b7nz.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
+        "connect-src": ["'self'", "https://api.github.com", "https://backend-1gk6.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
         "img-src": [
           "'self'",
           "data:",
