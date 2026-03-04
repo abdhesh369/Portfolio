@@ -77,16 +77,6 @@ describe("cachePublic middleware", () => {
         expect(mockNext).toHaveBeenCalled();
     });
 
-    it("skips when x-api-key header is present", () => {
-        const middleware = cachePublic(300);
-        const req = makeReq({ headers: { "x-api-key": "key123" } });
-
-        middleware(req as Request, mockRes as Response, mockNext);
-
-        expect(mockRes.set).not.toHaveBeenCalled();
-        expect(mockNext).toHaveBeenCalled();
-    });
-
     it("uses default maxAge of 300 when no argument given", () => {
         const middleware = cachePublic();
         const req = makeReq();

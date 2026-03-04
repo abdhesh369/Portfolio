@@ -152,6 +152,8 @@ describe("ArticleService", () => {
             const result = await service.create({
                 title: "New",
                 content: "Some content here",
+                status: "draft" as const,
+                readTimeMinutes: 1,
                 tags: ["tag1"],
             });
 

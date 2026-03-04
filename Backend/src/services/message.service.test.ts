@@ -67,6 +67,7 @@ describe("MessageService", () => {
                 name: "Bot",
                 email: "bot@spam.com",
                 message: "Buy stuff",
+                subject: "Spam",
                 website: "http://spam.com", // honeypot filled
             };
 
@@ -97,6 +98,7 @@ describe("MessageService", () => {
                 name: "Real User",
                 email: "real@test.com",
                 message: "Genuine message",
+                subject: "Hello",
                 website: "", // empty honeypot = legit
             };
             mockCreate.mockResolvedValue({ id: 1, ...input });

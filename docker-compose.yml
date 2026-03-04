@@ -49,7 +49,7 @@ services:
       FRONTEND_URL: http://localhost:3000
       JWT_SECRET: dev_secret_key_at_least_64_characters_long_for_proper_security_padding__
       JWT_REFRESH_SECRET: dev_refresh_secret_at_least_64_characters_long_security_padding______
-      ADMIN_PASSWORD: admin
+      ADMIN_PASSWORD: admin  # ⚠️ CHANGE IN PRODUCTION — insecure default for local dev only
       # Sentry configuration (optional, will use env vars if provided)
       SENTRY_DSN: ${SENTRY_DSN}
       SENTRY_ENVIRONMENT: development

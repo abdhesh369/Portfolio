@@ -83,7 +83,7 @@ export default function BlogList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
-    const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     // Debounce search query by 300ms
     useEffect(() => {

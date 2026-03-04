@@ -126,13 +126,11 @@ export class ArticleRepository {
     }
 
     async search(query: string, limit: number = 10): Promise<Article[]> {
-        const tsQuery = query.trim().split(/\s+/).join(' & ');
-
         const results = await db.execute(sql`
-            SELECT a.*, ts_rank(a.search_vector, to_tsquery('english', ${tsQuery})) AS rank
+            SELECT a.*, ts_rank(a.search_vector, plainto_tsquery('english', ${query})) AS rank
             FROM articles a
             WHERE a.status = 'published'
-              AND a.search_vector @@ to_tsquery('english', ${tsQuery})
+              AND a.search_vector @@ plainto_tsquery('english', ${query})
             ORDER BY rank DESC
             LIMIT ${limit}
         `);

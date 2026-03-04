@@ -16,7 +16,7 @@ export const cachePublic = (maxAgeSeconds: number = 300) => {
         }
 
         // Skip caching if authenticated (prevents leaking admin/draft content to CDNs)
-        if (req.cookies?.auth_token || req.headers.authorization || req.headers["x-api-key"]) {
+        if (req.cookies?.auth_token || req.headers.authorization) {
             return next();
         }
 

@@ -4,7 +4,7 @@ import React from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 
 // A component that throws on render
-function ThrowingComponent({ error }: { error: Error }) {
+function ThrowingComponent({ error }: { error: Error }): React.ReactNode {
   throw error;
 }
 

@@ -17,5 +17,6 @@ export {
   useSendMessage,
   useLogin,
   useAnalyticsSummary,
+  useVitalsSummary,
 } from "./portfolio";
 

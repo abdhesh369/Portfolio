@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useAnalyticsSummary, useVitalsSummary } from "../../hooks/use-portfolio";
 import {
     Eye,
@@ -175,8 +176,8 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                         fontSize: 12,
                                         color: 'var(--foreground-hex, #e2e8f0)',
                                     }}
-                                    labelFormatter={(v: string) => `Date: ${v}`}
-                                    formatter={(value: number) => [value.toLocaleString(), "Views"]}
+                                    labelFormatter={(v: ReactNode) => `Date: ${v}`}
+                                    formatter={(value: number | undefined) => [value != null ? value.toLocaleString() : '0', "Views"]}
                                 />
                                 <Area
                                     type="monotone"
