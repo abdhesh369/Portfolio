@@ -41,7 +41,6 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
-        offlineFallbackPage: '/offline.html',
         runtimeCaching: [
           // Public API routes: StaleWhileRevalidate, 7-day TTL
           {
