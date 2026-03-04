@@ -9,7 +9,13 @@ if (!fs.existsSync(envExamplePath)) {
     process.exit(0);
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 if (!fs.existsSync(envPath)) {
+    if (isProduction) {
+        console.log('ℹ️ No .env file found in production. Relying on platform environment variables.');
+        process.exit(0);
+    }
     console.error('❌ .env file is missing! Please copy .env.example to .env and fill in the values.');
     process.exit(1);
 }
