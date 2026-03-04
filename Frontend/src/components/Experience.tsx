@@ -1,5 +1,6 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
+import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale } from "@/lib/animation";
 import { useExperiences } from "@/hooks/use-portfolio";
 import type { Experience as ExperienceType } from "@shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin, ExternalLink } from "lucide-react";
@@ -84,7 +85,7 @@ const TimelineItem = ({
       <m.div
         whileHover={{ x: 5 }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="bg-[#0a0520]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
+        className="bg-card/80 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -144,8 +145,8 @@ const TimelineItem = ({
 // Section Header with Icon
 const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
   <m.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
+    initial={fadeUp.initial}
+    whileInView={fadeUp.animate}
     viewport={{ once: true }}
     className="flex items-center gap-4 mb-8"
   >
@@ -166,8 +167,8 @@ const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementTyp
 // Current Status Badge
 const CurrentStatusBadge = () => (
   <m.div
-    initial={{ opacity: 0, scale: 0.8 }}
-    whileInView={{ opacity: 1, scale: 1 }}
+    initial={scaleIn.initial}
+    whileInView={scaleIn.animate}
     viewport={{ once: true }}
     className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-500 rounded-full text-sm font-medium border border-green-500/20"
   >
@@ -191,8 +192,8 @@ export default function Experience() {
       {/* Section Header */}
       <div className="text-center mb-16">
         <m.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeDown.initial}
+          whileInView={fadeDown.animate}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
@@ -206,8 +207,8 @@ export default function Experience() {
           className="h-1.5 bg-primary mx-auto rounded-full mb-6"
         />
         <m.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={fadeIn.initial}
+          whileInView={fadeIn.animate}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
           className="text-muted-foreground max-w-xl mx-auto"
@@ -264,8 +265,8 @@ export default function Experience() {
 
           {/* Current Status */}
           <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={fadeUp.initial}
+            whileInView={fadeUp.animate}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
             className="mt-8 pl-10"
@@ -291,8 +292,8 @@ export default function Experience() {
               </div>
             ) : work.length === 0 ? (
               <m.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={fadeUp.initial}
+                whileInView={fadeUp.animate}
                 viewport={{ once: true }}
                 className="relative"
               >
@@ -302,8 +303,8 @@ export default function Experience() {
                   className="p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl border-2 border-dashed border-primary/30 text-center"
                 >
                   <m.div
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    animate={bobble.animate}
+                    transition={bobble.transition}
                     className="w-16 h-16 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center"
                   >
                     <Briefcase className="w-8 h-8 text-primary" />
@@ -313,8 +314,7 @@ export default function Experience() {
                     I'm actively seeking internships and entry-level opportunities to apply my skills and grow professionally.
                   </p>
                   <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    {...hoverScale}
                     onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
                     className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 hover:shadow-xl transition-all"
                   >
@@ -324,11 +324,11 @@ export default function Experience() {
 
                 {/* What I'm Looking For */}
                 <m.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={fadeUp.initial}
+                  whileInView={fadeUp.animate}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className="mt-6 p-6 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/10"
+                  className="mt-6 p-6 bg-card/80 backdrop-blur-sm rounded-2xl border border-white/10"
                 >
                   <h5 className="font-semibold mb-4 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />

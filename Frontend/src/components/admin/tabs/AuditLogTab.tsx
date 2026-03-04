@@ -19,9 +19,9 @@ interface AuditResponse {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  CREATE: "#22d3ee",
-  UPDATE: "#a78bfa",
-  DELETE: "#f87171",
+  CREATE: "var(--color-cyan)",
+  UPDATE: "var(--color-purple-light)",
+  DELETE: "var(--color-destructive, #f87171)",
 };
 
 const ENTITY_FILTERS = ["all", "project", "article", "skill", "experience", "service", "testimonial"];
@@ -83,7 +83,7 @@ export function AuditLogTab() {
               style={{
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.08)",
-                color: "#e2e8f0",
+                color: 'var(--foreground-hex, #e2e8f0)',
                 fontFamily: "inherit",
               }}
             >

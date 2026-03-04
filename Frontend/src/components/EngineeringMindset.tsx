@@ -1,5 +1,6 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
+import { fadeUpLarge, hoverCardLift, expand, fadeDown, scaleXReveal, fadeIn, fadeUp, hoverScale } from "@/lib/animation";
 import { useMindset } from "@/hooks/use-portfolio";
 import type { Mindset } from "@shared/schema";
 import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
@@ -32,8 +33,8 @@ const PrincipleCard = ({
   return (
     <m.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      initial={fadeUpLarge.initial}
+      animate={isInView ? fadeUpLarge.animate : {}}
       transition={{ delay: index * 0.1 }}
       onClick={onClick}
       className="relative cursor-pointer"
@@ -49,12 +50,12 @@ const PrincipleCard = ({
       )}
 
       <m.div
-        whileHover={{ scale: 1.02, y: -5 }}
+        whileHover={hoverCardLift.whileHover}
         animate={{
           borderColor: isActive ? "rgba(124,58,237,0.5)" : "rgba(0,0,0,0.1)",
           boxShadow: isActive ? "0 20px 40px -10px rgba(124,58,237,0.3)" : "0 0 0 0 transparent"
         }}
-        className={`relative p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-white/10 hover:border-primary/30'}`}
+        className={`relative p-8 bg-card/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-white/10 hover:border-primary/30'}`}
       >
         {/* Number badge */}
         <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold shadow-lg">
@@ -99,9 +100,9 @@ const PrincipleCard = ({
 // Expanded Detail Panel
 const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon: React.ElementType } }) => (
   <m.div
-    initial={{ opacity: 0, height: 0 }}
-    animate={{ opacity: 1, height: "auto" }}
-    exit={{ opacity: 0, height: 0 }}
+    initial={expand.initial}
+    animate={expand.animate}
+    exit={expand.exit}
     className="overflow-hidden"
   >
     <div className="p-8 bg-gradient-to-br from-primary/10 via-card to-primary/5 rounded-3xl border border-primary/20 mt-6">
@@ -187,23 +188,23 @@ export default function EngineeringMindset() {
           Philosophy
         </m.div>
         <m.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeDown.initial}
+          whileInView={fadeDown.animate}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
           Engineering Mindset
         </m.h2>
         <m.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
+          initial={scaleXReveal.initial}
+          whileInView={scaleXReveal.animate}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="h-1.5 w-20 bg-primary mx-auto rounded-full mb-6 origin-center"
         />
         <m.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={fadeIn.initial}
+          whileInView={fadeIn.animate}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
           className="text-muted-foreground max-w-xl mx-auto"
@@ -233,15 +234,15 @@ export default function EngineeringMindset() {
 
         {/* Quote Section */}
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUp.initial}
+          whileInView={fadeUp.animate}
           viewport={{ once: true }}
           className="mt-16 relative"
         >
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl" />
 
-          <div className="relative p-12 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10 text-center">
+          <div className="relative p-12 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10 text-center">
             {/* Animated quote icon */}
             <m.div
               animate={{ rotate: [0, 10, -10, 0] }}
@@ -254,8 +255,8 @@ export default function EngineeringMindset() {
             </m.div>
 
             <m.blockquote
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={fadeIn.initial}
+              whileInView={fadeIn.animate}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
               className="text-xl md:text-2xl italic text-muted-foreground max-w-3xl mx-auto leading-relaxed"
@@ -279,14 +280,13 @@ export default function EngineeringMindset() {
 
         {/* CTA */}
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUp.initial}
+          whileInView={fadeUp.animate}
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
           <m.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            {...hoverScale}
             onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' })}
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 text-primary rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-all"
           >

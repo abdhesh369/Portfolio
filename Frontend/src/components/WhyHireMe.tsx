@@ -1,5 +1,6 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { fadeLeft, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, hoverScale } from "@/lib/animation";
 import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useArticles, useExperiences } from "@/hooks/use-portfolio";
@@ -49,8 +50,8 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
   return (
     <m.div
       ref={ref}
-      initial={{ opacity: 0, x: -20 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      initial={fadeLeft.initial}
+      animate={isInView ? fadeLeft.animate : {}}
       transition={{ delay }}
       className="mb-4"
     >
@@ -81,8 +82,8 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
 
   return (
     <m.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={fadeUpLarge.initial}
+      whileInView={fadeUpLarge.animate}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
@@ -95,7 +96,7 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
         className="absolute -inset-2 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-3xl blur-xl"
       />
 
-      <div className="relative p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-300 h-full hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+      <div className="relative p-8 bg-card/80 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-300 h-full hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
         {/* Icon */}
         <m.div
           animate={{
@@ -179,16 +180,16 @@ export default function WhyHireMe() {
           Why Choose Me
         </m.div>
         <m.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeDown.initial}
+          whileInView={fadeDown.animate}
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4"
         >
           Why Hire Me as a Student Engineer
         </m.h2>
         <m.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
+          initial={scaleXReveal.initial}
+          whileInView={scaleXReveal.animate}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="h-1.5 w-20 bg-primary mx-auto rounded-full origin-center"
@@ -198,10 +199,10 @@ export default function WhyHireMe() {
       <div className="max-w-6xl mx-auto">
         {/* Stats Row */}
         <m.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUpLarge.initial}
+          whileInView={fadeUpLarge.animate}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10 mb-12"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10 mb-12"
         >
           <AnimatedCounter value={allSkills?.length ?? 0} suffix="+" label="Tech Stack" />
           <AnimatedCounter value={projects?.length ?? 0} suffix="+" label="Systems Built" />
@@ -218,13 +219,13 @@ export default function WhyHireMe() {
 
         {/* Skills Section */}
         <m.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUpLarge.initial}
+          whileInView={fadeUpLarge.animate}
           viewport={{ once: true }}
           className="grid md:grid-cols-2 gap-12 mb-12"
         >
           {/* Soft Skills */}
-          <div className="p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10">
+          <div className="p-8 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10">
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
               <Target className="w-5 h-5 text-primary" />
               Core Strengths
@@ -250,8 +251,8 @@ export default function WhyHireMe() {
               ].map((item, i) => (
                 <m.li
                   key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={fadeLeft.initial}
+                  whileInView={fadeLeft.animate}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   className="flex items-start gap-3"
@@ -266,12 +267,12 @@ export default function WhyHireMe() {
 
         {/* Tech Stack Section */}
         <m.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUpLarge.initial}
+          whileInView={fadeUpLarge.animate}
           viewport={{ once: true }}
           className="mb-12"
         >
-          <div className="p-8 bg-[#0a0520]/80 backdrop-blur-sm rounded-3xl border border-white/10">
+          <div className="p-8 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10">
             <h3 className="text-xl font-bold mb-8 flex items-center justify-center gap-2 text-center text-white">
               <Terminal className="w-5 h-5 text-primary" />
               Development Stack
@@ -281,8 +282,8 @@ export default function WhyHireMe() {
               {["TypeScript", "React", "Node.js", "Express", "PostgreSQL", "Drizzle ORM", "Tailwind CSS", "Framer Motion", "Vite", "Docker", "REST APIs", "Git"].map((tech, i) => (
                 <m.div
                   key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={scaleIn.initial}
+                  whileInView={scaleIn.animate}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
                   whileHover={{ y: -2 }}
@@ -310,8 +311,8 @@ export default function WhyHireMe() {
 
           <div className="relative">
             <m.div
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={bobble.animate}
+              transition={bobble.transition}
               className="w-16 h-16 mx-auto mb-6 bg-primary/20 rounded-full flex items-center justify-center"
             >
               <Sparkles className="w-8 h-8 text-primary" />
@@ -324,8 +325,7 @@ export default function WhyHireMe() {
 
             <div className="flex flex-wrap justify-center gap-4">
               <m.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                {...hoverScale}
               >
                 <Button
                   size="lg"
@@ -343,10 +343,9 @@ export default function WhyHireMe() {
               </m.div>
 
               <m.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                {...hoverScale}
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
-                className="h-14 px-8 bg-[#0a0520]/80 backdrop-blur-sm border border-white/10 text-white rounded-full font-bold hover:bg-white/5 hover:border-cyan-500/50 transition-all flex items-center gap-2"
+                className="h-14 px-8 bg-card/80 backdrop-blur-sm border border-white/10 text-white rounded-full font-bold hover:bg-white/5 hover:border-cyan-500/50 transition-all flex items-center gap-2"
               >
                 Let's Talk
                 <ArrowRight className="w-5 h-5" />

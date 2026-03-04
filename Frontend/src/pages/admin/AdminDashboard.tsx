@@ -125,9 +125,9 @@ export default function AdminDashboard() {
         <div
             className="flex min-h-screen relative overflow-hidden"
             style={{
-                background: "#050508",
+                background: 'var(--background-hex, #050508)',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                color: "#e2e8f0",
+                color: 'var(--foreground-hex, #e2e8f0)',
             }}
         >
             {/* Animated background grid */}
@@ -152,8 +152,8 @@ export default function AdminDashboard() {
                     <div
                         className="w-[34px] h-[34px] flex-shrink-0 rounded-lg flex items-center justify-center text-sm font-bold"
                         style={{
-                            background: "linear-gradient(135deg, #22d3ee, #a78bfa)",
-                            color: "#050508",
+                            background: "linear-gradient(135deg, var(--color-cyan), var(--color-purple-light))",
+                            color: 'var(--background-hex, #050508)',
                         }}
                     >
                         A
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                         >
                             <span
                                 className="w-[5px] h-[5px] bg-cyan-400 rounded-full"
-                                style={{ boxShadow: "0 0 6px #22d3ee" }}
+                                style={{ boxShadow: "0 0 6px var(--color-cyan)" }}
                             />
                             SYS.ONLINE
                         </div>
@@ -212,8 +212,8 @@ export default function AdminDashboard() {
                                     <span
                                         className="rounded-full text-[9px] font-bold"
                                         style={{
-                                            background: "#a78bfa",
-                                            color: "#050508",
+                                            background: 'var(--color-purple-light)',
+                                            color: 'var(--background-hex, #050508)',
                                             padding: "1px 6px",
                                         }}
                                     >
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                                     transition: "all 0.2s ease",
                                 }}
                             >
-                                <Search size={13} style={{ color: searchOpen ? "#22d3ee" : "rgba(148,163,184,0.5)" }} />
+                                <Search size={13} style={{ color: searchOpen ? "var(--color-cyan)" : "rgba(148,163,184,0.5)" }} />
                                 <input
                                     placeholder="Search tabs..."
                                     value={searchQuery}
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
                                 background: tab === "messages" ? "rgba(34,211,238,0.08)" : "rgba(255,255,255,0.04)",
                                 border: tab === "messages" ? "1px solid rgba(34,211,238,0.25)" : "1px solid rgba(255,255,255,0.08)",
                                 padding: "8px 10px",
-                                color: tab === "messages" ? "#22d3ee" : "rgba(148,163,184,0.7)",
+                                color: tab === "messages" ? "var(--color-cyan)" : "rgba(148,163,184,0.7)",
                                 transition: "all 0.2s ease",
                             }}
                         >
@@ -365,8 +365,8 @@ export default function AdminDashboard() {
                                 <span
                                     className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-bold"
                                     style={{
-                                        background: unreadCount > 0 ? "#f87171" : "#a78bfa",
-                                        color: "#050508",
+                                        background: unreadCount > 0 ? "var(--color-destructive, #f87171)" : "var(--color-purple-light)",
+                                        color: 'var(--background-hex, #050508)',
                                         boxShadow: unreadCount > 0 ? "0 0 8px rgba(248,113,113,0.5)" : "0 0 8px rgba(167,139,250,0.5)",
                                         padding: "0 4px",
                                     }}
@@ -383,9 +383,9 @@ export default function AdminDashboard() {
                                 className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[13px] font-bold cursor-pointer"
                                 style={{
                                     background: profileOpen
-                                        ? "linear-gradient(135deg, #a78bfa, #22d3ee)"
-                                        : "linear-gradient(135deg, #22d3ee, #a78bfa)",
-                                    color: "#050508",
+                                        ? "linear-gradient(135deg, var(--color-purple-light), var(--color-cyan))"
+                                        : "linear-gradient(135deg, var(--color-cyan), var(--color-purple-light))",
+                                    color: 'var(--background-hex, #050508)',
                                     boxShadow: profileOpen ? "0 0 16px rgba(167,139,250,0.4)" : "0 0 12px rgba(34,211,238,0.3)",
                                     transition: "all 0.2s ease",
                                     border: "none",

@@ -75,8 +75,8 @@ const DEFAULT_CONFIG: PlexusConfig = {
 
 // Sci-Fi color scheme
 const SCIFI_COLORS = {
-    particleColor: 0x00d4ff,  // Cyan
-    lineColor: 0xa855f7       // Purple
+    dark: { particleColor: 0x00d4ff, lineColor: 0xa855f7, background: 0x000000 },
+    light: { particleColor: 0x0891b2, lineColor: 0x9333ea, background: 0xf8fafc }
 };
 
 // ============================================
@@ -170,7 +170,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     sciFiTheme = true,
     static: isStatic = false
 }) => {
-    const { reducedMotion } = useTheme();
+    const { reducedMotion, theme } = useTheme();
     const containerRef = useRef<HTMLDivElement>(null);
     const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
@@ -193,9 +193,15 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     const config = useMemo((): PlexusConfig => {
         const isMobile = isMobileDevice();
 
+        // Resolve theme for color selection
+        const resolvedTheme = theme === "system"
+            ? (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            : theme;
+        const scheme = resolvedTheme === "light" ? SCIFI_COLORS.light : SCIFI_COLORS.dark;
+
         // Determine colors
         const colors = sciFiTheme
-            ? { particle: particleColor ?? SCIFI_COLORS.particleColor, line: lineColor ?? SCIFI_COLORS.lineColor }
+            ? { particle: particleColor ?? scheme.particleColor, line: lineColor ?? scheme.lineColor }
             : { particle: particleColor ?? DEFAULT_CONFIG.particleColor, line: lineColor ?? DEFAULT_CONFIG.lineColor };
 
         // Calculate particle count (reduce on mobile)
@@ -217,7 +223,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
             // Reduce connection distance on mobile for performance
             connectionDistance: isMobile ? 100 : DEFAULT_CONFIG.connectionDistance
         };
-    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic, reducedMotion]);
+    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic, reducedMotion, theme]);
 
     // Create particle cloud with BufferGeometry
     const createParticleCloud = useCallback((): THREE.Points => {
@@ -403,8 +409,12 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
         if (!container) return;
 
         // Scene
+        const resolvedTheme = theme === "system"
+            ? (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            : theme;
+        const bgColor = resolvedTheme === "light" ? SCIFI_COLORS.light.background : SCIFI_COLORS.dark.background;
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);
+        scene.background = new THREE.Color(bgColor);
         sceneRef.current = scene;
 
         // Camera

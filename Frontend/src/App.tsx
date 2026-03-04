@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
 import { ReloadPrompt } from "@/components/ReloadPrompt";
 import { LazyMotion, domAnimation, m } from "framer-motion";
+import { pageTransition, withReducedMotion } from "@/lib/animation";
+import { useTheme } from "@/components/theme-provider";
 
 // Lazy load heavy components
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
@@ -64,13 +66,15 @@ function DeferredAnalytics() {
 // Router component
 function Router() {
   const [location] = useLocation();
+  const { reducedMotion } = useTheme();
+  const transition = withReducedMotion(pageTransition, reducedMotion);
   return (
     <Suspense fallback={<PageLoader />}>
       <m.div
         key={location}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        initial={transition.initial}
+        animate={transition.animate}
+        transition={transition.transition}
       >
         <Switch>
           {/* Public routes */}

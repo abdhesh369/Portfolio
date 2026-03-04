@@ -56,8 +56,8 @@ interface AnalyticsOverviewProps {
 }
 
 const COLORS = {
-    cyan: "#22d3ee",
-    purple: "#a78bfa",
+    cyan: "var(--color-cyan)",
+    purple: "var(--color-purple-light)",
     green: "#34d399",
     pink: "#f472b6",
     amber: "#fbbf24",
@@ -172,7 +172,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                         border: "1px solid rgba(34,211,238,0.2)",
                                         borderRadius: 8,
                                         fontSize: 12,
-                                        color: "#e2e8f0",
+                                        color: 'var(--foreground-hex, #e2e8f0)',
                                     }}
                                     labelFormatter={(v: string) => `Date: ${v}`}
                                     formatter={(value: number) => [value.toLocaleString(), "Views"]}

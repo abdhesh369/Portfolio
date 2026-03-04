@@ -1,9 +1,10 @@
 import { m } from "framer-motion";
+import { fadeUp, fadeIn, SPRING } from "@/lib/animation";
 import { Terminal, ArrowLeft, Home, Zap, AlertTriangle } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#050510] p-4 relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 relative overflow-hidden">
       {/* Ambient animated grid */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -35,7 +36,7 @@ export default function NotFound() {
         <m.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", damping: 12 }}
+          transition={SPRING.bouncy}
           className="relative mb-8"
         >
           <span className="text-[12rem] sm:text-[16rem] font-bold font-display leading-none text-transparent bg-clip-text bg-gradient-to-b from-white/20 to-transparent select-none">
@@ -54,10 +55,10 @@ export default function NotFound() {
 
         {/* Terminal-style error message */}
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={fadeUp.initial}
+          animate={fadeUp.animate}
           transition={{ delay: 0.2 }}
-          className="bg-[#0a0520]/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden mb-8 shadow-2xl shadow-cyan-500/5 text-left"
+          className="bg-card/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden mb-8 shadow-2xl shadow-cyan-500/5 text-left"
         >
           {/* Terminal header */}
           <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/5">
@@ -93,8 +94,8 @@ export default function NotFound() {
 
         {/* Action buttons */}
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={fadeUp.initial}
+          animate={fadeUp.animate}
           transition={{ delay: 0.4 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
@@ -116,8 +117,8 @@ export default function NotFound() {
 
         {/* Fun easter egg */}
         <m.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={fadeIn.initial}
+          animate={fadeIn.animate}
           transition={{ delay: 0.8 }}
           className="mt-12 text-gray-600 text-xs font-mono flex items-center justify-center gap-1"
         >

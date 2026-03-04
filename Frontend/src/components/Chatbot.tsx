@@ -136,7 +136,8 @@ export function Chatbot() {
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 group pointer-events-auto"
+                        className="fixed right-4 sm:right-6 z-50 group pointer-events-auto"
+                        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
                         aria-label="Initialize AI Assistant"
                     >
                         {/* Outer Pulsing Ring */}
@@ -154,7 +155,7 @@ export function Chatbot() {
                         />
 
                         {/* Main FAB Body */}
-                        <div className="relative w-14 h-14 bg-[#0a0520]/80 backdrop-blur-xl border border-cyan-500/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group-hover:border-cyan-400 transition-all duration-500 overflow-hidden">
+                        <div className="relative w-14 h-14 bg-card/80 backdrop-blur-xl border border-cyan-500/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group-hover:border-cyan-400 transition-all duration-500 overflow-hidden">
                             {/* Inner Glow */}
                             <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-purple-500/20 opacity-50" />
 
@@ -169,7 +170,7 @@ export function Chatbot() {
                         </div>
 
                         {/* Tooltip */}
-                        <span className="absolute -top-12 right-0 bg-[#0a0520] border border-cyan-500/30 text-cyan-400 font-mono px-3 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 whitespace-nowrap pointer-events-none shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                        <span className="absolute -top-12 right-0 bg-card border border-cyan-500/30 text-cyan-400 font-mono px-3 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 whitespace-nowrap pointer-events-none shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                             SYS.INITIALIZE_CORE
                         </span>
                     </m.button>
@@ -186,7 +187,8 @@ export function Chatbot() {
                         initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                         exit={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
-                        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-[#0a0520]/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
+                        className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-card/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
+                        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
                     >
                         {/* Sci-Fi Accent Lines */}
                         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50 z-20" />
@@ -203,7 +205,7 @@ export function Chatbot() {
                                     <div className="relative p-2.5 bg-cyan-500/10 rounded-lg border border-cyan-500/20 text-cyan-400">
                                         <ChatbotIcon className="w-5 h-5" innerColor="currentColor" />
                                     </div>
-                                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0a0520] shadow-[0_0_8px_#10b981]" />
+                                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-card shadow-[0_0_8px_#10b981]" />
                                 </div>
                                 <div>
                                     <h3 id="chatbot-title" className="font-mono font-black text-[11px] tracking-[0.2em] text-cyan-400 uppercase">SYS.TERMINAL // CORE_V2</h3>

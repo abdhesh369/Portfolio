@@ -51,6 +51,7 @@
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
+  min-height: 44px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -71,12 +72,13 @@
 
 .admin-sidebar-nav-btn.active {
   background: linear-gradient(90deg, rgba(34, 211, 238, 0.12), rgba(167, 139, 250, 0.08));
-  border-left-color: #22d3ee;
-  color: #22d3ee;
+  border-left-color: var(--color-cyan);
+  color: var(--color-cyan);
 }
 
 .admin-sidebar-nav-btn.collapsed {
   padding: 10px 0;
+  min-height: 44px;
   justify-content: center;
 }
 

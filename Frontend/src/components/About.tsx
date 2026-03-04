@@ -1,5 +1,6 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle, hoverScale } from "@/lib/animation";
 import { User, GraduationCap, MapPin, Mail, Code, Calendar, Zap, Heart, Target, BookOpen, Layers, Monitor, Terminal, Cpu, Sparkles } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 // ...existing code... (profile image moved to public/images/hero.svg)
@@ -93,14 +94,14 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
   return (
     <m.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={scaleInSubtle.initial}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.05 }}
       className="relative group p-[1px] rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="relative p-6 h-full bg-[#0a0520]/80 backdrop-blur-sm rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 group-hover:border-cyan-500/30 transition-all">
+      <div className="relative p-6 h-full bg-card/80 backdrop-blur-sm rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 group-hover:border-cyan-500/30 transition-all">
         <div className="p-3 rounded-full bg-white/5 group-hover:bg-cyan-500/20 group-hover:text-cyan-400 transition-colors shadow-lg group-hover:shadow-cyan-500/20">
           <Icon className="w-5 h-5" />
         </div>
@@ -117,8 +118,8 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
 const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: React.ElementType; label: string; value: string; delay: number, color?: "cyan" | "purple" }) => {
   return (
     <m.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={fadeUp.initial}
+      whileInView={fadeUp.animate}
       viewport={{ once: true }}
       transition={{ delay }}
       className="relative group h-full"
@@ -145,8 +146,8 @@ const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: R
 // Timeline Node
 const TimelineItem = ({ year, title, description, delay }: { year: string; title: string; description: string; delay: number }) => (
   <m.div
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
+    initial={fadeLeft.initial}
+    whileInView={fadeLeft.animate}
     viewport={{ once: true }}
     transition={{ delay }}
     className="relative pl-8 pb-12 last:pb-0 group"
@@ -156,7 +157,7 @@ const TimelineItem = ({ year, title, description, delay }: { year: string; title
       <div className="absolute inset-0 bg-gradient-to-b from-cyan-500 via-purple-500 to-transparent -translate-y-full group-hover:translate-y-0 transition-transform duration-1000" />
     </div>
 
-    <div className="absolute left-[-4px] top-0 w-4 h-4 rounded-full border-2 border-cyan-500/50 bg-[#050510] group-hover:scale-125 group-hover:border-cyan-400 transition-all shadow-[0_0_10px_rgba(6,182,212,0.3)] z-10" />
+    <div className="absolute left-[-4px] top-0 w-4 h-4 rounded-full border-2 border-cyan-500/50 bg-background group-hover:scale-125 group-hover:border-cyan-400 transition-all shadow-[0_0_10px_rgba(6,182,212,0.3)] z-10" />
 
     <div className="px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-400 inline-block font-mono mb-2 group-hover:bg-cyan-500/20 transition-colors">
       {year}
@@ -185,8 +186,8 @@ export default function About() {
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-24 relative">
       <div className="text-center mb-20 relative z-10">
         <m.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={scaleIn.initial}
+          whileInView={scaleIn.animate}
           viewport={{ once: true }}
           className="inline-block px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-sm font-mono mb-4 backdrop-blur-md"
         >
@@ -194,8 +195,8 @@ export default function About() {
         </m.div>
 
         <m.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeDown.initial}
+          whileInView={fadeDown.animate}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="text-4xl md:text-5xl font-bold font-display"
@@ -211,11 +212,11 @@ export default function About() {
           <div className="lg:col-span-5 space-y-8 sticky top-24">
             <TiltCard>
               <div
-                className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0a0520]/80 backdrop-blur-xl group h-full shadow-2xl"
+                className="relative rounded-3xl overflow-hidden border border-white/10 bg-card/80 backdrop-blur-xl group h-full shadow-2xl"
               >
                 {/* Profile Image Area */}
                 <div className="relative aspect-[4/5] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0520] via-transparent to-transparent z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent z-10" />
 
                   {/* Hologram Overlay */}
                   <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 z-10 mix-blend-overlay" />
@@ -267,7 +268,7 @@ export default function About() {
                     <span className="text-sm text-gray-400">Core Tech Stack</span>
                     <div className="flex flex-wrap gap-2">
                       {["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"].map(tech => (
-                        <span key={tech} className="px-2 py-1 bg-[#0a0520]/50 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-gray-300">
+                        <span key={tech} className="px-2 py-1 bg-card/50 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-gray-300">
                           {tech}
                         </span>
                       ))}
@@ -292,8 +293,8 @@ export default function About() {
 
             {/* Bio Section */}
             <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={fadeUp.initial}
+              whileInView={fadeUp.animate}
               viewport={{ once: true }}
               className="space-y-6 relative"
             >
@@ -336,12 +337,12 @@ export default function About() {
 
         {/* Centered Timeline (Development Log) */}
         <m.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={fadeUpLarge.initial}
+          whileInView={fadeUpLarge.animate}
           viewport={{ once: true }}
           className="mt-20 max-w-4xl mx-auto"
         >
-          <div className="bg-[#0a0520]/50 p-8 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
+          <div className="bg-card/50 p-8 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Calendar className="w-32 h-32 text-white" />
             </div>

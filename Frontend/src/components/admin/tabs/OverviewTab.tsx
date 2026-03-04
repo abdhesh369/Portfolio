@@ -17,8 +17,8 @@ interface HealthData {
 
 // Color config
 const ACCENTS = {
-    cyan: { hex: "#22d3ee", rgb: "34,211,238", glow: "rgba(34,211,238,0.15)" },
-    purple: { hex: "#a78bfa", rgb: "167,139,250", glow: "rgba(167,139,250,0.15)" },
+    cyan: { hex: "var(--color-cyan)", rgb: "34,211,238", glow: "rgba(34,211,238,0.15)" },
+    purple: { hex: "var(--color-purple-light)", rgb: "167,139,250", glow: "rgba(167,139,250,0.15)" },
     green: { hex: "#34d399", rgb: "52,211,153", glow: "rgba(52,211,153,0.15)" },
     pink: { hex: "#f472b6", rgb: "244,114,182", glow: "rgba(244,114,182,0.15)" },
     amber: { hex: "#fbbf24", rgb: "251,191,36", glow: "rgba(251,191,36,0.15)" },

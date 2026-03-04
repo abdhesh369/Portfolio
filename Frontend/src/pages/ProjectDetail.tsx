@@ -1,6 +1,7 @@
 import { useRoute, Link } from "wouter";
 import { useProjects } from "@/hooks/use-portfolio";
 import { m } from "framer-motion";
+import { fadeUp, fadeUpLarge, fadeLeft, fadeRight, fadeIn, scaleInSubtle, hoverScale, hoverLift } from "@/lib/animation";
 import {
   ArrowLeft,
   Github,
@@ -88,8 +89,8 @@ const SectionCard = ({
 
   return (
     <m.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={fadeUp.initial}
+      whileInView={fadeUp.animate}
       viewport={{ once: true }}
       className="relative rounded-2xl overflow-hidden"
       style={{
@@ -147,8 +148,7 @@ const TechBadge = ({ tech }: { tech: string }) => {
 
   return (
     <m.span
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      {...scaleInSubtle}
       className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
       style={{
         background: color.bg,
@@ -210,8 +210,7 @@ export default function ProjectDetail() {
         style={{ background: 'linear-gradient(180deg, #050510 0%, #0a0520 50%, #050510 100%)' }}
       >
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          {...fadeUp}
           className="text-center"
         >
           <h1 className="text-3xl font-bold text-white mb-4">Project Not Found</h1>
@@ -222,7 +221,7 @@ export default function ProjectDetail() {
               style={{
                 background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(15, 10, 35, 0.9) 100%)',
                 border: '1px solid rgba(0, 212, 255, 0.4)',
-                color: '#00d4ff'
+                color: 'var(--color-cyan)'
               }}
             >
               <ArrowLeft className="w-4 h-4" />
@@ -312,8 +311,7 @@ export default function ProjectDetail() {
       <main className="relative z-10 pt-24 pb-20 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...fadeUp}
             className="space-y-10"
           >
             {/* Breadcrumb & Back Button */}
@@ -325,7 +323,7 @@ export default function ProjectDetail() {
                   style={{
                     background: 'rgba(20, 15, 40, 0.6)',
                     border: '1px solid rgba(100, 100, 140, 0.2)',
-                    color: '#8b8ba0'
+                    color: 'var(--color-muted-text)'
                   }}
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -343,8 +341,7 @@ export default function ProjectDetail() {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                   <m.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    {...fadeLeft}
                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
                     style={{
                       background: `${catColor.text}15`,
@@ -358,8 +355,7 @@ export default function ProjectDetail() {
                   </m.div>
 
                   <m.h1
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    {...fadeIn}
                     className="text-4xl md:text-5xl font-bold mb-2"
                     style={{
                       background: `linear-gradient(135deg, #ffffff 0%, ${catColor.text} 100%)`,
@@ -378,13 +374,12 @@ export default function ProjectDetail() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      {...hoverScale}
                       className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all"
                       style={{
                         background: 'rgba(25, 20, 45, 0.8)',
                         border: '1px solid rgba(100, 100, 140, 0.3)',
-                        color: '#a0a0b0'
+                        color: 'var(--color-muted-text)'
                       }}
                     >
                       <Github className="w-4 h-4" />
@@ -396,8 +391,7 @@ export default function ProjectDetail() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      {...hoverScale}
                       className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all"
                       style={{
                         background: `linear-gradient(135deg, ${catColor.glow} 0%, rgba(15, 10, 35, 0.9) 100%)`,
@@ -415,8 +409,8 @@ export default function ProjectDetail() {
 
               {/* Hero Image */}
               <m.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={fadeUp.initial}
+                animate={fadeUp.animate}
                 transition={{ delay: 0.2 }}
                 className="relative rounded-2xl overflow-hidden"
                 style={{
@@ -436,7 +430,7 @@ export default function ProjectDetail() {
                         height={675}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                     </>
                   ) : (
                     <div
@@ -523,8 +517,8 @@ export default function ProjectDetail() {
               <div className="space-y-6">
                 {/* Technologies */}
                 <m.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={fadeRight.initial}
+                  animate={fadeRight.animate}
                   transition={{ delay: 0.3 }}
                   className="sticky top-24 rounded-2xl p-6"
                   style={{
@@ -578,8 +572,8 @@ export default function ProjectDetail() {
             {/* Other Projects Section */}
             {otherProjects && otherProjects.length > 0 && (
               <m.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={fadeUpLarge.initial}
+                whileInView={fadeUpLarge.animate}
                 viewport={{ once: true }}
                 className="mt-20 pt-12 border-t border-gray-800/20"
               >
@@ -603,7 +597,7 @@ export default function ProjectDetail() {
                   {otherProjects.map((p) => (
                     <Link key={p.id} href={`/project/${p.id}`}>
                       <m.div
-                        whileHover={{ y: -8 }}
+                        {...hoverLift}
                         className="group relative cursor-pointer"
                       >
                         <div
@@ -639,8 +633,8 @@ export default function ProjectDetail() {
 
             {/* Back to Projects */}
             <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={fadeIn.initial}
+              animate={fadeIn.animate}
               transition={{ delay: 0.5 }}
               className="text-center pt-8 border-t border-gray-800/30"
             >
@@ -652,7 +646,7 @@ export default function ProjectDetail() {
                   style={{
                     background: 'rgba(20, 15, 40, 0.6)',
                     border: '1px solid rgba(100, 100, 140, 0.3)',
-                    color: '#a0a0b0'
+                    color: 'var(--color-muted-text)'
                   }}
                 >
                   <ArrowLeft className="w-4 h-4" />

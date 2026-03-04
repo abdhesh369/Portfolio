@@ -1,5 +1,6 @@
 import { m, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
@@ -107,9 +108,9 @@ const ProfileCard = () => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
+      initial={scaleInSubtle.initial}
+      animate={scaleInSubtle.animate}
+      transition={scaleInSubtle.transition}
       className="relative hidden lg:block perspective-1000"
       style={{
         transform: reducedMotion
@@ -123,7 +124,7 @@ const ProfileCard = () => {
       <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-20 blur-2xl animate-pulse" />
 
       {/* Main Card Container */}
-      <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-[#0a0520]/80 backdrop-blur-sm">
+      <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
         {/* Profile Image */}
         <img
           src="/images/Myphoto.webp"
@@ -167,7 +168,7 @@ const ProfileCard = () => {
           </div>
 
           {/* Bottom Details */}
-          <div className="bg-[#050510]/80 p-6 rounded-xl border border-white/10 backdrop-blur-md">
+          <div className="bg-background/80 p-6 rounded-xl border border-white/10 backdrop-blur-md">
             <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
               Active Protocols
@@ -228,7 +229,7 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
         x: [0, x, 0],
         rotate: [0, 5, -5, 0]
       }}
-      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay }}
+      transition={{ ...floatTransition, delay }}
       className={`absolute ${y < 0 ? '-top-4' : '-bottom-4'} ${x < 0 ? '-left-4' : '-right-4'} p-3 rounded-xl border backdrop-blur-md shadow-lg z-20 flex items-center gap-3 ${colors[color]}`}
     >
       <Icon className="w-5 h-5 pointer-events-none" />
@@ -259,14 +260,14 @@ export default function Hero() {
           <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: DURATION.slow, ease: EASE.easeOut }}
             className="space-y-8 text-center lg:text-left"
           >
             {/* Mobile Profile Avatar — visible on small screens only */}
             <m.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1, type: "spring", damping: 15 }}
+              initial={scaleIn.initial}
+              animate={scaleIn.animate}
+              transition={{ delay: 0.1, ...SPRING.gentle }}
               className="flex justify-center lg:hidden"
             >
               <div className="relative">
@@ -285,19 +286,19 @@ export default function Hero() {
 
             {/* Status Pill */}
             <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={fadeUp.initial}
+              animate={fadeUp.animate}
               transition={{ delay: 0.2 }}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs backdrop-blur-sm mx-auto lg:mx-0"
             >
-              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_var(--color-cyan)]" />
               SYSTEM_READY_FOR_WORK
             </m.div>
 
             <div className="space-y-4">
               <m.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={fadeUp.initial}
+                animate={fadeUp.animate}
                 transition={{ delay: 0.3 }}
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
@@ -310,8 +311,8 @@ export default function Hero() {
               </m.h1>
 
               <m.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={fadeIn.initial}
+                animate={fadeIn.animate}
                 transition={{ delay: 0.5 }}
                 className="text-xl md:text-2xl text-gray-400 font-light h-[60px] flex items-center justify-center lg:justify-start"
               >
@@ -334,8 +335,8 @@ export default function Hero() {
 
             {/* CTA Buttons */}
             <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={fadeUp.initial}
+              animate={fadeUp.animate}
               transition={{ delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
@@ -359,8 +360,8 @@ export default function Hero() {
 
             {/* Social Proof */}
             <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={fadeIn.initial}
+              animate={fadeIn.animate}
               transition={{ delay: 1 }}
               className="flex items-center gap-6 justify-center lg:justify-start pt-4"
             >

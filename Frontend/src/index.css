@@ -13,10 +13,8 @@
 
   /*
    * Light Theme Colors
-   * NOTE (Fix #11): These light-mode variables are retained for future use
-   * but the portfolio is intentionally dark-mode-only. The .dark class below
-   * provides the active theme. Do NOT remove — they serve as a foundation
-   * if a theme toggle is added later.
+   * These define the light mode appearance. The .dark class below
+   * provides the dark theme overrides.
    */
   --background: 0 0% 100%;
   --foreground: 222 47% 11%;
@@ -61,6 +59,26 @@
   --chart-3: 200 98% 39%;
   --chart-4: 43 96% 56%;
   --chart-5: 27 87% 67%;
+
+  /* Extended accent colors (light mode) */
+  --color-cyan: #0891b2;
+  --color-purple: #9333ea;
+  --color-purple-light: #8b5cf6;
+  --color-pink: #db2777;
+  --color-blue: #2563eb;
+  --color-green: #16a34a;
+  --color-amber: #d97706;
+  --color-sky: #0284c7;
+  --color-muted-text: #64748b;
+  --foreground-hex: #1e293b;
+  --background-hex: #ffffff;
+
+  /* Brand colors */
+  --brand-github: #6e5494;
+  --brand-linkedin: #0077b5;
+  --brand-twitter: #1da1f2;
+  --brand-instagram: #e1306c;
+  --brand-facebook: #1877f2;
 }
 
 .dark {
@@ -99,6 +117,26 @@
   --border: 216 34% 17%;
   --input: 216 34% 17%;
   --ring: 263 70% 50%;
+
+  /* Extended accent colors (hex for inline styles, HSL for Tailwind) */
+  --color-cyan: #00d4ff;
+  --color-purple: #a855f7;
+  --color-purple-light: #a78bfa;
+  --color-pink: #ec4899;
+  --color-blue: #3b82f6;
+  --color-green: #22c55e;
+  --color-amber: #f59e0b;
+  --color-sky: #38bdf8;
+  --color-muted-text: #a0a0b0;
+  --foreground-hex: #e2e8f0;
+  --background-hex: #050510;
+
+  /* Brand colors */
+  --brand-github: #6e5494;
+  --brand-linkedin: #0077b5;
+  --brand-twitter: #1da1f2;
+  --brand-instagram: #e1306c;
+  --brand-facebook: #1877f2;
 }
 
 /* ==================== BASE STYLES ==================== */
@@ -110,12 +148,15 @@
 
   html {
     @apply scroll-smooth;
+    touch-action: manipulation;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     @apply selection:bg-primary/20 selection:text-primary;
     font-family: var(--font-body);
+    /* Safe area insets for notched devices */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     font-feature-settings: 'rlig' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;

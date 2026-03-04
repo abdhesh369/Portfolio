@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
+import { fadeIn } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
 
@@ -9,6 +10,7 @@ import { HexagonNode } from './skills/HexagonNode';
 import { SkillTooltip } from './skills/SkillTooltip';
 import { SkillsTreeSVG } from './skills/SkillsTreeSVG';
 import { StatPanel, ProficiencyChart, CategorySummary } from './skills/StatPanels';
+import { SkillsListView } from './skills/SkillsListView';
 
 export default function SkillsTree() {
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -109,9 +111,14 @@ export default function SkillsTree() {
           </div>
         </m.div>
 
-        {/* Tree Container */}
+        {/* Mobile List View */}
+        <div className="block md:hidden">
+          <SkillsListView skillNodes={skillNodes} />
+        </div>
+
+        {/* Tree Container (Desktop) */}
         <m.div
-          className="relative w-full max-w-5xl mx-auto"
+          className="hidden md:block relative w-full max-w-5xl mx-auto"
           style={{
             aspectRatio: '16 / 12'
           }}
@@ -163,14 +170,14 @@ export default function SkillsTree() {
         {/* Legend */}
         <m.div
           className="flex justify-center gap-4 md:gap-8 mt-6 md:mt-8"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={fadeIn.initial}
+          whileInView={fadeIn.animate}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 2.8 }}
         >
           {[
-            { label: 'Core', color: '#00d4ff' },
-            { label: 'Comfortable', color: '#a855f7' },
+            { label: 'Core', color: 'var(--color-cyan)' },
+            { label: 'Comfortable', color: 'var(--color-purple)' },
             { label: 'Learning', color: '#ec4899' }
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">

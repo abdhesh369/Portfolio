@@ -24,12 +24,12 @@ export const SkillsTreeSVG = ({
                     <stop offset="0%" stopColor="#2d1b4e" stopOpacity="1" />
                     <stop offset="30%" stopColor="#4c1d95" stopOpacity="1" />
                     <stop offset="60%" stopColor="#7c3aed" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.6" />
+                    <stop offset="100%" stopColor="var(--color-purple-light)" stopOpacity="0.6" />
                 </linearGradient>
 
                 <linearGradient id="branchGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.8" />
-                    <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="var(--color-purple-light)" stopOpacity="0.3" />
                 </linearGradient>
 
                 <filter id="treeGlow" x="-100%" y="-100%" width="300%" height="300%">

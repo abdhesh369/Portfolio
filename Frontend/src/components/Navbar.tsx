@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Code2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 
 const navItems = [
@@ -92,7 +93,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${scrolled
-        ? "bg-[#050510]/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-cyan-500/5"
+        ? "bg-background/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-cyan-500/5"
         : "bg-transparent"
         }`}
     >
@@ -100,7 +101,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Brand Logo */}
           <button
-            className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050510] rounded-xl transition-all group"
+            className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl transition-all group"
             onClick={() => handleNavClick("/")}
             aria-label="Abdhesh Sah Portfolio - Home"
           >
@@ -130,7 +131,7 @@ export default function Navbar() {
                 <span className="relative z-10">{item.name}</span>
                 {/* Hover Glow Background */}
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
-                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_#22d3ee] ${(item.href === "/" && activeSection === "hero") ||
+                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_var(--color-cyan)] ${(item.href === "/" && activeSection === "hero") ||
                   (item.href.startsWith("#") && activeSection === item.href.slice(1))
                   ? "w-[60%]"
                   : "w-0 group-hover:w-[60%]"
@@ -138,7 +139,8 @@ export default function Navbar() {
               </button>
             ))}
 
-            <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-4">
+            <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
+              <ThemeToggle />
               <Button
                 onClick={() => handleNavClick("#contact")}
                 className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-full px-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all"
@@ -170,7 +172,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a0520]/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden"
+            className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navItems.map((item) => (

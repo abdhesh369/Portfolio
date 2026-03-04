@@ -227,7 +227,7 @@ export function ApiResponseViewer({
                   <pre
                     className="px-4 py-4 text-xs font-mono leading-relaxed overflow-x-auto max-h-[400px] overflow-y-auto scrollbar-thin"
                     dangerouslySetInnerHTML={{ __html: highlightJson(formattedJson) }}
-                    style={{ color: "#e2e8f0" }}
+                    style={{ color: 'var(--foreground-hex, #e2e8f0)' }}
                   />
                 )}
               </div>

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useArticles, useArticleSearch } from "@/hooks/use-portfolio";
 import { m } from "framer-motion";
+import { fadeUp, fadeLeft } from "@/lib/animation";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 function BlogCard({ article }: { article: Article }) {
     return (
         <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={fadeUp.initial}
+            whileInView={fadeUp.animate}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
         >
@@ -134,16 +135,15 @@ export default function BlogList() {
             <main className="container mx-auto px-6 pt-32 pb-24">
                 <header className="max-w-2xl mb-16">
                     <m.h1
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        {...fadeLeft}
                         className="text-4xl md:text-5xl font-bold text-white mb-4"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
                         Thoughts & <span className="text-primary italic">Insights</span>
                     </m.h1>
                     <m.p
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={fadeLeft.initial}
+                        animate={fadeLeft.animate}
                         transition={{ delay: 0.1 }}
                         className="text-white/60 text-lg"
                     >

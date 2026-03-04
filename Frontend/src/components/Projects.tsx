@@ -164,7 +164,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                 }}
               />
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0520] via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
             </>
           ) : (
             <div
@@ -316,7 +316,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                 style={{
                   background: 'rgba(30, 30, 50, 0.8)',
                   border: '1px solid rgba(100, 100, 140, 0.3)',
-                  color: '#a0a0b0'
+                  color: 'var(--color-muted-text)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.5)';
@@ -499,7 +499,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 height={224}
                 className="w-full h-56 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0820] via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
             </div>
           )}
 
@@ -514,7 +514,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                   className="px-3 py-1.5 rounded-lg text-sm font-medium"
                   style={{
                     background: 'rgba(0, 212, 255, 0.1)',
-                    color: '#00d4ff',
+                    color: 'var(--color-cyan)',
                     border: '1px solid rgba(0, 212, 255, 0.3)'
                   }}
                 >
@@ -534,7 +534,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 style={{
                   background: 'rgba(30, 30, 50, 0.8)',
                   border: '1px solid rgba(100, 100, 140, 0.3)',
-                  color: '#a0a0b0'
+                  color: 'var(--color-muted-text)'
                 }}
               >
                 <Github className="w-4 h-4" />
@@ -573,14 +573,14 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
   const activeStyle = {
     background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(168, 85, 247, 0.15) 100%)',
     border: '1px solid rgba(0, 212, 255, 0.5)',
-    color: '#00d4ff',
+    color: 'var(--color-cyan)',
     boxShadow: '0 0 20px rgba(0, 212, 255, 0.3)'
   };
 
   const inactiveStyle = {
     background: 'rgba(20, 15, 40, 0.6)',
     border: '1px solid rgba(100, 100, 140, 0.2)',
-    color: '#8b8b9b'
+    color: 'var(--color-muted-text)'
   };
 
   // Don't show categories with 0 count (except "All")
@@ -769,7 +769,7 @@ export default function Projects() {
             style={{
               background: 'rgba(168, 85, 247, 0.1)',
               border: '1px solid rgba(168, 85, 247, 0.3)',
-              color: '#a855f7'
+              color: 'var(--color-purple)'
             }}
           >
             <Cpu className="w-4 h-4" />

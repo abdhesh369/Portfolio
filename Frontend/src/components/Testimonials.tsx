@@ -1,23 +1,7 @@
 import { m } from "framer-motion";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { Quote, Linkedin } from "lucide-react";
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.15 },
-    },
-};
-
-const cardVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-};
+import { staggerContainer, staggerChild, fadeUp, hoverLiftSmall } from "@/lib/animation";
 
 export default function Testimonials() {
     const { data: testimonials, isLoading } = useTestimonials();
@@ -58,8 +42,8 @@ export default function Testimonials() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
                 {/* Section Header */}
                 <m.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={fadeUp.initial}
+                    whileInView={fadeUp.animate}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
@@ -87,7 +71,7 @@ export default function Testimonials() {
 
                 {/* Testimonial Cards */}
                 <m.div
-                    variants={containerVariants}
+                    variants={staggerContainer}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-50px" }}
@@ -96,8 +80,8 @@ export default function Testimonials() {
                     {testimonials.map((t) => (
                         <m.div
                             key={t.id}
-                            variants={cardVariants}
-                            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                            variants={staggerChild}
+                            {...hoverLiftSmall}
                             className="group relative rounded-2xl p-6 border border-white/[0.06] backdrop-blur-sm"
                             style={{
                                 background:

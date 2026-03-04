@@ -49,8 +49,8 @@ export const ProficiencyChart = ({ skillNodes }: { skillNodes: SkillNode[] }) =>
     };
 
     const categories = [
-        { name: 'Core', count: counts.Core, color: '#00d4ff', bgColor: 'rgba(0, 212, 255, 0.2)' },
-        { name: 'Comfortable', count: counts.Comfortable, color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.2)' },
+        { name: 'Core', count: counts.Core, color: 'var(--color-cyan)', bgColor: 'rgba(0, 212, 255, 0.2)' },
+        { name: 'Comfortable', count: counts.Comfortable, color: 'var(--color-purple)', bgColor: 'rgba(168, 85, 247, 0.2)' },
         { name: 'Learning', count: counts.Learning, color: '#ec4899', bgColor: 'rgba(236, 72, 153, 0.2)' }
     ];
 

@@ -13,11 +13,11 @@ const footerNavItems = [
 ];
 
 const socialLinks = [
-  { href: "https://github.com/abdhesh369", icon: Github, label: "Github", color: "#6e5494" },
-  { href: "https://www.linkedin.com/in/abdhesh369", icon: Linkedin, label: "LinkedIn", color: "#0077b5" },
-  { href: "https://x.com/abdhesh369", icon: Twitter, label: "Twitter", color: "#1da1f2" },
-  { href: "https://www.instagram.com/abdhesh.369", icon: Instagram, label: "Instagram", color: "#e1306c" },
-  { href: "https://www.facebook.com/abdhesh.369", icon: Facebook, label: "Facebook", color: "#1877f2" },
+  { href: "https://github.com/abdhesh369", icon: Github, label: "Github", color: "var(--brand-github)" },
+  { href: "https://www.linkedin.com/in/abdhesh369", icon: Linkedin, label: "LinkedIn", color: "var(--brand-linkedin)" },
+  { href: "https://x.com/abdhesh369", icon: Twitter, label: "Twitter", color: "var(--brand-twitter)" },
+  { href: "https://www.instagram.com/abdhesh.369", icon: Instagram, label: "Instagram", color: "var(--brand-instagram)" },
+  { href: "https://www.facebook.com/abdhesh.369", icon: Facebook, label: "Facebook", color: "var(--brand-facebook)" },
 ];
 
 export default function Footer() {
@@ -48,7 +48,7 @@ export default function Footer() {
     <footer className="relative mt-20 pt-20 pb-10 overflow-hidden">
       {/* Sci-fi Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#020205] via-[#0a0520] to-[#050510]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-card to-background" />
 
         {/* Grid Overlay */}
         <div

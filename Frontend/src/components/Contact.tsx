@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
 import { m, AnimatePresence } from "framer-motion";
+import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";
 import { useState, useEffect } from "react";
 import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ const CyberInput = ({
           setIsFocused(false);
           setHasValue(e.target.value.length > 0);
         }}
-        className={`w-full px-4 py-3 bg-[#0a0520]/50 border rounded-lg outline-none transition-all duration-300 font-mono text-sm ${error
+        className={`w-full px-4 py-3 bg-card/50 border rounded-lg outline-none transition-all duration-300 font-mono text-sm ${error
           ? 'border-red-500/50 focus:border-red-500'
           : 'border-white/10 focus:border-cyan-500/50 hover:border-white/20'
           } ${isFocused || hasValue ? 'pt-8 pb-2' : 'pt-5 pb-5'} placeholder-transparent text-gray-200 resize-none`}
@@ -85,8 +86,8 @@ const CyberInput = ({
 // Data Card
 const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.ElementType; label: string; value: string; href?: string; delay: number }) => (
   <m.div
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
+    initial={fadeLeft.initial}
+    whileInView={fadeLeft.animate}
     viewport={{ once: true }}
     transition={{ delay }}
     className="group"
@@ -162,8 +163,8 @@ export default function Contact() {
           </m.div>
 
           <m.h2
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={fadeDown.initial}
+            whileInView={fadeDown.animate}
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-bold font-display text-white mb-4"
           >
@@ -178,7 +179,7 @@ export default function Contact() {
         <div className="grid lg:grid-cols-5 gap-12 items-start">
           {/* Contact Info Panel */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="p-6 rounded-2xl border border-white/10 bg-[#0a0520]/80 backdrop-blur-sm relative overflow-hidden">
+            <div className="p-6 rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-20">
                 <Terminal className="w-24 h-24 text-cyan-500" />
               </div>
@@ -195,7 +196,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-[#0a0520]/80 backdrop-blur-sm">
+            <div className="p-6 rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm">
               <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                 <div className="w-1 h-6 bg-purple-500 rounded-full" />
                 Social Uplink
@@ -208,8 +209,8 @@ export default function Contact() {
 
             {/* Availability Block */}
             <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={fadeUp.initial}
+              whileInView={fadeUp.animate}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
               className="p-6 rounded-2xl border border-green-500/20 bg-green-500/5 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.1)] relative overflow-hidden group"
@@ -234,13 +235,13 @@ export default function Contact() {
 
           {/* Form Terminal */}
           <m.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={fadeRight.initial}
+            whileInView={fadeRight.animate}
             viewport={{ once: true }}
             className="lg:col-span-3 relative"
           >
             {/* Terminal Frame */}
-            <div className="relative bg-[#050510]/90 backdrop-blur-xl rounded-2xl border border-white/10 p-1 shadow-2xl">
+            <div className="relative bg-background/90 backdrop-blur-xl rounded-2xl border border-white/10 p-1 shadow-2xl">
               {/* Header Bar */}
               <div className="bg-white/5 px-4 py-2 rounded-t-xl flex items-center justify-between border-b border-white/5">
                 <div className="flex gap-2">
@@ -262,7 +263,7 @@ export default function Contact() {
                       transition={{ type: "spring", damping: 20, stiffness: 300 }}
                       role="status"
                       aria-live="polite"
-                      className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050510]/95 rounded-b-xl"
+                      className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/95 rounded-b-xl"
                     >
                       <m.div
                         initial={{ scale: 0 }}
@@ -352,8 +353,8 @@ const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: Re
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    initial={{ opacity: 0, scale: 0.8 }}
-    whileInView={{ opacity: 1, scale: 1 }}
+    initial={scaleIn.initial}
+    whileInView={scaleIn.animate}
     viewport={{ once: true }}
     transition={{ delay }}
     whileHover={{ scale: 1.05 }}

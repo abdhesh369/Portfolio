@@ -118,7 +118,7 @@ export function SeoTab({ }: AdminTabProps) {
             </div>
 
             {isEditing ? (
-                <Card className="border-primary/20 bg-[#0a0520]/80 backdrop-blur-sm">
+                <Card className="border-primary/20 bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>{editingSeo ? "Edit SEO Settings" : "New SEO Settings"}</CardTitle>
                         <CardDescription>
