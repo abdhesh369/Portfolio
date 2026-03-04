@@ -21,7 +21,7 @@
 ### Liveness Probe
 
 ```bash
-curl https://your-backend.onrender.com/ping
+curl https://backend-1gk6.onrender.com/ping
 # Expected: { "status": "ok" }
 ```
 
@@ -31,7 +31,7 @@ curl https://your-backend.onrender.com/ping
 ### Readiness / Deep Health
 
 ```bash
-curl https://your-backend.onrender.com/health
+curl https://backend-1gk6.onrender.com/health
 # Expected:
 # {
 #   "status": "healthy",         ← or "degraded"
@@ -48,7 +48,7 @@ curl https://your-backend.onrender.com/health
 ### API Health (monitoring tools)
 
 ```bash
-curl https://your-backend.onrender.com/api/v1/health
+curl https://backend-1gk6.onrender.com/api/v1/health
 ```
 
 Same logic as `/health` but scoped under the API prefix. Use this for external uptime monitors.
@@ -169,7 +169,7 @@ cd Backend && npx drizzle-kit push
 redis-cli -u $REDIS_URL FLUSHDB
 
 # 5. Verify
-curl https://your-backend.onrender.com/health
+curl https://backend-1gk6.onrender.com/health
 ```
 
 ---
