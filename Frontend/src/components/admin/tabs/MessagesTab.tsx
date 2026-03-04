@@ -9,7 +9,7 @@ import type { Message, EmailTemplate } from "@shared/schema";
 
 import type { AdminTabProps } from "./types";
 
-export function MessagesTab({ token }: AdminTabProps) {
+export function MessagesTab() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -23,7 +23,7 @@ export function MessagesTab({ token }: AdminTabProps) {
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} messages?`)) return;
         try {
-            await apiFetch("/api/messages/bulk-delete", token, {
+            await apiFetch("/api/messages/bulk-delete", {
                 method: "POST",
                 body: JSON.stringify({ ids: selectedIds })
             });
@@ -38,7 +38,7 @@ export function MessagesTab({ token }: AdminTabProps) {
     const fetchMessages = async () => {
         setLoading(true);
         try {
-            const data = await apiFetch("/api/messages", token);
+            const data = await apiFetch("/api/messages");
             setMessages(data ?? []);
         } catch {
             toast({ title: "Failed to load messages", variant: "destructive" });
@@ -49,12 +49,12 @@ export function MessagesTab({ token }: AdminTabProps) {
 
     useEffect(() => {
         fetchMessages();
-    }, [token]);
+    }, []);
 
     const deleteMessage = async (id: number) => {
         if (!confirm("Delete this message?")) return;
         try {
-            await apiFetch(`/api/messages/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/messages/${id}`, { method: "DELETE" });
             setMessages((prev) => prev.filter((m) => m.id !== id));
             toast({ title: "Message deleted" });
         } catch (err: any) {
@@ -118,7 +118,7 @@ export function MessagesTab({ token }: AdminTabProps) {
                                 <p className="text-xs text-white/30 mt-2">{new Date(msg.createdAt).toLocaleString()}</p>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                                <ReplyDialog message={msg} token={token} />
+                                <ReplyDialog message={msg} />
                                 <Button variant="destructive" size="sm" onClick={() => deleteMessage(msg.id)}
                                     className="opacity-60 group-hover:opacity-100 transition-opacity shrink-0"
                                 >
@@ -142,7 +142,7 @@ export function MessagesTab({ token }: AdminTabProps) {
     );
 }
 
-function ReplyDialog({ message, token }: { message: Message; token: string | null }) {
+function ReplyDialog({ message }: { message: Message }) {
     const [open, setOpen] = useState(false);
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [subject, setSubject] = useState(`Re: ${message.subject || "Message from Portfolio"}`);
@@ -152,11 +152,11 @@ function ReplyDialog({ message, token }: { message: Message; token: string | nul
 
     useEffect(() => {
         if (open) {
-            apiFetch("/api/email-templates", token)
+            apiFetch("/api/email-templates")
                 .then(setTemplates)
                 .catch(() => setTemplates([]));
         }
-    }, [open, token]);
+    }, [open]);
 
     const handleApplyTemplate = (tpl: EmailTemplate) => {
         const processedBody = tpl.body.replace(/{name}/g, message.name);
@@ -168,7 +168,7 @@ function ReplyDialog({ message, token }: { message: Message; token: string | nul
         if (!body) return toast({ title: "Body is required", variant: "destructive" });
         setSending(true);
         try {
-            await apiFetch(`/api/messages/${message.id}/reply`, token, {
+            await apiFetch(`/api/messages/${message.id}/reply`, {
                 method: "POST",
                 body: JSON.stringify({ subject, body }),
             });

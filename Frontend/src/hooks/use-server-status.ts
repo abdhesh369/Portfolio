@@ -22,18 +22,14 @@ const POLL_INTERVAL_MS = 5_000;      // retry every 5 s when not online
  */
 async function pingHealth(signal?: AbortSignal): Promise<{ ok: boolean; slow: boolean }> {
   const controller = new AbortController();
-  const mergedSignal = signal; // caller can cancel externally
 
-  // If the caller already aborted, bail immediately
-  if (mergedSignal?.aborted) return { ok: false, slow: false };
-
-  // Wire external signal → inner controller
   const onExternalAbort = () => controller.abort();
-  mergedSignal?.addEventListener("abort", onExternalAbort, { once: true });
+  signal?.addEventListener("abort", onExternalAbort, { once: true });
 
   let slow = false;
   const slowTimer = setTimeout(() => {
     slow = true;
+    controller.abort(); // Actually abort the request on timeout
   }, COLD_START_TIMEOUT_MS);
 
   try {
@@ -43,12 +39,15 @@ async function pingHealth(signal?: AbortSignal): Promise<{ ok: boolean; slow: bo
       cache: "no-store",
     });
     clearTimeout(slowTimer);
-    return { ok: res.ok, slow };
-  } catch {
+    return { ok: res.ok, slow: false }; // If it reached here, it wasn't a timeout
+  } catch (err: any) {
     clearTimeout(slowTimer);
+    if (err.name === 'AbortError' && slow) {
+      return { ok: false, slow: true };
+    }
     return { ok: false, slow: false };
   } finally {
-    mergedSignal?.removeEventListener("abort", onExternalAbort);
+    signal?.removeEventListener("abort", onExternalAbort);
   }
 }
 
@@ -100,7 +99,11 @@ export function useServerStatus() {
     } else {
       // Server is unreachable — mark degraded and start polling
       wasOfflineRef.current = true;
-      setStatus((prev) => (prev === "checking" ? "waking" : prev === "waking" ? "waking" : "offline"));
+      setStatus((prev) => {
+        if (slow) return "waking";
+        if (prev === "waking") return "waking"; // stay in waking if it was already waking and still failing
+        return "offline";
+      });
       startPolling();
     }
   }, [queryClient, stopPolling, startPolling]);

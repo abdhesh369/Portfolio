@@ -16,17 +16,15 @@ export const API_BASE_URL = (() => {
     return prodUrl;
 })();
 
-export function authHeaders(token: string | null) {
-    const h: Record<string, string> = { "Content-Type": "application/json" };
-    if (token) h["Authorization"] = `Bearer ${token}`;
-    return h;
+export function authHeaders() {
+    return { "Content-Type": "application/json" };
 }
 
-export async function apiFetch(path: string, token: string | null, opts: RequestInit = {}) {
+export async function apiFetch(path: string, opts: RequestInit = {}) {
     const res = await fetch(`${API_BASE_URL}${path}`, {
         ...opts,
         credentials: 'include',
-        headers: { ...authHeaders(token), ...(opts.headers as Record<string, string> ?? {}) },
+        headers: { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) },
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({ message: res.statusText }));

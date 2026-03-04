@@ -112,7 +112,7 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
 
     if (token) {
         const { revokeToken } = await import("../auth.js");
-        revokeToken(token);
+        await revokeToken(token);
     }
 
     const isProd = process.env.NODE_ENV === "production";

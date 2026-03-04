@@ -28,7 +28,7 @@ type TabKey = "overview" | "analytics" | "messages" | "templates" | "projects" |
 
 import type { AdminTabProps } from "./types";
 
-export function OverviewTab({ token, onNavigate }: AdminTabProps) {
+export function OverviewTab({ onNavigate }: AdminTabProps) {
     const { data: projects } = useProjects();
     const { data: skills } = useSkills();
     const { data: experiences } = useExperiences();
@@ -38,7 +38,7 @@ export function OverviewTab({ token, onNavigate }: AdminTabProps) {
     const [healthLoading, setHealthLoading] = useState(true);
 
     useEffect(() => {
-        apiFetch("/api/messages", token)
+        apiFetch("/api/messages")
             .then((d: Message[]) => {
                 setMessages(d ?? []);
                 setMsgCount(d?.length ?? 0);
@@ -47,7 +47,7 @@ export function OverviewTab({ token, onNavigate }: AdminTabProps) {
                 setMessages([]);
                 setMsgCount(0);
             });
-    }, [token]);
+    }, []);
 
     const fetchHealth = useCallback(async () => {
         setHealthLoading(true);

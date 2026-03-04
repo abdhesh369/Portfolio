@@ -68,7 +68,7 @@ function ArticleItem({ article, onEdit, onDelete }: {
 
 import type { AdminTabProps } from "./types";
 
-export function ArticlesTab({ token }: AdminTabProps) {
+export function ArticlesTab({ }: AdminTabProps) {
     const { data: articles, refetch, isLoading } = useArticles();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Article> & typeof emptyArticle) | null>(null);
@@ -119,10 +119,10 @@ export function ArticlesTab({ token }: AdminTabProps) {
                     old ? old.map(a => a.id === editing.id ? { ...a, ...body } as Article : a) : []
                 );
 
-                await apiFetch(`/api/articles/${editing.id}`, token, { method: "PATCH", body: JSON.stringify(body) });
+                await apiFetch(`/api/articles/${editing.id}`, { method: "PATCH", body: JSON.stringify(body) });
                 toast({ title: "Article updated" });
             } else {
-                await apiFetch("/api/articles", token, { method: "POST", body: JSON.stringify(body) });
+                await apiFetch("/api/articles", { method: "POST", body: JSON.stringify(body) });
                 toast({ title: "Article created" });
             }
             setEditing(null);
@@ -146,7 +146,7 @@ export function ArticlesTab({ token }: AdminTabProps) {
         );
 
         try {
-            await apiFetch(`/api/articles/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
             toast({ title: "Article deleted" });
             refetch();
         } catch (err: any) {

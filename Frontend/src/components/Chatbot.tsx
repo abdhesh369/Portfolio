@@ -103,7 +103,7 @@ export function Chatbot() {
         try {
             // Only send the last N messages to avoid unbounded payload
             const recentMessages = newMessages.slice(-MAX_CLIENT_MESSAGES);
-            const data = await apiFetch("/api/chat", null, {
+            const data = await apiFetch("/api/chat", {
                 method: "POST",
                 body: JSON.stringify({ messages: recentMessages })
             });

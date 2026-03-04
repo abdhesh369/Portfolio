@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useTestimonials } from "@/hooks/use-portfolio";
-import { useAuth } from "@/hooks/auth-context";
 import { apiFetch } from "@/lib/api-helpers";
 import type { Testimonial } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +17,7 @@ const empty = {
 
 import type { AdminTabProps } from "./types";
 
-export function TestimonialsTab({ token }: AdminTabProps) {
+export function TestimonialsTab({ }: AdminTabProps) {
     const { data: testimonials, refetch } = useTestimonials();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(typeof empty & { id?: number }) | null>(null);
@@ -56,13 +55,13 @@ export function TestimonialsTab({ token }: AdminTabProps) {
             };
 
             if (editing.id) {
-                await apiFetch(`/api/testimonials/${editing.id}`, token, {
+                await apiFetch(`/api/testimonials/${editing.id}`, {
                     method: "PATCH",
                     body: JSON.stringify(body),
                 });
                 toast({ title: "Testimonial updated" });
             } else {
-                await apiFetch("/api/testimonials", token, {
+                await apiFetch("/api/testimonials", {
                     method: "POST",
                     body: JSON.stringify(body),
                 });
@@ -79,7 +78,7 @@ export function TestimonialsTab({ token }: AdminTabProps) {
     async function remove(id: number) {
         if (!confirm("Delete this testimonial?")) return;
         try {
-            await apiFetch(`/api/testimonials/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/testimonials/${id}`, { method: "DELETE" });
             toast({ title: "Testimonial deleted" });
             refetch();
         } catch (err: any) {

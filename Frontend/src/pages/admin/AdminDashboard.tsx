@@ -64,7 +64,7 @@ export default function AdminDashboard() {
     }, [sidebarCollapsed]);
 
     const [msgCount, setMsgCount] = useState(0);
-    const { logout, token } = useAuth();
+    const { logout } = useAuth();
 
     // Search state
     const [searchOpen, setSearchOpen] = useState(false);
@@ -463,17 +463,17 @@ export default function AdminDashboard() {
                         </div>
                     }>
                         <TabErrorBoundary tabName={TAB_LABELS[tab]}>
-                            {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
+                            {tab === "overview" && <OverviewTab onNavigate={setTab} />}
                             {tab === "analytics" && <AnalyticsOverview />}
-                            {tab === "messages" && <MessagesTab token={token} />}
-                            {tab === "templates" && <EmailTemplatesTab token={token} />}
-                            {tab === "projects" && <ProjectsTab token={token} />}
-                            {tab === "skills" && <SkillsTab token={token} />}
-                            {tab === "experiences" && <ExperiencesTab token={token} />}
-                            {tab === "seo" && <SeoTab token={token} />}
-                            {tab === "services" && <ServicesTab token={token} />}
-                            {tab === "articles" && <ArticlesTab token={token} />}
-                            {tab === "testimonials" && <TestimonialsTab token={token} />}
+                            {tab === "messages" && <MessagesTab />}
+                            {tab === "templates" && <EmailTemplatesTab />}
+                            {tab === "projects" && <ProjectsTab />}
+                            {tab === "skills" && <SkillsTab />}
+                            {tab === "experiences" && <ExperiencesTab />}
+                            {tab === "seo" && <SeoTab />}
+                            {tab === "services" && <ServicesTab />}
+                            {tab === "articles" && <ArticlesTab />}
+                            {tab === "testimonials" && <TestimonialsTab />}
                         </TabErrorBoundary>
                     </Suspense>
                 </div>

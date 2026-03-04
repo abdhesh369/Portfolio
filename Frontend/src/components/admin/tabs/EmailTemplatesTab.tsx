@@ -11,7 +11,7 @@ const emptyTemplate = { name: "", subject: "", body: "" };
 
 import type { AdminTabProps } from "./types";
 
-export function EmailTemplatesTab({ token }: AdminTabProps) {
+export function EmailTemplatesTab({ }: AdminTabProps) {
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState<(Partial<EmailTemplate> & typeof emptyTemplate) | null>(null);
@@ -21,7 +21,7 @@ export function EmailTemplatesTab({ token }: AdminTabProps) {
     const fetchTemplates = async () => {
         setLoading(true);
         try {
-            const data = await apiFetch("/api/email-templates", token);
+            const data = await apiFetch("/api/email-templates");
             setTemplates(data ?? []);
         } catch {
             toast({ title: "Failed to load templates", variant: "destructive" });
@@ -32,7 +32,7 @@ export function EmailTemplatesTab({ token }: AdminTabProps) {
 
     useEffect(() => {
         fetchTemplates();
-    }, [token]);
+    }, []);
 
     const save = async (e: FormEvent) => {
         e.preventDefault();
@@ -40,13 +40,13 @@ export function EmailTemplatesTab({ token }: AdminTabProps) {
         setSaving(true);
         try {
             if (editing.id) {
-                await apiFetch(`/api/email-templates/${editing.id}`, token, {
+                await apiFetch(`/api/email-templates/${editing.id}`, {
                     method: "PUT",
                     body: JSON.stringify(editing)
                 });
                 toast({ title: "Template updated" });
             } else {
-                await apiFetch("/api/email-templates", token, {
+                await apiFetch("/api/email-templates", {
                     method: "POST",
                     body: JSON.stringify(editing)
                 });
@@ -64,7 +64,7 @@ export function EmailTemplatesTab({ token }: AdminTabProps) {
     const deleteTemplate = async (id: number) => {
         if (!confirm("Delete this template?")) return;
         try {
-            await apiFetch(`/api/email-templates/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/email-templates/${id}`, { method: "DELETE" });
             toast({ title: "Template deleted" });
             fetchTemplates();
         } catch (err: any) {

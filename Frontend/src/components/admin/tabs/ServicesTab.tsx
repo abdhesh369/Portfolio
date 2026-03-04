@@ -18,7 +18,7 @@ const emptyService = {
 
 import type { AdminTabProps } from "./types";
 
-export function ServicesTab({ token }: AdminTabProps) {
+export function ServicesTab({ }: AdminTabProps) {
   const { data: services, refetch } = useServices();
   const { toast } = useToast();
   const [editing, setEditing] = useState<(Partial<Service> & typeof emptyService) | null>(null);
@@ -56,13 +56,13 @@ export function ServicesTab({ token }: AdminTabProps) {
 
     try {
       if (editing.id) {
-        await apiFetch(`/api/services/${editing.id}`, token, {
+        await apiFetch(`/api/services/${editing.id}`, {
           method: "PATCH",
           body: JSON.stringify(body),
         });
         toast({ title: "Service updated" });
       } else {
-        await apiFetch("/api/services", token, {
+        await apiFetch("/api/services", {
           method: "POST",
           body: JSON.stringify(body),
         });
@@ -84,7 +84,7 @@ export function ServicesTab({ token }: AdminTabProps) {
   const deleteService = async (id: number) => {
     if (!confirm("Delete this service?")) return;
     try {
-      await apiFetch(`/api/services/${id}`, token, { method: "DELETE" });
+      await apiFetch(`/api/services/${id}`, { method: "DELETE" });
       toast({ title: "Service deleted" });
       refetch();
     } catch (err: any) {

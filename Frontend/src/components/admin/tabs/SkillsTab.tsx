@@ -11,7 +11,7 @@ const emptySkill = { name: "", category: "", status: "Core", icon: "Code", descr
 
 import type { AdminTabProps } from "./types";
 
-export function SkillsTab({ token }: AdminTabProps) {
+export function SkillsTab({ }: AdminTabProps) {
     const { data: skills, refetch } = useSkills();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Skill> & typeof emptySkill) | null>(null);
@@ -25,7 +25,7 @@ export function SkillsTab({ token }: AdminTabProps) {
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} skills?`)) return;
         try {
-            await apiFetch("/api/skills/bulk-delete", token, { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
+            await apiFetch("/api/skills/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
             toast({ title: "Skills deleted" });
             setSelectedIds([]);
             refetch();
@@ -40,10 +40,10 @@ export function SkillsTab({ token }: AdminTabProps) {
         setSaving(true);
         try {
             if (editing.id) {
-                await apiFetch(`/api/skills/${editing.id}`, token, { method: "PUT", body: JSON.stringify(editing) });
+                await apiFetch(`/api/skills/${editing.id}`, { method: "PUT", body: JSON.stringify(editing) });
                 toast({ title: "Skill updated" });
             } else {
-                await apiFetch("/api/skills", token, { method: "POST", body: JSON.stringify(editing) });
+                await apiFetch("/api/skills", { method: "POST", body: JSON.stringify(editing) });
                 toast({ title: "Skill created" });
             }
             setEditing(null);
@@ -58,7 +58,7 @@ export function SkillsTab({ token }: AdminTabProps) {
     const deleteSkill = async (id: number) => {
         if (!confirm("Delete this skill?")) return;
         try {
-            await apiFetch(`/api/skills/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/skills/${id}`, { method: "DELETE" });
             toast({ title: "Skill deleted" });
             refetch();
         } catch (err: any) {

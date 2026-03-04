@@ -11,7 +11,7 @@ const emptyExperience = { role: "", organization: "", period: "", description: "
 
 import type { AdminTabProps } from "./types";
 
-export function ExperiencesTab({ token }: AdminTabProps) {
+export function ExperiencesTab({ }: AdminTabProps) {
     const { data: experiences, refetch } = useExperiences();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Experience> & typeof emptyExperience) | null>(null);
@@ -23,10 +23,10 @@ export function ExperiencesTab({ token }: AdminTabProps) {
         setSaving(true);
         try {
             if (editing.id) {
-                await apiFetch(`/api/experiences/${editing.id}`, token, { method: "PUT", body: JSON.stringify(editing) });
+                await apiFetch(`/api/experiences/${editing.id}`, { method: "PUT", body: JSON.stringify(editing) });
                 toast({ title: "Experience updated" });
             } else {
-                await apiFetch("/api/experiences", token, { method: "POST", body: JSON.stringify(editing) });
+                await apiFetch("/api/experiences", { method: "POST", body: JSON.stringify(editing) });
                 toast({ title: "Experience created" });
             }
             setEditing(null);
@@ -41,7 +41,7 @@ export function ExperiencesTab({ token }: AdminTabProps) {
     const deleteExp = async (id: number) => {
         if (!confirm("Delete this experience?")) return;
         try {
-            await apiFetch(`/api/experiences/${id}`, token, { method: "DELETE" });
+            await apiFetch(`/api/experiences/${id}`, { method: "DELETE" });
             toast({ title: "Experience deleted" });
             refetch();
         } catch (err: any) {

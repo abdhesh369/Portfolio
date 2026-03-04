@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const queryClient = useQueryClient();
 
     const checkAuth = async () => {
         try {
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = () => {
         localStorage.removeItem("auth_last_exit");
         setIsAuthenticated(true);
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/status"] });
     };
 
     const logout = async () => {
@@ -47,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsAuthenticated(false);
             localStorage.removeItem("auth_last_exit");
+            queryClient.invalidateQueries({ queryKey: ["/api/auth/status"] });
         }
     };
 
