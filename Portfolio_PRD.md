@@ -767,13 +767,13 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 All colors are hardcoded (`#0a0520`, `#050510`, etc.). Light mode is incomplete.
 
 **Acceptance Criteria:**
-- [ ] All hardcoded dark colors replaced with CSS custom properties
-- [ ] `:root` defines light mode values; `.dark` class overrides to dark values
-- [ ] `ThemeProvider` respects `prefers-color-scheme` on first visit
-- [ ] Theme persisted in `localStorage` (already implemented — preserve behavior)
-- [ ] Three.js `PlexusBackground` uses theme-aware colors
-- [ ] Lighthouse Accessibility score unchanged (contrast ratios maintained in both modes)
-- [ ] No visual regression in dark mode
+- [x] All hardcoded dark colors replaced with CSS custom properties
+- [x] `:root` defines light mode values; `.dark` class overrides to dark values
+- [x] `ThemeProvider` respects `prefers-color-scheme` on first visit
+- [x] Theme persisted in `localStorage` (already implemented — preserve behavior)
+- [x] Three.js `PlexusBackground` uses theme-aware colors
+- [x] Lighthouse Accessibility score unchanged (contrast ratios maintained in both modes)
+- [x] No visual regression in dark mode
 
 ---
 
@@ -784,11 +784,11 @@ All colors are hardcoded (`#0a0520`, `#050510`, etc.). Light mode is incomplete.
 **File:** `Frontend/src/lib/animation.ts`
 
 **Acceptance Criteria:**
-- [ ] `animation.ts` exports: `DURATION`, `EASE`, `VARIANTS` token objects
-- [ ] All Framer Motion animations in the codebase use tokens (no raw numbers)
-- [ ] Page transitions consistent across all routes
-- [ ] No animation causes layout shift (CLS = 0)
-- [ ] All animations respect `prefers-reduced-motion` (already partially done — make complete)
+- [x] `animation.ts` exports: `DURATION`, `EASE`, `VARIANTS` token objects
+- [x] All Framer Motion animations in the codebase use tokens (no raw numbers)
+- [x] Page transitions consistent across all routes
+- [x] No animation causes layout shift (CLS = 0)
+- [x] All animations respect `prefers-reduced-motion` (already partially done — make complete)
 
 ---
 
@@ -798,11 +798,11 @@ All colors are hardcoded (`#0a0520`, `#050510`, etc.). Light mode is incomplete.
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] Admin sidebar touch targets: minimum 44×44px on all interactive elements
-- [ ] Skill tree: shows `SkillsListView` component on screens < 768px
-- [ ] `SkillsListView`: categorized list, expandable categories, accessible (keyboard + screen reader)
-- [ ] Chatbot: `bottom: calc(1.5rem + env(safe-area-inset-bottom))` for iOS home bar
-- [ ] `touch-action: manipulation` applied globally via CSS to remove 300ms tap delay
+- [x] Admin sidebar touch targets: minimum 44×44px on all interactive elements
+- [x] Skill tree: shows `SkillsListView` component on screens < 768px
+- [x] `SkillsListView`: categorized list, expandable categories, accessible (keyboard + screen reader)
+- [x] Chatbot: `bottom: calc(1.5rem + env(safe-area-inset-bottom))` for iOS home bar
+- [x] `touch-action: manipulation` applied globally via CSS to remove 300ms tap delay
 - [ ] All tested on: iPhone 14 (iOS Safari), Pixel 7 (Chrome Android), iPad
 
 ---
@@ -813,23 +813,23 @@ All colors are hardcoded (`#0a0520`, `#050510`, etc.). Light mode is incomplete.
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] `ARCHITECTURE.md` created and covers:
+- [x] `ARCHITECTURE.md` created and covers:
   - Shared Zod schema pattern and why
   - Redis caching strategy (keys, TTLs, invalidation triggers)
   - Auth flow diagram (JWT lifecycle, blacklist, refresh tokens)
   - BullMQ email queue design
   - Vite chunk splitting decisions
   - Database pool config and Neon cold start handling
-- [ ] `RUNBOOK.md` created and covers:
+- [x] `RUNBOOK.md` created and covers:
   - How to check server health
   - How to force-clear Redis cache
   - How to rollback a DB migration
   - How to restore from `backup-db.sh` snapshot
   - `FORCE_SEED=true` warning and safe usage
   - How to read Sentry errors and correlate with logs
-- [ ] `CHANGELOG.md` created following [Keep a Changelog](https://keepachangelog.com) format
-- [ ] JSDoc added to all public service methods (parameters, return type, throws)
-- [ ] `.env.example` updated with descriptions for every variable
+- [x] `CHANGELOG.md` created following [Keep a Changelog](https://keepachangelog.com) format
+- [x] JSDoc added to all public service methods (parameters, return type, throws)
+- [x] `.env.example` updated with descriptions for every variable
 
 ---
 

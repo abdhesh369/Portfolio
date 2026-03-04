@@ -178,6 +178,8 @@ describe("ArticleRepository", () => {
             const result = await repo.create({
                 title: "New Article",
                 content: "Content here",
+                status: "draft",
+                readTimeMinutes: 3,
                 tags: ["tag1", "tag2"],
             });
 
