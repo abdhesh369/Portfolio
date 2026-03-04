@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { fadeIn } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
@@ -70,6 +70,56 @@ export default function SkillsTree() {
 
   const activeNodeData = skillNodes.find((n) => n.id === activeNode);
 
+  const treeContainerRef = useRef<HTMLDivElement>(null);
+
+  /** Arrow-key navigation between skill nodes based on spatial proximity */
+  const handleTreeKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+      e.preventDefault();
+
+      const container = treeContainerRef.current;
+      if (!container) return;
+
+      const focused = document.activeElement as HTMLElement;
+      const nodes = Array.from(container.querySelectorAll<HTMLElement>('[data-skill-idx]'));
+      const currentIdx = nodes.indexOf(focused);
+      if (currentIdx === -1) return;
+
+      const current = skillNodes[currentIdx];
+      if (!current) return;
+
+      let bestIdx = -1;
+      let bestDist = Infinity;
+
+      for (let i = 0; i < skillNodes.length; i++) {
+        if (i === currentIdx) continue;
+        const n = skillNodes[i];
+        const dx = n.x - current.x;
+        const dy = n.y - current.y;
+
+        const isCandidate =
+          (e.key === 'ArrowRight' && dx > 0) ||
+          (e.key === 'ArrowLeft' && dx < 0) ||
+          (e.key === 'ArrowDown' && dy > 0) ||
+          (e.key === 'ArrowUp' && dy < 0);
+
+        if (!isCandidate) continue;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = i;
+        }
+      }
+
+      if (bestIdx !== -1 && nodes[bestIdx]) {
+        nodes[bestIdx].focus();
+        handleNodeClick(skillNodes[bestIdx].id);
+      }
+    },
+    [skillNodes]
+  );
+
   return (
     <section
       id="skills"
@@ -126,6 +176,10 @@ export default function SkillsTree() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
+          ref={treeContainerRef}
+          role="group"
+          aria-label="Skill tree nodes — use arrow keys to navigate"
+          onKeyDown={handleTreeKeyDown}
         >
           {/* Tree SVG */}
           <SkillsTreeSVG
@@ -135,7 +189,7 @@ export default function SkillsTree() {
           />
 
           {/* Skill Nodes */}
-          {skillNodes.map((node) => (
+          {skillNodes.map((node, idx) => (
             <HexagonNode
               key={node.id}
               node={node}
@@ -143,6 +197,7 @@ export default function SkillsTree() {
               onClick={() => handleNodeClick(node.id)}
               onHover={() => setActiveNode(node.id)}
               onLeave={() => !showTooltip && setActiveNode(null)}
+              data-skill-idx={idx}
             />
           ))}
 

@@ -28,6 +28,7 @@ interface HexagonNodeProps {
     onClick: () => void;
     onHover: () => void;
     onLeave: () => void;
+    'data-skill-idx'?: number;
 }
 
 export const HexagonNode = ({
@@ -35,7 +36,8 @@ export const HexagonNode = ({
     isActive,
     onClick,
     onHover,
-    onLeave
+    onLeave,
+    'data-skill-idx': skillIdx
 }: HexagonNodeProps) => {
     const colors = statusColors[node.status];
     const hexSize = 'clamp(44px, 7vw, 64px)';
@@ -53,6 +55,7 @@ export const HexagonNode = ({
             role="button"
             tabIndex={0}
             aria-label={`${node.name} (${node.status})`}
+            data-skill-idx={skillIdx}
             onMouseEnter={onHover}
             onMouseLeave={onLeave}
             whileHover={{ scale: 1.12, zIndex: 20 }}

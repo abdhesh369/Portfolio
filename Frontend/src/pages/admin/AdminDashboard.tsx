@@ -229,6 +229,7 @@ export default function AdminDashboard() {
                 <button
                     onClick={logout}
                     className="admin-sidebar-nav-btn mx-2 mb-1"
+                    aria-label="Logout"
                     style={{
                         color: "rgba(244,114,182,0.7)",
                         justifyContent: sidebarCollapsed ? "center" : "flex-start",
@@ -242,6 +243,7 @@ export default function AdminDashboard() {
                 {/* Collapse button */}
                 <button
                     onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                     className="mx-2 mb-3 p-2.5 rounded-md flex items-center justify-center gap-2 cursor-pointer text-[12px]"
                     style={{
                         background: "rgba(255,255,255,0.04)",
@@ -301,7 +303,7 @@ export default function AdminDashboard() {
                                     style={{ fontFamily: "inherit" }}
                                 />
                                 {searchQuery && (
-                                    <button onClick={() => { setSearchQuery(""); setSearchOpen(false); }} className="text-slate-400 hover:text-slate-200 cursor-pointer">
+                                    <button onClick={() => { setSearchQuery(""); setSearchOpen(false); }} aria-label="Clear search" className="text-slate-400 hover:text-slate-200 cursor-pointer">
                                         <X size={12} />
                                     </button>
                                 )}

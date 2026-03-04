@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
 import { ReloadPrompt } from "@/components/ReloadPrompt";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
@@ -159,12 +160,19 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={domAnimation}>
+              <a
+                href="#main-content"
+                className="skip-to-content sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"
+              >
+                Skip to main content
+              </a>
               <ServerStatusBanner />
               <DeferredAnalytics />
               <Router />
               <DeferredBackground />
               <DeferredChatbot />
               <ReloadPrompt />
+              <InstallPrompt />
               <Toaster />
             </LazyMotion>
           </AuthProvider>

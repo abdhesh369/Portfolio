@@ -237,9 +237,9 @@ export default function BlogPost() {
                     {/* Related articles strip */}
                     {relatedArticles.length > 0 && (
                         <section className="mt-16 pt-16 border-t border-white/10">
-                            <h3 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
+                            <h2 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
                                 Related Articles
-                            </h3>
+                            </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {relatedArticles.map((related: any) => (
                                     <Link key={related.id} href={`/blog/${related.slug}`}>
@@ -255,9 +255,9 @@ export default function BlogPost() {
                                                 )}
                                             </div>
                                             <div className="p-4">
-                                                <h4 className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                                                <h3 className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-2 mb-1">
                                                     {related.title}
-                                                </h4>
+                                                </h3>
                                                 <p className="text-xs text-white/40 line-clamp-2">{related.excerpt}</p>
                                             </div>
                                         </m.div>
@@ -273,7 +273,7 @@ export default function BlogPost() {
                                 AS
                             </div>
                             <div className="text-center md:text-left">
-                                <h4 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h4>
+                                <h3 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h3>
                                 <p className="text-white/50 mb-4">
                                     {AUTHOR.bio}
                                 </p>

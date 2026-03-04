@@ -267,7 +267,7 @@ A single `useEffect` with `[messages, isOpen]` dependencies re-focuses the input
 **Acceptance Criteria:**
 - [x] Test runner: `vitest` configured in `Backend/package.json`
 - [x] Mocked DB layer via `vi.mock()` + `vi.hoisted()` for isolated tests (no production DB dependency)
-- [ ] The following test files exist and pass:
+- [x] The following test files exist and pass:
 
 | Test File | What It Must Cover |
 |-----------|-------------------|
@@ -620,8 +620,8 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 - [x] Web App Manifest: name, short_name, theme_color `#00B4D8`, background_color `#050510`, `display: standalone`
 - [x] Icons: 192×192 and 512×512 maskable PNG
 - [x] Offline fallback page shown when network unavailable and page not cached
-- [ ] Lighthouse PWA score: 100
-- [ ] Install prompt shown on 2nd visit (not first)
+- [ ] Lighthouse PWA score: 100 — manual validation needed
+- [x] Install prompt shown on 2nd visit (not first)
 
 ---
 
@@ -632,15 +632,15 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 
 **Acceptance Criteria:**
 - [x] `@axe-core/playwright` runs in CI — zero violations on: Home, Blog List, Blog Post, Project Detail, Contact
-- [ ] Skip-to-main-content link as first focusable element on all pages
-- [ ] All icon-only buttons have `aria-label`
-- [ ] All color pairs pass 4.5:1 contrast ratio (use `@storybook/addon-a11y` for audit)
-- [ ] Skill tree: keyboard navigable — arrow keys move between nodes, Enter selects
-- [ ] Skill tree: on mobile (< 768px) a simplified accessible list view is shown instead of SVG
-- [ ] Blog post: heading hierarchy validated (no h4 without h3)
-- [ ] All form fields have associated `<label>` elements (not just placeholders)
-- [ ] `touch-action: manipulation` on all interactive elements
-- [ ] Lighthouse Accessibility score: 100
+- [x] Skip-to-main-content link as first focusable element on all pages
+- [x] All icon-only buttons have `aria-label`
+- [ ] All color pairs pass 4.5:1 contrast ratio (use `@storybook/addon-a11y` for audit) — manual validation needed
+- [x] Skill tree: keyboard navigable — arrow keys move between nodes, Enter selects
+- [x] Skill tree: on mobile (< 768px) a simplified accessible list view is shown instead of SVG
+- [x] Blog post: heading hierarchy validated (no h4 without h3)
+- [x] All form fields have associated `<label>` elements (not just placeholders)
+- [x] `touch-action: manipulation` on all interactive elements
+- [ ] Lighthouse Accessibility score: 100 — manual validation needed
 
 ---
 
@@ -672,7 +672,7 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 - [x] Admin dashboard "Performance" tab shows:
   - Average LCP, CLS, INP over last 7 days
   - Pass/fail indicator per Core Web Vitals threshold (Good / Needs Improvement / Poor)
-- [ ] Lighthouse CI added to `.github/workflows/ci.yml`:
+- [x] Lighthouse CI added to `.github/workflows/ci.yml`:
   - Performance ≥ 90
   - Accessibility ≥ 100
   - Best Practices ≥ 95
