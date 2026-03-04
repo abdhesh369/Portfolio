@@ -55,13 +55,13 @@ export function TestimonialsTab({ }: AdminTabProps) {
             };
 
             if (editing.id) {
-                await apiFetch(`/api/testimonials/${editing.id}`, {
+                await apiFetch(`/api/v1/testimonials/${editing.id}`, {
                     method: "PATCH",
                     body: JSON.stringify(body),
                 });
                 toast({ title: "Testimonial updated" });
             } else {
-                await apiFetch("/api/testimonials", {
+                await apiFetch("/api/v1/testimonials", {
                     method: "POST",
                     body: JSON.stringify(body),
                 });
@@ -78,7 +78,7 @@ export function TestimonialsTab({ }: AdminTabProps) {
     async function remove(id: number) {
         if (!confirm("Delete this testimonial?")) return;
         try {
-            await apiFetch(`/api/testimonials/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/testimonials/${id}`, { method: "DELETE" });
             toast({ title: "Testimonial deleted" });
             refetch();
         } catch (err: any) {

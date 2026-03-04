@@ -23,7 +23,7 @@ export function MessagesTab() {
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} messages?`)) return;
         try {
-            await apiFetch("/api/messages/bulk-delete", {
+            await apiFetch("/api/v1/messages/bulk-delete", {
                 method: "POST",
                 body: JSON.stringify({ ids: selectedIds })
             });
@@ -38,7 +38,7 @@ export function MessagesTab() {
     const fetchMessages = async () => {
         setLoading(true);
         try {
-            const data = await apiFetch("/api/messages");
+            const data = await apiFetch("/api/v1/messages");
             setMessages(data ?? []);
         } catch {
             toast({ title: "Failed to load messages", variant: "destructive" });
@@ -54,7 +54,7 @@ export function MessagesTab() {
     const deleteMessage = async (id: number) => {
         if (!confirm("Delete this message?")) return;
         try {
-            await apiFetch(`/api/messages/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/messages/${id}`, { method: "DELETE" });
             setMessages((prev) => prev.filter((m) => m.id !== id));
             toast({ title: "Message deleted" });
         } catch (err: any) {
@@ -152,7 +152,7 @@ function ReplyDialog({ message }: { message: Message }) {
 
     useEffect(() => {
         if (open) {
-            apiFetch("/api/email-templates")
+            apiFetch("/api/v1/email-templates")
                 .then(setTemplates)
                 .catch(() => setTemplates([]));
         }
@@ -168,7 +168,7 @@ function ReplyDialog({ message }: { message: Message }) {
         if (!body) return toast({ title: "Body is required", variant: "destructive" });
         setSending(true);
         try {
-            await apiFetch(`/api/messages/${message.id}/reply`, {
+            await apiFetch(`/api/v1/messages/${message.id}/reply`, {
                 method: "POST",
                 body: JSON.stringify({ subject, body }),
             });

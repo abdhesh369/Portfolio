@@ -2,6 +2,7 @@ import { Queue, Worker, Job } from "bullmq";
 import { Redis } from "ioredis";
 import { Resend } from "resend";
 import { env } from "../env.js";
+import { logger } from "./logger.js";
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
@@ -27,7 +28,7 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
     const { type, payload } = job.data;
 
     if (!env.RESEND_API_KEY) {
-        console.warn("[QUEUE] Skipping email: RESEND_API_KEY not set");
+        logger.warn({ context: "queue" }, "Skipping email: RESEND_API_KEY not set");
         return;
     }
 
@@ -87,10 +88,10 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
 
 if (emailWorker) {
     emailWorker.on("completed", (job) => {
-        console.log(`✅ [JOB:E-MAIL] Job ${job.id} completed successfully (${job.data.type})`);
+        logger.info({ context: "queue", jobId: job.id, type: job.data.type }, "Job completed successfully");
     });
 
     emailWorker.on("failed", (job, err) => {
-        console.error(`❌ [JOB:E-MAIL] Job ${job?.id} failed (${job?.data?.type}):`, err);
+        logger.error({ context: "queue", jobId: job?.id, type: job?.data?.type, error: err }, "Job failed");
     });
 }

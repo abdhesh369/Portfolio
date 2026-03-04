@@ -21,7 +21,7 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
     const fetchTemplates = async () => {
         setLoading(true);
         try {
-            const data = await apiFetch("/api/email-templates");
+            const data = await apiFetch("/api/v1/email-templates");
             setTemplates(data ?? []);
         } catch {
             toast({ title: "Failed to load templates", variant: "destructive" });
@@ -40,13 +40,13 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
         setSaving(true);
         try {
             if (editing.id) {
-                await apiFetch(`/api/email-templates/${editing.id}`, {
+                await apiFetch(`/api/v1/email-templates/${editing.id}`, {
                     method: "PUT",
                     body: JSON.stringify(editing)
                 });
                 toast({ title: "Template updated" });
             } else {
-                await apiFetch("/api/email-templates", {
+                await apiFetch("/api/v1/email-templates", {
                     method: "POST",
                     body: JSON.stringify(editing)
                 });
@@ -64,7 +64,7 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
     const deleteTemplate = async (id: number) => {
         if (!confirm("Delete this template?")) return;
         try {
-            await apiFetch(`/api/email-templates/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/email-templates/${id}`, { method: "DELETE" });
             toast({ title: "Template deleted" });
             fetchTemplates();
         } catch (err: any) {

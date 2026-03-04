@@ -1,6 +1,7 @@
 import { seoSettingsRepository } from "../repositories/seo-settings.repository.js";
 import type { InsertSeoSettings, SeoSettings } from "../../shared/schema.js";
 import { redis } from "../lib/redis.js";
+import { logger } from "../lib/logger.js";
 
 const CACHE_KEY = "seo_settings";
 
@@ -43,7 +44,7 @@ export class SeoSettingsService {
         try {
             await redis?.del(CACHE_KEY);
         } catch (error) {
-            console.warn("Failed to invalidate SEO settings cache:", error);
+            logger.warn({ context: "cache", service: "seo-settings", error }, "Failed to invalidate SEO settings cache");
         }
     }
 }

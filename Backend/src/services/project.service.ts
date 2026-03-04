@@ -1,5 +1,6 @@
 import { projectRepository } from "../repositories/project.repository.js";
 import { redis } from "../lib/redis.js";
+import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Project, InsertProject } from "../../shared/schema.js";
 
 export class ProjectService {
@@ -24,7 +25,7 @@ export class ProjectService {
     async create(data: InsertProject): Promise<Project> {
         const project = await projectRepository.create(data);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
         return project;
     }
@@ -32,7 +33,7 @@ export class ProjectService {
     async update(id: number, data: Partial<InsertProject>): Promise<Project> {
         const project = await projectRepository.update(id, data);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
         return project;
     }
@@ -40,28 +41,28 @@ export class ProjectService {
     async delete(id: number): Promise<void> {
         await projectRepository.delete(id);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
     }
 
     async bulkDelete(ids: number[]): Promise<void> {
         await projectRepository.bulkDelete(ids);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
     }
 
     async bulkUpdateStatus(ids: number[], status: string): Promise<void> {
         await projectRepository.bulkUpdateStatus(ids, status);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
     }
 
     async updateReorder(ids: number[]): Promise<void> {
         await projectRepository.reorder(ids);
         if (redis) {
-            await redis.del(this.CACHE_KEY_LIST);
+            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
     }
 }

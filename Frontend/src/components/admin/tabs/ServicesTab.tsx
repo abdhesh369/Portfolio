@@ -56,13 +56,13 @@ export function ServicesTab({ }: AdminTabProps) {
 
     try {
       if (editing.id) {
-        await apiFetch(`/api/services/${editing.id}`, {
+        await apiFetch(`/api/v1/services/${editing.id}`, {
           method: "PATCH",
           body: JSON.stringify(body),
         });
         toast({ title: "Service updated" });
       } else {
-        await apiFetch("/api/services", {
+        await apiFetch("/api/v1/services", {
           method: "POST",
           body: JSON.stringify(body),
         });
@@ -84,7 +84,7 @@ export function ServicesTab({ }: AdminTabProps) {
   const deleteService = async (id: number) => {
     if (!confirm("Delete this service?")) return;
     try {
-      await apiFetch(`/api/services/${id}`, { method: "DELETE" });
+      await apiFetch(`/api/v1/services/${id}`, { method: "DELETE" });
       toast({ title: "Service deleted" });
       refetch();
     } catch (err: any) {

@@ -1,12 +1,12 @@
 import { Router, type Express } from "express";
 import { upload } from "../lib/cloudinary.js";
-import { isAdmin, asyncHandler } from "../auth.js";
+import { isAuthenticated, asyncHandler } from "../auth.js";
 
 export function registerUploadRoutes(app: Router) {
     // POST /upload - Upload file to Cloudinary
     app.post(
         "/upload",
-        isAdmin,
+        isAuthenticated,
         asyncHandler(async (req, res) => {
             // We use the 'upload' middleware from cloudinary.ts directly in the route if possible,
             // or call it manually. The previous edit mixed them up.

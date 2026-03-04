@@ -12,7 +12,7 @@ export class MindsetRepository {
 
     async findAll(): Promise<Mindset[]> {
         const results = await db.select().from(mindsetTable);
-        return results.map(this.transformMindset);
+        return results.map(m => this.transformMindset(m));
     }
 
     async findById(id: number): Promise<Mindset | null> {

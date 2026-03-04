@@ -4,12 +4,10 @@ import { articlesTable, articleTagsTable, type Article, type InsertArticle } fro
 
 export class ArticleRepository {
     async findAll(status?: string): Promise<Article[]> {
-        const query = db.select().from(articlesTable);
-        if (status) {
-            // Error handling for drizzle types
-            query.where(eq(articlesTable.status, status as any));
-        }
-        const results = await query.orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt));
+        const baseQuery = status
+            ? db.select().from(articlesTable).where(eq(articlesTable.status, status as any))
+            : db.select().from(articlesTable);
+        const results = await baseQuery.orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt));
         if (results.length === 0) return [];
 
         // Batch fetch all tags for the articles
@@ -133,11 +131,11 @@ export class ArticleRepository {
         const relatedResults = await db.execute(sql`
             SELECT a.*, COUNT(at2.tag) as score
             FROM articles a
-            JOIN article_tags at1 ON at1.article_id = ${articleId}
-            JOIN article_tags at2 ON at2.article_id = a.id AND at2.tag = at1.tag
+            JOIN article_tags at1 ON at1."articleId" = ${articleId}
+            JOIN article_tags at2 ON at2."articleId" = a.id AND at2.tag = at1.tag
             WHERE a.id != ${articleId} AND a.status = 'published'
-            GROUP BY a.id, a.title, a.slug, a.content, a.excerpt, a.featured_image, a.status, a.published_at, a.view_count, a.read_time_minutes, a.meta_title, a.meta_description, a.author_id, a.featured_image_alt, a.created_at, a.updated_at
-            ORDER BY score DESC, a.published_at DESC
+            GROUP BY a.id, a.title, a.slug, a.content, a.excerpt, a."featuredImage", a.status, a."publishedAt", a."viewCount", a."readTimeMinutes", a."metaTitle", a."metaDescription", a."authorId", a."featuredImageAlt", a."createdAt", a."updatedAt"
+            ORDER BY score DESC, a."publishedAt" DESC
             LIMIT ${limit}
         `);
 
@@ -151,17 +149,17 @@ export class ArticleRepository {
             slug: r.slug,
             content: r.content,
             excerpt: r.excerpt,
-            featuredImage: r.featured_image,
+            featuredImage: r.featuredImage,
             status: r.status,
-            publishedAt: r.published_at ? new Date(r.published_at) : null,
-            viewCount: r.view_count,
-            readTimeMinutes: r.read_time_minutes,
-            metaTitle: r.meta_title,
-            metaDescription: r.meta_description,
-            authorId: r.author_id,
-            featuredImageAlt: r.featured_image_alt,
-            createdAt: new Date(r.created_at),
-            updatedAt: new Date(r.updated_at),
+            publishedAt: r.publishedAt ? new Date(r.publishedAt) : null,
+            viewCount: r.viewCount,
+            readTimeMinutes: r.readTimeMinutes,
+            metaTitle: r.metaTitle,
+            metaDescription: r.metaDescription,
+            authorId: r.authorId,
+            featuredImageAlt: r.featuredImageAlt,
+            createdAt: new Date(r.createdAt),
+            updatedAt: new Date(r.updatedAt),
         })) as Article[];
 
         // Fetch tags for results

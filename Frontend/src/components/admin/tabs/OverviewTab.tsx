@@ -38,7 +38,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     const [healthLoading, setHealthLoading] = useState(true);
 
     useEffect(() => {
-        apiFetch("/api/messages")
+        apiFetch("/api/v1/messages")
             .then((d: Message[]) => {
                 setMessages(d ?? []);
                 setMsgCount(d?.length ?? 0);

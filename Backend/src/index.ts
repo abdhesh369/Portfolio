@@ -2,6 +2,9 @@
 import "./env.js";
 
 import express, { type Request, Response, NextFunction } from "express";
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import { env } from "./env.js";
 import { createServer } from "http";
 import cors from "cors";
 import helmet from "helmet";
@@ -12,6 +15,8 @@ import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker } from "./lib/queue.js";
+import { redis } from "./lib/redis.js"; // Import redis instance or the helper
+import { logger } from "./lib/logger.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -21,22 +26,26 @@ const app = express();
 app.set("trust proxy", 1); // For production environments behind proxies (Render, Heroku, etc.)
 const httpServer = createServer(app);
 
+// Initialize Sentry
+if (env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    environment: env.SENTRY_ENVIRONMENT || env.NODE_ENV,
+    integrations: [
+      nodeProfilingIntegration(),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: env.NODE_ENV === "production" ? 0.1 : 1.0,
+    // Set sampling rate for profiling - this is relative to tracesSampleRate
+    profilesSampleRate: 1.0,
+  });
+  logger.info({ context: "sentry" }, "Sentry initialized");
+}
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: Buffer;
   }
-}
-
-function log(message: string, source = "express", level: "INFO" | "WARN" | "ERROR" = "INFO") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-  const sanitizedMessage = message.replace(/\n|\r/g, " ");
-  const levelTag = level.padEnd(5);
-  console.log(`${formattedTime} [${source}] [${levelTag}] ${sanitizedMessage}`);
 }
 
 // Request Tracing
@@ -57,15 +66,6 @@ const allowedOrigins = [
 
 app.use(compression());
 app.use(cookieParser());
-
-// Backward-compatible URL rewrite: /api/* → /api/v1/*
-// Avoids 307 redirects which cause double round-trips, cookie/body loss, and CORS issues.
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  if (req.url.startsWith('/api/') && !req.url.startsWith('/api/v1')) {
-    req.url = '/api/v1' + req.url.slice(4);
-  }
-  next();
-});
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -157,7 +157,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.on("finish", () => {
     if (req.path.startsWith("/api")) {
       const duration = Date.now() - start;
-      log(`[${(req as any).id}] ${req.method} ${req.path} ${res.statusCode} in ${duration}ms`);
+      logger.info({
+        requestId: (req as any).id,
+        method: req.method,
+        path: req.path,
+        status: res.statusCode,
+        duration: `${duration}ms`,
+      }, `Request processed`);
     }
   });
   next();
@@ -185,37 +191,55 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
 
+  // Use the static method from RedisClient
+  const { RedisClient } = await import("./lib/redis.js");
+  const redisHealth = await RedisClient.checkHealth();
+
+  const isHealthy = dbHealth.healthy && redisHealth.healthy;
+
   res.status(200).json({
-    status: dbHealth.healthy ? "healthy" : "degraded",
+    status: isHealthy ? "healthy" : "degraded",
     database: dbHealth.healthy ? "connected" : "reconnecting",
+    redis: redisHealth.healthy ? "connected" : "reconnecting",
     environment: process.env.NODE_ENV || "development",
     timestamp: new Date().toISOString(),
-    ...(process.env.NODE_ENV === "development" && { details: dbHealth.message })
+    ...(process.env.NODE_ENV === "development" && {
+      details: {
+        database: dbHealth.message,
+        redis: redisHealth.message
+      }
+    })
   });
 });
 
 // Formal API Health Check for monitoring tools
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
+  const { RedisClient } = await import("./lib/redis.js");
+  const redisHealth = await RedisClient.checkHealth();
+
+  const isHealthy = dbHealth.healthy && redisHealth.healthy;
+
   res.status(200).json({
-    status: dbHealth.healthy ? "healthy" : "degraded",
+    status: isHealthy ? "healthy" : "degraded",
     database: dbHealth.healthy ? "connected" : "reconnecting",
+    redis: redisHealth.healthy ? "connected" : "reconnecting",
     timestamp: new Date().toISOString(),
   });
 });
 
 function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {
-    log(`${signal} received, shutting down...`, "shutdown");
+    logger.info({ context: "shutdown" }, `${signal} received, shutting down...`);
 
     // Close HTTP server first to stop accepting new requests
     httpServer.close(() => {
-      log("HTTP server closed", "shutdown");
+      logger.info({ context: "shutdown" }, "HTTP server closed");
     });
 
     // Force exit if shutdown takes too long (must be set before any await)
     const forceTimer = setTimeout(() => {
-      log("Forced shutdown due to timeout", "shutdown");
+      logger.info({ context: "shutdown" }, "Forced shutdown due to timeout");
       process.exit(1);
     }, 10000);
     forceTimer.unref();
@@ -224,19 +248,19 @@ function setupGracefulShutdown() {
       // Close database pool
       const { closePool } = await import("./db.js");
       await closePool();
-      log("Database pool closed", "shutdown");
+      logger.info({ context: "shutdown" }, "Database pool closed");
 
       try {
         if (emailQueue) await emailQueue.close();
         if (emailWorker) await emailWorker.close();
-        log("Email queue and worker closed", "shutdown");
+        logger.info({ context: "shutdown" }, "Email queue and worker closed");
       } catch (qErr) {
-        log(`Error closing queue: ${qErr}`, "error");
+        logger.error({ context: "shutdown", error: qErr }, `Error closing queue`);
       }
 
       process.exit(0);
     } catch (err) {
-      log(`Error during shutdown: ${err}`, "error", "ERROR");
+      logger.error({ context: "shutdown", error: err }, `Error during shutdown`);
       process.exit(1);
     }
   };
@@ -248,7 +272,7 @@ function setupGracefulShutdown() {
 // ==================== MAIN STARTUP ====================
 async function startServer() {
   try {
-    log("Starting server...", "startup");
+    logger.info({ context: "startup" }, "Starting server...");
 
     // ── 1. Bind the port FIRST so Render detects the service immediately ──
     //    Static routes (/, /ping) are already registered above and will respond
@@ -258,41 +282,45 @@ async function startServer() {
 
     await new Promise<void>((resolve) => {
       httpServer.listen(port, host, () => {
-        log(`✓ Server listening on ${host}:${port}`, "startup");
+        logger.info({ context: "startup", port, host }, `✓ Server listening on ${host}:${port}`);
         resolve();
       });
     });
 
     // ── 2. Database health check ──
-    log("📍 Checking database health...", "startup");
+    logger.info({ context: "startup" }, "📍 Checking database health...");
     const health = await checkDatabaseHealth();
 
     if (!health.healthy) {
-      log("❌ Database connection failed. Shutting down...", "startup");
-      log(`Reason: ${health.message}`, "error");
+      logger.error({ context: "startup", error: health.message }, "❌ Database connection failed. Shutting down...");
       process.exit(1);
     }
-    log("✓ Database is healthy", "startup");
+    logger.info({ context: "startup" }, "✓ Database is healthy");
 
     // Controlled seeding: Skip in production unless explicitly forced
     const shouldSeed = process.env.NODE_ENV !== "production" || process.env.FORCE_SEED === "true";
 
     if (shouldSeed) {
-      log("📍 Seeding Database...", "startup");
+      logger.info({ context: "startup" }, "📍 Seeding Database...");
       try {
         await seedDatabase();
-        log("✓ Seeding complete", "startup");
+        logger.info({ context: "startup" }, "✓ Seeding complete");
       } catch (err) {
-        log(`⚠️ Seeding failed: ${err}`, "startup");
+        logger.warn({ context: "startup", error: err }, `⚠️ Seeding failed`);
       }
     } else {
-      log("ℹ️ Skipping auto-seeding in production environment", "startup");
+      logger.info({ context: "startup" }, "ℹ️ Skipping auto-seeding in production environment");
     }
 
     // ── 3. Register API routes ──
-    log("📍 Registering API routes...", "startup");
+    logger.info({ context: "startup" }, "📍 Registering API routes...");
     registerRoutes(app);
-    log("✓ API routes registered", "startup");
+    logger.info({ context: "startup" }, "✓ API routes registered");
+
+    // Sentry Error Handler (must be before custom error handlers)
+    if (env.SENTRY_DSN) {
+      Sentry.setupExpressErrorHandler(app);
+    }
 
     // Sanitize Global Error Handler
     app.use(
@@ -300,7 +328,16 @@ async function startServer() {
         const status = err.status || err.statusCode || 500;
         const message = status === 500 ? "Internal Server Error" : err.message;
 
-        log(`[${(req as any).id}] Error ${status}: ${err.message}`, "error", "ERROR");
+        logger.error({
+          requestId: (req as any).id,
+          status,
+          error: err.message,
+          stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+        }, `Global Error Handler`);
+
+        if (env.SENTRY_DSN && status >= 500) {
+          Sentry.captureException(err);
+        }
 
         res.status(status).json({
           error: {
@@ -315,9 +352,9 @@ async function startServer() {
     // SETUP GRACEFUL SHUTDOWN
     setupGracefulShutdown();
 
-    log("✓ Server fully ready", "startup");
+    logger.info({ context: "startup" }, "✓ Server fully ready");
   } catch (error) {
-    log(`❌ STARTUP FAILED: ${error}`, "error", "ERROR");
+    logger.fatal({ context: "startup", error }, `❌ STARTUP FAILED`);
     process.exit(1);
   }
 }

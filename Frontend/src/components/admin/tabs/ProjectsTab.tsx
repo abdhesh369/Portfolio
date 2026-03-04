@@ -128,7 +128,7 @@ export function ProjectsTab({ }: AdminTabProps) {
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} projects?`)) return;
         try {
-            await apiFetch("/api/projects/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
+            await apiFetch("/api/v1/projects/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
             toast({ title: "Projects deleted" });
             setSelectedIds([]);
             refetch();
@@ -139,7 +139,7 @@ export function ProjectsTab({ }: AdminTabProps) {
 
     const handleBulkStatus = async (status: string) => {
         try {
-            await apiFetch("/api/projects/bulk-status", { method: "POST", body: JSON.stringify({ ids: selectedIds, status }) });
+            await apiFetch("/api/v1/projects/bulk-status", { method: "POST", body: JSON.stringify({ ids: selectedIds, status }) });
             toast({ title: "Projects updated" });
             setSelectedIds([]);
             refetch();
@@ -169,7 +169,7 @@ export function ProjectsTab({ }: AdminTabProps) {
 
                 // Save order to backend
                 const orderedIds = newItems.map(p => p.id);
-                apiFetch('/api/projects/reorder', {
+                apiFetch('/api/v1/projects/reorder', {
                     method: 'PUT',
                     body: JSON.stringify({ orderedIds })
                 }).catch(err => toast({ title: "Failed to save order", variant: "destructive" }));
@@ -218,11 +218,11 @@ export function ProjectsTab({ }: AdminTabProps) {
                 queryClient.setQueryData<Project[]>(["projects"], old =>
                     old ? old.map(p => p.id === editing.id ? { ...p, ...body } as Project : p) : []
                 );
-                await apiFetch(`/api/projects/${editing.id}`, { method: "PUT", body: JSON.stringify(body) });
+                await apiFetch(`/api/v1/projects/${editing.id}`, { method: "PUT", body: JSON.stringify(body) });
                 toast({ title: "Project updated" });
             } else {
                 // For creates, we don't have an ID yet, so we just wait for the refetch
-                await apiFetch("/api/projects", { method: "POST", body: JSON.stringify(body) });
+                await apiFetch("/api/v1/projects", { method: "POST", body: JSON.stringify(body) });
                 toast({ title: "Project created" });
             }
             setEditing(null);
@@ -246,7 +246,7 @@ export function ProjectsTab({ }: AdminTabProps) {
         );
 
         try {
-            await apiFetch(`/api/projects/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/projects/${id}`, { method: "DELETE" });
             toast({ title: "Project deleted" });
             refetch();
         } catch (err: any) {

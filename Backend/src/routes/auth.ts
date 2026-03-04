@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated, asyncHandler, storeRefreshToken, validateRefreshToken, revokeRefreshToken } from "../auth.js";
+import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -66,21 +67,45 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT
+    // Generate short-lived access token (15 minutes)
     const token = jwt.sign(
-        { role: "admin" }, // Minimal payload
+        { role: "admin" },
         env.JWT_SECRET,
-        { expiresIn: "24h" }
+        { expiresIn: "15m" }
     );
+
+    // Generate refresh token (random, not JWT) — 7 days
+    const refreshToken = crypto.randomBytes(32).toString("hex");
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+
+    // Store hashed refresh token in Redis with 7-day TTL
+    await storeRefreshToken(refreshTokenHash);
 
     const isProd = process.env.NODE_ENV === "production";
 
-    // Set HttpOnly cookie
+    // Set HttpOnly access token cookie (15 min)
     res.cookie("auth_token", token, {
         httpOnly: true,
         secure: isProd,
         sameSite: "strict",
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    // Set HttpOnly refresh token cookie (7 days)
+    res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    // Set readable CSRF cookie (NOT httpOnly so frontend JS can read it)
+    const csrfToken = generateCsrfToken();
+    res.cookie("csrf_token", csrfToken, {
+        httpOnly: false,
+        secure: isProd,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
 
     res.json({ success: true, message: "Login successful" });
@@ -97,11 +122,48 @@ router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Re
 }));
 
 /**
+ * POST /api/auth/refresh
+ * Validates refresh token cookie and issues new access token
+ */
+router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+        return res.status(401).json({ message: "No refresh token provided" });
+    }
+
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+    const isValid = await validateRefreshToken(refreshTokenHash);
+
+    if (!isValid) {
+        return res.status(401).json({ message: "Invalid or expired refresh token" });
+    }
+
+    // Issue new short-lived access token
+    const accessToken = jwt.sign(
+        { role: "admin" },
+        env.JWT_SECRET,
+        { expiresIn: "15m" }
+    );
+
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.cookie("auth_token", accessToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.json({ success: true, message: "Token refreshed" });
+}));
+
+/**
  * POST /api/auth/logout
  * Blacklists current token and clears cookie
  */
 router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
-    // 1. Revoke token in blacklist (whether from header or cookie)
+    // 1. Revoke access token in blacklist (whether from header or cookie)
     let token: string | undefined;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -115,11 +177,28 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
         await revokeToken(token);
     }
 
+    // 2. Revoke refresh token from Redis
+    const refreshToken = req.cookies?.refresh_token;
+    if (refreshToken) {
+        const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+        await revokeRefreshToken(refreshTokenHash);
+    }
+
     const isProd = process.env.NODE_ENV === "production";
 
-    // 2. Clear cookie (must match flags used when setting)
+    // 3. Clear all cookies (must match flags used when setting)
     res.clearCookie("auth_token", {
         httpOnly: true,
+        secure: isProd,
+        sameSite: "strict"
+    });
+    res.clearCookie("refresh_token", {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: "strict"
+    });
+    res.clearCookie("csrf_token", {
+        httpOnly: false,
         secure: isProd,
         sameSite: "strict"
     });

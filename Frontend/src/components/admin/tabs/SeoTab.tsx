@@ -18,13 +18,13 @@ export function SeoTab({ }: AdminTabProps) {
     const { data: seoSettingsList, isLoading } = useQuery<SeoSettings[]>({
         queryKey: ["seo-settings"],
         queryFn: async () => {
-            return apiFetch("/api/seo");
+            return apiFetch("/api/v1/seo");
         },
     });
 
     const createMutation = useMutation({
         mutationFn: async (data: InsertSeoSettings) => {
-            return apiFetch("/api/seo", { method: "POST", body: JSON.stringify(data) });
+            return apiFetch("/api/v1/seo", { method: "POST", body: JSON.stringify(data) });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
@@ -39,7 +39,7 @@ export function SeoTab({ }: AdminTabProps) {
 
     const updateMutation = useMutation({
         mutationFn: async ({ id, data }: { id: number; data: InsertSeoSettings }) => {
-            return apiFetch(`/api/seo/${id}`, { method: "PATCH", body: JSON.stringify(data) });
+            return apiFetch(`/api/v1/seo/${id}`, { method: "PATCH", body: JSON.stringify(data) });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
@@ -54,7 +54,7 @@ export function SeoTab({ }: AdminTabProps) {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            await apiFetch(`/api/seo/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/seo/${id}`, { method: "DELETE" });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["seo-settings"] });

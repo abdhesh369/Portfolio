@@ -49,3 +49,7 @@ ts_errors.txt
 tsc_output.txt
 *.tmp
 .cache/
+
+
+Portfolio_Engineer_Masterplan.md
+Portfolio_PDR.md

@@ -17,9 +17,14 @@ import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
 import feedRoutes from "./routes/feed.js";
 import express from "express";
+import { csrfProtection } from "./middleware/csrf.js";
 
 export function registerRoutes(app: Express) {
   const v1Router = Router();
+
+  // CSRF protection for all state-changing admin requests
+  // (skips GET/HEAD/OPTIONS and unauthenticated requests automatically)
+  v1Router.use(csrfProtection);
 
   // Register all routes on the v1 router
   v1Router.use("/auth", authRoutes);
@@ -53,7 +58,4 @@ export function registerRoutes(app: Express) {
 
   // Main API versioning
   app.use("/api/v1", v1Router);
-
-  // Note: /api/* → /api/v1/* rewrite is handled in index.ts (before rate limiter)
-  // to avoid 307 redirects that cause double round-trips and break cookies/CORS.
 }

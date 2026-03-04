@@ -119,10 +119,10 @@ export function ArticlesTab({ }: AdminTabProps) {
                     old ? old.map(a => a.id === editing.id ? { ...a, ...body } as Article : a) : []
                 );
 
-                await apiFetch(`/api/articles/${editing.id}`, { method: "PATCH", body: JSON.stringify(body) });
+                await apiFetch(`/api/v1/articles/${editing.id}`, { method: "PATCH", body: JSON.stringify(body) });
                 toast({ title: "Article updated" });
             } else {
-                await apiFetch("/api/articles", { method: "POST", body: JSON.stringify(body) });
+                await apiFetch("/api/v1/articles", { method: "POST", body: JSON.stringify(body) });
                 toast({ title: "Article created" });
             }
             setEditing(null);
@@ -146,7 +146,7 @@ export function ArticlesTab({ }: AdminTabProps) {
         );
 
         try {
-            await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
+            await apiFetch(`/api/v1/articles/${id}`, { method: "DELETE" });
             toast({ title: "Article deleted" });
             refetch();
         } catch (err: any) {

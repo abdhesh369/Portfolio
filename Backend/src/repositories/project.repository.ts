@@ -12,7 +12,7 @@ export class ProjectRepository {
 
     async findAll(): Promise<Project[]> {
         const results = await db.select().from(projectsTable).orderBy(asc(projectsTable.displayOrder));
-        return results.map(this.transformProject);
+        return results.map(p => this.transformProject(p));
     }
 
     async findById(id: number): Promise<Project | null> {

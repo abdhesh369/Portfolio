@@ -4,21 +4,23 @@ import { isAuthenticated, asyncHandler, checkAuthStatus } from "../auth.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
 import { articleService } from "../services/article.service.js";
+import { logger } from "../lib/logger.js";
 
 export const articlesRouter = Router();
 
 // GET /articles - List all articles
 articlesRouter.get(
     "/",
-    cachePublic(300),
     asyncHandler(async (req, res) => {
         const isAdmin = await checkAuthStatus(req);
         let status = req.query.status as string | undefined;
 
         if (!isAdmin) {
             status = "published";
+            // Only cache public (non-admin) responses
+            res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=60");
         } else {
-            // Prevent caching sensitive draft data
+            // Never cache admin responses containing drafts
             res.setHeader("Cache-Control", "no-store");
         }
 
@@ -74,7 +76,7 @@ articlesRouter.get(
         if (!isAdmin) {
             // Fire-and-forget: don't await, don't block response
             articleService.incrementViewCount(article.id).catch((err) => {
-                console.error(`[ARTICLE] Failed to increment view count: ${err}`);
+                logger.error({ context: "article", id: article.id, error: err }, "Failed to increment view count");
             });
         }
     })

@@ -12,7 +12,7 @@ export class PortfolioServiceRepository {
 
     async findAll(): Promise<Service[]> {
         const results = await db.select().from(servicesTable).orderBy(asc(servicesTable.displayOrder));
-        return results.map(this.transformService);
+        return results.map(s => this.transformService(s));
     }
 
     async findById(id: number): Promise<Service | null> {

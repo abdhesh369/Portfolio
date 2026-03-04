@@ -2,6 +2,7 @@ import { Router } from "express";
 import { articleService } from "../services/article.service.js";
 import type { Article } from "../../shared/schema.js";
 import { escapeXml } from "../lib/xml-utils.js";
+import { logger } from "../lib/logger.js";
 
 const feedRoutes = Router();
 
@@ -41,7 +42,7 @@ feedRoutes.get("/feed.xml", async (req, res) => {
     res.header("Content-Type", "application/rss+xml");
     res.send(xml);
   } catch (error) {
-    console.error("Error generating RSS feed:", error);
+    logger.error({ context: "feed", error }, "Error generating RSS feed");
     res.status(500).send("Error generating feed");
   }
 });

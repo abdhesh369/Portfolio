@@ -21,7 +21,7 @@ export const cachePublic = (maxAgeSeconds: number = 300) => {
         }
 
         // Set Cache-Control header
-        res.setHeader(
+        res.set(
             "Cache-Control",
             `public, max-age=${maxAgeSeconds}, stale-while-revalidate=60`
         );

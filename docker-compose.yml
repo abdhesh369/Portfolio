@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio-db
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -u user -d portfolio" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: portfolio-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - portfolio-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: portfolio-api
+    restart: always
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DATABASE_URL: postgresql://user:password@postgres:5432/portfolio
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: http://localhost:3000
+      JWT_SECRET: dev_secret_key_at_least_32_characters
+      ADMIN_PASSWORD: admin
+      # Sentry configuration (optional, will use env vars if provided)
+      SENTRY_DSN: ${SENTRY_DSN}
+      SENTRY_ENVIRONMENT: development
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - portfolio-network
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: portfolio-frontend
+    environment:
+      # These are build-time args for Vite, but Vite can also use runtime env
+      # if configured, though standard Vite build embeds them.
+      VITE_API_URL: http://localhost:5000
+      VITE_SENTRY_DSN: ${VITE_SENTRY_DSN}
+      VITE_SENTRY_ENVIRONMENT: development
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - portfolio-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+
+networks:
+  portfolio-network:
+    driver: bridge

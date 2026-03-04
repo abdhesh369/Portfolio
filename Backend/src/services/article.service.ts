@@ -1,5 +1,7 @@
 import { articleRepository } from "../repositories/article.repository.js";
 import { redis } from "../lib/redis.js";
+import { CHAT_CACHE_KEY } from "../routes/chat.js";
+import { logger } from "../lib/logger.js";
 import type { Article, InsertArticle } from "../../shared/schema.js";
 
 const CACHE_KEY = "articles";
@@ -138,17 +140,17 @@ export class ArticleService {
         try {
             const keys = await redis.smembers(`${CACHE_KEY}:tracked-keys`);
             if (keys.length > 0) {
-                await redis.del(...keys, `${CACHE_KEY}:tracked-keys`);
+                await redis.del(...keys, `${CACHE_KEY}:tracked-keys`, CHAT_CACHE_KEY);
             } else {
                 // Fallback for untracked keys or migration period
-                await redis.del(CACHE_KEY, `${CACHE_KEY}:status:published`, `${CACHE_KEY}:status:draft`);
+                await redis.del(CACHE_KEY, `${CACHE_KEY}:status:published`, `${CACHE_KEY}:status:draft`, CHAT_CACHE_KEY);
             }
 
             if (slug) {
                 await redis.del(`${ARTICLE_CACHE_PREFIX}${slug}`);
             }
         } catch (error) {
-            console.error(`[REDIS] Invalidation failed: ${error}`);
+            logger.error({ context: "cache", service: "article", error }, "Cache invalidation failed");
         }
     }
 }

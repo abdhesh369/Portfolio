@@ -3,6 +3,7 @@ import { seoSettingsService } from "../services/seo-settings.service.js";
 import { projectService } from "../services/project.service.js";
 import { articleService } from "../services/article.service.js";
 import { escapeXml } from "../lib/xml-utils.js";
+import { logger } from "../lib/logger.js";
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.get("/", async (req, res) => {
   try {
     const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
     if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {
-      console.warn("Sitemap: No PUBLIC_URL or FRONTEND_URL found, falling back to abdheshsah.com.np");
+      logger.warn({ context: "sitemap" }, "No PUBLIC_URL or FRONTEND_URL found, falling back to default");
     }
     const seoSettings = await seoSettingsService.getAll();
     const projects = await projectService.getAll();
@@ -73,7 +74,7 @@ router.get("/", async (req, res) => {
     res.header("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400");
     res.send(xml);
   } catch (error) {
-    console.error("Sitemap generation error:", error);
+    logger.error({ context: "sitemap", error }, "Sitemap generation error");
     res.status(500).send("Error generating sitemap");
   }
 });

@@ -93,6 +93,73 @@ const isMobileDevice = (): boolean => {
 };
 
 // ============================================
+// SPATIAL GRID — O(n) connection search
+// ============================================
+
+/**
+ * Uniform spatial hash grid that partitions 3D space into
+ * cells of `cellSize`. Allows O(1) lookup of nearby particles
+ * by only checking the 27 neighboring cells (3×3×3 cube).
+ */
+export class SpatialGrid {
+    private cells: Map<string, number[]>;
+    public readonly cellSize: number;
+
+    constructor(cellSize: number) {
+        this.cellSize = cellSize;
+        this.cells = new Map();
+    }
+
+    /** Hash a 3D position to a cell key */
+    private key(x: number, y: number, z: number): string {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        const cz = Math.floor(z / this.cellSize);
+        return `${cx},${cy},${cz}`;
+    }
+
+    /** Insert a particle index at a given position */
+    insert(index: number, x: number, y: number, z: number): void {
+        const k = this.key(x, y, z);
+        let bucket = this.cells.get(k);
+        if (!bucket) {
+            bucket = [];
+            this.cells.set(k, bucket);
+        }
+        bucket.push(index);
+    }
+
+    /** Get all particle indices in the 27 neighboring cells of (x, y, z) */
+    getNearby(x: number, y: number, z: number): number[] {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        const cz = Math.floor(z / this.cellSize);
+        const result: number[] = [];
+
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dz = -1; dz <= 1; dz++) {
+                    const k = `${cx + dx},${cy + dy},${cz + dz}`;
+                    const bucket = this.cells.get(k);
+                    if (bucket) {
+                        for (let n = 0; n < bucket.length; n++) {
+                            result.push(bucket[n]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /** Clear all cells for reuse */
+    clear(): void {
+        this.cells.clear();
+    }
+}
+
+// ============================================
 // MAIN COMPONENT
 // ============================================
 
@@ -114,6 +181,8 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     const velocitiesRef = useRef<ParticleVelocity[]>([]);
     const animationIdRef = useRef<number>(0);
     const isVisibleRef = useRef<boolean>(true);
+    const spatialGridRef = useRef<SpatialGrid | null>(null);
+    const frameCountRef = useRef<number>(0);
 
     // Mouse tracking
     const mouseRef = useRef({ x: 0, y: 0 });
@@ -201,7 +270,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
         return new THREE.LineSegments(geometry, material);
     }, [config]);
 
-    // Update line connections
+    // Update line connections using spatial grid — O(n) average instead of O(n²)
     const updateLineConnections = useCallback(() => {
         const particles = particlesRef.current;
         const lines = linesRef.current;
@@ -210,35 +279,50 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
         const particlePositions = particles.geometry.attributes.position.array as Float32Array;
         const linePositions = lines.geometry.attributes.position.array as Float32Array;
 
+        const maxDistanceSq = config.connectionDistance * config.connectionDistance;
+
+        // Build spatial grid
+        let grid = spatialGridRef.current;
+        if (!grid) {
+            grid = new SpatialGrid(config.connectionDistance);
+            spatialGridRef.current = grid;
+        }
+        grid.clear();
+
+        for (let i = 0; i < config.particleCount; i++) {
+            const i3 = i * 3;
+            grid.insert(i, particlePositions[i3], particlePositions[i3 + 1], particlePositions[i3 + 2]);
+        }
+
         let lineIndex = 0;
         let connectionCount = 0;
-        const maxDistance = config.connectionDistance;
-        const maxDistanceSq = maxDistance * maxDistance; // Optimize: avoid sqrt
 
+        // For each particle, only check neighbors in adjacent cells
         for (let i = 0; i < config.particleCount; i++) {
             const i3 = i * 3;
             const x1 = particlePositions[i3];
             const y1 = particlePositions[i3 + 1];
             const z1 = particlePositions[i3 + 2];
 
-            for (let j = i + 1; j < config.particleCount; j++) {
-                const j3 = j * 3;
-                const x2 = particlePositions[j3];
-                const y2 = particlePositions[j3 + 1];
-                const z2 = particlePositions[j3 + 2];
+            const neighbors = grid.getNearby(x1, y1, z1);
 
-                const dx = x1 - x2;
-                const dy = y1 - y2;
-                const dz = z1 - z2;
+            for (let n = 0; n < neighbors.length; n++) {
+                const j = neighbors[n];
+                if (j <= i) continue; // Avoid duplicates — only check j > i
+
+                const j3 = j * 3;
+                const dx = x1 - particlePositions[j3];
+                const dy = y1 - particlePositions[j3 + 1];
+                const dz = z1 - particlePositions[j3 + 2];
                 const distanceSq = dx * dx + dy * dy + dz * dz;
 
                 if (distanceSq < maxDistanceSq) {
                     linePositions[lineIndex++] = x1;
                     linePositions[lineIndex++] = y1;
                     linePositions[lineIndex++] = z1;
-                    linePositions[lineIndex++] = x2;
-                    linePositions[lineIndex++] = y2;
-                    linePositions[lineIndex++] = z2;
+                    linePositions[lineIndex++] = particlePositions[j3];
+                    linePositions[lineIndex++] = particlePositions[j3 + 1];
+                    linePositions[lineIndex++] = particlePositions[j3 + 2];
                     connectionCount++;
                 }
             }
@@ -301,8 +385,11 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
             particles.geometry.attributes.position.needsUpdate = true;
         }
 
-        // Update connections
-        updateLineConnections();
+        // Update connections every 3rd frame for performance
+        frameCountRef.current++;
+        if (frameCountRef.current % 3 === 0) {
+            updateLineConnections();
+        }
 
         // Render
         renderer.render(scene, camera);

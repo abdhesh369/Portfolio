@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from '../shared/schema.js';
 import { env } from './env.js';
+import { logger } from './lib/logger.js';
 
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL must be set. Did you forget to provision a database?');
@@ -16,7 +17,7 @@ export const pool = new pg.Pool({
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 15000, // 15 s — handles Neon cold starts (increased from 10s)
     query_timeout: 15000, // Per-query timeout
-    ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
 });
 
 export const db = drizzle(pool, { schema });
@@ -50,9 +51,9 @@ export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message
  * Gracefully closes the database pool
  */
 export async function closePool() {
-    console.log("📍 Closing database pool...");
+    logger.info({ context: "database" }, "Closing database pool...");
     await pool.end();
-    console.log("✓ Database pool closed");
+    logger.info({ context: "database" }, "Database pool closed");
 }
 
 

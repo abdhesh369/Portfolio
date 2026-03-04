@@ -68,7 +68,7 @@ export const api = {
     projects: {
         list: {
             method: "GET" as const,
-            path: "/api/projects",
+            path: "/api/v1/projects",
             description: "List all projects (public)",
             responses: {
                 200: z.array(projectSchema),
@@ -77,7 +77,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/projects/:id",
+            path: "/api/v1/projects/:id",
             description: "Get single project by ID (public)",
             responses: {
                 200: projectSchema,
@@ -88,7 +88,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/projects",
+            path: "/api/v1/projects",
             description: "Create new project (admin only)",
             input: insertProjectApiSchema,
             requiresAuth: true,
@@ -102,7 +102,7 @@ export const api = {
         },
         update: {
             method: "PUT" as const,
-            path: "/api/projects/:id",
+            path: "/api/v1/projects/:id",
             description: "Update project by ID (admin only)",
             input: insertProjectApiSchema.partial(),
             requiresAuth: true,
@@ -117,7 +117,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/projects/:id",
+            path: "/api/v1/projects/:id",
             description: "Delete project by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -135,7 +135,7 @@ export const api = {
     skills: {
         list: {
             method: "GET" as const,
-            path: "/api/skills",
+            path: "/api/v1/skills",
             description: "List all skills (public, cached)",
             responses: {
                 200: z.array(skillSchema),
@@ -144,7 +144,7 @@ export const api = {
         },
         connections: {
             method: "GET" as const,
-            path: "/api/skills/connections",
+            path: "/api/v1/skills/connections",
             description: "List all skill connections (public)",
             responses: {
                 200: z.array(skillConnectionSchema),
@@ -153,7 +153,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/skills/:id",
+            path: "/api/v1/skills/:id",
             description: "Get single skill by ID (public)",
             responses: {
                 200: skillSchema,
@@ -164,7 +164,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/skills",
+            path: "/api/v1/skills",
             description: "Create new skill (admin only)",
             input: insertSkillApiSchema,
             requiresAuth: true,
@@ -178,7 +178,7 @@ export const api = {
         },
         update: {
             method: "PUT" as const,
-            path: "/api/skills/:id",
+            path: "/api/v1/skills/:id",
             description: "Update skill by ID (admin only)",
             input: insertSkillApiSchema.partial(),
             requiresAuth: true,
@@ -193,7 +193,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/skills/:id",
+            path: "/api/v1/skills/:id",
             description: "Delete skill by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -211,7 +211,7 @@ export const api = {
     mindset: {
         list: {
             method: "GET" as const,
-            path: "/api/mindset",
+            path: "/api/v1/mindset",
             description: "List all engineering mindset principles (public)",
             responses: {
                 200: z.array(mindsetSchema),
@@ -220,7 +220,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/mindset/:id",
+            path: "/api/v1/mindset/:id",
             description: "Get single mindset principle by ID (public)",
             responses: {
                 200: mindsetSchema,
@@ -235,7 +235,7 @@ export const api = {
     experiences: {
         list: {
             method: "GET" as const,
-            path: "/api/experiences",
+            path: "/api/v1/experiences",
             description: "List all experiences (public, cached)",
             responses: {
                 200: z.array(experienceSchema),
@@ -244,7 +244,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/experiences/:id",
+            path: "/api/v1/experiences/:id",
             description: "Get single experience by ID (public)",
             responses: {
                 200: experienceSchema,
@@ -255,7 +255,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/experiences",
+            path: "/api/v1/experiences",
             description: "Create new experience (admin only)",
             input: insertExperienceApiSchema,
             requiresAuth: true,
@@ -269,7 +269,7 @@ export const api = {
         },
         update: {
             method: "PUT" as const,
-            path: "/api/experiences/:id",
+            path: "/api/v1/experiences/:id",
             description: "Update experience by ID (admin only)",
             input: insertExperienceApiSchema.partial(),
             requiresAuth: true,
@@ -284,7 +284,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/experiences/:id",
+            path: "/api/v1/experiences/:id",
             description: "Delete experience by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -302,7 +302,7 @@ export const api = {
     services: {
         list: {
             method: "GET" as const,
-            path: "/api/services",
+            path: "/api/v1/services",
             description: "List all services (public, cached)",
             responses: {
                 200: z.array(serviceSchema),
@@ -311,7 +311,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/services/:id",
+            path: "/api/v1/services/:id",
             description: "Get single service by ID (public)",
             responses: {
                 200: serviceSchema,
@@ -322,7 +322,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/services",
+            path: "/api/v1/services",
             description: "Create new service (admin only)",
             input: insertServiceApiSchema,
             requiresAuth: true,
@@ -336,7 +336,7 @@ export const api = {
         },
         update: {
             method: "PATCH" as const,
-            path: "/api/services/:id",
+            path: "/api/v1/services/:id",
             description: "Update service by ID (admin only)",
             input: insertServiceApiSchema.partial(),
             requiresAuth: true,
@@ -351,7 +351,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/services/:id",
+            path: "/api/v1/services/:id",
             description: "Delete service by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -369,7 +369,7 @@ export const api = {
     messages: {
         list: {
             method: "GET" as const,
-            path: "/api/messages",
+            path: "/api/v1/messages",
             description: "List all messages (admin only)",
             requiresAuth: true,
             responses: {
@@ -381,7 +381,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/messages/:id",
+            path: "/api/v1/messages/:id",
             description: "Get single message by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -395,7 +395,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/messages",
+            path: "/api/v1/messages",
             description: "Submit contact form (public, rate-limited)",
             input: insertMessageApiSchema,
             responses: {
@@ -409,7 +409,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/messages/:id",
+            path: "/api/v1/messages/:id",
             description: "Delete message by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -427,7 +427,7 @@ export const api = {
     analytics: {
         track: {
             method: "POST" as const,
-            path: "/api/analytics/track",
+            path: "/api/v1/analytics/track",
             description: "Log an analytics event (public)",
             input: insertAnalyticsSchema,
             responses: {
@@ -438,7 +438,7 @@ export const api = {
         },
         summary: {
             method: "GET" as const,
-            path: "/api/analytics/summary",
+            path: "/api/v1/analytics/summary",
             description: "Get analytics summary (admin only)",
             requiresAuth: true,
             responses: {
@@ -454,7 +454,7 @@ export const api = {
     testimonials: {
         list: {
             method: "GET" as const,
-            path: "/api/testimonials",
+            path: "/api/v1/testimonials",
             description: "List all testimonials (public, cached)",
             responses: {
                 200: z.array(testimonialSchema),
@@ -463,7 +463,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/testimonials/:id",
+            path: "/api/v1/testimonials/:id",
             description: "Get single testimonial by ID (public)",
             responses: {
                 200: testimonialSchema,
@@ -474,7 +474,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/testimonials",
+            path: "/api/v1/testimonials",
             description: "Create new testimonial (admin only)",
             input: insertTestimonialApiSchema,
             requiresAuth: true,
@@ -487,7 +487,7 @@ export const api = {
         },
         update: {
             method: "PATCH" as const,
-            path: "/api/testimonials/:id",
+            path: "/api/v1/testimonials/:id",
             description: "Update testimonial by ID (admin only)",
             input: insertTestimonialApiSchema.partial(),
             requiresAuth: true,
@@ -501,7 +501,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/testimonials/:id",
+            path: "/api/v1/testimonials/:id",
             description: "Delete testimonial by ID (admin only)",
             requiresAuth: true,
             responses: {
@@ -516,7 +516,7 @@ export const api = {
     articles: {
         list: {
             method: "GET" as const,
-            path: "/api/articles",
+            path: "/api/v1/articles",
             description: "List all articles (public/admin)",
             responses: {
                 200: z.array(articleSchema),
@@ -525,7 +525,7 @@ export const api = {
         },
         get: {
             method: "GET" as const,
-            path: "/api/articles/:slug",
+            path: "/api/v1/articles/:slug",
             description: "Get single article by slug (public)",
             responses: {
                 200: articleWithRelatedSchema,
@@ -535,7 +535,7 @@ export const api = {
         },
         create: {
             method: "POST" as const,
-            path: "/api/articles",
+            path: "/api/v1/articles",
             description: "Create new article (admin only)",
             input: insertArticleApiSchema,
             requiresAuth: true,
@@ -548,7 +548,7 @@ export const api = {
         },
         update: {
             method: "PATCH" as const,
-            path: "/api/articles/:id",
+            path: "/api/v1/articles/:id",
             description: "Update article by ID (admin only)",
             input: insertArticleApiSchema.partial(),
             requiresAuth: true,
@@ -562,7 +562,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/articles/:id",
+            path: "/api/v1/articles/:id",
             description: "Delete article by ID (admin only)",
             requiresAuth: true,
             responses: {

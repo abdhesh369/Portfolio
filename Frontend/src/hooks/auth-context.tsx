@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const checkAuth = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/auth/status`, {
+            const res = await fetch(`${API_BASE_URL}/api/v1/auth/status`, {
                 credentials: 'include'
             });
             if (res.ok) {
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = async () => {
         try {
-            await fetch(`${API_BASE_URL}/api/auth/logout`, {
+            await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
                 method: "POST",
                 credentials: 'include'
             });

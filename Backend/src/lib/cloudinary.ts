@@ -1,12 +1,13 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
+import { logger } from './logger.js';
 
 // Validate before configuring
 if (!process.env.CLOUDINARY_CLOUD_NAME ||
     !process.env.CLOUDINARY_API_KEY ||
     !process.env.CLOUDINARY_API_SECRET) {
-    console.error("❌ [CLOUDINARY] Credentials not configured. Uploads will fail.");
+    logger.error({ context: "cloudinary" }, "Credentials not configured. Uploads will fail.");
     if (process.env.NODE_ENV === 'production') {
         throw new Error("CLOUDINARY credentials required in production");
     }

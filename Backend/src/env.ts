@@ -34,7 +34,6 @@ const envSchema = z.object({
     RESEND_API_KEY: z.string().optional(),
     REDIS_URL: z.string().optional(),
     FRONTEND_URL: z.string().optional(),
-    ADMIN_API_KEY: z.string().min(32, "ADMIN_API_KEY must be at least 32 characters"),
     JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
     ADMIN_PASSWORD: z.string().min(8, "ADMIN_PASSWORD must be at least 8 characters"),
     ADMIN_EMAIL: z.string().email(),
@@ -44,6 +43,8 @@ const envSchema = z.object({
     CLOUDINARY_CLOUD_NAME: z.string().optional(),
     CLOUDINARY_API_KEY: z.string().optional(),
     CLOUDINARY_API_SECRET: z.string().optional(),
+    SENTRY_DSN: z.string().optional(),
+    SENTRY_ENVIRONMENT: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

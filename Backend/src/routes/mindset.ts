@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { mindsetService } from "../services/mindset.service.js";
 import { insertMindsetApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { cachePublic } from "../middleware/cache.js";
 import { z } from "zod";
 
 const router = Router();
@@ -32,6 +33,7 @@ export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset - Get mindset data
     app.get(
         "/mindset",
+        cachePublic(3600),
         asyncHandler(async (req, res) => {
             const mindset = await mindsetService.getAll();
             res.json(mindset);
@@ -52,6 +54,7 @@ export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset/:id - Get single mindset principle
     app.get(
         "/mindset/:id",
+        cachePublic(3600),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {

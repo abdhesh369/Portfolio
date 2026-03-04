@@ -9,6 +9,7 @@ import { env } from "../env.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import DOMPurify from 'isomorphic-dompurify';
 import { emailQueue } from "../lib/queue.js";
+import { logger } from "../lib/logger.js";
 function escapeHtml(text: string): string {
     return text
         .replace(/&/g, "&amp;")
@@ -29,12 +30,7 @@ const contactFormLimiter = rateLimit({
 
 import { validateBody } from "../middleware/validate.js";
 
-// Logger helper
-function log(message: string, level: "info" | "error" | "warn" = "info") {
-    const timestamp = new Date().toISOString();
-    const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
-    console.log(`${prefix} [${timestamp}] [ROUTES] ${message}`);
-}
+// Rate Limiter: max 5 requests per 15 minutes
 
 export function registerMessageRoutes(app: Router) {
     // GET /messages - List all messages (admin only)
@@ -86,7 +82,7 @@ export function registerMessageRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             try {
                 const message = await messageService.create(req.body);
-                log(`New message from: ${message.name} (${message.email})`);
+                logger.info({ context: "messages", name: message.name, email: message.email }, "New message received");
 
                 // Send response immediately
                 res.status(201).json({
@@ -103,13 +99,13 @@ export function registerMessageRoutes(app: Router) {
                             message,
                             targetEmail: env.ADMIN_EMAIL,
                         }
-                    }).catch(err => log(`Failed to queue email: ${err}`, "error"));
+                    }).catch(err => logger.error({ context: "messages", error: err }, "Failed to queue email"));
                 } else {
-                    log("Skipping email notification: Queue not initialized", "warn");
+                    logger.warn({ context: "messages" }, "Skipping email notification: Queue not initialized");
                 }
             } catch (error: any) {
                 if (error.message === "Message rejected") {
-                    log(`Spam blocked (Honeypot filled): ${req.body.email}`, "warn");
+                    logger.warn({ context: "messages", email: req.body.email }, "Spam blocked (Honeypot filled)");
                     // Fake success to trick the bot
                     res.status(201).json({
                         success: true,
@@ -179,10 +175,10 @@ export function registerMessageRoutes(app: Router) {
                             html: safeSanitizedBody,
                         }
                     });
-                    log(`Queued reply to ${message.email}`);
+                    logger.info({ context: "messages", to: message.email }, "Queued reply");
                     res.json({ success: true, message: "Reply queued successfully" });
                 } catch (queueError: any) {
-                    log(`Failed to queue reply to ${message.email}: ${queueError.message}`, "error");
+                    logger.error({ context: "messages", to: message.email, error: queueError.message }, "Failed to queue reply");
                     res.status(500).json({ message: `Failed to queue email: ${queueError.message}` });
                 }
             } else {
@@ -201,7 +197,11 @@ export function registerMessageRoutes(app: Router) {
                 res.status(400).json({ message: "Invalid message ID" });
                 return;
             }
-            await messageService.delete(id);
+            const deleted = await messageService.delete(id);
+            if (!deleted) {
+                res.status(404).json({ message: "Message not found" });
+                return;
+            }
             res.status(204).send();
         })
     );

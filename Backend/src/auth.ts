@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { env } from "./env.js";
+import { logger } from "./lib/logger.js";
 import jwt from "jsonwebtoken";
 import { Redis } from "ioredis";
 
@@ -8,7 +9,7 @@ const redis = env.REDIS_URL ? new Redis(env.REDIS_URL) : null;
 const isProd = env.NODE_ENV === "production";
 
 if (isProd && !redis) {
-    console.warn("⚠️  [AUTH] Redis is not configured in production. Token blacklist is disabled. Tokens cannot be revoked persistently.");
+    logger.warn({ context: "auth" }, "Redis is not configured in production. Token blacklist is disabled.");
 }
 
 /**
@@ -27,7 +28,49 @@ export async function revokeToken(token: string) {
             }
         }
     } catch (err) {
-        console.error("[AUTH] Failed to revoke token:", err);
+        logger.error({ context: "auth", error: err }, "Failed to revoke token");
+    }
+}
+
+// --- Refresh Token Helpers ---
+
+const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60; // 604800 seconds (7 days)
+
+/**
+ * Stores a hashed refresh token in Redis with 7-day TTL
+ */
+export async function storeRefreshToken(tokenHash: string): Promise<void> {
+    if (!redis) return;
+    try {
+        await redis.set(`refresh:${tokenHash}`, "1", "EX", REFRESH_TOKEN_TTL);
+    } catch (err) {
+        logger.error({ context: "auth", error: err }, "Failed to store refresh token");
+    }
+}
+
+/**
+ * Validates whether a hashed refresh token exists in Redis
+ */
+export async function validateRefreshToken(tokenHash: string): Promise<boolean> {
+    if (!redis) return false;
+    try {
+        const exists = await redis.get(`refresh:${tokenHash}`);
+        return exists === "1";
+    } catch (err) {
+        logger.error({ context: "auth", error: err }, "Failed to validate refresh token");
+        return false;
+    }
+}
+
+/**
+ * Revokes a refresh token by deleting its hash from Redis
+ */
+export async function revokeRefreshToken(tokenHash: string): Promise<void> {
+    if (!redis) return;
+    try {
+        await redis.del(`refresh:${tokenHash}`);
+    } catch (err) {
+        logger.error({ context: "auth", error: err }, "Failed to revoke refresh token");
     }
 }
 
@@ -55,11 +98,6 @@ export async function checkAuthStatus(req: Request): Promise<boolean> {
         } catch (err) {
             return false;
         }
-    }
-
-    const apiKey = req.headers["x-api-key"];
-    if (apiKey === env.ADMIN_API_KEY) {
-        return true;
     }
 
     return false;
@@ -100,17 +138,9 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         }
     }
 
-    // 3. Fallback to x-api-key (deprecated)
-    const apiKey = req.headers["x-api-key"];
-    if (apiKey === env.ADMIN_API_KEY) {
-        return next();
-    }
-
-    res.status(401).json({ message: "Unauthorized. Please provide a valid token or API key." });
+    res.status(401).json({ message: "Unauthorized. Please provide a valid token." });
 };
 
-// Alias for better readability in admin routes
-export const isAdmin = isAuthenticated;
 
 /**
  * Error handler wrapper for async routes

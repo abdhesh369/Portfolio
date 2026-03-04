@@ -1,5 +1,6 @@
 import { Redis } from "ioredis";
 import { env } from "../env.js";
+import { logger } from "./logger.js";
 
 const DEFAULT_REDIS_URL = "redis://localhost:6379";
 
@@ -13,7 +14,7 @@ class RedisClient {
 
     public static getInstance(): Redis | null {
         if (!env.REDIS_URL && env.NODE_ENV === "production") {
-            console.error("❌ [REDIS] Error: REDIS_URL is missing in production.");
+            logger.error({ context: "redis" }, "REDIS_URL is missing in production");
             return null;
         }
 
@@ -38,16 +39,16 @@ class RedisClient {
 
                 this.instance.on("connect", () => {
                     this.isConnected = true;
-                    console.log("✓ [REDIS] Connected successfully");
+                    logger.info({ context: "redis" }, "Connected successfully");
                 });
 
                 this.instance.on("error", (err) => {
                     this.isConnected = false;
-                    console.error(`❌ [REDIS] Connection error: ${err.message}`);
+                    logger.error({ context: "redis", error: err.message }, "Connection error");
                 });
 
             } catch (error) {
-                console.error(`❌ [REDIS] Failed to initialize: ${error}`);
+                logger.error({ context: "redis", error }, "Failed to initialize");
                 return null;
             }
         }
@@ -57,6 +58,18 @@ class RedisClient {
 
     public static get isReady(): boolean {
         return this.isConnected;
+    }
+
+    public static async checkHealth(): Promise<{ healthy: boolean; message: string }> {
+        if (!this.instance) {
+            return { healthy: false, message: "Redis client not initialized" };
+        }
+        try {
+            await this.instance.ping();
+            return { healthy: true, message: "Redis connected successfully" };
+        } catch (error: any) {
+            return { healthy: false, message: error.message };
+        }
     }
 }
 

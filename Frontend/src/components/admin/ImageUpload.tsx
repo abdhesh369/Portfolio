@@ -37,7 +37,7 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
         formData.append('image', file);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/upload`, {
+            const response = await fetch(`${API_BASE_URL}/api/v1/upload`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData

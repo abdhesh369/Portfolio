@@ -1,6 +1,7 @@
 import { emailTemplateRepository } from "../repositories/email-template.repository.js";
 import type { InsertEmailTemplate, EmailTemplate } from "../../shared/schema.js";
 import { redis } from "../lib/redis.js";
+import { logger } from "../lib/logger.js";
 
 const CACHE_KEY = "email_templates";
 
@@ -43,7 +44,7 @@ export class EmailTemplateService {
         try {
             await redis?.del(CACHE_KEY);
         } catch (error) {
-            console.warn("Failed to invalidate email template cache:", error);
+            logger.warn({ context: "cache", service: "email-template", error }, "Failed to invalidate email template cache");
         }
     }
 }

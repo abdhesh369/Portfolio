@@ -12,7 +12,7 @@ export class MessageRepository {
 
     async findAll(): Promise<Message[]> {
         const results = await db.select().from(messagesTable).orderBy(desc(messagesTable.createdAt));
-        return results.map(this.transformMessage);
+        return results.map(m => this.transformMessage(m));
     }
 
     async findById(id: number): Promise<Message | null> {
@@ -33,8 +33,9 @@ export class MessageRepository {
         return this.transformMessage(inserted);
     }
 
-    async delete(id: number): Promise<void> {
-        await db.delete(messagesTable).where(eq(messagesTable.id, id));
+    async delete(id: number): Promise<boolean> {
+        const result = await db.delete(messagesTable).where(eq(messagesTable.id, id)).returning();
+        return result.length > 0;
     }
 
     async update(id: number, data: Partial<InsertMessage>): Promise<Message> {

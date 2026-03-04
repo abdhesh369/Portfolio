@@ -33,9 +33,9 @@ export function Chatbot() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // Effect 1: Focus management — only runs when chatbot opens/closes
     useEffect(() => {
         if (isOpen) {
-            scrollToBottom();
             // Store last focused element to return focus later
             lastFocusedRef.current = document.activeElement as HTMLElement;
             // Focus input shortly after opening for animation
@@ -48,7 +48,14 @@ export function Chatbot() {
                 fabRef.current.focus();
             }
         }
-    }, [messages, isOpen]);
+    }, [isOpen]);
+
+    // Effect 2: Scroll to bottom — only runs when new messages arrive
+    useEffect(() => {
+        if (isOpen) {
+            scrollToBottom();
+        }
+    }, [messages]);
 
     // Focus Trap and Escape Key
     useEffect(() => {
@@ -103,7 +110,7 @@ export function Chatbot() {
         try {
             // Only send the last N messages to avoid unbounded payload
             const recentMessages = newMessages.slice(-MAX_CLIENT_MESSAGES);
-            const data = await apiFetch("/api/chat", {
+            const data = await apiFetch("/api/v1/chat", {
                 method: "POST",
                 body: JSON.stringify({ messages: recentMessages })
             });
@@ -243,7 +250,13 @@ export function Chatbot() {
                                             <div className={`prose prose-sm dark:prose-invert max-w-none break-words prose-p:leading-relaxed ${msg.role === 'model' ? 'font-mono text-[13px] tracking-tight' : 'font-sans'
                                                 }`}>
                                                 {msg.role === 'model' ? (
-                                                    <ReactMarkdown>
+                                                    <ReactMarkdown
+                                                        components={{
+                                                            a: ({ node, ...props }) => (
+                                                                <a {...props} target="_blank" rel="noopener noreferrer" />
+                                                            )
+                                                        }}
+                                                    >
                                                         {msg.parts[0].text}
                                                     </ReactMarkdown>
                                                 ) : (

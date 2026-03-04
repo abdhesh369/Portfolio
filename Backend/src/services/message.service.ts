@@ -1,6 +1,7 @@
 import { messageRepository } from "../repositories/message.repository.js";
 import DOMPurify from "isomorphic-dompurify";
 import type { Message, InsertMessage } from "../../shared/schema.js";
+import { logger } from "../lib/logger.js";
 
 export class MessageService {
     private sanitize(text: string): string {
@@ -18,7 +19,7 @@ export class MessageService {
     async create(data: InsertMessage & { website?: string }): Promise<Message> {
         // Honeypot check
         if (data.website) {
-            console.warn("Spam detected via honeypot field");
+            logger.warn({ context: "security", service: "message", email: data.email }, "Spam detected via honeypot field");
             throw new Error("Message rejected");
         }
 
@@ -33,8 +34,8 @@ export class MessageService {
         return await messageRepository.create(sanitizedData);
     }
 
-    async delete(id: number): Promise<void> {
-        await messageRepository.delete(id);
+    async delete(id: number): Promise<boolean> {
+        return await messageRepository.delete(id);
     }
 
     async bulkDelete(ids: number[]): Promise<void> {

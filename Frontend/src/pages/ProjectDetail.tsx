@@ -563,7 +563,7 @@ export default function ProjectDetail() {
                   {/* API Response Viewer — "Proof of Work" */}
                   <div className="mt-6 pt-6 border-t border-gray-800/50">
                     <ApiResponseViewer
-                      endpoint={`/api/projects/${project.id}`}
+                      endpoint={`/api/v1/projects/${project.id}`}
                       data={project}
                       accentColor={catColor.text}
                     />

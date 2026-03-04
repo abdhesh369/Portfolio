@@ -1,5 +1,6 @@
 import { skillRepository } from "../repositories/skill.repository.js";
 import { redis } from "../lib/redis.js";
+import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Skill, InsertSkill } from "../../shared/schema.js";
 
 export class SkillService {
@@ -24,7 +25,7 @@ export class SkillService {
     async create(data: InsertSkill): Promise<Skill> {
         const skill = await skillRepository.create(data);
         if (redis) {
-            await redis.del(this.CACHE_KEY);
+            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
         }
         return skill;
     }
@@ -32,7 +33,7 @@ export class SkillService {
     async update(id: number, data: Partial<InsertSkill>): Promise<Skill> {
         const skill = await skillRepository.update(id, data);
         if (redis) {
-            await redis.del(this.CACHE_KEY);
+            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
         }
         return skill;
     }
@@ -40,14 +41,14 @@ export class SkillService {
     async delete(id: number): Promise<void> {
         await skillRepository.delete(id);
         if (redis) {
-            await redis.del(this.CACHE_KEY);
+            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
         }
     }
 
     async bulkDelete(ids: number[]): Promise<void> {
         await skillRepository.bulkDelete(ids);
         if (redis) {
-            await redis.del(this.CACHE_KEY);
+            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
         }
     }
 }

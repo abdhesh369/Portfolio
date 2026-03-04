@@ -29,7 +29,7 @@ export function SEO({
         queryKey: ["seo", slug],
         queryFn: async () => {
             if (!slug) return null;
-            const res = await fetch(`${API_BASE_URL}/api/seo/${slug}`);
+            const res = await fetch(`${API_BASE_URL}/api/v1/seo/${slug}`);
             if (!res.ok) return null;
             return res.json();
         },
