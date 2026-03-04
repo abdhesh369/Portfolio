@@ -51,6 +51,29 @@ export class ArticleRepository {
         } as Article;
     }
 
+    async findByIds(ids: number[]): Promise<Article[]> {
+        if (ids.length === 0) return [];
+
+        const results = await db.select().from(articlesTable).where(inArray(articlesTable.id, ids));
+        if (results.length === 0) return [];
+
+        // Batch fetch all tags for these articles
+        const allTags = await db.select()
+            .from(articleTagsTable)
+            .where(inArray(articleTagsTable.articleId, ids));
+
+        const tagsMap = new Map<number, string[]>();
+        for (const t of allTags) {
+            if (!tagsMap.has(t.articleId)) tagsMap.set(t.articleId, []);
+            tagsMap.get(t.articleId)!.push(t.tag);
+        }
+
+        return results.map(a => ({
+            ...a,
+            tags: tagsMap.get(a.id) ?? []
+        })) as Article[];
+    }
+
     async create(data: InsertArticle & { tags?: string[] }): Promise<Article> {
         const { tags, ...articleData } = data;
 

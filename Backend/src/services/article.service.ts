@@ -107,7 +107,7 @@ export class ArticleService {
     }
 
     async bulkDelete(ids: number[], shouldClearQueryCache = true): Promise<void> {
-        const articles = await Promise.all(ids.map(id => articleRepository.findById(id)));
+        const articles = await articleRepository.findByIds(ids);
         await articleRepository.bulkDelete(ids);
 
         // Invalidate cache for all deleted articles

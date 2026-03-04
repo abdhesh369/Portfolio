@@ -44,7 +44,8 @@ export default function AdminLogin() {
                 title: "Welcome back, Admin!",
                 description: "You are now logged in.",
             });
-            navigate("/admin", { replace: true });
+            // Navigating here is redundant as the useEffect handles the redirect
+            // once isAuthenticated becomes true.
         } catch (err: any) {
             toast({
                 title: "Login Failed",

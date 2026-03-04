@@ -101,8 +101,13 @@ export function useServerStatus() {
       }
     } else {
       // Server is unreachable — mark degraded and start polling
-      failCountRef.current += 1;
       wasOfflineRef.current = true;
+
+      if (slow) {
+        failCountRef.current = 0; // Reset — server is waking, not offline
+      } else {
+        failCountRef.current += 1;
+      }
 
       setStatus((prev) => {
         if (slow) return "waking";

@@ -26,6 +26,10 @@ export function registerUploadRoutes(app: Router) {
 
             uploadMem(req, res, async (err) => {
                 if (err) {
+                    // Multer errors (including fileSize limit)
+                    if (err.code === "LIMIT_FILE_SIZE") {
+                        return res.status(413).json({ message: "File too large. Maximum size is 5MB." });
+                    }
                     return res.status(500).json({ message: "Upload service error", details: err.message });
                 }
 
