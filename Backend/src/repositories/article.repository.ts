@@ -10,16 +10,23 @@ export class ArticleRepository {
             query.where(eq(articlesTable.status, status as any));
         }
         const results = await query.orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt));
+        if (results.length === 0) return [];
 
-        const articlesWithTags = await Promise.all(results.map(async (article) => {
-            const tags = await db.select().from(articleTagsTable).where(eq(articleTagsTable.articleId, article.id));
-            return {
-                ...article,
-                tags: tags.map(t => t.tag)
-            } as Article;
-        }));
+        // Batch fetch all tags for the articles
+        const allTags = await db.select()
+            .from(articleTagsTable)
+            .where(inArray(articleTagsTable.articleId, results.map(a => a.id)));
 
-        return articlesWithTags;
+        const tagsMap = new Map<number, string[]>();
+        for (const t of allTags) {
+            if (!tagsMap.has(t.articleId)) tagsMap.set(t.articleId, []);
+            tagsMap.get(t.articleId)!.push(t.tag);
+        }
+
+        return results.map(a => ({
+            ...a,
+            tags: tagsMap.get(a.id) ?? []
+        })) as Article[];
     }
 
     async findBySlug(slug: string): Promise<Article | null> {
@@ -95,6 +102,56 @@ export class ArticleRepository {
         await db.update(articlesTable)
             .set({ viewCount: sql`${articlesTable.viewCount} + 1` })
             .where(eq(articlesTable.id, id));
+    }
+
+    async findRelated(articleId: number, limit: number = 3): Promise<Article[]> {
+        // Query to find articles with overlapping tags using a specialized SQL join
+        // Using sql.raw carefully or structured sql template
+        const relatedResults = await db.execute(sql`
+            SELECT a.*, COUNT(at2.tag) as score
+            FROM articles a
+            JOIN article_tags at1 ON at1.article_id = ${articleId}
+            JOIN article_tags at2 ON at2.article_id = a.id AND at2.tag = at1.tag
+            WHERE a.id != ${articleId} AND a.status = 'published'
+            GROUP BY a.id, a.title, a.slug, a.content, a.excerpt, a.featured_image, a.status, a.published_at, a.view_count, a.read_time_minutes, a.meta_title, a.meta_description, a.author_id, a.featured_image_alt, a.created_at, a.updated_at
+            ORDER BY score DESC, a.published_at DESC
+            LIMIT ${limit}
+        `);
+
+        if (!relatedResults.rows || relatedResults.rows.length === 0) return [];
+
+        // Map results if column names differ from schema (snake_case to camelCase)
+        // Drizzle usually handles this but execute() returns raw rows
+        const results = relatedResults.rows.map((r: any) => ({
+            id: r.id,
+            title: r.title,
+            slug: r.slug,
+            content: r.content,
+            excerpt: r.excerpt,
+            featuredImage: r.featured_image,
+            status: r.status,
+            publishedAt: r.published_at ? new Date(r.published_at) : null,
+            viewCount: r.view_count,
+            readTimeMinutes: r.read_time_minutes,
+            metaTitle: r.meta_title,
+            metaDescription: r.meta_description,
+            authorId: r.author_id,
+            featuredImageAlt: r.featured_image_alt,
+            createdAt: new Date(r.created_at),
+            updatedAt: new Date(r.updated_at),
+        })) as Article[];
+
+        // Fetch tags for results
+        const ids = results.map(r => r.id);
+        const allTags = await db.select().from(articleTagsTable).where(inArray(articleTagsTable.articleId, ids));
+
+        const tagsMap = new Map<number, string[]>();
+        for (const t of allTags) {
+            if (!tagsMap.has(t.articleId)) tagsMap.set(t.articleId, []);
+            tagsMap.get(t.articleId)!.push(t.tag);
+        }
+
+        return results.map(r => ({ ...r, tags: tagsMap.get(r.id) ?? [] }));
     }
 }
 

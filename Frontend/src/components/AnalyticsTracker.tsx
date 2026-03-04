@@ -2,15 +2,16 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
 
+// Local cache to prevent double-tracking across remounts within the same session
+let lastTrackedPath: string | null = null;
+
 export function AnalyticsTracker() {
     const [location] = useLocation();
 
-    const lastTrackedPath = useRef<string | null>(null);
-
     useEffect(() => {
         // Prevent duplicate tracking for the same path in strict mode or rapid navigation
-        if (lastTrackedPath.current === location) return;
-        lastTrackedPath.current = location;
+        if (lastTrackedPath === location) return;
+        lastTrackedPath = location;
 
         // 0. Bot Filtering: Don't track crawlers or automated tools
         if (/bot|crawler|spider|preview|lighthouse|googlebot|bingbot|yandex|slurp|duckduckgo/i.test(navigator.userAgent)) {
@@ -29,7 +30,7 @@ export function AnalyticsTracker() {
                     device: /Mobi|Android/i.test(userAgent) ? "mobile" : "desktop",
                 };
 
-                await fetch(`${API_BASE_URL}/api/analytics/track`, {
+                await fetch(`${API_BASE_URL}/api/v1/analytics/track`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(info),
@@ -54,10 +55,10 @@ export function AnalyticsTracker() {
 
 // Simple helpers for tracking
 function getBrowser(ua: string) {
+    if (ua.includes("Edg")) return "Edge"; // Edge UA contains "Edg" (not "Edge") — must check before Chrome
     if (ua.includes("Chrome")) return "Chrome";
     if (ua.includes("Firefox")) return "Firefox";
     if (ua.includes("Safari")) return "Safari";
-    if (ua.includes("Edge")) return "Edge";
     return "Unknown";
 }
 

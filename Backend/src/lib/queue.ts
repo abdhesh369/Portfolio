@@ -3,6 +3,9 @@ import { Redis } from "ioredis";
 import { Resend } from "resend";
 import { env } from "../env.js";
 
+// BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
+// Queue and Worker each need their own connection (BullMQ internal requirement).
+// These are intentionally separate from the app-level redis singleton in redis.ts.
 function getRedisConnection() {
     return new Redis(env.REDIS_URL || "redis://localhost:6379", {
         maxRetriesPerRequest: null, // BullMQ requires this to be null

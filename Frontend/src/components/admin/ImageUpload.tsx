@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api-helpers";
+import { useToast } from "@/hooks/use-toast";
 
 interface ImageUploadProps {
     value: string;
@@ -13,6 +14,7 @@ interface ImageUploadProps {
 export function ImageUpload({ value, onChange, label = "Image", className }: ImageUploadProps) {
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { toast } = useToast();
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -20,13 +22,13 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            alert('Please upload an image file');
+            toast({ title: "Invalid file type", description: "Please upload an image file.", variant: "destructive" });
             return;
         }
 
         // Validate file size (e.g., max 5MB)
         if (file.size > 5 * 1024 * 1024) {
-            alert('File size should be less than 5MB');
+            toast({ title: "File too large", description: "File size should be less than 5MB.", variant: "destructive" });
             return;
         }
 
@@ -50,7 +52,7 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
             onChange(data.url);
         } catch (error: any) {
             console.error('Upload error:', error);
-            alert(`Failed to upload image: ${error.message}`);
+            toast({ title: "Upload failed", description: error.message || "Failed to upload image.", variant: "destructive" });
         } finally {
             setUploading(false);
             // Reset input

@@ -25,14 +25,22 @@ export const db = drizzle(pool, { schema });
  * Checks database connectivity
  */
 export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message: string }> {
+    const timeout = new Promise<{ healthy: boolean; message: string }>((_, reject) =>
+        setTimeout(() => reject(new Error('Database health check timed out')), 5000)
+    );
+
     try {
-        const client = await pool.connect();
-        try {
-            await client.query('SELECT 1');
-            return { healthy: true, message: 'Database connected successfully' };
-        } finally {
-            client.release();
-        }
+        const check = async () => {
+            const client = await pool.connect();
+            try {
+                await client.query('SELECT 1');
+                return { healthy: true, message: 'Database connected successfully' };
+            } finally {
+                client.release();
+            }
+        };
+
+        return await Promise.race([check(), timeout]) as { healthy: boolean; message: string };
     } catch (error: any) {
         return { healthy: false, message: error.message };
     }

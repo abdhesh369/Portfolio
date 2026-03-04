@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
 
 interface SeoProps {
@@ -23,6 +24,7 @@ export function SEO({
     noindex: propNoindex,
     structuredData,
 }: SeoProps) {
+    const [location] = useLocation();
     const { data: seoSettings } = useQuery({
         queryKey: ["seo", slug],
         queryFn: async () => {
@@ -43,7 +45,11 @@ export function SEO({
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
-    const canonicalUrl = seoSettings?.canonicalUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    const canonicalUrl = seoSettings?.canonicalUrl || `https://abdheshsah.com.np${location}`;
+
+    const safeJsonLd = (data: any) => {
+        return JSON.stringify(data).replace(/<\/script>/g, '<\\/script>');
+    };
 
     return (
         <Helmet>
@@ -75,12 +81,12 @@ export function SEO({
                 Array.isArray(structuredData) ? (
                     structuredData.map((data, i) => (
                         <script key={i} type="application/ld+json">
-                            {JSON.stringify(data)}
+                            {safeJsonLd(data)}
                         </script>
                     ))
                 ) : (
                     <script type="application/ld+json">
-                        {JSON.stringify(structuredData)}
+                        {safeJsonLd(structuredData)}
                     </script>
                 )
             )}

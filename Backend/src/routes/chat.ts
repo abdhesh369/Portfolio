@@ -7,6 +7,8 @@ import { db } from "../db.js";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
 import { env } from "../env.js";
 
+import { validateBody } from "../middleware/validate.js";
+
 const MAX_CHAT_MESSAGES = 20; // Sliding window limit to prevent token abuse
 
 const chatSchema = z.object({
@@ -30,7 +32,7 @@ const chatLimiter = rateLimit({
 });
 
 export const registerChatRoutes = (router: Router) => {
-    router.post("/chat", chatLimiter, async (req, res) => {
+    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
         try {
             const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
 
@@ -39,10 +41,7 @@ export const registerChatRoutes = (router: Router) => {
                 return res.status(500).json({ message: "OpenRouter API key is not configured." });
             }
 
-            const body = chatSchema.safeParse(req.body);
-            if (!body.success) {
-                return res.status(400).json({ message: "Invalid request body", details: body.error });
-            }
+            const validatedData = req.body;
 
             // Fetch context for system prompt
             const [articles, projects, skills, experiences] = await Promise.all([
@@ -67,9 +66,9 @@ export const registerChatRoutes = (router: Router) => {
 
             // Map internal history to OpenRouter messages format { role, content }
             // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
-            const allMessages = body.data.messages.map(msg => ({
+            const allMessages = validatedData.messages.map((msg: any) => ({
                 role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
-                content: msg.parts.map(p => p.text).join("\n")
+                content: msg.parts.map((p: any) => p.text).join("\n")
             }));
             const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
 

@@ -407,7 +407,7 @@ export const analyticsSchema = z.object({
 });
 
 export const insertAnalyticsSchema = z.object({
-  type: z.string().max(50),
+  type: z.enum(["page_view", "project_view", "contact_form"]),
   targetId: z.number().nullable().optional(),
   path: z.string().max(500),
   browser: z.string().max(100).nullable().optional(),

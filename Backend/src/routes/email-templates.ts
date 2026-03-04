@@ -3,6 +3,7 @@ import { emailTemplateService } from "../services/email-template.service.js";
 import { insertEmailTemplateApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
+import { validateBody } from "../middleware/validate.js";
 
 export function registerEmailTemplateRoutes(app: Router) {
     // GET /email-templates - List all templates (admin only)
@@ -38,13 +39,9 @@ export function registerEmailTemplateRoutes(app: Router) {
     app.post(
         "/email-templates",
         isAuthenticated,
+        validateBody(insertEmailTemplateApiSchema),
         asyncHandler(async (req, res) => {
-            const parsed = insertEmailTemplateApiSchema.safeParse(req.body);
-            if (!parsed.success) {
-                res.status(400).json({ message: "Invalid template data", errors: parsed.error.errors });
-                return;
-            }
-            const template = await emailTemplateService.create(parsed.data);
+            const template = await emailTemplateService.create(req.body);
             res.status(201).json(template);
         })
     );
@@ -53,18 +50,14 @@ export function registerEmailTemplateRoutes(app: Router) {
     app.put(
         "/email-templates/:id",
         isAuthenticated,
+        validateBody(insertEmailTemplateApiSchema.partial()),
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
                 res.status(400).json({ message: "Invalid template ID" });
                 return;
             }
-            const parsed = insertEmailTemplateApiSchema.partial().safeParse(req.body);
-            if (!parsed.success) {
-                res.status(400).json({ message: "Invalid template data", errors: parsed.error.errors });
-                return;
-            }
-            const template = await emailTemplateService.update(id, parsed.data);
+            const template = await emailTemplateService.update(id, req.body);
             res.json(template);
         })
     );

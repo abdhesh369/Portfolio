@@ -253,7 +253,7 @@ export function useLogin() {
         title: "Login Successful",
         description: "Welcome back, Admin!",
       });
-      // Invalidate auth state to trigger re-render instead of hard reload
+      // Invalidate auth state to trigger re-render
       queryClient.invalidateQueries({ queryKey: ["auth-status"] });
     },
     onError: (error) => {
@@ -283,22 +283,7 @@ export function useAnalyticsSummary() {
   });
 }
 
-/**
- * Logout utility
- */
-export async function logout() {
-  try {
-    await fetch(`${API_BASE_URL}/api/auth/logout`, {
-      method: "POST",
-      credentials: 'include'
-    });
-  } finally {
-    // Invalidate auth state rather than hard page reload
-    queryClient.invalidateQueries({ queryKey: ["auth-status"] });
-    // Navigate to login page
-    window.location.href = "/admin/login";
-  }
-}
+
 
 /* ---------------------------------- */
 /* End of File */

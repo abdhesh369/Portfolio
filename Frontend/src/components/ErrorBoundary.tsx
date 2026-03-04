@@ -4,9 +4,13 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 /*  Constants & Configuration                                         */
 /* ------------------------------------------------------------------ */
 
-const CONTACT_EMAIL = "abdheshshah111@gmail.com";
-const GITHUB_URL = "github.com/abdhesh369";
-const LINKEDIN_URL = "linkedin.com/in/abdhesh369";
+// Contact information is intentionally kept generic in the error boundary
+// to avoid leaking PII into the compiled JS bundle.
+// Users can find full contact details on the main site.
+const CONTACT_INFO = {
+  action: "Visit the homepage to find contact information",
+  recover: "Try reloading or navigating home",
+};
 
 interface TerminalLine {
   type: "input" | "output" | "error" | "info" | "ascii";
@@ -68,11 +72,10 @@ const COMMANDS: Record<string, (args: string[], error?: Error) => string[]> = {
 
   contact: () => [
     "",
-    "  Contact Information",
+    "  Recovery Options",
     "  ─────────────────────────────────────",
-    `  Email    : ${CONTACT_EMAIL}`,
-    `  GitHub   : ${GITHUB_URL}`,
-    `  LinkedIn : ${LINKEDIN_URL}`,
+    `  ${CONTACT_INFO.action}`,
+    `  ${CONTACT_INFO.recover}`,
     "",
   ],
 

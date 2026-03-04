@@ -1,27 +1,25 @@
 import { Request, Response, NextFunction } from "express";
-import { z } from "zod";
+import { AnyZodObject, ZodError } from "zod";
 
 /**
- * Validation middleware factory for Express routes
- * @param schema Zod schema to validate req.body against
+ * Middleware to validate request body against a Zod schema.
  */
-export function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: Request, res: Response, next: NextFunction): void => {
+export const validateBody = (schema: AnyZodObject) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            req.body = schema.parse(req.body);
+            req.body = await schema.parseAsync(req.body);
             next();
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                res.status(400).json({
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return res.status(400).json({
                     message: "Validation failed",
-                    errors: err.errors.map((e) => ({
+                    errors: error.errors.map((e) => ({
                         path: e.path.join("."),
                         message: e.message,
                     })),
                 });
-                return;
             }
-            next(err);
+            next(error);
         }
     };
-}
+};

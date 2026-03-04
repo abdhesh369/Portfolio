@@ -23,14 +23,13 @@ const loginLimiter = rateLimit({
 
 /**
  * Constant-time string comparison to prevent timing attacks.
+ * Uses HMAC to normalize input lengths before comparison.
  */
 function safeCompare(a: string, b: string): boolean {
-    if (a.length !== b.length) {
-        // Compare against itself to consume the same time regardless of length mismatch
-        crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a));
-        return false;
-    }
-    return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+    const sah = crypto.randomBytes(32); // Random salt for this comparison
+    const hmacA = crypto.createHmac("sha256", sah).update(a || "").digest();
+    const hmacB = crypto.createHmac("sha256", sah).update(b || "").digest();
+    return crypto.timingSafeEqual(hmacA, hmacB);
 }
 
 /**
@@ -44,8 +43,8 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         return res.status(400).json({ message: "Password is required" });
     }
 
-    const normalizedInput = password.trim();
-    const normalizedSecret = env.ADMIN_PASSWORD.trim();
+    const normalizedInput = String(password).trim();
+    const normalizedSecret = String(env.ADMIN_PASSWORD).trim();
 
     let isValid = false;
 
@@ -69,7 +68,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
 
     // Generate JWT
     const token = jwt.sign(
-        { role: "admin", user: "abdhesh" },
+        { role: "admin" }, // Minimal payload
         env.JWT_SECRET,
         { expiresIn: "24h" }
     );
@@ -80,11 +79,11 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     res.cookie("auth_token", token, {
         httpOnly: true,
         secure: isProd,
-        sameSite: "lax",
+        sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.json({ token, message: "Login successful" });
+    res.json({ success: true, message: "Login successful" });
 }));
 
 /**
@@ -93,8 +92,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
  */
 router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
     res.json({
-        authenticated: true,
-        user: (req as any).user
+        authenticated: true
     });
 }));
 
@@ -123,7 +121,7 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
     res.clearCookie("auth_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: "lax"
+        sameSite: "strict"
     });
 
     res.json({ message: "Logged out successfully" });

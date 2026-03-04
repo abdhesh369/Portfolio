@@ -35,6 +35,7 @@ export class ArticleService {
         const articles = await articleRepository.findAll(status);
         if (redis) {
             await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
+            await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
         }
         return articles;
     }
@@ -52,6 +53,7 @@ export class ArticleService {
         const article = await articleRepository.findBySlug(slug);
         if (article && redis) {
             await redis.setex(cacheKey, 3600, JSON.stringify(article));
+            await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
         }
         return article;
     }
@@ -74,42 +76,46 @@ export class ArticleService {
         return article;
     }
 
-    async update(id: number, data: Partial<InsertArticle> & { tags?: string[] }): Promise<Article> {
+    async update(id: number, data: Partial<InsertArticle> & { tags?: string[] }, shouldClearQueryCache = true): Promise<Article> {
         const current = await articleRepository.findById(id);
         if (!current) throw new Error(`Article with id ${id} not found`);
 
-        const updateData: any = { ...data };
+        const updateData: any = { ...data, updatedAt: new Date() };
 
         if (data.content) {
             updateData.readTimeMinutes = this.calculateReadTime(data.content);
         }
 
-        if (data.title && !data.slug && current.title !== data.title) {
+        if (data.title && !data.slug && current.title !== data.title && current.status !== "published") {
             updateData.slug = this.generateSlug(data.title);
         }
 
         const article = await articleRepository.update(id, updateData);
-        await this.invalidateCache(current.slug); // Invalidate old slug
+        if (shouldClearQueryCache) {
+            await this.invalidateCache(current.slug); // Invalidate old slug
+        }
         if (article.slug !== current.slug && redis) {
             await redis.del(`${ARTICLE_CACHE_PREFIX}${article.slug}`); // Ensure new slug is also clear
         }
         return article;
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number, shouldClearQueryCache = true): Promise<void> {
         const article = await articleRepository.findById(id);
         await articleRepository.delete(id);
-        if (article) {
+        if (article && shouldClearQueryCache) {
             await this.invalidateCache(article.slug);
         }
     }
 
-    async bulkDelete(ids: number[]): Promise<void> {
+    async bulkDelete(ids: number[], shouldClearQueryCache = true): Promise<void> {
         const articles = await Promise.all(ids.map(id => articleRepository.findById(id)));
         await articleRepository.bulkDelete(ids);
 
         // Invalidate cache for all deleted articles
-        await this.invalidateCache();
+        if (shouldClearQueryCache) {
+            await this.invalidateCache();
+        }
         if (redis) {
             for (const article of articles) {
                 if (article) {
@@ -117,6 +123,10 @@ export class ArticleService {
                 }
             }
         }
+    }
+
+    async getRelatedArticles(articleId: number, limit: number = 3): Promise<Article[]> {
+        return articleRepository.findRelated(articleId, limit);
     }
 
     async incrementViewCount(id: number): Promise<void> {
@@ -128,10 +138,14 @@ export class ArticleService {
         if (!redis) return;
 
         try {
-            const keys = await redis.keys(`${CACHE_KEY}*`);
+            const keys = await redis.smembers(`${CACHE_KEY}:tracked-keys`);
             if (keys.length > 0) {
-                await redis.del(...keys);
+                await redis.del(...keys, `${CACHE_KEY}:tracked-keys`);
+            } else {
+                // Fallback for untracked keys or migration period
+                await redis.del(CACHE_KEY, `${CACHE_KEY}:status:published`, `${CACHE_KEY}:status:draft`);
             }
+
             if (slug) {
                 await redis.del(`${ARTICLE_CACHE_PREFIX}${slug}`);
             }

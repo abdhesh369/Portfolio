@@ -15,7 +15,7 @@ export class MessageService {
         return await messageRepository.findById(id);
     }
 
-    async create(data: any): Promise<Message> {
+    async create(data: InsertMessage & { website?: string }): Promise<Message> {
         // Honeypot check
         if (data.website) {
             console.warn("Spam detected via honeypot field");

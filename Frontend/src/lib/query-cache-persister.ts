@@ -41,7 +41,7 @@ interface CacheEntry {
 }
 
 function storageKey(queryKey: readonly unknown[]): string {
-  return STORAGE_PREFIX + queryKey.join("_");
+  return STORAGE_PREFIX + JSON.stringify(queryKey);
 }
 
 function isCacheable(queryKey: readonly unknown[]): boolean {
@@ -97,7 +97,14 @@ export function hydrateFromCache(qc: QueryClient): void {
 
     // Reconstruct the queryKey from the storage key
     const queryKeyStr = key.slice(STORAGE_PREFIX.length);
-    const queryKey = queryKeyStr.split("_");
+    let queryKey: unknown[];
+    try {
+      queryKey = JSON.parse(queryKeyStr);
+    } catch {
+      // Legacy key format (pre-JSON) — remove and skip
+      localStorage.removeItem(key);
+      continue;
+    }
 
     // Set data in the cache — it will be treated as stale if staleTime
     // has passed, triggering a background refetch automatically.

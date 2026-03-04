@@ -66,6 +66,17 @@ export function useServerStatus() {
     }
   }, []);
 
+  // Use a ref to always hold the latest `check` so that `startPolling`
+  // never captures a stale closure.
+  const checkRef = useRef<(() => Promise<void>) | undefined>(undefined);
+
+  const startPolling = useCallback(() => {
+    if (pollingRef.current) return; // already polling
+    pollingRef.current = setInterval(() => {
+      checkRef.current?.();
+    }, POLL_INTERVAL_MS);
+  }, []);
+
   const check = useCallback(async () => {
     // Create a fresh AbortController per check
     abortRef.current?.abort();
@@ -77,7 +88,7 @@ export function useServerStatus() {
     // If this check was aborted (component unmounted), ignore the result
     if (ac.signal.aborted) return;
 
-    if (ok && !slow) {
+    if (ok) {
       setStatus("online");
       stopPolling();
 
@@ -86,29 +97,17 @@ export function useServerStatus() {
         wasOfflineRef.current = false;
         queryClient.invalidateQueries();
       }
-    } else if (ok && slow) {
-      // Server responded but took a while — cold-start detected
-      setStatus("online");
-      stopPolling();
-      if (wasOfflineRef.current) {
-        wasOfflineRef.current = false;
-        queryClient.invalidateQueries();
-      }
     } else {
-      // Distinguish waking vs offline based on whether slow timer fired
-      // If the request failed quickly (<3 s), the server is likely offline.
-      // If it timed out / was slow, it's probably waking up.
+      // Server is unreachable — mark degraded and start polling
       wasOfflineRef.current = true;
       setStatus((prev) => (prev === "checking" ? "waking" : prev === "waking" ? "waking" : "offline"));
       startPolling();
     }
-  }, [queryClient, stopPolling]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [queryClient, stopPolling, startPolling]);
 
-  const startPolling = useCallback(() => {
-    if (pollingRef.current) return; // already polling
-    pollingRef.current = setInterval(() => {
-      check();
-    }, POLL_INTERVAL_MS);
+  // Keep the ref in sync with the latest `check`
+  useEffect(() => {
+    checkRef.current = check;
   }, [check]);
 
   // Initial check on mount

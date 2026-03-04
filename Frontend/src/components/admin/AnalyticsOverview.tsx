@@ -1,4 +1,3 @@
-import React from "react";
 import { useAnalyticsSummary } from "../../hooks/use-portfolio";
 import {
     Eye,

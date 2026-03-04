@@ -2,15 +2,7 @@ import { Router } from "express";
 import { seoSettingsService } from "../services/seo-settings.service.js";
 import { projectService } from "../services/project.service.js";
 import { articleService } from "../services/article.service.js";
-/** Escape special XML characters to prevent injection */
-function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
+import { escapeXml } from "../lib/xml-utils.js";
 
 const router = Router();
 
@@ -78,6 +70,7 @@ router.get("/", async (req, res) => {
 </urlset>`;
 
     res.header("Content-Type", "application/xml");
+    res.header("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400");
     res.send(xml);
   } catch (error) {
     console.error("Sitemap generation error:", error);

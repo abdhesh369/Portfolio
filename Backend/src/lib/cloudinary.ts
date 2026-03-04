@@ -24,7 +24,15 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'portfolio_uploads',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif', 'avif'],
-        public_id: (req: any, file: any) => `project_${Date.now()}_${file.originalname.split('.')[0]}`,
+        public_id: (req: any, file: any) => {
+            // Sanitize filename to prevent path traversal or injection
+            const cleanName = file.originalname
+                .split('.')[0]
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .slice(0, 50); // Limit length
+            return `project_${Date.now()}_${cleanName}`;
+        },
     } as any, // Explicitly cast to avoid type errors with recent versions
 });
 

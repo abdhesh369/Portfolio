@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,7 +11,6 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Link2, Check } from "lucide-react";
 import { Link } from "wouter";
-import { API_BASE_URL } from "@/lib/api-helpers";
 
 function PostSkeleton() {
     return (
@@ -39,19 +38,13 @@ export default function BlogPost() {
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
-    const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
     const [copied, setCopied] = useState(false);
+
+    // Related articles come from the article response itself (GET /:slug returns { ...article, relatedArticles })
+    const relatedArticles = (article as any)?.relatedArticles || [];
 
     // Dynamic OG image generation
     const ogImage = article ? getDynamicOgImage(article.title, article.featuredImage || undefined) : undefined;
-
-    useEffect(() => {
-        if (!slug) return;
-        fetch(`${API_BASE_URL}/api/v1/articles/related/${slug}`)
-            .then(res => res.ok ? res.json() : [])
-            .then(data => setRelatedArticles(data))
-            .catch(() => setRelatedArticles([]));
-    }, [slug]);
 
     function copyLink() {
         navigator.clipboard.writeText(window.location.href);

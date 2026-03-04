@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api-helpers";
 type Role = "user" | "model";
 
 const MAX_CLIENT_MESSAGES = 20; // Cap messages sent to API
+const MAX_RENDERED_MESSAGES = 50; // Cap messages kept in state to prevent unbounded DOM growth
 
 interface ChatMessage {
     role: Role;
@@ -93,7 +94,7 @@ export function Chatbot() {
         if (!input.trim() || isLoading) return;
 
         const userMsg: ChatMessage = { role: "user", parts: [{ text: input.trim() }], timestamp: Date.now() };
-        const newMessages = [...messages, userMsg];
+        const newMessages = [...messages, userMsg].slice(-MAX_RENDERED_MESSAGES);
 
         setMessages(newMessages);
         setInput("");

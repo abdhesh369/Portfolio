@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/auth-context";
 import { useMessages } from "@/hooks/use-portfolio";
 import "@/styles/admin.css"; // Admin-only styles — code-split, not loaded on public pages
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
+import { TabErrorBoundary } from "@/components/admin/TabErrorBoundary";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star,
@@ -461,17 +462,19 @@ export default function AdminDashboard() {
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
                         </div>
                     }>
-                        {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
-                        {tab === "analytics" && <AnalyticsOverview />}
-                        {tab === "messages" && <MessagesTab token={token} />}
-                        {tab === "templates" && <EmailTemplatesTab token={token} />}
-                        {tab === "projects" && <ProjectsTab token={token} />}
-                        {tab === "skills" && <SkillsTab token={token} />}
-                        {tab === "experiences" && <ExperiencesTab token={token} />}
-                        {tab === "seo" && <SeoTab token={token} />}
-                        {tab === "services" && <ServicesTab token={token} />}
-                        {tab === "articles" && <ArticlesTab token={token} />}
-                        {tab === "testimonials" && <TestimonialsTab token={token} />}
+                        <TabErrorBoundary tabName={TAB_LABELS[tab]}>
+                            {tab === "overview" && <OverviewTab token={token} onNavigate={setTab} />}
+                            {tab === "analytics" && <AnalyticsOverview />}
+                            {tab === "messages" && <MessagesTab token={token} />}
+                            {tab === "templates" && <EmailTemplatesTab token={token} />}
+                            {tab === "projects" && <ProjectsTab token={token} />}
+                            {tab === "skills" && <SkillsTab token={token} />}
+                            {tab === "experiences" && <ExperiencesTab token={token} />}
+                            {tab === "seo" && <SeoTab token={token} />}
+                            {tab === "services" && <ServicesTab token={token} />}
+                            {tab === "articles" && <ArticlesTab token={token} />}
+                            {tab === "testimonials" && <TestimonialsTab token={token} />}
+                        </TabErrorBoundary>
                     </Suspense>
                 </div>
 

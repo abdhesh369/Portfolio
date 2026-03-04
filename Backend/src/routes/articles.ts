@@ -39,29 +39,8 @@ articlesRouter.get(
             return;
         }
 
-        // Get all published articles with tags
-        const allArticles = await articleService.getAll("published");
-
-        // Find articles with overlapping tags, excluding the current one
-        const currentTags = new Set(article.tags || []);
-        if (currentTags.size === 0) {
-            res.json([]);
-            return;
-        }
-
-        const scored = allArticles
-            .filter((a) => a.slug !== slug)
-            .map((a) => {
-                const articleTags = a.tags || [];
-                const overlap = articleTags.filter((t) => currentTags.has(t)).length;
-                return { article: a, score: overlap };
-            })
-            .filter(({ score }) => score > 0)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 3)
-            .map(({ article }) => article);
-
-        res.json(scored);
+        const related = await articleService.getRelatedArticles(article.id);
+        res.json(related);
     })
 );
 
@@ -88,7 +67,15 @@ articlesRouter.get(
             res.setHeader("Cache-Control", "no-store");
         }
 
-        res.json(article);
+        const relatedArticles = await articleService.getRelatedArticles(article.id);
+        res.json({ ...article, relatedArticles });
+
+        if (!isAdmin) {
+            // Fire-and-forget: don't await, don't block response
+            articleService.incrementViewCount(article.id).catch((err) => {
+                console.error(`[ARTICLE] Failed to increment view count: ${err}`);
+            });
+        }
     })
 );
 
