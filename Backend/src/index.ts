@@ -88,7 +88,7 @@ app.use(
 
       const isAllowed = allowedOrigins.includes(origin) ||
         (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:")) ||
-        origin.endsWith(".onrender.com");
+        (process.env.BACKEND_RENDER_URL ? origin === process.env.BACKEND_RENDER_URL : false);
 
       if (isAllowed) {
         callback(null, true);

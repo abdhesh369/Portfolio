@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
+import { randomUUID } from 'crypto';
 import { logger } from './logger.js';
 
 // Validate before configuring
@@ -25,14 +26,8 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'portfolio_uploads',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif', 'avif'],
-        public_id: (req: any, file: any) => {
-            // Sanitize filename to prevent path traversal or injection
-            const cleanName = file.originalname
-                .split('.')[0]
-                .replace(/[^\w\s-]/g, '')
-                .replace(/[\s_-]+/g, '-')
-                .slice(0, 50); // Limit length
-            return `project_${Date.now()}_${cleanName}`;
+        public_id: () => {
+            return `project_${randomUUID()}`;
         },
     } as any, // Explicitly cast to avoid type errors with recent versions
 });

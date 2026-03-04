@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { db } from "../db.js";
 import { skillConnectionsTable, type SkillConnection, type InsertSkillConnection } from "../../shared/schema.js";
 
@@ -31,7 +31,6 @@ export class SkillConnectionRepository {
 
     async bulkDelete(ids: number[]): Promise<void> {
         if (ids.length === 0) return;
-        const { inArray } = await import("drizzle-orm");
         await db.delete(skillConnectionsTable).where(inArray(skillConnectionsTable.id, ids));
     }
 }

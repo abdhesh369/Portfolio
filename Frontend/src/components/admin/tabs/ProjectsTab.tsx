@@ -7,6 +7,7 @@ import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";
 import type { Project } from "@shared/schema";
 import {
@@ -131,6 +132,7 @@ export function ProjectsTab({ }: AdminTabProps) {
             await apiFetch("/api/v1/projects/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
             toast({ title: "Projects deleted" });
             setSelectedIds([]);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
@@ -142,6 +144,7 @@ export function ProjectsTab({ }: AdminTabProps) {
             await apiFetch("/api/v1/projects/bulk-status", { method: "POST", body: JSON.stringify({ ids: selectedIds, status }) });
             toast({ title: "Projects updated" });
             setSelectedIds([]);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Bulk update failed", description: err.message, variant: "destructive" });
@@ -226,6 +229,7 @@ export function ProjectsTab({ }: AdminTabProps) {
                 toast({ title: "Project created" });
             }
             setEditing(null);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             // Revert on error
@@ -248,6 +252,7 @@ export function ProjectsTab({ }: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/projects/${id}`, { method: "DELETE" });
             toast({ title: "Project deleted" });
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             // Revert on error

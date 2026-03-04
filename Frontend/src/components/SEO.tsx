@@ -48,7 +48,11 @@ export function SEO({
     const canonicalUrl = seoSettings?.canonicalUrl || `https://abdheshsah.com.np${location}`;
 
     const safeJsonLd = (data: any) => {
-        return JSON.stringify(data).replace(/<\/script>/g, '<\\/script>');
+        return JSON.stringify(data)
+            .replace(/</g, '\\u003c')
+            .replace(/>/g, '\\u003e')
+            .replace(/&/g, '\\u0026')
+            .replace(/'/g, '\\u0027');
     };
 
     return (

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useMessages } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
+import { queryClient } from "@/lib/queryClient";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@shared/schema";
 
 import type { AdminTabProps } from "./types";
 
 export function MessagesTab() {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data: messagesData, isLoading } = useMessages();
+    const messages = messagesData ?? [];
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const { toast } = useToast();
@@ -29,40 +31,24 @@ export function MessagesTab() {
             });
             toast({ title: "Messages deleted" });
             setSelectedIds([]);
-            fetchMessages();
+            queryClient.invalidateQueries({ queryKey: ["messages"] });
         } catch (err: any) {
             toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
         }
     };
 
-    const fetchMessages = async () => {
-        setLoading(true);
-        try {
-            const data = await apiFetch("/api/v1/messages");
-            setMessages(data ?? []);
-        } catch {
-            toast({ title: "Failed to load messages", variant: "destructive" });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchMessages();
-    }, []);
-
     const deleteMessage = async (id: number) => {
         if (!confirm("Delete this message?")) return;
         try {
             await apiFetch(`/api/v1/messages/${id}`, { method: "DELETE" });
-            setMessages((prev) => prev.filter((m) => m.id !== id));
+            queryClient.invalidateQueries({ queryKey: ["messages"] });
             toast({ title: "Message deleted" });
         } catch (err: any) {
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });
         }
     };
 
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     const filtered = messages.filter(m =>
         m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -88,7 +74,7 @@ export function MessagesTab() {
                             className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all"
                         />
                     </div>
-                    <Button variant="outline" size="sm" onClick={fetchMessages} className="text-white/60">Refresh</Button>
+                    <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ["messages"] })} className="text-white/60">Refresh</Button>
                 </div>
             </div>
 

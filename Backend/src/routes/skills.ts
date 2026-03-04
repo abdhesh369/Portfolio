@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import { z } from "zod";
 import { skillService } from "../services/skill.service.js";
 import { skillConnectionService } from "../services/skill-connection.service.js";
@@ -6,28 +6,7 @@ import { insertSkillApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
-
-// Validation middleware factory
-function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        try {
-            req.body = schema.parse(req.body);
-            next();
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                res.status(400).json({
-                    message: "Validation failed",
-                    errors: err.errors.map((e) => ({
-                        path: e.path.join("."),
-                        message: e.message,
-                    })),
-                });
-                return;
-            }
-            next(err);
-        }
-    };
-}
+import { validateBody } from "../middleware/validate.js";
 
 export function registerSkillRoutes(app: Router) {
     // GET /api/skills/connections - List all skill connections

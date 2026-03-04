@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
-import { apiFetch, API_BASE_URL } from "@/lib/api-helpers";
-import type { Message } from "@shared/schema";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useProjects, useSkills, useExperiences, useMessages } from "@/hooks/use-portfolio";
+import { API_BASE_URL } from "@/lib/api-helpers";
 import {
     Rocket, Mail, Zap, Briefcase, PenTool, FolderKanban,
     Plus, ArrowUpRight, Clock, Database, Server, Shield, Activity,
@@ -32,32 +31,26 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     const { data: projects } = useProjects();
     const { data: skills } = useSkills();
     const { data: experiences } = useExperiences();
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [msgCount, setMsgCount] = useState<number | null>(null);
+    const { data: messagesData } = useMessages();
+    const messages = messagesData ?? [];
+    const msgCount = messages.length;
     const [healthData, setHealthData] = useState<HealthData | null>(null);
     const [healthLoading, setHealthLoading] = useState(true);
-
-    useEffect(() => {
-        apiFetch("/api/v1/messages")
-            .then((d: Message[]) => {
-                setMessages(d ?? []);
-                setMsgCount(d?.length ?? 0);
-            })
-            .catch(() => {
-                setMessages([]);
-                setMsgCount(0);
-            });
-    }, []);
+    const abortRef = useRef<AbortController | null>(null);
 
     const fetchHealth = useCallback(async () => {
+        abortRef.current?.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
         setHealthLoading(true);
         try {
             const start = performance.now();
-            const res = await fetch(`${API_BASE_URL}/health`);
+            const res = await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
             const elapsed = Math.round(performance.now() - start);
             const data = await res.json();
             setHealthData({ ...data, responseTimeMs: elapsed });
-        } catch {
+        } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") return;
             setHealthData({
                 status: "unreachable",
                 database: "unknown",
@@ -72,6 +65,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
 
     useEffect(() => {
         fetchHealth();
+        return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
     const stats = [

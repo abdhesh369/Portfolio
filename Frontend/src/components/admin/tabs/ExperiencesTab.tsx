@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@shared/schema";
 
@@ -30,6 +31,7 @@ export function ExperiencesTab({ }: AdminTabProps) {
                 toast({ title: "Experience created" });
             }
             setEditing(null);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
@@ -43,6 +45,7 @@ export function ExperiencesTab({ }: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/experiences/${id}`, { method: "DELETE" });
             toast({ title: "Experience deleted" });
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });

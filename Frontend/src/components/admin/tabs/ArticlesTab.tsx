@@ -7,6 +7,7 @@ import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Article } from "@shared/schema";
 
@@ -126,6 +127,7 @@ export function ArticlesTab({ }: AdminTabProps) {
                 toast({ title: "Article created" });
             }
             setEditing(null);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             // Revert on error
@@ -148,6 +150,7 @@ export function ArticlesTab({ }: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/articles/${id}`, { method: "DELETE" });
             toast({ title: "Article deleted" });
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             // Revert on error

@@ -124,10 +124,6 @@ export class ArticleService {
             updateData.readTimeMinutes = this.calculateReadTime(data.content);
         }
 
-        if (data.title && !data.slug && current.title !== data.title && current.status !== "published") {
-            updateData.slug = this.generateSlug(data.title);
-        }
-
         const article = await articleRepository.update(id, updateData);
         if (shouldClearQueryCache) {
             await this.invalidateCache(current.slug); // Invalidate old slug

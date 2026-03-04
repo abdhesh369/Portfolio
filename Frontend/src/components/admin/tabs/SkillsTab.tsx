@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Skill } from "@shared/schema";
 
@@ -28,6 +29,7 @@ export function SkillsTab({ }: AdminTabProps) {
             await apiFetch("/api/v1/skills/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
             toast({ title: "Skills deleted" });
             setSelectedIds([]);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
@@ -47,6 +49,7 @@ export function SkillsTab({ }: AdminTabProps) {
                 toast({ title: "Skill created" });
             }
             setEditing(null);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
@@ -60,6 +63,7 @@ export function SkillsTab({ }: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/skills/${id}`, { method: "DELETE" });
             toast({ title: "Skill deleted" });
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });
