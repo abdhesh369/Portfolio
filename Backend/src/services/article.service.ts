@@ -24,6 +24,11 @@ export class ArticleService {
             .replace(/^-+|-+$/g, '');
     }
 
+    /**
+     * Retrieves all articles, using Redis cache when available.
+     * @param status - Optional filter for article status (e.g. 'published', 'draft')
+     * @returns Array of article objects
+     */
     async getAll(status?: string): Promise<Article[]> {
         const cacheKey = status ? `${CACHE_KEY}:status:${status}` : CACHE_KEY;
         const cached = redis ? await redis.get(cacheKey) : null;
@@ -41,6 +46,11 @@ export class ArticleService {
         return articles;
     }
 
+    /**
+     * Retrieves a single article by its URL slug, using Redis cache when available.
+     * @param slug - The URL-friendly slug identifier
+     * @returns The matching article or null if not found
+     */
     async getBySlug(slug: string): Promise<Article | null> {
         const cacheKey = `${ARTICLE_CACHE_PREFIX}${slug}`;
         const cached = redis ? await redis.get(cacheKey) : null;
@@ -58,15 +68,30 @@ export class ArticleService {
         return article;
     }
 
+    /**
+     * Finds an article by its numeric ID.
+     * @param id - The article ID
+     * @returns The matching article or null if not found
+     */
     async findById(id: number): Promise<Article | null> {
         return articleRepository.findById(id);
     }
 
+    /**
+     * Searches articles by a text query.
+     * @param query - The search query string
+     * @returns Array of matching articles (max 10)
+     */
     async search(query: string): Promise<Article[]> {
         if (!query || query.trim().length === 0) return [];
         return articleRepository.search(query.trim(), 10);
     }
 
+    /**
+     * Creates a new article with auto-generated slug and read time.
+     * @param data - The article data including optional tags
+     * @returns The newly created article
+     */
     async create(data: InsertArticle & { tags?: string[] }): Promise<Article> {
         const slug = data.slug || this.generateSlug(data.title);
         const readTimeMinutes = this.calculateReadTime(data.content);
@@ -81,6 +106,14 @@ export class ArticleService {
         return article;
     }
 
+    /**
+     * Updates an existing article by ID, recalculating read time and slug as needed.
+     * @param id - The article ID to update
+     * @param data - Partial article data and optional tags to update
+     * @param shouldClearQueryCache - Whether to invalidate the query cache (default: true)
+     * @returns The updated article
+     * @throws {Error} If the article with the given ID is not found
+     */
     async update(id: number, data: Partial<InsertArticle> & { tags?: string[] }, shouldClearQueryCache = true): Promise<Article> {
         const current = await articleRepository.findById(id);
         if (!current) throw new Error(`Article with id ${id} not found`);
@@ -105,6 +138,11 @@ export class ArticleService {
         return article;
     }
 
+    /**
+     * Deletes an article by ID and invalidates related caches.
+     * @param id - The article ID to delete
+     * @param shouldClearQueryCache - Whether to invalidate the query cache (default: true)
+     */
     async delete(id: number, shouldClearQueryCache = true): Promise<void> {
         const article = await articleRepository.findById(id);
         await articleRepository.delete(id);
@@ -113,6 +151,11 @@ export class ArticleService {
         }
     }
 
+    /**
+     * Deletes multiple articles by their IDs and invalidates related caches.
+     * @param ids - Array of article IDs to delete
+     * @param shouldClearQueryCache - Whether to invalidate the query cache (default: true)
+     */
     async bulkDelete(ids: number[], shouldClearQueryCache = true): Promise<void> {
         const articles = await articleRepository.findByIds(ids);
         await articleRepository.bulkDelete(ids);
@@ -130,10 +173,20 @@ export class ArticleService {
         }
     }
 
+    /**
+     * Retrieves articles related to a given article.
+     * @param articleId - The ID of the article to find related content for
+     * @param limit - Maximum number of related articles to return (default: 3)
+     * @returns Array of related articles
+     */
     async getRelatedArticles(articleId: number, limit: number = 3): Promise<Article[]> {
         return articleRepository.findRelated(articleId, limit);
     }
 
+    /**
+     * Increments the view count for an article.
+     * @param id - The article ID to increment views for
+     */
     async incrementViewCount(id: number): Promise<void> {
         await articleRepository.incrementViewCount(id);
         // Note: View counts are allowed to be slightly stale in cache

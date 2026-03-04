@@ -8,14 +8,29 @@ export class MessageService {
         return DOMPurify.sanitize(text);
     }
 
+    /**
+     * Retrieves all messages.
+     * @returns Array of message objects
+     */
     async getAll(): Promise<Message[]> {
         return await messageRepository.findAll();
     }
 
+    /**
+     * Retrieves a single message by its ID.
+     * @param id - The message ID
+     * @returns The matching message or null if not found
+     */
     async getById(id: number): Promise<Message | null> {
         return await messageRepository.findById(id);
     }
 
+    /**
+     * Creates a new message after sanitizing input and checking the honeypot field.
+     * @param data - The message data including optional honeypot website field
+     * @returns The newly created message
+     * @throws {Error} If the honeypot field is populated (spam detected)
+     */
     async create(data: InsertMessage & { website?: string }): Promise<Message> {
         // Honeypot check
         if (data.website) {
@@ -34,10 +49,19 @@ export class MessageService {
         return await messageRepository.create(sanitizedData);
     }
 
+    /**
+     * Deletes a message by its ID.
+     * @param id - The message ID to delete
+     * @returns True if the message was deleted, false otherwise
+     */
     async delete(id: number): Promise<boolean> {
         return await messageRepository.delete(id);
     }
 
+    /**
+     * Deletes multiple messages by their IDs.
+     * @param ids - Array of message IDs to delete
+     */
     async bulkDelete(ids: number[]): Promise<void> {
         await messageRepository.bulkDelete(ids);
     }
