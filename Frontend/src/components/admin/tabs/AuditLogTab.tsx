@@ -111,9 +111,9 @@ export function AuditLogTab() {
 
       {/* Table */}
       {loading ? (
-        <LoadingSkeleton rows={8} />
+        <LoadingSkeleton />
       ) : entries.length === 0 ? (
-        <EmptyState message="No audit log entries found" />
+        <EmptyState icon="📋" text="No audit log entries found" />
       ) : (
         <div
           className="rounded-lg overflow-hidden"

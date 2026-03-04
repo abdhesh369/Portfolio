@@ -612,14 +612,14 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Tool:** `vite-plugin-pwa`
 
 **Acceptance Criteria:**
-- [ ] `vite-plugin-pwa` configured with `registerType: 'autoUpdate'`
-- [ ] Service worker caches: JS/CSS/HTML/images/fonts on install
-- [ ] Runtime cache strategy:
+- [x] `vite-plugin-pwa` configured with `registerType: 'autoUpdate'`
+- [x] Service worker caches: JS/CSS/HTML/images/fonts on install
+- [x] Runtime cache strategy:
   - `GET /api/v1/projects`, `skills`, `articles`, `experiences` → `StaleWhileRevalidate`, 7-day TTL
   - `GET /api/v1/admin/*`, `/api/v1/auth/*` → `NetworkOnly` (never cached)
-- [ ] Web App Manifest: name, short_name, theme_color `#00B4D8`, background_color `#050510`, `display: standalone`
-- [ ] Icons: 192×192 and 512×512 maskable PNG
-- [ ] Offline fallback page shown when network unavailable and page not cached
+- [x] Web App Manifest: name, short_name, theme_color `#00B4D8`, background_color `#050510`, `display: standalone`
+- [x] Icons: 192×192 and 512×512 maskable PNG
+- [x] Offline fallback page shown when network unavailable and page not cached
 - [ ] Lighthouse PWA score: 100
 - [ ] Install prompt shown on 2nd visit (not first)
 
@@ -631,7 +631,7 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Effort:** L
 
 **Acceptance Criteria:**
-- [ ] `@axe-core/playwright` runs in CI — zero violations on: Home, Blog List, Blog Post, Project Detail, Contact
+- [x] `@axe-core/playwright` runs in CI — zero violations on: Home, Blog List, Blog Post, Project Detail, Contact
 - [ ] Skip-to-main-content link as first focusable element on all pages
 - [ ] All icon-only buttons have `aria-label`
 - [ ] All color pairs pass 4.5:1 contrast ratio (use `@storybook/addon-a11y` for audit)
@@ -651,10 +651,10 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **File:** `Frontend/src/components/SEO.tsx`
 
 **Acceptance Criteria:**
-- [ ] `Person` schema on every page with `name`, `url`, `jobTitle`, `sameAs` (GitHub, LinkedIn)
-- [ ] `SoftwareApplication` schema on Project Detail pages
-- [ ] `TechArticle` schema on Blog Post pages with `headline`, `datePublished`, `dateModified`, `wordCount`
-- [ ] `BreadcrumbList` schema on Blog Post and Project Detail pages
+- [x] `Person` schema on every page with `name`, `url`, `jobTitle`, `sameAs` (GitHub, LinkedIn)
+- [x] `SoftwareApplication` schema on Project Detail pages
+- [x] `TechArticle` schema on Blog Post pages with `headline`, `datePublished`, `dateModified`, `wordCount`
+- [x] `BreadcrumbList` schema on Blog Post and Project Detail pages
 - [ ] All schemas validated with [Google's Rich Results Test](https://search.google.com/test/rich-results)
 - [ ] No validation errors in structured data testing tool
 
@@ -666,10 +666,10 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] `web-vitals` library installed and reporting: LCP, CLS, INP, FCP, TTFB
-- [ ] Metrics sent to `POST /api/v1/analytics/vitals` with `name`, `value`, `rating`, `path`
-- [ ] New `vitals` table in DB stores metrics (or reuse `analytics` table with `type: 'vital'`)
-- [ ] Admin dashboard "Performance" tab shows:
+- [x] `web-vitals` library installed and reporting: LCP, CLS, INP, FCP, TTFB
+- [x] Metrics sent to `POST /api/v1/analytics/vitals` with `name`, `value`, `rating`, `path`
+- [x] New `vitals` table in DB stores metrics (or reuse `analytics` table with `type: 'vital'`)
+- [x] Admin dashboard "Performance" tab shows:
   - Average LCP, CLS, INP over last 7 days
   - Pass/fail indicator per Core Web Vitals threshold (Good / Needs Improvement / Poor)
 - [ ] Lighthouse CI added to `.github/workflows/ci.yml`:
@@ -687,7 +687,7 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **File:** `Backend/src/repositories/article.repository.ts`
 
 **Acceptance Criteria:**
-- [ ] PostgreSQL `tsvector` column added to `articles` table via Drizzle migration:
+- [x] PostgreSQL `tsvector` column added to `articles` table via Drizzle migration:
   ```sql
   ALTER TABLE articles ADD COLUMN search_vector tsvector
     GENERATED ALWAYS AS (
@@ -695,11 +695,11 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
     ) STORED;
   CREATE INDEX articles_search_idx ON articles USING GIN(search_vector);
   ```
-- [ ] New `GET /api/articles/search?q=<term>` endpoint (max 10 results, published only)
-- [ ] Results ranked by `ts_rank`
-- [ ] Frontend: search input on Blog List page with debounced 300ms requests
-- [ ] Empty query shows all articles (no search applied)
-- [ ] No external search service required
+- [x] New `GET /api/articles/search?q=<term>` endpoint (max 10 results, published only)
+- [x] Results ranked by `ts_rank`
+- [x] Frontend: search input on Blog List page with debounced 300ms requests
+- [x] Empty query shows all articles (no search applied)
+- [x] No external search service required
 
 ---
 
@@ -709,12 +709,12 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] Reading progress bar: fixed top of viewport, cyan color, updates on scroll (passive listener)
-- [ ] Table of contents: auto-generated from `h2`/`h3` headings in article content, sticky on desktop
-- [ ] Copy-to-clipboard button on all code blocks rendered by Tiptap/ReactMarkdown
-- [ ] View count displayed on article cards (already tracked, just expose in UI)
-- [ ] Reading time displayed prominently below article title (already calculated, improve placement)
-- [ ] All enhancements pass accessibility check (ToC keyboard navigable, progress bar not announced by screen readers)
+- [x] Reading progress bar: fixed top of viewport, cyan color, updates on scroll (passive listener)
+- [x] Table of contents: auto-generated from `h2`/`h3` headings in article content, sticky on desktop
+- [x] Copy-to-clipboard button on all code blocks rendered by Tiptap/ReactMarkdown
+- [x] View count displayed on article cards (already tracked, just expose in UI)
+- [x] Reading time displayed prominently below article title (already calculated, improve placement)
+- [x] All enhancements pass accessibility check (ToC keyboard navigable, progress bar not announced by screen readers)
 
 ---
 
@@ -724,13 +724,13 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] New `GET /api/v1/messages/stream` SSE endpoint (requires auth)
-- [ ] Emits `data: <JSON>` event when new message arrives via contact form
-- [ ] Admin dashboard subscribes to SSE stream on mount, unsubscribes on unmount
-- [ ] Unread message count badge in sidebar updates in real time
-- [ ] Browser notification (if permission granted) shown for new messages
-- [ ] SSE connection heartbeat every 30s to prevent proxy timeouts
-- [ ] Fallback: if SSE fails, poll every 60s (existing behavior)
+- [x] New `GET /api/v1/messages/stream` SSE endpoint (requires auth)
+- [x] Emits `data: <JSON>` event when new message arrives via contact form
+- [x] Admin dashboard subscribes to SSE stream on mount, unsubscribes on unmount
+- [x] Unread message count badge in sidebar updates in real time
+- [x] Browser notification (if permission granted) shown for new messages
+- [x] SSE connection heartbeat every 30s to prevent proxy timeouts
+- [x] Fallback: if SSE fails, poll every 60s (existing behavior)
 
 ---
 
@@ -740,12 +740,12 @@ O(n²) connection loop checks 44,850 pairs per frame at 60fps = ~2.7M distance c
 **Effort:** M
 
 **Acceptance Criteria:**
-- [ ] New `audit_log` table: `id`, `action`, `entity`, `entity_id`, `old_values (jsonb)`, `new_values (jsonb)`, `created_at`
-- [ ] Service decorator or middleware records every: CREATE, UPDATE, DELETE on: projects, articles, skills, experiences, services, testimonials
-- [ ] New `GET /api/v1/admin/audit-log` endpoint (admin only, paginated)
-- [ ] Admin dashboard "Audit Log" section shows last 50 actions with entity, action, timestamp
-- [ ] Old/new values shown in expandable diff view
-- [ ] Audit log cannot be deleted by admin (append-only)
+- [x] New `audit_log` table: `id`, `action`, `entity`, `entity_id`, `old_values (jsonb)`, `new_values (jsonb)`, `created_at`
+- [x] Service decorator or middleware records every: CREATE, UPDATE, DELETE on: projects, articles, skills, experiences, services, testimonials
+- [x] New `GET /api/v1/admin/audit-log` endpoint (admin only, paginated)
+- [x] Admin dashboard "Audit Log" section shows last 50 actions with entity, action, timestamp
+- [x] Old/new values shown in expandable diff view
+- [x] Audit log cannot be deleted by admin (append-only)
 
 ---
 
@@ -953,17 +953,17 @@ All colors are hardcoded (`#0a0520`, `#050510`, etc.). Light mode is incomplete.
 
 ---
 
-### Release 2.0 — Features (End of Week 20)
+### Release 2.0 — Features (End of Week 20) ✅
 > User-facing improvements and SEO/PWA.
 
-- TICKET-025 PWA
-- TICKET-026 Accessibility
-- TICKET-027 JSON-LD
-- TICKET-028 Core Web Vitals
-- TICKET-029 Blog search
-- TICKET-030 Blog enhancements
-- TICKET-031 Real-time notifications
-- TICKET-032 Audit log
+- ✅ TICKET-025 PWA
+- ✅ TICKET-026 Accessibility
+- ✅ TICKET-027 JSON-LD
+- ✅ TICKET-028 Core Web Vitals
+- ✅ TICKET-029 Blog search
+- ✅ TICKET-030 Blog enhancements
+- ✅ TICKET-031 Real-time notifications
+- ✅ TICKET-032 Audit log
 
 **Deploy gate:** Lighthouse scores meet targets, zero axe-core violations in CI, Rich Results Test passes.
 

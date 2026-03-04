@@ -15,7 +15,7 @@ export function useMessageStream(enabled: boolean = true) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [lastMessage, setLastMessage] = useState<SSEMessage | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
-  const fallbackRef = useRef<ReturnType<typeof setInterval>>();
+  const fallbackRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
   const resetUnread = useCallback(() => setUnreadCount(0), []);
 
