@@ -189,7 +189,7 @@ export default function ProjectDetail() {
     return (
       <div
         className="min-h-screen pt-24 px-4 flex items-center justify-center"
-        style={{ background: 'linear-gradient(180deg, #050510 0%, #0a0520 50%, #050510 100%)' }}
+        style={{ background: 'linear-gradient(180deg, var(--color-bg-deep, #050510) 0%, var(--color-bg-mid, #0a0520) 50%, var(--color-bg-deep, #050510) 100%)' }}
       >
         <div className="w-full max-w-4xl space-y-8">
           <div className="h-12 rounded-lg animate-pulse" style={{ background: 'rgba(30, 25, 50, 0.5)' }} />
@@ -207,7 +207,7 @@ export default function ProjectDetail() {
     return (
       <div
         className="min-h-screen pt-24 px-4 flex flex-col items-center justify-center"
-        style={{ background: 'linear-gradient(180deg, #050510 0%, #0a0520 50%, #050510 100%)' }}
+        style={{ background: 'linear-gradient(180deg, var(--color-bg-deep, #050510) 0%, var(--color-bg-mid, #0a0520) 50%, var(--color-bg-deep, #050510) 100%)' }}
       >
         <m.div
           {...fadeUp}
@@ -239,7 +239,7 @@ export default function ProjectDetail() {
     <div
       className="min-h-screen relative overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #050510 0%, #0a0520 30%, #0d0525 60%, #050510 100%)'
+        background: 'linear-gradient(180deg, var(--color-bg-deep, #050510) 0%, var(--color-bg-mid, #0a0520) 30%, var(--color-bg-accent, #0d0525) 60%, var(--color-bg-deep, #050510) 100%)'
       }}
     >
       <SEO

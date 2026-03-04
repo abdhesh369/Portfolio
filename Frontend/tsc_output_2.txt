@@ -1,0 +1,46 @@
+src/components/admin/AnalyticsOverview.tsx(177,37): error TS2322: Type '(v: string) => string' is not assignable to type '((label: ReactNode, payload: readonly Payload<number, "Views">[]) => ReactNode) & ((label: any, payload: Payload<number, "Views">[]) => ReactNode)'.
+  Type '(v: string) => string' is not assignable to type '(label: ReactNode, payload: readonly Payload<number, "Views">[]) => ReactNode'.
+    Types of parameters 'v' and 'label' are incompatible.
+      Type 'ReactNode' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/components/admin/AnalyticsOverview.tsx(178,37): error TS2322: Type '(value: number) => [string, "Views"]' is not assignable to type 'Formatter<number, "Views"> & ((value: number, name: "Views", item: Payload<number, "Views">, index: number, payload: Payload<number, "Views">[]) => ReactNode | [...])'.
+  Type '(value: number) => [string, "Views"]' is not assignable to type 'Formatter<number, "Views">'.
+    Types of parameters 'value' and 'value' are incompatible.
+      Type 'number | undefined' is not assignable to type 'number'.
+        Type 'undefined' is not assignable to type 'number'.
+src/components/ErrorBoundary.test.tsx(35,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(49,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(67,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(82,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(96,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(114,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(146,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ErrorBoundary.test.tsx(160,10): error TS2786: 'ThrowingComponent' cannot be used as a JSX component.
+  Its type '({ error }: { error: Error; }) => void' is not a valid JSX element type.
+    Type '({ error }: { error: Error; }) => void' is not assignable to type '(props: any) => ReactNode | Promise<ReactNode>'.
+      Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+src/components/ReloadPrompt.tsx(2,31): error TS2307: Cannot find module 'virtual:pwa-register/react' or its corresponding type declarations.
+src/components/ReloadPrompt.tsx(11,22): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/components/ReloadPrompt.tsx(14,25): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/pages/BlogList.tsx(86,25): error TS2554: Expected 1 arguments, but got 0.

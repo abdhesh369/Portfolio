@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
       manifest: {
         name: 'Abdhesh Sah | Portfolio',

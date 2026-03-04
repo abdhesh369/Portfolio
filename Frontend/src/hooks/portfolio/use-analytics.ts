@@ -17,3 +17,20 @@ export function useAnalyticsSummary() {
     },
   });
 }
+
+export function useVitalsSummary(days: number = 7) {
+  return useQuery({
+    queryKey: ["vitals-summary", days],
+    queryFn: async () => {
+      const url = `${API_BASE_URL}/api/v1/analytics/vitals?days=${days}`;
+      const res = await fetch(url, {
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(errData.message || `Failed to fetch vitals summary (${res.status})`);
+      }
+      return res.json();
+    },
+  });
+}

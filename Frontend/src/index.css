@@ -73,6 +73,11 @@
   --foreground-hex: #1e293b;
   --background-hex: #ffffff;
 
+  /* Background gradients */
+  --color-bg-deep: #f8fafc;
+  --color-bg-mid: #f1f5f9;
+  --color-bg-accent: #e2e8f0;
+
   /* Brand colors */
   --brand-github: #6e5494;
   --brand-linkedin: #0077b5;
@@ -130,6 +135,11 @@
   --color-muted-text: #a0a0b0;
   --foreground-hex: #e2e8f0;
   --background-hex: #050510;
+
+  /* Background gradients */
+  --color-bg-deep: #050510;
+  --color-bg-mid: #0a0520;
+  --color-bg-accent: #0d0525;
 
   /* Brand colors */
   --brand-github: #6e5494;

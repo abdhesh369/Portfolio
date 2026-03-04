@@ -1,4 +1,4 @@
-import { useAnalyticsSummary } from "../../hooks/use-portfolio";
+import { useAnalyticsSummary, useVitalsSummary } from "../../hooks/use-portfolio";
 import {
     Eye,
     Activity,
@@ -7,6 +7,7 @@ import {
     Smartphone,
     Globe,
     FolderKanban,
+    Gauge,
 } from "lucide-react";
 import {
     ResponsiveContainer,
@@ -272,6 +273,119 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                         </ul>
                     </div>
                 )}
+            </div>
+
+            {/* ─── Core Web Vitals (TICKET-028) ─── */}
+            <VitalsPanel />
+        </div>
+    );
+}
+
+/* ────── Vitals thresholds per metric ────── */
+const VITAL_THRESHOLDS: Record<string, { good: number; poor: number; unit: string }> = {
+    LCP: { good: 2500, poor: 4000, unit: "ms" },
+    CLS: { good: 0.1, poor: 0.25, unit: "" },
+    INP: { good: 200, poor: 500, unit: "ms" },
+    FCP: { good: 1800, poor: 3000, unit: "ms" },
+    TTFB: { good: 800, poor: 1800, unit: "ms" },
+};
+
+function getRating(name: string, value: number): "good" | "needs-improvement" | "poor" {
+    const t = VITAL_THRESHOLDS[name];
+    if (!t) return "good";
+    if (value <= t.good) return "good";
+    if (value <= t.poor) return "needs-improvement";
+    return "poor";
+}
+
+const RATING_COLORS: Record<string, string> = {
+    good: "#34d399",
+    "needs-improvement": "#fbbf24",
+    poor: "#f87171",
+};
+
+function VitalsPanel() {
+    const { data, isLoading, error } = useVitalsSummary(7);
+    const vitals = (data as { vitals?: { name: string; avg: number; p75: number; good: number; needsImprovement: number; poor: number; total: number }[] })?.vitals ?? [];
+
+    if (isLoading) {
+        return (
+            <div className="admin-panel-card">
+                <div className="flex items-center gap-2 mb-3">
+                    <Gauge size={14} style={{ color: COLORS.cyan }} />
+                    <h3 className="text-sm font-bold text-slate-100" style={{ letterSpacing: "0.03em" }}>
+                        Core Web Vitals — Last 7 Days
+                    </h3>
+                </div>
+                <div className="flex items-center justify-center p-8">
+                    <div className="w-6 h-6 rounded-full border-2 border-transparent animate-spin" style={{ borderTopColor: COLORS.cyan }} />
+                </div>
+            </div>
+        );
+    }
+
+    if (error || vitals.length === 0) {
+        return (
+            <div className="admin-panel-card">
+                <div className="flex items-center gap-2 mb-3">
+                    <Gauge size={14} style={{ color: COLORS.cyan }} />
+                    <h3 className="text-sm font-bold text-slate-100" style={{ letterSpacing: "0.03em" }}>
+                        Core Web Vitals — Last 7 Days
+                    </h3>
+                </div>
+                <p className="text-xs text-slate-500 text-center py-4">
+                    {error ? `Failed to load vitals: ${(error as Error).message}` : "No vitals data collected yet."}
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="admin-panel-card">
+            <div className="flex items-center gap-2 mb-4">
+                <Gauge size={14} style={{ color: COLORS.cyan }} />
+                <h3 className="text-sm font-bold text-slate-100" style={{ letterSpacing: "0.03em" }}>
+                    Core Web Vitals — Last 7 Days
+                </h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {vitals.map((v) => {
+                    const rating = getRating(v.name, v.avg);
+                    const t = VITAL_THRESHOLDS[v.name];
+                    return (
+                        <div
+                            key={v.name}
+                            className="rounded-lg p-3"
+                            style={{ background: "rgba(15,23,42,0.4)", border: `1px solid ${RATING_COLORS[rating]}30` }}
+                        >
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold text-slate-200 uppercase">{v.name}</span>
+                                <span
+                                    className="text-[10px] px-1.5 py-0.5 rounded-full font-medium uppercase"
+                                    style={{ background: `${RATING_COLORS[rating]}20`, color: RATING_COLORS[rating] }}
+                                >
+                                    {rating === "needs-improvement" ? "Needs Work" : rating}
+                                </span>
+                            </div>
+                            <div className="text-lg font-bold" style={{ color: RATING_COLORS[rating] }}>
+                                {v.name === "CLS" ? v.avg.toFixed(3) : `${v.avg}${t?.unit ?? ""}`}
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">
+                                p75: {v.name === "CLS" ? v.p75.toFixed(3) : `${v.p75}${t?.unit ?? ""}`}
+                                {" · "}
+                                {v.total} samples
+                            </div>
+                            {/* Distribution bar */}
+                            {v.total > 0 && (
+                                <div className="flex h-1.5 rounded-full overflow-hidden mt-2 gap-px">
+                                    <div style={{ width: `${(v.good / v.total) * 100}%`, background: RATING_COLORS.good }} />
+                                    <div style={{ width: `${(v.needsImprovement / v.total) * 100}%`, background: RATING_COLORS["needs-improvement"] }} />
+                                    <div style={{ width: `${(v.poor / v.total) * 100}%`, background: RATING_COLORS.poor }} />
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

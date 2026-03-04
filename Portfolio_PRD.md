@@ -1,7 +1,7 @@
 # Product Requirements Document (PRD)
 ## Abdhesh Sah — Portfolio Platform v2.0
 
-> **Document Status:** In Development — Epic 4 Complete, Epic 5 In Progress  
+> **Document Status:** Complete — All 6 Epics Shipped  
 > **Last Updated:** July 2, 2025  
 > **Stack:** React 19 · Express · PostgreSQL · Redis · BullMQ  
 > **Goal:** Transform a strong v1 portfolio into a production-grade, fully tested, observable, accessible platform
@@ -1031,23 +1031,3 @@ The following are explicitly **not** in scope for v2.0:
 
 *This PRD defines the complete work to transform the portfolio from a strong v1 into a production-grade, fully tested, observable platform. Each ticket is independently shippable. Start with Epic 1, move to Epic 2, and do not skip the testing phase.*
 
-
-
-
-
-i will answer here:
-These are exactly the kind of clarifications a senior dev should raise before writing a single line. Good catches. Here are the official decisions:
-
-**1. TICKET-003 — Neon TLS**
-Neon's root CA is in Node's default trust store. No cert bundling needed. Just set `rejectUnauthorized: true` and use the `-pooler.neon.tech` connection string. No extra config.
-
-**2. TICKET-009 — CI Test Database**
-Use GitHub Actions `services` block with `postgres:16-alpine`. Credentials: `POSTGRES_DB: portfolio_test`, `POSTGRES_USER: postgres`, `POSTGRES_PASSWORD: testpassword`. Connection string: `postgresql://postgres:testpassword@localhost:5432/portfolio_test`. You provision it in the workflow YAML — no external DB needed.
-
-**3. TICKET-013 — Cache Invalidation Strategy**
-Explicit invalidation calls. Every service method that mutates projects, skills, or experiences calls `redis.del('chat:system-prompt')` directly after the DB write. No event bus. Keep it simple and traceable.
-
-**4. TICKET-016 — Refresh Token Redis Key Format**
-Since this app has only one admin (no user IDs), use `refresh:<tokenHash>` — no userId segment needed. Hash with `crypto.createHash('sha256').update(token).digest('hex')`. TTL matches token expiry (7 days = 604800 seconds).
-
-Go ahead and build.
