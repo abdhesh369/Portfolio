@@ -51,15 +51,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Blog with search, filtering, and view count tracking
 - Project detail pages with tech stack badges
 - Interactive skill tree SVG with hover highlighting
-- AI chatbot with OpenRouter/Gemini integration
+- AI chatbot with OpenRouter integration
 - Web Vitals reporting to analytics API
 - Recharts-powered analytics dashboard
 
 #### Testing & Quality (Epic 5)
-- 93 backend tests (unit + integration) across 12 test files
-- 41 frontend tests (component + hook) across 6 test files
-- 18 integration tests for API endpoints
-- 6 e2e accessibility tests via Playwright + axe-core
+- Automated API testing via vitest (refer to test suite for exact count)
+- Frontend component testing setup
+- Integration tests for API endpoints
+- e2e accessibility tests via Playwright + axe-core
 - Vitest with coverage reporting (@vitest/coverage-v8)
 - Automated Lighthouse CI assertions
 

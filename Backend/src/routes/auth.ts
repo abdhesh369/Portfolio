@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, asyncHandler, storeRefreshToken, validateRefreshToken, revokeRefreshToken } from "../auth.js";
+import { isAuthenticated, asyncHandler, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
 import rateLimit from "express-rate-limit";
@@ -155,6 +155,14 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
+    const newCsrfToken = generateCsrfToken();
+    res.cookie("csrf_token", newCsrfToken, {
+        httpOnly: false,
+        secure: isProd,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000, // Match access token TTL
+    });
+
     res.json({ success: true, message: "Token refreshed" });
 }));
 
@@ -173,7 +181,6 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
     }
 
     if (token) {
-        const { revokeToken } = await import("../auth.js");
         await revokeToken(token);
     }
 

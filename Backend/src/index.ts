@@ -15,7 +15,7 @@ import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker } from "./lib/queue.js";
-import { redis } from "./lib/redis.js"; // Import redis instance or the helper
+import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance or the helper
 import { logger } from "./lib/logger.js";
 
 import rateLimit from "express-rate-limit";
@@ -99,7 +99,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
   })
 );
 
@@ -113,7 +113,13 @@ app.use(
         "default-src": ["'self'"],
         "script-src": ["'self'", "https://www.googletagmanager.com"],
         "object-src": ["'none'"],
-        "connect-src": ["'self'", "https://api.github.com", "https://backend-1gk6.onrender.com", "https://www.google-analytics.com", "https://region1.google-analytics.com"],
+        "connect-src": [
+          "'self'",
+          "https://api.github.com",
+          ...(process.env.BACKEND_URL ? [process.env.BACKEND_URL] : []),
+          "https://www.google-analytics.com",
+          "https://region1.google-analytics.com"
+        ],
         "img-src": [
           "'self'",
           "data:",
@@ -190,9 +196,6 @@ app.get("/ping", (_req: Request, res: Response) => {
 // so Render doesn't mark the deploy as failed during Neon cold starts.
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-
-  // Use the static method from RedisClient
-  const { RedisClient } = await import("./lib/redis.js");
   const redisHealth = await RedisClient.checkHealth();
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
@@ -215,7 +218,6 @@ app.get("/health", async (_req: Request, res: Response) => {
 // Formal API Health Check for monitoring tools
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const { RedisClient } = await import("./lib/redis.js");
   const redisHealth = await RedisClient.checkHealth();
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;

@@ -10,4 +10,5 @@ export { useServices } from "./use-services";
 export { useTestimonials } from "./use-testimonials";
 export { useMessages, useSendMessage } from "./use-contact";
 export { useAnalyticsSummary, useVitalsSummary } from "./use-analytics";
+export { useEmailTemplates } from "./use-email-templates";
 export { useLogin } from "./use-auth";

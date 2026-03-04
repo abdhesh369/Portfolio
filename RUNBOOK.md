@@ -66,7 +66,7 @@ redis-cli -u $REDIS_URL
 # Option 1: Selective — delete known cache keys
 DEL projects:list skills:list articles testimonials mindset portfolio_services email_templates seo_settings skill_connections
 
-# Option 2: Clear all article variant keys
+# Option 2: Clear all article variant keys (if tracking set exists)
 SMEMBERS articles:tracked-keys
 # Then DEL each returned key
 
@@ -181,15 +181,17 @@ curl https://backend-1gk6.onrender.com/health
 `seedDatabase()` runs on server startup and uses a **smart merge strategy**:
 
 1. Checks if data already exists (e.g., `projectService.getAll()`)
-2. If data exists → **updates/merges** existing records
-3. If table is empty or doesn't exist → **inserts** seed data
-4. The function is **idempotent** — safe to run multiple times
+2. If `FORCE_SEED=true` is set, it will **wipe existing data** and insert fresh seed data
+3. Otherwise, if data exists → **updates/merges** existing records
+4. If table is empty or doesn't exist → **inserts** seed data
+5. The function is **idempotent** — safe to run multiple times
 
 ### ⚠️ FORCE_SEED Warning
 
-If a `FORCE_SEED=true` environment variable is ever added:
-- It would **wipe all existing data** and re-insert from seed
-- **NEVER enable in production** without a backup
+Setting the `FORCE_SEED=true` environment variable changes seeding behavior:
+- It **wipes all existing data** for supported tables and re-inserts from seed
+- Use with caution, primarily for development or staging environments
+- **NEVER enable in production** without an explicit need and a fresh backup
 - Always take a backup first: `./scripts/backup-db.sh`
 
 ### Disabling Seeding

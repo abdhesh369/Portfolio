@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Service } from "@shared/schema";
 
@@ -69,6 +70,7 @@ export function ServicesTab({ }: AdminTabProps) {
         toast({ title: "Service created" });
       }
       setEditing(null);
+      clearQueryCache();
       refetch();
     } catch (err: any) {
       toast({
@@ -86,6 +88,7 @@ export function ServicesTab({ }: AdminTabProps) {
     try {
       await apiFetch(`/api/v1/services/${id}`, { method: "DELETE" });
       toast({ title: "Service deleted" });
+      clearQueryCache();
       refetch();
     } catch (err: any) {
       toast({

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { apiFetch } from "@/lib/api-helpers";
+import { clearQueryCache } from "@/lib/query-cache-persister";
 import type { Testimonial } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
@@ -69,6 +70,7 @@ export function TestimonialsTab({ }: AdminTabProps) {
             }
 
             setEditing(null);
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: err.message || "Failed to save testimonial", variant: "destructive" });
@@ -80,6 +82,7 @@ export function TestimonialsTab({ }: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/testimonials/${id}`, { method: "DELETE" });
             toast({ title: "Testimonial deleted" });
+            clearQueryCache();
             refetch();
         } catch (err: any) {
             toast({ title: err.message || "Failed to delete", variant: "destructive" });

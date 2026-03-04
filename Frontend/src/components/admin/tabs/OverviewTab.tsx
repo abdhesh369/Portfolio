@@ -9,6 +9,7 @@ import {
 interface HealthData {
     status: string;
     database: string;
+    redis: string;
     environment: string;
     timestamp: string;
     responseTimeMs: number;
@@ -54,6 +55,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             setHealthData({
                 status: "unreachable",
                 database: "unknown",
+                redis: "unknown",
                 environment: "unknown",
                 timestamp: new Date().toISOString(),
                 responseTimeMs: -1,
@@ -155,6 +157,13 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             accent: ACCENTS.green.hex,
             text: healthLoading ? "checking..." : healthData?.database ?? "unknown",
             icon: Database,
+        },
+        {
+            label: "Redis Cache",
+            value: healthData?.redis === "connected" ? 100 : 0,
+            accent: ACCENTS.pink.hex,
+            text: healthLoading ? "checking..." : healthData?.redis ?? "unknown",
+            icon: Server,
         },
         {
             label: "Content Coverage",

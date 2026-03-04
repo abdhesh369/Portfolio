@@ -18,5 +18,6 @@ export {
   useLogin,
   useAnalyticsSummary,
   useVitalsSummary,
+  useEmailTemplates,
 } from "./portfolio";
 

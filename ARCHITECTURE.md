@@ -216,3 +216,19 @@ Neon's free-tier databases hibernate after ~5 minutes of inactivity. The **15-se
 ### Health Check
 
 `checkDatabaseHealth()` acquires a pool client, runs `SELECT 1` with a 5-second `Promise.race` timeout. Returns boolean — no exceptions thrown to callers.
+
+---
+
+## Database Seeding
+
+The application includes an idempotent database seeder (`src/db/seed.ts`).
+
+### Default Behavior (Merge)
+On startup, `seedDatabase()` checks for existing data (e.g., projects). If data exists, it gracefully merges/updates records. If tables are empty, it inserts the initial seed data.
+
+### FORCE_SEED Behavior (Wipe & Reset)
+If the `FORCE_SEED=true` environment variable is set:
+1. The seeder **wipes all existing data** in supported tables.
+2. It re-inserts fresh data from the seed files.
+3. This is a destructive operation intended for development/staging environments, **never production**.
+4. Refer to `RUNBOOK.md` for proper usage guidelines and backup procedures before using this feature.

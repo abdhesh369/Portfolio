@@ -45,22 +45,7 @@ articlesRouter.get(
     })
 );
 
-// GET /articles/related/:slug - Get related articles based on overlapping tags
-articlesRouter.get(
-    "/related/:slug",
-    cachePublic(300),
-    asyncHandler(async (req, res) => {
-        const slug = req.params.slug;
-        const article = await articleService.getBySlug(slug);
-        if (!article) {
-            res.status(404).json({ error: "Article not found" });
-            return;
-        }
 
-        const related = await articleService.getRelatedArticles(article.id);
-        res.json(related);
-    })
-);
 
 // GET /articles/:slug - Get article by slug
 articlesRouter.get(
@@ -77,7 +62,7 @@ articlesRouter.get(
 
         const isAdmin = await checkAuthStatus(req);
         if (article.status !== "published" && !isAdmin) {
-            res.setHeader("Cache-Control", "no-store"); // BUG-07
+            res.setHeader("Cache-Control", "no-store");
             res.status(403).json({ error: "Access denied" });
             return;
         }

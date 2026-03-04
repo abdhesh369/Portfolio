@@ -4,6 +4,7 @@ import { insertMindsetApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { validateBody } from "../middleware/validate.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset - Get mindset data
@@ -23,6 +24,7 @@ export function registerMindsetRoutes(app: Router) {
         validateBody(insertMindsetApiSchema),
         asyncHandler(async (req, res) => {
             const mindset = await mindsetService.create(req.body);
+            recordAudit("CREATE", "mindset", mindset.id, null, req.body as Record<string, unknown>);
             res.status(201).json(mindset);
         })
     );
@@ -58,6 +60,7 @@ export function registerMindsetRoutes(app: Router) {
                 return;
             }
             const mindset = await mindsetService.update(id, req.body);
+            recordAudit("UPDATE", "mindset", id, null, req.body as Record<string, unknown>);
             res.json(mindset);
         })
     );
@@ -73,6 +76,7 @@ export function registerMindsetRoutes(app: Router) {
                 return;
             }
             await mindsetService.delete(id);
+            recordAudit("DELETE", "mindset", id, null, null);
             res.status(204).send();
         })
     );

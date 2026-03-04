@@ -19,6 +19,7 @@ import {
     articleSchema,
     articleWithRelatedSchema,
     insertArticleApiSchema,
+    emailTemplateSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -569,6 +570,22 @@ export const api = {
                 204: z.void(),
                 401: errorSchemas.unauthorized,
                 404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
+    // ---------- EMAIL TEMPLATES ----------
+    emailTemplates: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/email-templates",
+            description: "List all email templates (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.array(emailTemplateSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
                 500: errorSchemas.internal,
             },
         },

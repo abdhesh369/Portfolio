@@ -1,72 +1,64 @@
-import React, { useState, useEffect, type FormEvent } from "react";
+import React, { useState, type FormEvent } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { apiFetch } from "@/lib/api-helpers";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { EmailTemplate } from "@shared/schema";
+import { useEmailTemplates } from "@/hooks/portfolio/use-email-templates";
 
 const emptyTemplate = { name: "", subject: "", body: "" };
 
 import type { AdminTabProps } from "./types";
 
 export function EmailTemplatesTab({ }: AdminTabProps) {
-    const [templates, setTemplates] = useState<EmailTemplate[]>([]);
-    const [loading, setLoading] = useState(true);
+    const {
+        data: templates = [],
+        isLoading: loading,
+        createMutation,
+        updateMutation,
+        deleteMutation
+    } = useEmailTemplates();
+
     const [editing, setEditing] = useState<(Partial<EmailTemplate> & typeof emptyTemplate) | null>(null);
-    const [saving, setSaving] = useState(false);
     const { toast } = useToast();
 
-    const fetchTemplates = async () => {
-        setLoading(true);
-        try {
-            const data = await apiFetch("/api/v1/email-templates");
-            setTemplates(data ?? []);
-        } catch {
-            toast({ title: "Failed to load templates", variant: "destructive" });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchTemplates();
-    }, []);
+    const isSaving = createMutation.isPending || updateMutation.isPending;
 
     const save = async (e: FormEvent) => {
         e.preventDefault();
         if (!editing) return;
-        setSaving(true);
+
         try {
             if (editing.id) {
-                await apiFetch(`/api/v1/email-templates/${editing.id}`, {
-                    method: "PUT",
-                    body: JSON.stringify(editing)
+                await updateMutation.mutateAsync({
+                    id: editing.id,
+                    data: {
+                        name: editing.name,
+                        subject: editing.subject,
+                        body: editing.body
+                    }
                 });
                 toast({ title: "Template updated" });
             } else {
-                await apiFetch("/api/v1/email-templates", {
-                    method: "POST",
-                    body: JSON.stringify(editing)
+                await createMutation.mutateAsync({
+                    name: editing.name,
+                    subject: editing.subject,
+                    body: editing.body
                 });
                 toast({ title: "Template created" });
             }
             setEditing(null);
-            fetchTemplates();
         } catch (err: any) {
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
-        } finally {
-            setSaving(false);
         }
     };
 
     const deleteTemplate = async (id: number) => {
         if (!confirm("Delete this template?")) return;
         try {
-            await apiFetch(`/api/v1/email-templates/${id}`, { method: "DELETE" });
+            await deleteMutation.mutateAsync(id);
             toast({ title: "Template deleted" });
-            fetchTemplates();
         } catch (err: any) {
             toast({ title: "Delete failed", description: err.message, variant: "destructive" });
         }
@@ -106,8 +98,8 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
                     </div>
 
                     <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={saving}>
-                            {saving ? "Saving..." : (editing.id ? "Update" : "Create")}
+                        <Button type="submit" disabled={isSaving}>
+                            {isSaving ? "Saving..." : (editing.id ? "Update" : "Create")}
                         </Button>
                         <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
                     </div>
@@ -139,7 +131,7 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
                                 <div className="text-sm text-white/40 line-clamp-3 prose prose-invert prose-sm" dangerouslySetInnerHTML={{ __html: tpl.body }} />
                             </div>
                             <div className="flex gap-2 pt-2 border-t border-white/5">
-                                <Button variant="outline" size="sm" onClick={() => setEditing(tpl)} className="text-white/60">Edit</Button>
+                                <Button variant="outline" size="sm" onClick={() => setEditing(tpl as Partial<EmailTemplate> & typeof emptyTemplate)} className="text-white/60">Edit</Button>
                                 <Button variant="destructive" size="sm" onClick={() => deleteTemplate(tpl.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
                             </div>
                         </div>
