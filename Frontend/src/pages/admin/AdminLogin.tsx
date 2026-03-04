@@ -37,8 +37,8 @@ export default function AdminLogin() {
                 throw new Error(err.message || "Invalid credentials");
             }
 
-            const data = await res.json();
-            login(data.token);
+            await res.json();
+            login();
             toast({
                 title: "Welcome back, Admin!",
                 description: "You are now logged in.",

@@ -51,12 +51,16 @@ export const registerChatRoutes = (router: Router) => {
                 db.select().from(experiencesTable),
             ]);
 
+            // Helper to truncate long strings for the prompt
+            const truncate = (text: string, maxLen = 500) =>
+                text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
+
             const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.
             Your goal is to answer questions about Abdhesh based on the following information:
-            - Skills: ${skills.map(s => s.name).join(", ")}
-            - Projects: ${projects.map(p => `${p.title}: ${p.description}`).join("; ")}
-            - Experiences: ${experiences.map(e => `${e.role} at ${e.organization}`).join("; ")}
-            - Articles: ${articles.map(a => a.title).join(", ")}
+            - Skills: ${skills.slice(0, 30).map(s => s.name).join(", ")}
+            - Projects: ${projects.slice(0, 10).map(p => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
+            - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
+            - Articles: ${articles.slice(0, 10).map(a => a.title).join(", ")}
             
             Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
 

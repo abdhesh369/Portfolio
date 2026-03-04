@@ -51,6 +51,8 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
+  // Static named routes BEFORE dynamic :id routes
+
   // PUT /projects/reorder - Reorder projects
   app.put(
     "/projects/reorder",
@@ -87,6 +89,25 @@ export function registerProjectRoutes(app: Router) {
       const { ids, status } = schema.parse(req.body);
       await projectService.bulkUpdateStatus(ids, status);
       res.status(204).send();
+    })
+  );
+
+  // GET /api/projects/:id - Get project by ID
+  app.get(
+    "/projects/:id",
+    cachePublic(600),
+    asyncHandler(async (req, res) => {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid project ID" });
+        return;
+      }
+      const project = await projectService.getById(id);
+      if (!project) {
+        res.status(404).json({ message: "Project not found" });
+        return;
+      }
+      res.json(project);
     })
   );
 

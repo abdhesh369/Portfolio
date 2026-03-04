@@ -1,41 +1,40 @@
 import { Request, Response, NextFunction } from "express";
 import { env } from "./env.js";
 import jwt from "jsonwebtoken";
+import { Redis } from "ioredis";
 
-// In-memory token blacklist (use Redis in production)
-const tokenBlacklist = new Set<string>();
+// Central Redis connection for token blacklist
+const redis = env.REDIS_URL ? new Redis(env.REDIS_URL) : null;
+const isProd = env.NODE_ENV === "production";
 
-// Warn if running in production without a persistent store for token revocation
-if (process.env.NODE_ENV === "production") {
-    console.warn("⚠️  [AUTH] Token blacklist is in-memory. Revoked tokens will be valid again after server restart. Consider using Redis for persistent token revocation.");
+if (isProd && !redis) {
+    console.warn("⚠️  [AUTH] Redis is not configured in production. Token blacklist is disabled. Tokens cannot be revoked persistently.");
 }
-
-// Periodically purge expired tokens from blacklist (every 30 minutes)
-setInterval(() => {
-    for (const token of tokenBlacklist) {
-        try {
-            const decoded = jwt.decode(token) as { exp?: number } | null;
-            if (decoded?.exp && decoded.exp * 1000 < Date.now()) {
-                tokenBlacklist.delete(token);
-            }
-        } catch {
-            // Malformed token — remove it
-            tokenBlacklist.delete(token);
-        }
-    }
-}, 30 * 60 * 1000);
 
 /**
  * Revokes a JWT token by adding it to the blacklist
  */
-export function revokeToken(token: string) {
-    tokenBlacklist.add(token);
+export async function revokeToken(token: string) {
+    if (!redis) return; // Skip if no Redis
+
+    try {
+        const decoded = jwt.decode(token) as { exp?: number } | null;
+        if (decoded?.exp) {
+            const ttl = Math.max(0, decoded.exp - Math.floor(Date.now() / 1000));
+            if (ttl > 0) {
+                // Store in Redis with TTL so it expires automatically
+                await redis.set(`blacklist:${token}`, "1", "EX", ttl);
+            }
+        }
+    } catch (err) {
+        console.error("[AUTH] Failed to revoke token:", err);
+    }
 }
 
 /**
  * Checks if the request is authenticated via JWT or API Key without throwing an error
  */
-export const checkAuthStatus = (req: Request): boolean => {
+export async function checkAuthStatus(req: Request): Promise<boolean> {
     let token: string | undefined;
 
     const authHeader = req.headers.authorization;
@@ -46,7 +45,10 @@ export const checkAuthStatus = (req: Request): boolean => {
     }
 
     if (token) {
-        if (tokenBlacklist.has(token)) return false;
+        if (redis) {
+            const isBlacklisted = await redis.get(`blacklist:${token}`);
+            if (isBlacklisted) return false;
+        }
         try {
             jwt.verify(token, env.JWT_SECRET);
             return true;
@@ -61,12 +63,12 @@ export const checkAuthStatus = (req: Request): boolean => {
     }
 
     return false;
-};
+}
 
 /**
  * Middleware to check for admin authentication via JWT or API Key
  */
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined;
 
     // 1. Check for Bearer token in Authorization header
@@ -80,9 +82,12 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     }
 
     if (token) {
-        // Check if token is blacklisted
-        if (tokenBlacklist.has(token)) {
-            return res.status(401).json({ message: "Token has been revoked. Please login again." });
+        // Check if token is blacklisted in Redis
+        if (redis) {
+            const isBlacklisted = await redis.get(`blacklist:${token}`);
+            if (isBlacklisted) {
+                return res.status(401).json({ message: "Token has been revoked. Please login again." });
+            }
         }
 
         try {
@@ -103,6 +108,9 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 
     res.status(401).json({ message: "Unauthorized. Please provide a valid token or API key." });
 };
+
+// Alias for better readability in admin routes
+export const isAdmin = isAuthenticated;
 
 /**
  * Error handler wrapper for async routes

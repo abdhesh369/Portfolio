@@ -12,7 +12,7 @@ articlesRouter.get(
     "/",
     cachePublic(300),
     asyncHandler(async (req, res) => {
-        const isAdmin = checkAuthStatus(req);
+        const isAdmin = await checkAuthStatus(req);
         let status = req.query.status as string | undefined;
 
         if (!isAdmin) {
@@ -57,7 +57,7 @@ articlesRouter.get(
             return;
         }
 
-        const isAdmin = checkAuthStatus(req);
+        const isAdmin = await checkAuthStatus(req);
         if (article.status !== "published" && !isAdmin) {
             res.status(403).json({ error: "Access denied" });
             return;

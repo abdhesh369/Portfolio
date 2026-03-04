@@ -15,6 +15,11 @@ export const cachePublic = (maxAgeSeconds: number = 300) => {
             return next();
         }
 
+        // Skip caching if authenticated (prevents leaking admin/draft content to CDNs)
+        if (req.cookies?.auth_token || req.headers.authorization || req.headers["x-api-key"]) {
+            return next();
+        }
+
         // Set Cache-Control header
         res.setHeader(
             "Cache-Control",

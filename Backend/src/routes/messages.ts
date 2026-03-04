@@ -47,6 +47,18 @@ export function registerMessageRoutes(app: Router) {
         })
     );
 
+    // POST /messages/bulk-delete - Bulk delete messages
+    app.post(
+        "/messages/bulk-delete",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const schema = z.object({ ids: z.array(z.number()) });
+            const { ids } = schema.parse(req.body);
+            await messageService.bulkDelete(ids);
+            res.status(204).send();
+        })
+    );
+
     // GET /messages/:id - Get single message
     app.get(
         "/messages/:id",
@@ -111,18 +123,6 @@ export function registerMessageRoutes(app: Router) {
         })
     );
 
-    // POST /messages/bulk-delete - Bulk delete messages
-    app.post(
-        "/messages/bulk-delete",
-        isAuthenticated,
-        asyncHandler(async (req, res) => {
-            const schema = z.object({ ids: z.array(z.number()) });
-            const { ids } = schema.parse(req.body);
-            await messageService.bulkDelete(ids);
-            res.status(204).send();
-        })
-    );
-
     // POST /messages/:id/reply - Reply to a message
     app.post(
         "/messages/:id/reply",
@@ -164,7 +164,10 @@ export function registerMessageRoutes(app: Router) {
             // Post-process: strip javascript: hrefs and enforce rel="noopener noreferrer"
             const safeSanitizedBody = sanitizedBody
                 .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
-                .replace(/<a\s/gi, '<a rel="noopener noreferrer" ');
+                .replace(/<a\b([^>]*?)(\srel="[^"]*")?([^>]*?)>/gi, (match, p1, p2, p3) => {
+                    // Remove any existing rel attribute and add the mandatory one
+                    return `<a${p1}${p3} rel="noopener noreferrer">`;
+                });
 
             if (emailQueue) {
                 try {
