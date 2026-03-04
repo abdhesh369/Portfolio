@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useArticle } from "@/hooks/use-portfolio";
+import type { ArticleWithRelated } from "@shared/schema";
 import { useRoute } from "wouter";
 import { m } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Link2, Check } from "lucide-react";
 import { Link } from "wouter";
+import { AUTHOR } from "@/lib/author";
 
 function PostSkeleton() {
     return (
@@ -41,7 +43,7 @@ export default function BlogPost() {
     const [copied, setCopied] = useState(false);
 
     // Related articles come from the article response itself (GET /:slug returns { ...article, relatedArticles })
-    const relatedArticles = (article as any)?.relatedArticles || [];
+    const relatedArticles = (article as ArticleWithRelated)?.relatedArticles || [];
 
     // Dynamic OG image generation
     const ogImage = article ? getDynamicOgImage(article.title, article.featuredImage || undefined) : undefined;
@@ -84,7 +86,7 @@ export default function BlogPost() {
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
             <SEO
                 slug={`blog/${article.slug}`}
-                title={`${article.title} | Abdhesh Sah`}
+                title={`${article.title} | ${AUTHOR.name}`}
                 description={article.excerpt || article.title}
                 image={ogImage}
                 structuredData={[
@@ -97,7 +99,7 @@ export default function BlogPost() {
                         "dateModified": article.updatedAt,
                         "author": {
                             "@type": "Person",
-                            "name": "Abdhesh Sah",
+                            "name": AUTHOR.name,
                             "url": "https://abdheshsah.com.np"
                         }
                     },
@@ -154,7 +156,7 @@ export default function BlogPost() {
                                 {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
                             </Badge>
                             <span className="text-white/30 text-sm">{article.readTimeMinutes || 5} min read</span>
-                            {(article as any).tags?.map((tag: string) => (
+                            {article.tags?.map((tag: string) => (
                                 <span key={tag} className="text-xs text-white/40">#{tag}</span>
                             ))}
                         </m.div>
@@ -250,14 +252,14 @@ export default function BlogPost() {
                                 AS
                             </div>
                             <div className="text-center md:text-left">
-                                <h4 className="text-xl font-bold text-white mb-2">Written by Abdhesh Sah</h4>
+                                <h4 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h4>
                                 <p className="text-white/50 mb-4">
-                                    Engineer passionate about building high-performance web applications and sharing knowledge with the community.
+                                    {AUTHOR.bio}
                                 </p>
                                 <div className="flex justify-center md:justify-start gap-4">
-                                    <a href="https://twitter.com/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
-                                    <a href="https://linkedin.com/in/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
-                                    <a href="https://github.com/abdhesh369" target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
+                                    <a href={AUTHOR.socials.twitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
+                                    <a href={AUTHOR.socials.linkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
+                                    <a href={AUTHOR.socials.github} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
                                 </div>
                             </div>
                         </div>

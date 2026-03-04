@@ -27,11 +27,10 @@ export class ArticleService {
         const cached = redis ? await redis.get(cacheKey) : null;
 
         if (cached) {
-            console.log(`Cache Hit: ${cacheKey}`);
             return JSON.parse(cached);
         }
 
-        console.log(`Cache Miss: ${cacheKey}`);
+
         const articles = await articleRepository.findAll(status);
         if (redis) {
             await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
@@ -45,11 +44,10 @@ export class ArticleService {
         const cached = redis ? await redis.get(cacheKey) : null;
 
         if (cached) {
-            console.log(`Cache Hit: ${cacheKey}`);
             return JSON.parse(cached);
         }
 
-        console.log(`Cache Miss: ${cacheKey}`);
+
         const article = await articleRepository.findBySlug(slug);
         if (article && redis) {
             await redis.setex(cacheKey, 3600, JSON.stringify(article));
@@ -80,7 +78,7 @@ export class ArticleService {
         const current = await articleRepository.findById(id);
         if (!current) throw new Error(`Article with id ${id} not found`);
 
-        const updateData: any = { ...data, updatedAt: new Date() };
+        const updateData: Partial<InsertArticle> & { updatedAt: Date; readTimeMinutes?: number; slug?: string } = { ...data, updatedAt: new Date() };
 
         if (data.content) {
             updateData.readTimeMinutes = this.calculateReadTime(data.content);

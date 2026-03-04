@@ -57,6 +57,8 @@ export function useServerStatus() {
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const wasOfflineRef = useRef(false); // tracks if we ever left "online"
+  const failCountRef = useRef(0);
+  const OFFLINE_THRESHOLD = 3;
 
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
@@ -88,6 +90,7 @@ export function useServerStatus() {
     if (ac.signal.aborted) return;
 
     if (ok) {
+      failCountRef.current = 0;
       setStatus("online");
       stopPolling();
 
@@ -98,11 +101,14 @@ export function useServerStatus() {
       }
     } else {
       // Server is unreachable — mark degraded and start polling
+      failCountRef.current += 1;
       wasOfflineRef.current = true;
+
       setStatus((prev) => {
         if (slow) return "waking";
-        if (prev === "waking") return "waking"; // stay in waking if it was already waking and still failing
-        return "offline";
+        // If we've failed enough times, mark as offline even if it was "waking" before
+        if (failCountRef.current >= OFFLINE_THRESHOLD) return "offline";
+        return prev === "checking" ? "offline" : prev;
       });
       startPolling();
     }

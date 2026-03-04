@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { Article } from "@shared/schema";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
-function BlogCard({ article }: { article: any }) {
+function BlogCard({ article }: { article: Article }) {
     return (
         <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -23,7 +24,7 @@ function BlogCard({ article }: { article: any }) {
                         {article.featuredImage ? (
                             <img
                                 src={article.featuredImage}
-                                alt={article.imageAlt || `Cover illustration for the article "${article.title}": ${article.excerpt?.substring(0, 100)}...`}
+                                alt={article.featuredImageAlt || `Cover illustration for the article "${article.title}": ${article.excerpt?.substring(0, 100)}...`}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                         ) : (
@@ -48,7 +49,7 @@ function BlogCard({ article }: { article: any }) {
                             {article.excerpt || "No excerpt available."}
                         </p>
                         <div className="mt-auto flex flex-wrap gap-2">
-                            {(article.tags as string[] | undefined)?.map((tag: string) => (
+                            {article.tags?.map((tag: string) => (
                                 <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/40 border border-white/10">
                                     #{tag}
                                 </span>
@@ -83,16 +84,16 @@ export default function BlogList() {
 
     // Extract unique tags from all articles
     const allTags = Array.from(
-        new Set(articles?.flatMap((a: any) => (a.tags as string[]) || []) || [])
+        new Set(articles?.flatMap(a => a.tags || []) || [])
     ).sort();
 
     const filteredArticles = articles?.filter(a => {
         const matchesSearch = !searchQuery ||
             a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+            a.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        const matchesTag = !selectedTag || (a.tags as string[] | undefined)?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
+        const matchesTag = !selectedTag || a.tags?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
 
         return matchesSearch && matchesTag;
     }) || [];
@@ -176,7 +177,7 @@ export default function BlogList() {
                 ) : filteredArticles.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredArticles.map((article) => (
-                            <BlogCard key={(article as any).id} article={article} />
+                            <BlogCard key={article.id} article={article} />
                         ))}
                     </div>
                 ) : (

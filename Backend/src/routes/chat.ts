@@ -41,7 +41,7 @@ export const registerChatRoutes = (router: Router) => {
                 return res.status(500).json({ message: "OpenRouter API key is not configured." });
             }
 
-            const validatedData = req.body;
+            const validatedData: z.infer<typeof chatSchema> = req.body;
 
             // Fetch context for system prompt
             const [articles, projects, skills, experiences] = await Promise.all([

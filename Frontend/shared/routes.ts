@@ -17,6 +17,7 @@ import {
     testimonialSchema,
     insertTestimonialApiSchema,
     articleSchema,
+    articleWithRelatedSchema,
     insertArticleApiSchema,
 } from "./schema.js";
 
@@ -527,7 +528,7 @@ export const api = {
             path: "/api/articles/:slug",
             description: "Get single article by slug (public)",
             responses: {
-                200: articleSchema,
+                200: articleWithRelatedSchema,
                 404: errorSchemas.notFound,
                 500: errorSchemas.internal,
             },

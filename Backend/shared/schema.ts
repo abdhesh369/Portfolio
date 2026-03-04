@@ -393,9 +393,11 @@ export const insertMessageApiSchema = z.object({
   website: z.string().optional(), // Honeypot field for spam prevention
 });
 
+export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form"] as const;
+
 export const analyticsSchema = z.object({
   id: z.number(),
-  type: z.string().max(50),
+  type: z.enum(ANALYTICS_EVENT_TYPES),
   targetId: z.number().nullable().optional(),
   path: z.string().max(500),
   browser: z.string().max(100).nullable().optional(),
@@ -407,7 +409,7 @@ export const analyticsSchema = z.object({
 });
 
 export const insertAnalyticsSchema = z.object({
-  type: z.enum(["page_view", "project_view", "contact_form"]),
+  type: z.enum(ANALYTICS_EVENT_TYPES),
   targetId: z.number().nullable().optional(),
   path: z.string().max(500),
   browser: z.string().max(100).nullable().optional(),
@@ -480,6 +482,10 @@ export const articleSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
+export const articleWithRelatedSchema = articleSchema.extend({
+  relatedArticles: z.array(articleSchema).optional(),
+});
+
 export const insertArticleApiSchema = z.object({
   title: z.string().min(1).max(255),
   slug: z.string().max(255).optional(),
@@ -510,6 +516,7 @@ export type Analytics = z.infer<typeof analyticsSchema>;
 export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
 export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
+export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
 export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 

@@ -59,6 +59,7 @@ articlesRouter.get(
 
         const isAdmin = await checkAuthStatus(req);
         if (article.status !== "published" && !isAdmin) {
+            res.setHeader("Cache-Control", "no-store"); // BUG-07
             res.status(403).json({ error: "Access denied" });
             return;
         }

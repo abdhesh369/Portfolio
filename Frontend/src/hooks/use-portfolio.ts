@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
+import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 
 /* ---------------------------------- */
 /* Generic fetch helper */
@@ -254,7 +255,7 @@ export function useLogin() {
         description: "Welcome back, Admin!",
       });
       // Invalidate auth state to trigger re-render
-      queryClient.invalidateQueries({ queryKey: ["auth-status"] });
+      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
     },
     onError: (error) => {
       toast({

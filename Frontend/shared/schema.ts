@@ -1,4 +1,4 @@
-import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -24,6 +24,11 @@ export const projectsTable = pgTable("projects", {
   impact: text("impact"),
   role: text("role"),
   imageAlt: text("imageAlt"),
+}, (table) => {
+  return {
+    categoryIdx: index("projects_category_idx").on(table.category),
+    orderIdx: index("projects_order_idx").on(table.displayOrder),
+  };
 });
 
 export const skillsTable = pgTable("skills", {
@@ -40,8 +45,8 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: varchar("from_skill_id", { length: 100 }).notNull(),
-  toSkillId: varchar("to_skill_id", { length: 100 }).notNull(),
+  fromSkillId: integer("from_skill_id").notNull(),
+  toSkillId: integer("to_skill_id").notNull(),
 });
 
 export const experiencesTable = pgTable("experiences", {
@@ -81,6 +86,11 @@ export const analyticsTable = pgTable("analytics", {
   country: varchar("country", { length: 100 }),
   city: varchar("city", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    typeIdx: index("analytics_type_idx").on(table.type),
+    createdIdx: index("analytics_created_at_idx").on(table.createdAt),
+  };
 });
 
 export const emailTemplatesTable = pgTable("email_templates", {
@@ -122,14 +132,19 @@ export const articlesTable = pgTable("articles", {
   metaTitle: varchar("metaTitle", { length: 255 }),
   metaDescription: text("metaDescription"),
   authorId: integer("authorId"),
+  featuredImageAlt: text("featuredImageAlt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-  featuredImageAlt: text("featuredImageAlt"),
+}, (table) => {
+  return {
+    statusIdx: index("articles_status_idx").on(table.status),
+    slugIdx: index("articles_slug_idx").on(table.slug), // though unique, status filtering is common
+  };
 });
 
 export const articleTagsTable = pgTable("article_tags", {
   id: serial("id").primaryKey(),
-  articleId: integer("articleId").notNull(),
+  articleId: integer("articleId").notNull().references(() => articlesTable.id, { onDelete: 'cascade' }),
   tag: varchar("tag", { length: 100 }).notNull(),
 });
 
@@ -141,6 +156,11 @@ export const servicesTable = pgTable("services", {
   tags: jsonb("tags").notNull(),
   displayOrder: integer("displayOrder").notNull().default(0),
   isFeatured: boolean("isFeatured").notNull().default(false),
+}, (table) => {
+  return {
+    categoryIdx: index("services_category_idx").on(table.category),
+    orderIdx: index("services_order_idx").on(table.displayOrder),
+  };
 });
 
 export const testimonialsTable = pgTable("testimonials", {
@@ -154,6 +174,10 @@ export const testimonialsTable = pgTable("testimonials", {
   linkedinUrl: varchar("linkedinUrl", { length: 500 }),
   displayOrder: integer("displayOrder").notNull().default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    orderIdx: index("testimonials_order_idx").on(table.displayOrder),
+  };
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
@@ -273,8 +297,8 @@ export const insertSkillApiSchema = z.object({
 
 export const skillConnectionSchema = z.object({
   id: z.number(),
-  fromSkillId: z.string().min(1),
-  toSkillId: z.string().min(1),
+  fromSkillId: z.number(),
+  toSkillId: z.number(),
 });
 
 export const mindsetSchema = z.object({
@@ -338,7 +362,7 @@ export const testimonialSchema = z.object({
   avatarUrl: z.string().max(500).nullable().optional(),
   linkedinUrl: z.string().url().max(500).nullable().optional(),
   displayOrder: z.number().default(0),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertTestimonialApiSchema = z.object({
@@ -358,7 +382,7 @@ export const messageSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500),
   message: z.string().min(1).max(5000),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertMessageApiSchema = z.object({
@@ -369,9 +393,11 @@ export const insertMessageApiSchema = z.object({
   website: z.string().optional(), // Honeypot field for spam prevention
 });
 
+export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form"] as const;
+
 export const analyticsSchema = z.object({
   id: z.number(),
-  type: z.string().max(50),
+  type: z.enum(ANALYTICS_EVENT_TYPES),
   targetId: z.number().nullable().optional(),
   path: z.string().max(500),
   browser: z.string().max(100).nullable().optional(),
@@ -379,11 +405,11 @@ export const analyticsSchema = z.object({
   device: z.string().max(50).nullable().optional(),
   country: z.string().max(100).nullable().optional(),
   city: z.string().max(100).nullable().optional(),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertAnalyticsSchema = z.object({
-  type: z.string().max(50),
+  type: z.enum(ANALYTICS_EVENT_TYPES),
   targetId: z.number().nullable().optional(),
   path: z.string().max(500),
   browser: z.string().max(100).nullable().optional(),
@@ -398,7 +424,7 @@ export const emailTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   subject: z.string().min(1).max(500),
   body: z.string().min(1).max(10000),
-  createdAt: z.string(),
+  createdAt: z.coerce.date(),
 });
 
 export const insertEmailTemplateApiSchema = z.object({
@@ -419,8 +445,8 @@ export const seoSettingsSchema = z.object({
   canonicalUrl: z.string().url().max(500).nullable().optional(),
   noindex: z.boolean().default(false),
   twitterCard: z.string().default("summary_large_image"),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const insertSeoSettingsApiSchema = z.object({
@@ -450,10 +476,14 @@ export const articleSchema = z.object({
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
+  featuredImageAlt: z.string().max(500).nullable().optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  featuredImageAlt: z.string().nullable().optional(),
   tags: z.array(z.string()).optional(),
+});
+
+export const articleWithRelatedSchema = articleSchema.extend({
+  relatedArticles: z.array(articleSchema).optional(),
 });
 
 export const insertArticleApiSchema = z.object({
@@ -467,8 +497,8 @@ export const insertArticleApiSchema = z.object({
   readTimeMinutes: z.number().default(0),
   metaTitle: z.string().max(255).nullable().optional(),
   metaDescription: z.string().nullable().optional(),
-  featuredImageAlt: z.string().max(500).nullable().optional(),
   tags: z.array(z.string()).optional(),
+  featuredImageAlt: z.string().max(500).nullable().optional(),
 });
 
 export const updateArticleApiSchema = insertArticleApiSchema.partial();
@@ -486,7 +516,9 @@ export type Analytics = z.infer<typeof analyticsSchema>;
 export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
 export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
+export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
+export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type InsertSkill = z.infer<typeof insertSkillApiSchema>;

@@ -13,8 +13,16 @@ export function registerUploadRoutes(app: Router) {
             // Let's use it as a manual call to have full control over the buffer.
 
             // Use memory storage for validation before streaming to Cloudinary
-            const storage = (await import("multer")).memoryStorage();
-            const uploadMem = (await import("multer")).default({ storage }).single("file");
+            const multerModule = await import("multer");
+            const multer = multerModule.default;
+            const storage = multer.memoryStorage();
+            const uploadMem = multer({
+                storage,
+                limits: {
+                    fileSize: 5 * 1024 * 1024, // 5MB limit (BUG-02)
+                    files: 1
+                }
+            }).single("file");
 
             uploadMem(req, res, async (err) => {
                 if (err) {

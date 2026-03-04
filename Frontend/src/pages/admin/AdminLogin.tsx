@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/auth-context";
 import { useToast } from "@/hooks/use-toast";
@@ -14,10 +14,11 @@ export default function AdminLogin() {
     const { toast } = useToast();
 
     // If already logged in, redirect
-    if (isAuthenticated) {
-        navigate("/admin", { replace: true });
-        return null;
-    }
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/admin", { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
