@@ -47,7 +47,8 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/portfolio
       REDIS_URL: redis://redis:6379
       FRONTEND_URL: http://localhost:3000
-      JWT_SECRET: dev_secret_key_at_least_32_characters
+      JWT_SECRET: dev_secret_key_at_least_64_characters_long_for_proper_security_padding__
+      JWT_REFRESH_SECRET: dev_refresh_secret_at_least_64_characters_long_security_padding______
       ADMIN_PASSWORD: admin
       # Sentry configuration (optional, will use env vars if provided)
       SENTRY_DSN: ${SENTRY_DSN}

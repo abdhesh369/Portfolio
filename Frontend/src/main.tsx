@@ -3,6 +3,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
 import * as Sentry from "@sentry/react";
+import { initWebVitals } from "./lib/web-vitals";
 
 if (import.meta.env.VITE_SENTRY_DSN) {
     Sentry.init({
@@ -25,3 +26,6 @@ createRoot(document.getElementById("root")!).render(
         <App />
     </HelmetProvider>
 );
+
+// Initialize Core Web Vitals reporting (non-blocking)
+initWebVitals();

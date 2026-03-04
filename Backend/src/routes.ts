@@ -16,8 +16,10 @@ import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
 import feedRoutes from "./routes/feed.js";
+import auditLogRoutes from "./routes/audit-log.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
+import { logger } from "./lib/logger.js";
 
 export function registerRoutes(app: Express) {
   const v1Router = Router();
@@ -38,7 +40,7 @@ export function registerRoutes(app: Express) {
     "/csp-report",
     express.json({ type: "application/csp-report" }),
     (req, res) => {
-      console.warn("CSP Violation:", JSON.stringify(req.body, null, 2));
+      logger.warn({ report: req.body }, "CSP Violation");
       res.status(204).end();
     }
   );
@@ -55,6 +57,9 @@ export function registerRoutes(app: Express) {
   registerEmailTemplateRoutes(v1Router);
   registerTestimonialRoutes(v1Router);
   registerChatRoutes(v1Router);
+
+  // Admin audit log (TICKET-032)
+  v1Router.use("/admin", auditLogRoutes);
 
   // Main API versioning
   app.use("/api/v1", v1Router);

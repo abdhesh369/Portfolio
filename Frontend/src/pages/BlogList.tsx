@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { Article } from "@shared/schema";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { useArticles } from "@/hooks/use-portfolio";
+import { useArticles, useArticleSearch } from "@/hooks/use-portfolio";
 import { m } from "framer-motion";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
@@ -80,23 +80,47 @@ function BlogSkeleton() {
 export default function BlogList() {
     const { data: articles, isLoading } = useArticles("published");
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedQuery, setDebouncedQuery] = useState("");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+    // Debounce search query by 300ms
+    useEffect(() => {
+        debounceRef.current = setTimeout(() => {
+            setDebouncedQuery(searchQuery);
+        }, 300);
+        return () => clearTimeout(debounceRef.current);
+    }, [searchQuery]);
+
+    // Use server-side FTS when query is >= 2 chars, otherwise client-side filter
+    const { data: searchResults, isFetching: isSearching } = useArticleSearch(debouncedQuery);
+    const useServerSearch = debouncedQuery.trim().length >= 2;
 
     // Extract unique tags from all articles
     const allTags = Array.from(
         new Set(articles?.flatMap(a => a.tags || []) || [])
     ).sort();
 
-    const filteredArticles = articles?.filter(a => {
-        const matchesSearch = !searchQuery ||
-            a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredArticles = (() => {
+        const source = useServerSearch ? (searchResults || []) : (articles || []);
 
-        const matchesTag = !selectedTag || a.tags?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
+        return source.filter(a => {
+            // If using server search, only apply tag filter
+            if (useServerSearch) {
+                return !selectedTag || a.tags?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
+            }
 
-        return matchesSearch && matchesTag;
-    }) || [];
+            // Client-side filtering for short queries
+            const matchesSearch = !searchQuery ||
+                a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+
+            const matchesTag = !selectedTag || a.tags?.some(t => t.toLowerCase() === selectedTag.toLowerCase());
+
+            return matchesSearch && matchesTag;
+        });
+    })();
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">

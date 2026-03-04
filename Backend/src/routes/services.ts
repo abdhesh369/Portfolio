@@ -4,6 +4,7 @@ import { portfolioServiceService } from "../services/portfolio-service.service.j
 import { insertServiceApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
+import { recordAudit } from "../lib/audit.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -64,6 +65,7 @@ export function registerServiceRoutes(app: Router) {
     validateBody(insertServiceApiSchema),
     asyncHandler(async (req, res) => {
       const service = await portfolioServiceService.create(req.body);
+      recordAudit("CREATE", "service", service.id, null, req.body);
       res.status(201).json(service);
     })
   );
@@ -80,6 +82,7 @@ export function registerServiceRoutes(app: Router) {
         return;
       }
       const service = await portfolioServiceService.update(id, req.body);
+      recordAudit("UPDATE", "service", id, null, req.body);
       res.json(service);
     })
   );
@@ -95,6 +98,7 @@ export function registerServiceRoutes(app: Router) {
         return;
       }
       await portfolioServiceService.delete(id);
+      recordAudit("DELETE", "service", id, null, null);
       res.status(204).send();
     })
   );

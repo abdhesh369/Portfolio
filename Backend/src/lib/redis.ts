@@ -8,7 +8,7 @@ const DEFAULT_REDIS_URL = "redis://localhost:6379";
  * Global Redis Client
  * Provides a unified way to access Redis for caching and session management.
  */
-class RedisClient {
+export class RedisClient {
     private static instance: Redis | null = null;
     private static isConnected: boolean = false;
 

@@ -3,6 +3,7 @@ import { insertTestimonialApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { testimonialService } from "../services/testimonial.service.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerTestimonialRoutes(app: Router) {
     // GET /testimonials - public list
@@ -41,6 +42,7 @@ export function registerTestimonialRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const data = insertTestimonialApiSchema.parse(req.body);
             const testimonial = await testimonialService.create(data);
+            recordAudit("CREATE", "testimonial", testimonial.id, null, data as Record<string, unknown>);
             res.status(201).json(testimonial);
         })
     );
@@ -57,6 +59,7 @@ export function registerTestimonialRoutes(app: Router) {
             }
             const data = insertTestimonialApiSchema.partial().parse(req.body);
             const testimonial = await testimonialService.update(id, data);
+            recordAudit("UPDATE", "testimonial", id, null, data as Record<string, unknown>);
             res.json(testimonial);
         })
     );
@@ -72,6 +75,7 @@ export function registerTestimonialRoutes(app: Router) {
                 return;
             }
             await testimonialService.delete(id);
+            recordAudit("DELETE", "testimonial", id, null, null);
             res.status(204).send();
         })
     );

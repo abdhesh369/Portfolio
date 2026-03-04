@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
+import { ScrollProgressBar } from "@/components/ScrollProgressBar";
+import { TableOfContents } from "@/components/TableOfContents";
 import { useArticle } from "@/hooks/use-portfolio";
+import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
 import type { ArticleWithRelated } from "@shared/schema";
 import { useRoute } from "wouter";
 import { m } from "framer-motion";
@@ -41,6 +44,10 @@ export default function BlogPost() {
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
     const [copied, setCopied] = useState(false);
+    const articleRef = useRef<HTMLElement>(null);
+
+    // Add copy-to-clipboard buttons on code blocks after content renders
+    useCodeBlockCopy(articleRef.current);
 
     // Related articles come from the article response itself (GET /:slug returns { ...article, relatedArticles })
     const relatedArticles = (article as ArticleWithRelated)?.relatedArticles || [];
@@ -84,6 +91,7 @@ export default function BlogPost() {
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
+            <ScrollProgressBar />
             <SEO
                 slug={`blog/${article.slug}`}
                 title={`${article.title} | ${AUTHOR.name}`}
@@ -92,15 +100,24 @@ export default function BlogPost() {
                 structuredData={[
                     {
                         "@context": "https://schema.org",
-                        "@type": "BlogPosting",
+                        "@type": "TechArticle",
                         "headline": article.title,
                         "image": article.featuredImage ? [article.featuredImage] : [],
                         "datePublished": article.publishedAt,
                         "dateModified": article.updatedAt,
+                        "wordCount": article.content ? article.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length : 0,
                         "author": {
                             "@type": "Person",
                             "name": AUTHOR.name,
                             "url": "https://abdheshsah.com.np"
+                        },
+                        "publisher": {
+                            "@type": "Person",
+                            "name": AUTHOR.name
+                        },
+                        "mainEntityOfPage": {
+                            "@type": "WebPage",
+                            "@id": `https://abdheshsah.com.np/blog/${article.slug}`
                         }
                     },
                     {
@@ -132,7 +149,7 @@ export default function BlogPost() {
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-24">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl xl:max-w-6xl mx-auto">
                     <m.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -146,6 +163,9 @@ export default function BlogPost() {
                         </Link>
                     </m.div>
 
+                    <div className="flex gap-12">
+                        {/* Main article content */}
+                        <div className="flex-1 max-w-4xl">
                     <header className="mb-12">
                         <m.div
                             initial={{ opacity: 0, y: 20 }}
@@ -189,6 +209,7 @@ export default function BlogPost() {
                     </header>
 
                     <article
+                        ref={articleRef}
                         className="prose prose-invert prose-purple max-w-none 
                         prose-headings:font-display prose-headings:font-bold prose-headings:text-white
                         prose-p:text-white/70 prose-p:leading-relaxed prose-p:text-lg
@@ -264,6 +285,13 @@ export default function BlogPost() {
                             </div>
                         </div>
                     </footer>
+                        </div>
+
+                        {/* Table of Contents sidebar — visible on xl screens */}
+                        <aside className="hidden xl:block w-64 shrink-0">
+                            <TableOfContents contentSelector="article" />
+                        </aside>
+                    </div>
                 </div>
             </main>
 

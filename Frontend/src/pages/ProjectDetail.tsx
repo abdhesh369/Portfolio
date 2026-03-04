@@ -252,16 +252,19 @@ export default function ProjectDetail() {
         structuredData={[
           {
             "@context": "https://schema.org",
-            "@type": "SoftwareSourceCode",
+            "@type": "SoftwareApplication",
             "name": project.title,
             "description": project.description,
-            "codeRepository": project.githubUrl,
-            "programmingLanguage": project.techStack,
+            "url": project.liveUrl || project.githubUrl,
+            "applicationCategory": "WebApplication",
+            "operatingSystem": "Any",
             "author": {
               "@type": "Person",
               "name": "Abdhesh Sah"
             },
-            "dateCreated": new Date().toISOString().split('T')[0],
+            "datePublished": new Date().toISOString().split('T')[0],
+            "codeRepository": project.githubUrl,
+            "programmingLanguage": project.techStack,
           },
           {
             "@context": "https://schema.org",

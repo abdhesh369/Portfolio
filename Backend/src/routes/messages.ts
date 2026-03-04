@@ -29,10 +29,36 @@ const contactFormLimiter = rateLimit({
 });
 
 import { validateBody } from "../middleware/validate.js";
+import { messageSSE } from "../lib/sse.js";
+import crypto from "crypto";
 
 // Rate Limiter: max 5 requests per 15 minutes
 
 export function registerMessageRoutes(app: Router) {
+    // GET /messages/stream - SSE endpoint for real-time message notifications (admin only)
+    app.get(
+        "/messages/stream",
+        isAuthenticated,
+        (req, res) => {
+            res.writeHead(200, {
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no", // Disable nginx buffering
+            });
+
+            // Send initial connection event
+            res.write(`event: connected\ndata: ${JSON.stringify({ status: "ok" })}\n\n`);
+
+            const clientId = crypto.randomUUID();
+            messageSSE.addClient(clientId, res);
+
+            req.on("close", () => {
+                messageSSE.removeClient(clientId);
+            });
+        }
+    );
+
     // GET /messages - List all messages (admin only)
     app.get(
         "/messages",
@@ -83,6 +109,14 @@ export function registerMessageRoutes(app: Router) {
             try {
                 const message = await messageService.create(req.body);
                 logger.info({ context: "messages", name: message.name, email: message.email }, "New message received");
+
+                // Emit SSE event for real-time admin notification
+                messageSSE.emit("new-message", {
+                    id: message.id,
+                    name: message.name,
+                    subject: message.subject,
+                    createdAt: message.createdAt,
+                });
 
                 // Send response immediately
                 res.status(201).json({

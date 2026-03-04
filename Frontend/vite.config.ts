@@ -1,12 +1,100 @@
 ﻿import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
+    VitePWA({
+      registerType: 'prompt',
+      includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
+      manifest: {
+        name: 'Abdhesh Sah | Portfolio',
+        short_name: 'Abdhesh',
+        description: 'Senior Full-Stack Engineer specializing in high-performance web systems.',
+        theme_color: '#00B4D8',
+        background_color: '#050510',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'icons/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/pwa-512x512-maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          // Public API routes: StaleWhileRevalidate, 7-day TTL
+          {
+            urlPattern: /\/api\/v1\/(projects|skills|articles|experiences)(\/|$|\?)/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'api-public-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7  // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Admin & auth routes: NetworkOnly (never cached)
+          {
+            urlPattern: /\/api\/v1\/(admin|auth)(\/|$|\?)/i,
+            handler: 'NetworkOnly',
+          },
+          // Google Fonts stylesheets
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Google Fonts files
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
+    }),
   ],
   esbuild: mode === 'production' ? {
     drop: ['console', 'debugger'],

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
 import { articleService } from "../services/article.service.js";
 import { logger } from "../lib/logger.js";
+import { recordAudit } from "../lib/audit.js";
 
 export const articlesRouter = Router();
 
@@ -26,6 +27,21 @@ articlesRouter.get(
 
         const articles = await articleService.getAll(status);
         res.json(articles);
+    })
+);
+
+// GET /articles/search?q=<term> - Full-text search published articles
+articlesRouter.get(
+    "/search",
+    cachePublic(60),
+    asyncHandler(async (req, res) => {
+        const q = (req.query.q as string) || "";
+        if (!q.trim()) {
+            res.json([]);
+            return;
+        }
+        const results = await articleService.search(q);
+        res.json(results);
     })
 );
 
@@ -89,6 +105,7 @@ articlesRouter.post(
     asyncHandler(async (req, res) => {
         const data = insertArticleApiSchema.parse(req.body);
         const article = await articleService.create(data);
+        recordAudit("CREATE", "article", article.id, null, data as Record<string, unknown>);
         res.status(201).json(article);
     })
 );
@@ -100,6 +117,7 @@ articlesRouter.post(
     asyncHandler(async (req, res) => {
         const { ids } = z.object({ ids: z.array(z.number()) }).parse(req.body);
         await articleService.bulkDelete(ids);
+        recordAudit("DELETE", "article", undefined, { ids }, null);
         res.status(204).send();
     })
 );
@@ -116,6 +134,7 @@ articlesRouter.patch(
         }
         const data = updateArticleApiSchema.parse(req.body);
         const article = await articleService.update(id, data);
+        recordAudit("UPDATE", "article", id, null, data as Record<string, unknown>);
         res.json(article);
     })
 );
@@ -131,6 +150,7 @@ articlesRouter.delete(
             return;
         }
         await articleService.delete(id);
+        recordAudit("DELETE", "article", id, null, null);
         res.status(204).send();
     })
 );

@@ -5,6 +5,7 @@ import { skillConnectionService } from "../services/skill-connection.service.js"
 import { insertSkillApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
+import { recordAudit } from "../lib/audit.js";
 
 // Validation middleware factory
 function validateBody<T extends z.ZodType>(schema: T) {
@@ -75,6 +76,7 @@ export function registerSkillRoutes(app: Router) {
         validateBody(insertSkillApiSchema),
         asyncHandler(async (req, res) => {
             const skill = await skillService.create(req.body);
+            recordAudit("CREATE", "skill", skill.id, null, req.body);
             res.status(201).json(skill);
         })
     );
@@ -91,6 +93,7 @@ export function registerSkillRoutes(app: Router) {
                 return;
             }
             const skill = await skillService.update(id, req.body);
+            recordAudit("UPDATE", "skill", id, null, req.body);
             res.json(skill);
         })
     );
@@ -106,6 +109,7 @@ export function registerSkillRoutes(app: Router) {
                 return;
             }
             await skillService.delete(id);
+            recordAudit("DELETE", "skill", id, null, null);
             res.status(204).send();
         })
     );
@@ -118,6 +122,7 @@ export function registerSkillRoutes(app: Router) {
             const schema = z.object({ ids: z.array(z.number()) });
             const { ids } = schema.parse(req.body);
             await skillService.bulkDelete(ids);
+            recordAudit("DELETE", "skill", undefined, { ids }, null);
             res.status(204).send();
         })
     );

@@ -1,6 +1,7 @@
 import { api } from "@shared/routes";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
+import type { Article } from "@shared/schema";
 
 export function useArticles(status?: string) {
   return useQuery({
@@ -24,5 +25,18 @@ export function useArticle(slug: string) {
         "Failed to fetch article"
       ),
     enabled: !!slug,
+  });
+}
+
+export function useArticleSearch(query: string) {
+  return useQuery<Article[]>({
+    queryKey: ["articles", "search", query],
+    queryFn: async () => {
+      const res = await fetch(`/api/v1/articles/search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error("Search failed");
+      return res.json();
+    },
+    enabled: query.trim().length >= 2,
+    placeholderData: (prev) => prev,
   });
 }

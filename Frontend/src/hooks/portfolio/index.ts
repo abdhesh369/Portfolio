@@ -4,7 +4,7 @@
  */
 export { useProjects } from "./use-projects";
 export { useSkills, useSkillConnections, useMindset } from "./use-skills";
-export { useArticles, useArticle } from "./use-articles";
+export { useArticles, useArticle, useArticleSearch } from "./use-articles";
 export { useExperiences } from "./use-experiences";
 export { useServices } from "./use-services";
 export { useTestimonials } from "./use-testimonials";

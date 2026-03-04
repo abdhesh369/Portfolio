@@ -3,6 +3,7 @@ import { insertExperienceApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { experienceService } from "../services/experience.service.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerExperienceRoutes(app: Router) {
     // GET /experiences - Get all experiences
@@ -41,6 +42,7 @@ export function registerExperienceRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const data = insertExperienceApiSchema.parse(req.body);
             const experience = await experienceService.create(data);
+            recordAudit("CREATE", "experience", experience.id, null, data as Record<string, unknown>);
             res.status(201).json(experience);
         })
     );
@@ -57,6 +59,7 @@ export function registerExperienceRoutes(app: Router) {
             }
             const data = insertExperienceApiSchema.partial().parse(req.body);
             const experience = await experienceService.update(id, data);
+            recordAudit("UPDATE", "experience", id, null, data as Record<string, unknown>);
             res.json(experience);
         })
     );
@@ -72,6 +75,7 @@ export function registerExperienceRoutes(app: Router) {
                 return;
             }
             await experienceService.delete(id);
+            recordAudit("DELETE", "experience", id, null, null);
             res.status(204).send();
         })
     );

@@ -62,6 +62,11 @@ export class ArticleService {
         return articleRepository.findById(id);
     }
 
+    async search(query: string): Promise<Article[]> {
+        if (!query || query.trim().length === 0) return [];
+        return articleRepository.search(query.trim(), 10);
+    }
+
     async create(data: InsertArticle & { tags?: string[] }): Promise<Article> {
         const slug = data.slug || this.generateSlug(data.title);
         const readTimeMinutes = this.calculateReadTime(data.content);

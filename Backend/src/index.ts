@@ -93,7 +93,7 @@ app.use(
       if (isAllowed) {
         callback(null, true);
       } else {
-        console.warn(`CORS blocked origin: ${origin}`);
+        logger.warn({ origin }, "CORS blocked origin");
         callback(new Error("Not allowed by CORS"));
       }
     },

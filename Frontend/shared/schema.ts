@@ -180,6 +180,22 @@ export const testimonialsTable = pgTable("testimonials", {
   };
 });
 
+// TICKET-032: Append-only audit log
+export const auditLogTable = pgTable("audit_log", {
+  id: serial("id").primaryKey(),
+  action: varchar("action", { length: 20 }).notNull(),
+  entity: varchar("entity", { length: 50 }).notNull(),
+  entityId: integer("entity_id"),
+  oldValues: jsonb("old_values"),
+  newValues: jsonb("new_values"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    entityIdx: index("audit_log_entity_idx").on(table.entity),
+    createdIdx: index("audit_log_created_at_idx").on(table.createdAt),
+  };
+});
+
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
 
 export const selectProjectSchema = createSelectSchema(projectsTable);
@@ -217,6 +233,9 @@ export const insertServiceSchema = createInsertSchema(servicesTable);
 
 export const selectTestimonialSchema = createSelectSchema(testimonialsTable);
 export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
+
+export const selectAuditLogSchema = createSelectSchema(auditLogTable);
+export const insertAuditLogSchema = createInsertSchema(auditLogTable);
 
 // ================= CUSTOM API SCHEMAS =================
 

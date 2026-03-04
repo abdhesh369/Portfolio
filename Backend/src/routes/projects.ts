@@ -9,6 +9,7 @@ const router = Router();
 
 import { validateBody } from "../middleware/validate.js";
 import { cachePublic } from "../middleware/cache.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerProjectRoutes(app: Router) {
   // GET /api/projects - Get all projects
@@ -31,6 +32,7 @@ export function registerProjectRoutes(app: Router) {
       const schema = z.object({ orderedIds: z.array(z.number()) });
       const { orderedIds } = schema.parse(req.body);
       await projectService.updateReorder(orderedIds);
+      recordAudit("UPDATE", "project", undefined, null, { orderedIds });
       res.status(204).send();
     })
   );
@@ -43,6 +45,7 @@ export function registerProjectRoutes(app: Router) {
       const schema = z.object({ ids: z.array(z.number()) });
       const { ids } = schema.parse(req.body);
       await projectService.bulkDelete(ids);
+      recordAudit("DELETE", "project", undefined, { ids }, null);
       res.status(204).send();
     })
   );
@@ -58,6 +61,7 @@ export function registerProjectRoutes(app: Router) {
       });
       const { ids, status } = schema.parse(req.body);
       await projectService.bulkUpdateStatus(ids, status);
+      recordAudit("UPDATE", "project", undefined, null, { ids, status });
       res.status(204).send();
     })
   );
@@ -93,6 +97,7 @@ export function registerProjectRoutes(app: Router) {
         return;
       }
       const project = await projectService.update(id, req.body);
+      recordAudit("UPDATE", "project", id, null, req.body);
       res.json(project);
     })
   );
@@ -108,6 +113,7 @@ export function registerProjectRoutes(app: Router) {
         return;
       }
       await projectService.delete(id);
+      recordAudit("DELETE", "project", id, null, null);
       res.status(204).send();
     })
   );

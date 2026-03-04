@@ -5,6 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
+import { ReloadPrompt } from "@/components/ReloadPrompt";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Lazy load heavy components
@@ -159,6 +160,7 @@ function App() {
               <Router />
               <DeferredBackground />
               <DeferredChatbot />
+              <ReloadPrompt />
               <Toaster />
             </LazyMotion>
           </AuthProvider>

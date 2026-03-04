@@ -125,6 +125,54 @@ export class ArticleRepository {
             .where(eq(articlesTable.id, id));
     }
 
+    async search(query: string, limit: number = 10): Promise<Article[]> {
+        const tsQuery = query.trim().split(/\s+/).join(' & ');
+
+        const results = await db.execute(sql`
+            SELECT a.*, ts_rank(a.search_vector, to_tsquery('english', ${tsQuery})) AS rank
+            FROM articles a
+            WHERE a.status = 'published'
+              AND a.search_vector @@ to_tsquery('english', ${tsQuery})
+            ORDER BY rank DESC
+            LIMIT ${limit}
+        `);
+
+        if (!results.rows || results.rows.length === 0) return [];
+
+        const articles = results.rows.map((r: any) => ({
+            id: r.id,
+            title: r.title,
+            slug: r.slug,
+            content: r.content,
+            excerpt: r.excerpt,
+            featuredImage: r.featuredImage,
+            status: r.status,
+            publishedAt: r.publishedAt ? new Date(r.publishedAt) : null,
+            viewCount: r.viewCount,
+            readTimeMinutes: r.readTimeMinutes,
+            metaTitle: r.metaTitle,
+            metaDescription: r.metaDescription,
+            authorId: r.authorId,
+            featuredImageAlt: r.featuredImageAlt,
+            createdAt: new Date(r.createdAt),
+            updatedAt: new Date(r.updatedAt),
+        })) as Article[];
+
+        // Fetch tags for results
+        const ids = articles.map(a => a.id);
+        if (ids.length > 0) {
+            const allTags = await db.select().from(articleTagsTable).where(inArray(articleTagsTable.articleId, ids));
+            const tagsMap = new Map<number, string[]>();
+            for (const t of allTags) {
+                if (!tagsMap.has(t.articleId)) tagsMap.set(t.articleId, []);
+                tagsMap.get(t.articleId)!.push(t.tag);
+            }
+            return articles.map(a => ({ ...a, tags: tagsMap.get(a.id) ?? [] }));
+        }
+
+        return articles;
+    }
+
     async findRelated(articleId: number, limit: number = 3): Promise<Article[]> {
         // Query to find articles with overlapping tags using a specialized SQL join
         // Using sql.raw carefully or structured sql template

@@ -18,7 +18,7 @@ const transport = env.NODE_ENV === "development"
     : undefined;
 
 export const logger = pino({
-    level: env.NODE_ENV === "development" ? "debug" : "info",
+    level: env.LOG_LEVEL || "info",
     transport,
     formatters: {
         level: (label) => {
@@ -29,5 +29,19 @@ export const logger = pino({
     base: {
         env: env.NODE_ENV,
         service: "portfolio-backend",
+    },
+    // Redact sensitive fields from log output
+    redact: {
+        paths: [
+            "authorization",
+            "req.headers.authorization",
+            "req.headers[\"x-api-key\"]",
+            "password",
+            "token",
+            "refreshToken",
+            "*.password",
+            "*.token",
+        ],
+        censor: "[REDACTED]",
     },
 });

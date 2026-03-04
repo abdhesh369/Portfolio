@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useAuth } from "@/hooks/auth-context";
 import { useMessages } from "@/hooks/use-portfolio";
+import { useMessageStream } from "@/hooks/use-message-stream";
 import "@/styles/admin.css"; // Admin-only styles — code-split, not loaded on public pages
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
 import { TabErrorBoundary } from "@/components/admin/TabErrorBoundary";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
-    Zap, Briefcase, Settings, Search, PenTool, Star,
+    Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
     PanelLeftClose, PanelLeft, Bell, LogOut, ChevronRight, User, X,
 } from "lucide-react";
 
@@ -21,8 +22,9 @@ const ServicesTab = lazy(() => import("@/components/admin/tabs/ServicesTab").the
 const SeoTab = lazy(() => import("@/components/admin/tabs/SeoTab").then(m => ({ default: m.SeoTab })));
 const ArticlesTab = lazy(() => import("@/components/admin/tabs/ArticlesTab").then(m => ({ default: m.ArticlesTab })));
 const TestimonialsTab = lazy(() => import("@/components/admin/tabs/TestimonialsTab").then(m => ({ default: m.TestimonialsTab })));
+const AuditLogTab = lazy(() => import("@/components/admin/tabs/AuditLogTab").then(m => ({ default: m.AuditLogTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "audit";
 
 const NAV_ITEMS: { key: Tab; label: string; icon: React.ElementType; badge?: number }[] = [
     { key: "overview", label: "Overview", icon: LayoutDashboard },
@@ -36,6 +38,7 @@ const NAV_ITEMS: { key: Tab; label: string; icon: React.ElementType; badge?: num
     { key: "seo", label: "SEO", icon: Search },
     { key: "articles", label: "Articles", icon: PenTool },
     { key: "testimonials", label: "Testimonials", icon: Star },
+    { key: "audit", label: "Audit Log", icon: Shield },
 ];
 
 const TAB_LABELS: Record<Tab, string> = {
@@ -50,6 +53,7 @@ const TAB_LABELS: Record<Tab, string> = {
     seo: "SEO",
     articles: "ARTICLES",
     testimonials: "TESTIMONIALS",
+    audit: "AUDIT LOG",
 };
 
 export default function AdminDashboard() {
@@ -65,6 +69,9 @@ export default function AdminDashboard() {
 
     const [msgCount, setMsgCount] = useState(0);
     const { logout } = useAuth();
+
+    // SSE real-time notifications (TICKET-031)
+    const { unreadCount, resetUnread } = useMessageStream(true);
 
     // Search state
     const [searchOpen, setSearchOpen] = useState(false);
@@ -103,9 +110,15 @@ export default function AdminDashboard() {
         item.label.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Update nav badge dynamically
+    // Reset unread count when switching to messages tab
+    useEffect(() => {
+        if (tab === "messages") resetUnread();
+    }, [tab, resetUnread]);
+
+    // Update nav badge dynamically (total + SSE unread)
+    const displayBadge = tab === "messages" ? msgCount : msgCount + unreadCount;
     const navItems = NAV_ITEMS.map((item) =>
-        item.key === "messages" ? { ...item, badge: msgCount } : item
+        item.key === "messages" ? { ...item, badge: displayBadge } : item
     );
 
     return (
@@ -334,10 +347,10 @@ export default function AdminDashboard() {
                             )}
                         </div>
 
-                        {/* ─── Notification Bell ─── */}
+                        {/* ─── Notification Bell (SSE-aware) ─── */}
                         <button
-                            onClick={() => setTab("messages")}
-                            title={msgCount > 0 ? `${msgCount} messages — click to view` : "Messages — click to view"}
+                            onClick={() => { setTab("messages"); resetUnread(); }}
+                            title={displayBadge > 0 ? `${displayBadge} messages${unreadCount > 0 ? ` (${unreadCount} new)` : ""} — click to view` : "Messages — click to view"}
                             className="relative rounded-md cursor-pointer"
                             style={{
                                 background: tab === "messages" ? "rgba(34,211,238,0.08)" : "rgba(255,255,255,0.04)",
@@ -347,18 +360,18 @@ export default function AdminDashboard() {
                                 transition: "all 0.2s ease",
                             }}
                         >
-                            <Bell size={15} />
-                            {msgCount > 0 && (
+                            <Bell size={15} className={unreadCount > 0 ? "animate-bounce" : ""} />
+                            {displayBadge > 0 && (
                                 <span
                                     className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-bold"
                                     style={{
-                                        background: "#a78bfa",
+                                        background: unreadCount > 0 ? "#f87171" : "#a78bfa",
                                         color: "#050508",
-                                        boxShadow: "0 0 8px rgba(167,139,250,0.5)",
+                                        boxShadow: unreadCount > 0 ? "0 0 8px rgba(248,113,113,0.5)" : "0 0 8px rgba(167,139,250,0.5)",
                                         padding: "0 4px",
                                     }}
                                 >
-                                    {msgCount > 99 ? "99+" : msgCount}
+                                    {displayBadge > 99 ? "99+" : displayBadge}
                                 </span>
                             )}
                         </button>
@@ -474,6 +487,7 @@ export default function AdminDashboard() {
                             {tab === "services" && <ServicesTab />}
                             {tab === "articles" && <ArticlesTab />}
                             {tab === "testimonials" && <TestimonialsTab />}
+                            {tab === "audit" && <AuditLogTab />}
                         </TabErrorBoundary>
                     </Suspense>
                 </div>

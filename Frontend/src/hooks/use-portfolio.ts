@@ -9,6 +9,7 @@ export {
   useMindset,
   useArticles,
   useArticle,
+  useArticleSearch,
   useExperiences,
   useServices,
   useTestimonials,
