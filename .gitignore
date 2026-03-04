@@ -46,10 +46,15 @@ headers*.txt
 db_report*.txt
 test_storage*.txt
 ts_errors.txt
-tsc_output.txt
+tsc_output*.txt
 *.tmp
 .cache/
 
+# Test artifacts
+test-results/
+playwright-report/
+stats.html
 
-Portfolio_Engineer_Masterplan.md
-Portfolio_PDR.md
+# Internal planning docs (local only)
+Portfolio_Engineering_Masterplan.md
+Portfolio_PRD.md
