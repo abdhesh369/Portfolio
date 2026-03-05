@@ -88,6 +88,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         httpOnly: true,
         secure: isProd,
         sameSite: "strict",
+        path: "/",
         maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
@@ -96,6 +97,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         httpOnly: true,
         secure: isProd,
         sameSite: "strict",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -105,6 +107,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         httpOnly: false,
         secure: isProd,
         sameSite: "strict",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
 
@@ -153,6 +156,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         httpOnly: true,
         secure: isProd,
         sameSite: "strict",
+        path: "/",
         maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
@@ -161,6 +165,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         httpOnly: false,
         secure: isProd,
         sameSite: "strict",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match login TTL)
     });
 
@@ -198,17 +203,20 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
     res.clearCookie("auth_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict"
+        sameSite: "strict",
+        path: "/"
     });
     res.clearCookie("refresh_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict"
+        sameSite: "strict",
+        path: "/"
     });
     res.clearCookie("csrf_token", {
         httpOnly: false,
         secure: isProd,
-        sameSite: "strict"
+        sameSite: "strict",
+        path: "/"
     });
 
     res.json({

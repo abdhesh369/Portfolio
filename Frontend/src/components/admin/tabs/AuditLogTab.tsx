@@ -24,7 +24,7 @@ const ACTION_COLORS: Record<string, string> = {
   DELETE: "var(--color-destructive, #f87171)",
 };
 
-const ENTITY_FILTERS = ["all", "project", "article", "skill", "experience", "service", "testimonial"];
+const ENTITY_FILTERS = ["all", "project", "article", "skill", "experience", "service", "testimonial", "guestbook_entry", "message", "seo_settings", "email_template", "upload"];
 
 export function AuditLogTab() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
