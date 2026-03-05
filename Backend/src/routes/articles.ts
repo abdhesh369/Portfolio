@@ -56,14 +56,14 @@ articlesRouter.get(
         const article = await articleService.getBySlug(slug);
 
         if (!article) {
-            res.status(404).json({ error: "Article not found" });
+            res.status(404).json({ success: false, message: "Article not found" });
             return;
         }
 
         const isAdmin = await checkAuthStatus(req);
         if (article.status !== "published" && !isAdmin) {
             res.setHeader("Cache-Control", "no-store");
-            res.status(403).json({ error: "Access denied" });
+            res.status(403).json({ success: false, message: "Access denied" });
             return;
         }
 
@@ -118,7 +118,7 @@ articlesRouter.patch(
     asyncHandler(async (req, res) => {
         const id = parseInt(req.params.id, 10);
         if (isNaN(id)) {
-            res.status(400).json({ error: "Invalid article ID" });
+            res.status(400).json({ success: false, message: "Invalid article ID" });
             return;
         }
         const data = updateArticleApiSchema.parse(req.body);
@@ -139,7 +139,7 @@ articlesRouter.delete(
     asyncHandler(async (req, res) => {
         const id = parseInt(req.params.id, 10);
         if (isNaN(id)) {
-            res.status(400).json({ error: "Invalid article ID" });
+            res.status(400).json({ success: false, message: "Invalid article ID" });
             return;
         }
         await articleService.delete(id);

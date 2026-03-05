@@ -23,12 +23,12 @@ export function registerTestimonialRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid testimonial ID" });
+                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
                 return;
             }
             const testimonial = await testimonialService.getById(id);
             if (!testimonial) {
-                res.status(404).json({ message: "Testimonial not found" });
+                res.status(404).json({ success: false, message: "Testimonial not found" });
                 return;
             }
             res.json(testimonial);
@@ -58,7 +58,7 @@ export function registerTestimonialRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid testimonial ID" });
+                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
                 return;
             }
             const data = insertTestimonialApiSchema.partial().parse(req.body);
@@ -79,7 +79,7 @@ export function registerTestimonialRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid testimonial ID" });
+                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
                 return;
             }
             await testimonialService.delete(id);

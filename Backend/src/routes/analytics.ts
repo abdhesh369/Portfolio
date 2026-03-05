@@ -10,7 +10,7 @@ import type { Request } from "express";
 const analyticsLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: { message: "Too many analytics events" },
+    message: { success: false, message: "Too many analytics events" },
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -18,7 +18,7 @@ const analyticsLimiter = rateLimit({
 const vitalsLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 200,
-    message: { message: "Too many vitals reports" },
+    message: { success: false, message: "Too many vitals reports" },
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -68,7 +68,7 @@ export function registerAnalyticsRoutes(app: Router) {
         validateBody(insertAnalyticsSchema),
         asyncHandler(async (req, res) => {
             if (isBotRequest(req)) {
-                return res.status(202).json({ message: "Request accepted (bot filtered)" });
+                return res.status(202).json({ success: true, message: "Request accepted (bot filtered)" });
             }
             const event = await analyticsService.logEvent(req.body);
             res.status(201).json({
