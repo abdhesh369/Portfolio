@@ -14,6 +14,18 @@ function isLocalRedisUrl(url: string): boolean {
     }
 }
 
+function formatRedisUrlForLog(url: string): string {
+    try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^\[|\]$/g, "");
+        const port = parsed.port ? `:${parsed.port}` : "";
+        const dbPath = parsed.pathname && parsed.pathname !== "/" ? parsed.pathname : "";
+        return `${parsed.protocol}//${host}${port}${dbPath}`;
+    } catch {
+        return "[invalid REDIS_URL]";
+    }
+}
+
 /**
  * Global Redis Client
  * Provides a unified way to access Redis for caching and session management.
@@ -24,14 +36,17 @@ export class RedisClient {
     public static getInstance(): Redis | null {
         if (env.NODE_ENV === "production") {
             if (!env.REDIS_URL) {
-                logger.warn({ context: "redis" }, "REDIS_URL is missing in production. Redis will be disabled.");
+                logger.warn(
+                    { context: "redis" },
+                    "REDIS_URL is missing in production. Redis will be disabled. Set REDIS_URL to a managed Redis endpoint to enable cache, token blacklist, and queues."
+                );
                 return null;
             }
 
             if (isLocalRedisUrl(env.REDIS_URL)) {
                 logger.warn(
-                    { context: "redis", url: env.REDIS_URL },
-                    "REDIS_URL points to localhost in production. Redis will be disabled."
+                    { context: "redis", url: formatRedisUrlForLog(env.REDIS_URL) },
+                    "REDIS_URL points to localhost in production. Redis will be disabled. Use a managed Redis URL (rediss://...) or unset REDIS_URL to intentionally disable Redis."
                 );
                 return null;
             }

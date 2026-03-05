@@ -14,6 +14,20 @@ function isLocalRedisUrl(url: string): boolean {
     }
 }
 
+function formatRedisUrlForLog(url?: string): string | undefined {
+    if (!url) return undefined;
+
+    try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^\[|\]$/g, "");
+        const port = parsed.port ? `:${parsed.port}` : "";
+        const dbPath = parsed.pathname && parsed.pathname !== "/" ? parsed.pathname : "";
+        return `${parsed.protocol}//${host}${port}${dbPath}`;
+    } catch {
+        return "[invalid REDIS_URL]";
+    }
+}
+
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
 // These are intentionally separate from the app-level redis singleton in redis.ts.
@@ -36,9 +50,9 @@ if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
         {
             context: "queue",
             redisConfigured: hasRedisUrl,
-            redisUrl: env.REDIS_URL,
+            redisUrl: formatRedisUrlForLog(env.REDIS_URL),
         },
-        "Queue disabled in production: REDIS_URL is missing or points to localhost"
+        "Queue disabled in production: REDIS_URL is missing or points to localhost. Set REDIS_URL to a managed Redis endpoint (recommended rediss://...) or unset REDIS_URL to disable background jobs intentionally."
     );
 }
 
