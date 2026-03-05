@@ -72,16 +72,13 @@ export function useMessageStream(enabled: boolean = true) {
 
       async function poll() {
         try {
-          const res = await apiFetch("/api/v1/messages");
-          if (res.ok) {
-            const messages = await res.json();
-            if (Array.isArray(messages) && messages.length > lastKnownCount) {
-              const newCount = messages.length - lastKnownCount;
-              if (lastKnownCount > 0) {
-                setUnreadCount((c) => c + newCount);
-              }
-              lastKnownCount = messages.length;
+          const messages = await apiFetch("/api/v1/messages");
+          if (Array.isArray(messages) && messages.length > lastKnownCount) {
+            const newCount = messages.length - lastKnownCount;
+            if (lastKnownCount > 0) {
+              setUnreadCount((c) => c + newCount);
             }
+            lastKnownCount = messages.length;
           }
         } catch {
           // Silently fail

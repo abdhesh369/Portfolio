@@ -4,7 +4,7 @@ import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { Button } from "@/components/ui/button";
 import {
@@ -127,6 +127,13 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
             },
         },
     });
+
+    // Synchronize external value changes (B18/Editor)
+    useEffect(() => {
+        if (editor && value !== editor.getHTML()) {
+            editor.commands.setContent(value, { emitUpdate: false });
+        }
+    }, [value, editor]);
 
     return (
         <div className={className}>
