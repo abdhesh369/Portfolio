@@ -5,6 +5,7 @@ import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { useScrollStore } from "@/hooks/use-scroll-store";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
 const About = lazy(() => import("@/components/About"));
@@ -91,8 +92,18 @@ function useHashScroll() {
 
 export default function Home() {
   useHashScroll();
+  const { progress } = useScrollStore();
+
   return (
     <div className="min-h-screen selection:bg-primary/20">
+      {/* Top Reading Progress Bar */}
+      <div aria-hidden="true" className="fixed top-0 left-0 w-full h-1 z-[100] pointer-events-none">
+        <div
+          className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 origin-left will-change-transform transition-transform duration-75 ease-out"
+          style={{ transform: `scaleX(${progress / 100})` }}
+        />
+      </div>
+
       <SEO
         slug="home"
         title="Abdhesh Sah - Full-Stack Engineer Portfolio"

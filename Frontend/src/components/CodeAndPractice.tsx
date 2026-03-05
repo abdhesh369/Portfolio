@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus, AlertCircle, Zap } from "lucide-react";
 import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/api-helpers";
 
 type GitHubEvent = {
   type: string;
@@ -25,8 +26,7 @@ export default function CodeAndPractice() {
   const [events, setEvents] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
-    fetch("https://api.github.com/users/abdhesh369/events/public")
-      .then(res => res.json())
+    apiFetch("/api/v1/github/activity")
       .then((data: GitHubEvent[]) => {
         if (!Array.isArray(data)) {
           return;

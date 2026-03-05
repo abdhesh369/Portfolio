@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const queryClient = useQueryClient();
 
-    const checkAuth = async () => {
+    const checkAuth = useCallback(async () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/v1/auth/status`, {
                 credentials: 'include'
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [queryClient]); // queryClient is stable from useQueryClient()
 
     const login = () => {
         localStorage.removeItem("auth_last_exit");

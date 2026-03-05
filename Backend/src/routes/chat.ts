@@ -71,6 +71,19 @@ export async function buildSystemPrompt(): Promise<string> {
     return systemPrompt;
 }
 
+let openRouterClient: OpenRouter | null = null;
+
+function getOpenRouterClient() {
+    if (!openRouterClient) {
+        const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
+        if (!apiKey) {
+            throw new Error("OpenRouter API key is not configured.");
+        }
+        openRouterClient = new OpenRouter({ apiKey });
+    }
+    return openRouterClient;
+}
+
 /**
  * Chat Rate Limiter: 20 requests per minute per IP
  */
@@ -85,21 +98,18 @@ const chatLimiter = rateLimit({
 export const registerChatRoutes = (router: Router) => {
     router.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
         try {
-            const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
-
-            if (!apiKey) {
-                logger.error({ context: "chat" }, "OPENROUTER_API_KEY is missing");
-                return res.status(500).json({ message: "OpenRouter API key is not configured." });
+            let openrouter: OpenRouter;
+            try {
+                openrouter = getOpenRouterClient();
+            } catch (err: any) {
+                logger.error({ context: "chat" }, err.message);
+                return res.status(500).json({ message: err.message });
             }
 
             const validatedData: z.infer<typeof chatSchema> = req.body;
 
             // Build system prompt (cached in Redis with 15-min TTL)
             const systemPrompt = await buildSystemPrompt();
-
-            const openrouter = new OpenRouter({
-                apiKey: apiKey
-            });
 
             // Map internal history to OpenRouter messages format { role, content }
             // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
@@ -117,8 +127,6 @@ export const registerChatRoutes = (router: Router) => {
                 },
                 ...messages
             ];
-
-
 
             const response = await openrouter.chat.send({
                 chatGenerationParams: {

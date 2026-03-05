@@ -55,12 +55,79 @@ function isCacheable(queryKey: readonly unknown[]): boolean {
   return [...CACHEABLE_KEYS].some(k => first.endsWith(`/${k}`) || first.endsWith(`${k}`));
 }
 
+const MAX_STORAGE_SIZE = 4.5 * 1024 * 1024; // 4.5MB (standard localStorage is ~5MB)
+
+function getStoredCacheKeys(): string[] {
+  const keys: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(STORAGE_PREFIX)) keys.push(key);
+  }
+  return keys;
+}
+
+function getTotalCacheSize(): number {
+  let size = 0;
+  getStoredCacheKeys().forEach(key => {
+    size += (localStorage.getItem(key) || "").length * 2; // UTF-16 strings are 2 bytes per char
+  });
+  return size;
+}
+
+function evictOldest(): boolean {
+  const keys = getStoredCacheKeys();
+  if (keys.length === 0) return false;
+
+  let oldestKey: string | null = null;
+  let oldestTs = Infinity;
+
+  keys.forEach(key => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const entry: CacheEntry = JSON.parse(raw);
+        if (entry.ts < oldestTs) {
+          oldestTs = entry.ts;
+          oldestKey = key;
+        }
+      }
+    } catch {
+      // If corrupt, evict it
+      oldestKey = key;
+    }
+  });
+
+  if (oldestKey) {
+    localStorage.removeItem(oldestKey);
+    return true;
+  }
+  return false;
+}
+
 function writeToStorage(key: string, data: unknown): void {
   try {
     const entry: CacheEntry = { v: CACHE_VERSION, ts: Date.now(), data };
-    localStorage.setItem(key, JSON.stringify(entry));
-  } catch {
-    // localStorage full or unavailable — silently ignore
+    const serialized = JSON.stringify(entry);
+
+    // Check quota before writing
+    const estimatedSize = serialized.length * 2;
+    while (getTotalCacheSize() + estimatedSize > MAX_STORAGE_SIZE) {
+      if (!evictOldest()) break;
+    }
+
+    localStorage.setItem(key, serialized);
+  } catch (e) {
+    // If we still hit a QuotaExceededError, clear all as a fallback
+    if (e instanceof Error && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+      clearQueryCache();
+      // Try one last time after clearing everything
+      try {
+        const entry: CacheEntry = { v: CACHE_VERSION, ts: Date.now(), data };
+        localStorage.setItem(key, JSON.stringify(entry));
+      } catch {
+        // Give up
+      }
+    }
   }
 }
 

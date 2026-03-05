@@ -138,11 +138,16 @@ export default function Contact() {
         form.reset();
         setShowSuccess(true);
         setCooldown(60); // 60 seconds cooldown
-        // Auto-dismiss after 8 seconds
-        setTimeout(() => setShowSuccess(false), 8000);
       },
     });
   };
+
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => setShowSuccess(false), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
 
   useEffect(() => {
     if (cooldown > 0) {

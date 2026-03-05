@@ -35,17 +35,8 @@ githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) 
 
         const data = await response.json();
 
-        // 3. Simple Filtering (commits, push, create, pull request)
-        const filteredData = Array.isArray(data) ? data.slice(0, 5).map((event: any) => ({
-            id: event.id,
-            type: event.type,
-            repo: event.repo.name,
-            createdAt: event.created_at,
-            payload: {
-                action: event.payload.action,
-                commits: event.payload.commits?.length || 0
-            }
-        })) : [];
+        // 3. Just limit the payload size to the first 15 events
+        const filteredData = Array.isArray(data) ? data.slice(0, 15) : [];
 
         // 4. Set Cache
         if (redis) {

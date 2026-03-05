@@ -312,7 +312,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
           <div className="flex flex-wrap gap-1.5 mb-4 pt-3 border-t border-gray-800/50">
             {project.techStack.slice(0, 4).map((tech: string, idx: number) => (
               <m.span
-                key={idx}
+                key={tech}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
@@ -416,9 +416,15 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
     const closeButton = containerRef.current?.querySelector('button');
     closeButton?.focus();
 
+    // Body scroll lock
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+
     return () => {
       // Return focus on close
       lastFocusedRef.current?.focus();
+      // Restore scroll
+      document.body.style.overflow = originalStyle;
     };
   }, []);
 
@@ -488,6 +494,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
+        aria-describedby="modal-description"
         className="relative w-full max-w-3xl md:rounded-2xl overflow-hidden h-full md:h-auto md:max-h-[90vh] flex flex-col"
         style={{
           background: 'linear-gradient(180deg, rgba(15, 10, 40, 0.98) 0%, rgba(10, 8, 30, 0.98) 100%)',
@@ -530,14 +537,14 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
             </div>
           )}
 
-          <p className="text-gray-300 mb-5 leading-relaxed">{project.description}</p>
+          <p id="modal-description" className="text-gray-300 mb-5 leading-relaxed">{project.description}</p>
 
           <div className="mb-5">
             <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Technologies</h4>
             <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech: string, idx: number) => (
+              {project.techStack.map((tech: string) => (
                 <span
-                  key={idx}
+                  key={tech}
                   className="px-3 py-1.5 rounded-lg text-sm font-medium"
                   style={{
                     background: 'rgba(0, 212, 255, 0.1)',
@@ -645,19 +652,14 @@ export default function Projects() {
   const categories = ["All", "Web", "System", "Academic", "Backend", "Utility"];
 
   const filteredProjects = (Array.isArray(projects) ? projects : [])?.filter(p => {
-    const isExcluded = p.title.toLowerCase().includes("netflix") ||
-      p.title.toLowerCase().includes("amazon");
-    if (isExcluded) return false;
+    if (p.isHidden) return false;
 
     if (filter === "All") return true;
     return p.category === filter;
   }) || [];
 
   const getCategoryCount = (cat: string) => {
-    const allProjects = (Array.isArray(projects) ? projects : []).filter(p => {
-      const isExcluded = p.title.toLowerCase().includes("netflix") || p.title.toLowerCase().includes("amazon");
-      return !isExcluded;
-    });
+    const allProjects = (Array.isArray(projects) ? projects : []).filter(p => !p.isHidden);
     if (cat === "All") return allProjects.length;
     return allProjects.filter(p => p.category === cat).length;
   };

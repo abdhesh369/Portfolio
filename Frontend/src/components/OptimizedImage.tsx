@@ -28,9 +28,23 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
     const optimizedSrc = src ? getOptimizedImageUrl(src, { width, height, quality, crop, gravity }) : src;
 
+    let srcSet: string | undefined = undefined;
+    if (src && src.includes("cloudinary.com") && width) {
+        const src1x = optimizedSrc;
+        const src2x = getOptimizedImageUrl(src, {
+            width: width * 2,
+            height: height ? height * 2 : undefined,
+            quality,
+            crop,
+            gravity
+        });
+        srcSet = `${src1x} 1x, ${src2x} 2x`;
+    }
+
     return (
         <m.img
             src={optimizedSrc}
+            srcSet={srcSet}
             alt={alt}
             loading="lazy"
             className={cn("bg-secondary/20 flex shrink-0", className)}

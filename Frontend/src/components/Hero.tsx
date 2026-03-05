@@ -301,6 +301,7 @@ const OpenToWorkBanner = () => {
 };
 
 export default function Hero() {
+  const status = useServerStatus();
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
   const { data: experiences } = useExperiences();
@@ -361,7 +362,7 @@ export default function Hero() {
             >
               <div className={`w-2 h-2 rounded-full animate-pulse shadow-glow ${status === "online" ? "bg-cyan-400" : status === "waking" ? "bg-yellow-500" : "bg-red-500"
                 }`} />
-              {status === "online" ? "SYSTEM_ACTIVE" : status === "checking" ? "SEARCHING_FOR_UPLINK" : "SYSTEM_DEGRADED"}
+              {status === "online" ? "SYSTEM_ACTIVE" : status === "checking" ? "SEARCHING_FOR_UPLINK" : status === "waking" ? "WAKING_UP" : "SYSTEM_DEGRADED"}
             </m.div>
 
             <div className="space-y-4">
@@ -416,7 +417,6 @@ export default function Hero() {
               >
                 View My Work <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
-              -
               <Button
                 onClick={scrollToContact}
                 variant="outline"

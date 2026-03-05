@@ -11,6 +11,7 @@ import { validateBody } from "../middleware/validate.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
 import { logger } from "../lib/logger.js";
+import { redis } from "../lib/redis.js";
 
 export function registerProjectRoutes(app: Router) {
   // GET /api/projects - Get all projects
@@ -100,10 +101,30 @@ export function registerProjectRoutes(app: Router) {
       }
       res.json(project);
 
-      // Fire-and-forget: don't await, don't block response
-      projectService.incrementViewCount(project.id).catch((err) => {
-        logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
-      });
+      // Fire-and-forget IP-based deduplication for view counts (1 hour)
+      const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+      const viewKey = `view:project:${project.id}:ip:${ip}`;
+
+      const r = redis;
+      if (r) {
+        r.get(viewKey).then((hasViewed: string | null) => {
+          if (!hasViewed) {
+            projectService.incrementViewCount(project.id).catch((err: any) => {
+              logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
+            });
+            r.set(viewKey, "1", "EX", 3600).catch((err: any) => {
+              logger.error({ context: "project", error: err }, "Failed to set view cache");
+            });
+          }
+        }).catch((err: any) => {
+          logger.error({ context: "project", error: err }, "Failed to check view cache");
+        });
+      } else {
+        // Fallback if no redis
+        projectService.incrementViewCount(project.id).catch((err: any) => {
+          logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
+        });
+      }
     })
   );
 

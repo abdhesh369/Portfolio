@@ -47,7 +47,7 @@ export default function BlogPost() {
     const articleRef = useRef<HTMLElement>(null);
 
     // Add copy-to-clipboard buttons on code blocks after content renders
-    useCodeBlockCopy(articleRef.current);
+    useCodeBlockCopy(articleRef, article?.content);
 
     // Related articles come from the article response itself (GET /:slug returns { ...article, relatedArticles })
     const relatedArticles = (article as ArticleWithRelated)?.relatedArticles || [];

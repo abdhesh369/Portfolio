@@ -16,13 +16,14 @@ const navItems = [
   { name: "Contact", href: "#contact" },
 ];
 
+const SECTION_IDS = ["hero", "about", "skills", "projects", "experience", "contact"];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [location, setLocation] = useLocation();
-  const activeSection = useScrollSpy(["hero", "about", "skills", "projects", "experience", "contact"], 80);
+  const activeSection = useScrollSpy(SECTION_IDS, 80);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const { scrollY, scrollDirection } = useScrollStore();
