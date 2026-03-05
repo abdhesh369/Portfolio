@@ -10,6 +10,7 @@ import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Eye } from "lucide-react";
 
 function BlogCard({ article }: { article: Article }) {
     return (
@@ -42,6 +43,11 @@ function BlogCard({ article }: { article: Article }) {
                             </Badge>
                             <span className="text-[10px] text-white/30">•</span>
                             <span className="text-[10px] text-white/30">{article.readTimeMinutes || 5} min read</span>
+                            <span className="text-[10px] text-white/30">•</span>
+                            <span className="text-[10px] text-white/40 flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                {article.viewCount || 0}
+                            </span>
                         </div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors mb-2 line-clamp-2" style={{ fontFamily: "var(--font-display)" }}>
                             {article.title}

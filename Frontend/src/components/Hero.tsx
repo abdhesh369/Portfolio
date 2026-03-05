@@ -1,4 +1,4 @@
-import { m, useMotionValue, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2 } from "lucide-react";
@@ -8,6 +8,7 @@ import { useTheme } from "./theme-provider";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {
+  const prefersReducedMotion = useReducedMotion();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -16,6 +17,7 @@ const MouseGradient = () => {
   const y = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
@@ -23,6 +25,8 @@ const MouseGradient = () => {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
+
+  if (prefersReducedMotion) return null;
 
   return (
     <m.div
@@ -44,6 +48,13 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
   const [index, setIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Reset state when strings prop changes
+  useEffect(() => {
+    setDisplayed("");
+    setIsDeleting(false);
+    setIndex(0);
+  }, [strings]);
 
   useEffect(() => {
     const current = strings[index];
@@ -101,6 +112,12 @@ const ProfileCard = () => {
   const handleMouseLeave = useCallback(() => {
     setRotateX(0);
     setRotateY(0);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return (
@@ -238,6 +255,46 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
   )
 }
 
+const OpenToWorkBanner = () => {
+  return (
+    <m.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, duration: 0.8 }}
+      className="relative group mb-8 inline-block"
+    >
+      {/* Dynamic Background Glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/50 to-purple-500/50 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
+
+      {/* Banner Body */}
+      <div className="relative flex items-center gap-3 px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.3)]">
+        <span className="flex items-center gap-2">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500 shadow-[0_0_8px_#22d3ee]"></span>
+          </span>
+          <span className="text-cyan-300 font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap">
+            Status: Open for opportunities
+          </span>
+        </span>
+
+        <div className="h-4 w-[1px] bg-white/20 mx-1" />
+
+        <span className="flex items-center gap-1.5 text-purple-400 font-display text-xs font-semibold group-hover:text-purple-300 transition-colors">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Hiring? Let's Talk</span>
+          <span className="sm:hidden text-[10px]">Hiring?</span>
+        </span>
+
+        {/* Diagonal Scanline Overlay */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-full">
+          <div className="absolute inset-x-0 h-full w-[200%] bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[-30deg] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+        </div>
+      </div>
+    </m.div>
+  );
+};
+
 export default function Hero() {
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
@@ -283,6 +340,8 @@ export default function Hero() {
                 />
               </div>
             </m.div>
+
+            <OpenToWorkBanner />
 
             {/* Status Pill */}
             <m.div

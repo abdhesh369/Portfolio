@@ -428,6 +428,26 @@
   .text-shadow-glow {
     text-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.15);
   }
+
+  /* Premium Tilt Animation */
+  .animate-tilt {
+    animation: tilt 10s infinite linear;
+  }
+
+  /* Glitch Glow */
+  .glitch-glow {
+    animation: glitch-glow 4s infinite;
+  }
+
+  /* Premium Tilt Animation */
+  .animate-tilt {
+    animation: tilt 10s infinite linear;
+  }
+
+  /* Glitch Glow */
+  .glitch-glow {
+    animation: glitch-glow 4s infinite;
+  }
 }
 
 /* ==================== KEYFRAME ANIMATIONS ==================== */
@@ -745,6 +765,7 @@
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -752,10 +773,13 @@
 }
 
 @keyframes status-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.4;
     transform: scale(0.75);

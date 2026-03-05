@@ -102,6 +102,14 @@ export class ProjectService {
             await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
     }
+
+    /**
+     * Increments the view count for a project.
+     * @param id - The project ID to increment views for
+     */
+    async incrementViewCount(id: number): Promise<void> {
+        await projectRepository.incrementViewCount(id);
+    }
 }
 
 export const projectService = new ProjectService();

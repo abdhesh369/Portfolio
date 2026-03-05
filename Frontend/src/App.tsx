@@ -7,7 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
 import { ReloadPrompt } from "@/components/ReloadPrompt";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import { LazyMotion, domAnimation, m } from "framer-motion";
+import { LazyMotion, m } from "framer-motion";
+const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res.default);
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
 
@@ -159,7 +160,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
-            <LazyMotion features={domAnimation}>
+            <LazyMotion features={loadFramerFeatures}>
               <a
                 href="#main-content"
                 className="skip-to-content sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"

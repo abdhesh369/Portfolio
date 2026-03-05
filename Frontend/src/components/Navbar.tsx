@@ -30,25 +30,27 @@ export default function Navbar() {
 
   const handleNavClick = (href: string) => {
     setIsOpen(false);
+
     if (href.startsWith("#")) {
       if (location !== "/") {
+        // Navigate to home first, the hash scroll will be handled by Home component
         setLocation("/");
-        // Wait for navigation then scroll
-        setTimeout(() => {
-          const element = document.querySelector(href);
-          element?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        // We set the hash manually to ensure it's picked up
+        window.location.hash = href;
       } else {
         const element = document.querySelector(href);
-        element?.scrollIntoView({ behavior: "smooth" });
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+          // Update hash without triggering reload
+          window.history.pushState(null, "", href);
+        }
       }
     } else if (href === "/") {
       if (location === "/") {
         window.scrollTo({ top: 0, behavior: "smooth" });
+        window.history.pushState(null, "", "/");
       } else {
-        setLocation(href);
-        // Wait for potential page transition then scroll
-        setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 100);
+        setLocation("/");
       }
     } else {
       setLocation(href);
@@ -118,26 +120,29 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => handleNavClick(item.href)}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full group overflow-hidden ${(item.href === "/" && activeSection === "hero") ||
-                  (item.href.startsWith("#") && activeSection === item.href.slice(1))
-                  ? "text-white"
-                  : "text-gray-300 hover:text-white"
-                  }`}
-              >
-                <span className="relative z-10">{item.name}</span>
-                {/* Hover Glow Background */}
-                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
-                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_var(--color-cyan)] ${(item.href === "/" && activeSection === "hero") ||
-                  (item.href.startsWith("#") && activeSection === item.href.slice(1))
-                  ? "w-[60%]"
-                  : "w-0 group-hover:w-[60%]"
-                  }`} />
-              </button>
-            ))}
+            {navItems.map((item) => {
+              const isActive = (item.href === "/" && activeSection === "hero") ||
+                (item.href.startsWith("#") && activeSection === item.href.slice(1));
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavClick(item.href)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full group overflow-hidden ${isActive
+                    ? "text-white"
+                    : "text-gray-300 hover:text-white"
+                    }`}
+                >
+                  <span className="relative z-10">{item.name}</span>
+                  {/* Hover Glow Background */}
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
+                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_var(--color-cyan)] ${isActive
+                    ? "w-[60%]"
+                    : "w-0 group-hover:w-[60%]"
+                    }`} />
+                </button>
+              )
+            })}
 
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
               <ThemeToggle />
@@ -175,15 +180,20 @@ export default function Navbar() {
             className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => handleNavClick(item.href)}
-                  className="block w-full text-left px-4 py-3 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all border-l-2 border-transparent hover:border-cyan-400"
-                >
-                  {item.name}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const isActive = (item.href === "/" && activeSection === "hero") ||
+                  (item.href.startsWith("#") && activeSection === item.href.slice(1));
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavClick(item.href)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`block w-full text-left px-4 py-3 text-base font-medium transition-all border-l-2 rounded-lg ${isActive ? "text-white bg-white/5 border-cyan-400" : "text-gray-300 border-transparent hover:text-white hover:bg-white/5 hover:border-cyan-400"}`}
+                  >
+                    {item.name}
+                  </button>
+                )
+              })}
               <Button
                 onClick={() => handleNavClick("#contact")}
                 className="w-full mt-4 bg-cyan-500 text-black hover:bg-cyan-400"

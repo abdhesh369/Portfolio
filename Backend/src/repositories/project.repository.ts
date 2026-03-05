@@ -1,4 +1,4 @@
-import { eq, asc, inArray } from "drizzle-orm";
+import { eq, asc, inArray, sql } from "drizzle-orm";
 import { db } from "../db.js";
 import { projectsTable, type Project, type InsertProject } from "../../shared/schema.js";
 
@@ -66,6 +66,12 @@ export class ProjectRepository {
     async bulkUpdateStatus(ids: number[], status: string): Promise<void> {
         if (ids.length === 0) return;
         await db.update(projectsTable).set({ status }).where(inArray(projectsTable.id, ids));
+    }
+
+    async incrementViewCount(id: number): Promise<void> {
+        await db.update(projectsTable)
+            .set({ viewCount: sql`${projectsTable.viewCount} + 1` })
+            .where(eq(projectsTable.id, id));
     }
 }
 

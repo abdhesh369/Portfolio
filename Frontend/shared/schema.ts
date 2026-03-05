@@ -24,6 +24,7 @@ export const projectsTable = pgTable("projects", {
   impact: text("impact"),
   role: text("role"),
   imageAlt: text("imageAlt"),
+  viewCount: integer("viewCount").notNull().default(0),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),
@@ -269,6 +270,7 @@ export const projectSchema = z.object({
   impact: z.string().max(5000).nullish(),
   role: z.string().max(5000).nullish(),
   imageAlt: z.string().max(500).nullish(),
+  viewCount: z.number().default(0),
 });
 
 export const insertProjectApiSchema = z.object({

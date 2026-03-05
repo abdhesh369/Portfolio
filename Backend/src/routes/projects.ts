@@ -10,6 +10,7 @@ const router = Router();
 import { validateBody } from "../middleware/validate.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
+import { logger } from "../lib/logger.js";
 
 export function registerProjectRoutes(app: Router) {
   // GET /api/projects - Get all projects
@@ -82,6 +83,11 @@ export function registerProjectRoutes(app: Router) {
         return;
       }
       res.json(project);
+
+      // Fire-and-forget: don't await, don't block response
+      projectService.incrementViewCount(project.id).catch((err) => {
+        logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
+      });
     })
   );
 

@@ -2,10 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { env } from "./env.js";
 import { logger } from "./lib/logger.js";
 import jwt from "jsonwebtoken";
-import { Redis } from "ioredis";
 
-// Central Redis connection for token blacklist
-const redis = env.REDIS_URL ? new Redis(env.REDIS_URL) : null;
+import { redis } from "./lib/redis.js";
 const isProd = env.NODE_ENV === "production";
 
 if (isProd && !redis) {

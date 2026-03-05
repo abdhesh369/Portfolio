@@ -13,7 +13,7 @@ import { m } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Link2, Check } from "lucide-react";
+import { ArrowLeft, Link2, Check, Eye } from "lucide-react";
 import { Link } from "wouter";
 import { AUTHOR } from "@/lib/author";
 
@@ -166,125 +166,129 @@ export default function BlogPost() {
                     <div className="flex gap-12">
                         {/* Main article content */}
                         <div className="flex-1 max-w-4xl">
-                    <header className="mb-12">
-                        <m.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-wrap items-center gap-4 mb-6"
-                        >
-                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
-                            </Badge>
-                            <span className="text-white/30 text-sm">{article.readTimeMinutes || 5} min read</span>
-                            {article.tags?.map((tag: string) => (
-                                <span key={tag} className="text-xs text-white/40">#{tag}</span>
-                            ))}
-                        </m.div>
+                            <header className="mb-12">
+                                <m.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex flex-wrap items-center gap-4 mb-6"
+                                >
+                                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                                        {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
+                                    </Badge>
+                                    <span className="text-white/30 text-sm">{article.readTimeMinutes || 5} min read</span>
+                                    <span className="text-white/40 text-sm flex items-center gap-1.5">
+                                        <Eye className="w-4 h-4" />
+                                        {article.viewCount || 0} views
+                                    </span>
+                                    {article.tags?.map((tag: string) => (
+                                        <span key={tag} className="text-xs text-white/40">#{tag}</span>
+                                    ))}
+                                </m.div>
 
-                        <m.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight"
-                            style={{ fontFamily: "var(--font-display)" }}
-                        >
-                            {article.title}
-                        </m.h1>
+                                <m.h1
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1 }}
+                                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight"
+                                    style={{ fontFamily: "var(--font-display)" }}
+                                >
+                                    {article.title}
+                                </m.h1>
 
-                        {article.featuredImage && (
-                            <m.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="aspect-video relative rounded-3xl overflow-hidden bg-white/5 border border-white/10"
-                            >
-                                <img
-                                    src={article.featuredImage}
-                                    alt={article.featuredImageAlt || `${article.title} - Featured image for blog post`}
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
-                            </m.div>
-                        )}
-                    </header>
+                                {article.featuredImage && (
+                                    <m.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="aspect-video relative rounded-3xl overflow-hidden bg-white/5 border border-white/10"
+                                    >
+                                        <img
+                                            src={article.featuredImage}
+                                            alt={article.featuredImageAlt || `${article.title} - Featured image for blog post`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+                                    </m.div>
+                                )}
+                            </header>
 
-                    <article
-                        ref={articleRef}
-                        className="prose prose-invert prose-purple max-w-none 
+                            <article
+                                ref={articleRef}
+                                className="prose prose-invert prose-purple max-w-none 
                         prose-headings:font-display prose-headings:font-bold prose-headings:text-white
                         prose-p:text-white/70 prose-p:leading-relaxed prose-p:text-lg
                         prose-a:text-primary prose-a:no-underline hover:prose-a:underline
                         prose-strong:text-white prose-code:text-primary prose-pre:bg-white/5
                         prose-img:rounded-2xl prose-img:border prose-img:border-white/10
                         animate-fade-in pt-8"
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
-                    />
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
+                            />
 
-                    {/* Share button */}
-                    <div className="mt-12 flex items-center gap-3">
-                        <button
-                            onClick={copyLink}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm"
-                        >
-                            {copied ? (
-                                <><Check className="w-4 h-4 text-green-400" /> Copied!</>
-                            ) : (
-                                <><Link2 className="w-4 h-4" /> Copy Link</>
+                            {/* Share button */}
+                            <div className="mt-12 flex items-center gap-3">
+                                <button
+                                    onClick={copyLink}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm"
+                                >
+                                    {copied ? (
+                                        <><Check className="w-4 h-4 text-green-400" /> Copied!</>
+                                    ) : (
+                                        <><Link2 className="w-4 h-4" /> Copy Link</>
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Related articles strip */}
+                            {relatedArticles.length > 0 && (
+                                <section className="mt-16 pt-16 border-t border-white/10">
+                                    <h2 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
+                                        Related Articles
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {relatedArticles.map((related: any) => (
+                                            <Link key={related.id} href={`/blog/${related.slug}`}>
+                                                <m.div
+                                                    whileHover={{ y: -4 }}
+                                                    className="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 hover:border-primary/20 transition-all bg-white/[0.02]"
+                                                >
+                                                    <div className="aspect-video bg-white/5 relative overflow-hidden">
+                                                        {related.featuredImage ? (
+                                                            <img src={related.featuredImage} alt={`${related.title} - Related article thumbnail`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📝</div>
+                                                        )}
+                                                    </div>
+                                                    <div className="p-4">
+                                                        <h3 className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                                                            {related.title}
+                                                        </h3>
+                                                        <p className="text-xs text-white/40 line-clamp-2">{related.excerpt}</p>
+                                                    </div>
+                                                </m.div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </section>
                             )}
-                        </button>
-                    </div>
 
-                    {/* Related articles strip */}
-                    {relatedArticles.length > 0 && (
-                        <section className="mt-16 pt-16 border-t border-white/10">
-                            <h2 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
-                                Related Articles
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {relatedArticles.map((related: any) => (
-                                    <Link key={related.id} href={`/blog/${related.slug}`}>
-                                        <m.div
-                                            whileHover={{ y: -4 }}
-                                            className="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 hover:border-primary/20 transition-all bg-white/[0.02]"
-                                        >
-                                            <div className="aspect-video bg-white/5 relative overflow-hidden">
-                                                {related.featuredImage ? (
-                                                    <img src={related.featuredImage} alt={`${related.title} - Related article thumbnail`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📝</div>
-                                                )}
-                                            </div>
-                                            <div className="p-4">
-                                                <h3 className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-2 mb-1">
-                                                    {related.title}
-                                                </h3>
-                                                <p className="text-xs text-white/40 line-clamp-2">{related.excerpt}</p>
-                                            </div>
-                                        </m.div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    <footer className="mt-16 pt-16 border-t border-white/10">
-                        <div className="bg-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-white/5">
-                            <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-4xl shrink-0">
-                                AS
-                            </div>
-                            <div className="text-center md:text-left">
-                                <h3 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h3>
-                                <p className="text-white/50 mb-4">
-                                    {AUTHOR.bio}
-                                </p>
-                                <div className="flex justify-center md:justify-start gap-4">
-                                    <a href={AUTHOR.socials.twitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
-                                    <a href={AUTHOR.socials.linkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
-                                    <a href={AUTHOR.socials.github} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
+                            <footer className="mt-16 pt-16 border-t border-white/10">
+                                <div className="bg-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-white/5">
+                                    <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-4xl shrink-0">
+                                        AS
+                                    </div>
+                                    <div className="text-center md:text-left">
+                                        <h3 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h3>
+                                        <p className="text-white/50 mb-4">
+                                            {AUTHOR.bio}
+                                        </p>
+                                        <div className="flex justify-center md:justify-start gap-4">
+                                            <a href={AUTHOR.socials.twitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
+                                            <a href={AUTHOR.socials.linkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
+                                            <a href={AUTHOR.socials.github} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </footer>
+                            </footer>
                         </div>
 
                         {/* Table of Contents sidebar — visible on xl screens */}

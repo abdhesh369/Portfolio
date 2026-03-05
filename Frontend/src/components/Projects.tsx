@@ -242,19 +242,24 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
 
           {/* Category & Flagship Badges */}
           <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
-            <m.span
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              className="px-3 py-1.5 text-xs font-bold rounded-full uppercase tracking-wider"
-              style={{
-                background: catColor.bg,
-                color: catColor.text,
-                border: `1px solid ${catColor.text}40`,
-                boxShadow: `0 0 15px ${catColor.glow}`
-              }}
-            >
-              {project.category}
-            </m.span>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold rounded-full bg-black/50 text-gray-300 border border-white/10 backdrop-blur-md" title="Views">
+                <Eye className="w-3 h-3" /> {project.viewCount || 0}
+              </span>
+              <m.span
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="px-3 py-1.5 text-xs font-bold rounded-full uppercase tracking-wider"
+                style={{
+                  background: catColor.bg,
+                  color: catColor.text,
+                  border: `1px solid ${catColor.text}40`,
+                  boxShadow: `0 0 15px ${catColor.glow}`
+                }}
+              >
+                {project.category}
+              </m.span>
+            </div>
             {project.isFlagship && (
               <m.span
                 initial={{ x: 20, opacity: 0 }}
@@ -475,7 +480,12 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(100, 100, 140, 0.2)' }}>
           <div>
             <h3 id="modal-title" className="text-xl font-bold text-white">{project.title}</h3>
-            <span className="text-sm font-medium" style={{ color: catColor.text }}>{project.category}</span>
+            <div className="flex items-center gap-3 mt-1 text-sm">
+              <span className="font-medium" style={{ color: catColor.text }}>{project.category}</span>
+              <span className="text-gray-400 flex items-center gap-1">
+                <Eye className="w-3.5 h-3.5" /> {project.viewCount || 0}
+              </span>
+            </div>
           </div>
           <button
             onClick={onClose}

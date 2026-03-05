@@ -71,6 +71,15 @@ export class RedisClient {
             return { healthy: false, message: error.message };
         }
     }
+
+    public static async quit(): Promise<void> {
+        if (this.instance) {
+            await this.instance.quit();
+            this.instance = null;
+            this.isConnected = false;
+            logger.info({ context: "redis" }, "Disconnected gracefully");
+        }
+    }
 }
 
 export const redis = RedisClient.getInstance();

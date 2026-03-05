@@ -1,0 +1,65 @@
+No config path provided, using default 'drizzle.config.ts'
+Reading config file 'D:\Portfolio\Backend\drizzle.config.ts'
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+Using 'pg' driver for database querying
+DrizzleQueryError: Failed query: CREATE TABLE "analytics" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"targetId" integer,
+	"path" varchar(500) NOT NULL,
+	"browser" varchar(100),
+	"os" varchar(100),
+	"device" varchar(50),
+	"country" varchar(100),
+	"city" varchar(100),
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+
+params: 
+    at NodePgPreparedQuery.queryWithCache (D:\Portfolio\Backend\node_modules\src\pg-core\session.ts:73:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (D:\Portfolio\Backend\node_modules\src\pg-core\dialect.ts:102:7)
+    ... 2 lines matching cause stack trace ...
+    at async migrate (D:\Portfolio\Backend\node_modules\src\node-postgres\migrator.ts:10:2) {
+  query: 'CREATE TABLE "analytics" (\n' +
+    '\t"id" serial PRIMARY KEY NOT NULL,\n' +
+    '\t"type" varchar(50) NOT NULL,\n' +
+    '\t"targetId" integer,\n' +
+    '\t"path" varchar(500) NOT NULL,\n' +
+    '\t"browser" varchar(100),\n' +
+    '\t"os" varchar(100),\n' +
+    '\t"device" varchar(50),\n' +
+    '\t"country" varchar(100),\n' +
+    '\t"city" varchar(100),\n' +
+    '\t"createdAt" timestamp DEFAULT now() NOT NULL\n' +
+    ');\n',
+  params: [],
+  cause: error: relation "analytics" already exists
+      at D:\Portfolio\Backend\node_modules\pg\lib\client.js:624:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async <anonymous> (D:\Portfolio\Backend\node_modules\src\node-postgres\session.ts:149:14)
+      at async NodePgPreparedQuery.queryWithCache (D:\Portfolio\Backend\node_modules\src\pg-core\session.ts:71:12)
+      at async <anonymous> (D:\Portfolio\Backend\node_modules\src\pg-core\dialect.ts:102:7)
+      at async NodePgSession.transaction (D:\Portfolio\Backend\node_modules\src\node-postgres\session.ts:259:19)
+      at async PgDialect.migrate (D:\Portfolio\Backend\node_modules\src\pg-core\dialect.ts:95:3)
+      at async migrate (D:\Portfolio\Backend\node_modules\src\node-postgres\migrator.ts:10:2) {
+    length: 103,
+    severity: 'ERROR',
+    code: '42P07',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'heap.c',
+    line: '1160',
+    routine: 'heap_create_with_catalog'
+  }
+}
+[Γú╖] applying migrations...[2K[1G[Γú»] applying migrations...[2K[1G[Γúƒ] applying migrations...[2K[1G[Γí┐] applying migrations...[2K[1G[Γó┐] applying migrations...[2K[1G[Γú╗] applying migrations...[2K[1G[Γú╜] applying migrations...[2K[1G[Γú╖] applying migrations...[2K[1G[Γú»] applying migrations...[2K[1G[Γúƒ] applying migrations...[2K[1G[Γí┐] applying migrations...[2K[1G[Γó┐] applying migrations...[2K[1G[Γú╗] applying migrations...[2K[1G[Γú╜] applying migrations...[2K[1G[Γú╖] applying migrations...[2K[1G[Γú»] applying migrations...[2K[1G[Γúƒ] applying migrations...[2K[1G[Γí┐] applying migrations...[2K[1G[Γó┐] applying migrations...

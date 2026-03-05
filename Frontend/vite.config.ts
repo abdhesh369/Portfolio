@@ -134,6 +134,7 @@ export default defineConfig(({ mode }) => ({
         return deps.filter(dep =>
           !dep.includes('vendor-editor') &&
           !dep.includes('vendor-admin') &&
+          !dep.includes('vendor-charts') &&
           !dep.includes('vendor-three') &&
           !dep.includes('AdminDashboard') &&
           !dep.includes('RichTextEditor')
@@ -171,12 +172,15 @@ export default defineConfig(({ mode }) => ({
             id.includes('/recharts/') ||
             id.includes('/d3-') ||
             id.includes('/internmap/') ||
+            id.includes('/victory-vendor/') ||
+            id.includes('/react-smooth/') ||
+            id.includes('/decimal.js-light/')
+          ) return 'vendor-charts';
+
+          if (
             id.includes('/react-redux/') ||
             id.includes('/redux/') ||
             id.includes('/@redux') ||
-            id.includes('/victory-vendor/') ||
-            id.includes('/react-smooth/') ||
-            id.includes('/decimal.js-light/') ||
             id.includes('/eventemitter3/') ||
             id.includes('/es-toolkit/') ||
             id.includes('/immer/') ||

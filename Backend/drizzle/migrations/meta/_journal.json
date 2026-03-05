@@ -36,6 +36,13 @@
       "when": 1772600200000,
       "tag": "0004_add_missing_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772686065758,
+      "tag": "0005_secret_mentor",
+      "breakpoints": true
     }
   ]
 }

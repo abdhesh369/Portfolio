@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
 const About = lazy(() => import("@/components/About"));
@@ -17,6 +18,7 @@ const Experience = lazy(() => import("@/components/Experience"));
 const Testimonials = lazy(() => import("@/components/Testimonials"));
 const Contact = lazy(() => import("@/components/Contact"));
 const Footer = lazy(() => import("@/components/Footer"));
+const BackToTop = lazy(() => import("@/components/BackToTop"));
 
 // Skeleton loading states that match section shapes
 function SectionFallback() {
@@ -83,12 +85,48 @@ function ScrollProgressBar() {
   );
 }
 
+function SafeSection({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<SectionFallback />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+// Robust hash scroll handler
+function useHashScroll() {
+  useEffect(() => {
+    const handleHashScroll = () => {
+      const { hash } = window.location;
+      if (hash) {
+        // Delay slightly to allow lazy-loaded sections to potentially start mounting
+        // and for the browser to finish rendering the initial frame
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    };
+
+    // Run once on mount
+    handleHashScroll();
+
+    // Also listen for hash changes
+    window.addEventListener("hashchange", handleHashScroll);
+    return () => window.removeEventListener("hashchange", handleHashScroll);
+  }, []);
+}
+
 export default function Home() {
+  useHashScroll();
   return (
     <div className="min-h-screen selection:bg-primary/20">
       {/* Scroll Progress Bar — pure JS, no framer-motion */}
       <ScrollProgressBar />
-
 
       <SEO
         slug="home"
@@ -133,49 +171,35 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <About />
-        </Suspense>
+        <SafeSection><About /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Skills />
-        </Suspense>
+        <SafeSection><Skills /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <WhyHireMe />
-        </Suspense>
+        <SafeSection><WhyHireMe /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Services />
-        </Suspense>
+        <SafeSection><Services /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <EngineeringMindset />
-        </Suspense>
+        <SafeSection><EngineeringMindset /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Projects />
-        </Suspense>
+        <SafeSection><Projects /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <CodeAndPractice />
-        </Suspense>
+        <SafeSection><CodeAndPractice /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Experience />
-        </Suspense>
+        <SafeSection><Experience /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Testimonials />
-        </Suspense>
+        <SafeSection><Testimonials /></SafeSection>
         <SectionDivider />
-        <Suspense fallback={<SectionFallback />}>
-          <Contact />
-        </Suspense>
+        <SafeSection><Contact /></SafeSection>
       </main>
 
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      </ErrorBoundary>
+
       <Suspense fallback={null}>
-        <Footer />
+        <BackToTop />
       </Suspense>
     </div>
   );

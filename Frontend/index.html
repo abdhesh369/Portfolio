@@ -31,13 +31,10 @@
   <!-- Optimization: Let Vite handle preloading chunks automatically to avoid version mismatches -->
 
   <!-- Preconnect to performance-critical external resources -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://backend-1gk6.onrender.com" crossorigin>
-  <link rel="dns-prefetch" href="https://backend-1gk6.onrender.com">
-  <link rel="preconnect" href="https://api.github.com" crossorigin>
-  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
+  <link rel="preconnect" href="https://region1.google-analytics.com" crossorigin>
+  <link rel="dns-prefetch" href="https://region1.google-analytics.com">
 
   <!-- Preload critical hero image -->
   <link rel="preload" as="image" type="image/webp" href="/images/Myphoto-500.webp" fetchpriority="high">
@@ -123,9 +120,50 @@
   ">
 
   <title>Abdhesh Sah | Full-Stack Engineer & System Designer | Portfolio</title>
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('vite-ui-theme');
+        var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) || theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.add('light'); // if needed
+        }
+      } catch (e) { }
+    })();
+  </script>
+  <style>
+    /* Minimal inline fallback vars to prevent FOUC on static hero before Vite CSS loads */
+    :root {
+      --fallback-bg: #ffffff;
+      --fallback-text: #0f172a;
+      --fallback-nav: rgba(255, 255, 255, 0.8);
+      --fallback-nav-border: rgba(0, 0, 0, 0.05);
+      --fallback-nav-text: #0f172a;
+      --fallback-hero-bg: #f8fafc;
+      --fallback-muted: #64748b;
+    }
+
+    :root.dark {
+      --fallback-bg: #020817;
+      --fallback-text: #ffffff;
+      --fallback-nav: rgba(2, 8, 23, 0.8);
+      --fallback-nav-border: rgba(255, 255, 255, 0.05);
+      --fallback-nav-text: #ffffff;
+      --fallback-hero-bg: rgba(10, 5, 32, 0.8);
+      --fallback-muted: #94a3b8;
+    }
+
+    body {
+      background-color: var(--fallback-bg);
+      color: var(--fallback-text);
+      margin: 0;
+    }
+  </style>
 </head>
 
-<body class="dark" style="background-color: #020817;">
+<body class="">
   <a href="#main-content" class="skip-to-content">Skip to content</a>
   <div id="root">
     <noscript>
@@ -135,13 +173,14 @@
       </div>
     </noscript>
     <!-- Static hero for instant FCP/LCP — replaced when React mounts -->
-    <div style="min-height:100vh;background:#020817;color:#94a3b8;font-family:'Space Grotesk',system-ui,sans-serif">
+    <div
+      style="min-height:100vh;background:var(--fallback-bg);color:var(--fallback-muted);font-family:'Space Grotesk',system-ui,sans-serif">
       <!-- Navbar -->
       <nav
-        style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:rgba(2,8,23,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-.02em">Abdhesh<span
+        style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:var(--fallback-nav);backdrop-filter:blur(12px);border-bottom:1px solid var(--fallback-nav-border)">
+        <span style="font-size:18px;font-weight:700;color:var(--fallback-nav-text);letter-spacing:-.02em">Abdhesh<span
             style="color:#22d3ee">.dev</span></span>
-        <div style="display:flex;gap:24px;font-size:14px;color:rgba(148,163,184,.7)">
+        <div style="display:flex;gap:24px;font-size:14px;color:var(--fallback-muted)">
           <span>Home</span><span>Skills</span><span>Projects</span><span>Experience</span><span>Blog</span><span>Contact</span>
         </div>
       </nav>
@@ -153,26 +192,20 @@
             <span style="width:8px;height:8px;border-radius:50%;background:#22d3ee;display:inline-block"></span>
             SYSTEM_READY_FOR_WORK
           </div>
-          <h1 style="font-size:clamp(2.5rem,5vw,4.25rem);font-weight:700;line-height:1.1;color:#fff;margin:0 0 16px">
+          <h1
+            style="font-size:clamp(2.5rem,5vw,4.25rem);font-weight:700;line-height:1.1;color:var(--fallback-text);margin:0 0 16px">
             Start building<br><span
-              style="background:linear-gradient(90deg,#22d3ee,#3b82f6,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">The
+              style="background:linear-gradient(90deg,#22d3ee,#3b82f6,#a855f7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">The
               Future</span>
           </h1>
-          <p style="font-size:18px;color:#9ca3af;line-height:1.7;margin:0 0 32px;max-width:480px">
-            I'm <strong style="color:#fff">Abdhesh Sah</strong>, a Full-Stack Engineer passionate about performance,
+          <p style="font-size:18px;color:var(--fallback-muted);line-height:1.7;margin:0 0 32px;max-width:480px">
+            I'm <strong style="color:var(--fallback-text)">Abdhesh Sah</strong>, a Full-Stack Engineer passionate about
+            performance,
             precision, and building digital experiences that feel alive.
           </p>
-          <div style="display:flex;gap:12px">
-            <span
-              style="display:inline-flex;align-items:center;padding:12px 32px;border-radius:9999px;background:#06b6d4;color:#000;font-weight:700;font-size:14px">View
-              My Work →</span>
-            <span
-              style="display:inline-flex;align-items:center;padding:12px 32px;border-radius:9999px;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:14px">Contact
-              Me</span>
-          </div>
         </div>
         <div
-          style="width:280px;height:340px;border-radius:16px;flex-shrink:0;background:rgba(10,5,32,.8);border:1px solid rgba(255,255,255,.1);overflow:hidden;position:relative">
+          style="width:280px;height:340px;border-radius:16px;flex-shrink:0;background:var(--fallback-hero-bg);border:1px solid var(--fallback-nav-border);overflow:hidden;position:relative">
           <img src="/images/Myphoto-500.webp" alt="Abdhesh Sah" width="280" height="340"
             style="width:100%;height:100%;object-fit:cover;opacity:.85;filter:grayscale(.2)" fetchpriority="high">
         </div>

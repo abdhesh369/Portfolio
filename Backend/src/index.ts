@@ -78,28 +78,33 @@ app.use("/api/v1", globalLimiter);
 
 // Harden CORS
 app.use(
-  cors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      // Allow non-browser requests (health checks, monitoring, cURL) — they have no Origin
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
+  cors((req: Request, callback: (err: Error | null, options?: any) => void) => {
+    const origin = req.header("Origin");
 
-      const isAllowed = allowedOrigins.includes(origin) ||
-        (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:")) ||
-        (process.env.BACKEND_RENDER_URL ? origin === process.env.BACKEND_RENDER_URL : false);
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        logger.warn({ origin }, "CORS blocked origin");
-        callback(new Error("Not allowed by CORS"));
+    // Allow non-browser requests (health checks, monitoring, cURL) — they have no Origin
+    if (!origin) {
+      const secFetch = req.header("sec-fetch-site");
+      if (secFetch && secFetch !== 'none') {
+        return callback(new Error("Origin required for browser requests"));
       }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
+      return callback(null, { origin: true, credentials: true });
+    }
+
+    const isAllowed = allowedOrigins.includes(origin) ||
+      (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:")) ||
+      (process.env.BACKEND_RENDER_URL ? origin === process.env.BACKEND_RENDER_URL : false);
+
+    if (isAllowed) {
+      callback(null, {
+        origin: true,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"]
+      });
+    } else {
+      logger.warn({ origin }, "CORS blocked origin");
+      callback(new Error("Not allowed by CORS"));
+    }
   })
 );
 
@@ -255,9 +260,13 @@ function setupGracefulShutdown() {
       try {
         if (emailQueue) await emailQueue.close();
         if (emailWorker) await emailWorker.close();
-        logger.info({ context: "shutdown" }, "Email queue and worker closed");
+
+        // Disconnect main Redis client
+        await RedisClient.quit();
+
+        logger.info({ context: "shutdown" }, "Redis and queues closed");
       } catch (qErr) {
-        logger.error({ context: "shutdown", error: qErr }, `Error closing queue`);
+        logger.error({ context: "shutdown", error: qErr }, `Error closing Redis/Queue`);
       }
 
       process.exit(0);

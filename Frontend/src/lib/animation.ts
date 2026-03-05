@@ -29,7 +29,7 @@ export const EASE = {
   easeInOut: "easeInOut" as const,
   linear: "linear" as const,
   /** Smooth deceleration cubic-bezier used for stagger children */
-  smooth: [0.22, 1, 0.36, 1] as readonly number[],
+  smooth: [0.22, 1, 0.36, 1] as [number, number, number, number],
 } as const;
 
 // ─── Spring Presets ─────────────────────────────────────────────────────────

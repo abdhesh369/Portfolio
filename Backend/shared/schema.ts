@@ -24,6 +24,7 @@ export const projectsTable = pgTable("projects", {
   impact: text("impact"),
   role: text("role"),
   imageAlt: text("imageAlt"),
+  viewCount: integer("viewCount").notNull().default(0),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),
@@ -45,8 +46,8 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: integer("from_skill_id").notNull(),
-  toSkillId: integer("to_skill_id").notNull(),
+  fromSkillId: integer("from_skill_id").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
+  toSkillId: integer("to_skill_id").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
 });
 
 export const experiencesTable = pgTable("experiences", {
@@ -54,6 +55,8 @@ export const experiencesTable = pgTable("experiences", {
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
   period: varchar("period", { length: 100 }).notNull(),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
   description: text("description").notNull(),
   type: varchar("type", { length: 100 }).notNull().default("Experience"),
 });
@@ -78,7 +81,7 @@ export const mindsetTable = pgTable("mindset", {
 export const analyticsTable = pgTable("analytics", {
   id: serial("id").primaryKey(),
   type: varchar("type", { length: 50 }).notNull(), // page_view, project_view, contact_form
-  targetId: integer("targetId"), // ID of project for project_view
+  targetId: integer("targetId").references(() => projectsTable.id, { onDelete: "set null" }), // ID of project for project_view
   path: varchar("path", { length: 500 }).notNull(),
   browser: varchar("browser", { length: 100 }),
   os: varchar("os", { length: 100 }),
@@ -131,7 +134,7 @@ export const articlesTable = pgTable("articles", {
   readTimeMinutes: integer("readTimeMinutes").notNull().default(0),
   metaTitle: varchar("metaTitle", { length: 255 }),
   metaDescription: text("metaDescription"),
-  authorId: integer("authorId"),
+  authorId: integer("authorId"), // Reserved for multi-author support
   featuredImageAlt: text("featuredImageAlt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -178,6 +181,21 @@ export const testimonialsTable = pgTable("testimonials", {
   return {
     orderIdx: index("testimonials_order_idx").on(table.displayOrder),
   };
+});
+
+export const siteSettingsTable = pgTable("site_settings", {
+  key: varchar("key", { length: 100 }).primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
+
+export const commentsTable = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  articleId: integer("article_id").notNull().references(() => articlesTable.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  message: text("message").notNull(),
+  isApproved: boolean("is_approved").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // TICKET-032: Append-only audit log
@@ -237,6 +255,12 @@ export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
 export const selectAuditLogSchema = createSelectSchema(auditLogTable);
 export const insertAuditLogSchema = createInsertSchema(auditLogTable);
 
+export const selectSiteSettingsSchema = createSelectSchema(siteSettingsTable);
+export const insertSiteSettingsSchema = createInsertSchema(siteSettingsTable);
+
+export const selectCommentSchema = createSelectSchema(commentsTable);
+export const insertCommentSchema = createInsertSchema(commentsTable);
+
 // ================= CUSTOM API SCHEMAS =================
 
 function isValidUrl(url: string | null | undefined): boolean {
@@ -269,6 +293,7 @@ export const projectSchema = z.object({
   impact: z.string().max(5000).nullish(),
   role: z.string().max(5000).nullish(),
   imageAlt: z.string().max(500).nullish(),
+  viewCount: z.number().default(0),
 });
 
 export const insertProjectApiSchema = z.object({
@@ -340,6 +365,8 @@ export const experienceSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().min(1).max(100),
+  startDate: z.coerce.date().nullable().optional(),
+  endDate: z.coerce.date().nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100),
 });
@@ -358,6 +385,8 @@ export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().min(1).max(100),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
 });
@@ -481,6 +510,21 @@ export const insertSeoSettingsApiSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
 });
 
+export const commentSchema = z.object({
+  id: z.number(),
+  articleId: z.number(),
+  name: z.string().min(1).max(100),
+  message: z.string().min(1).max(5000),
+  isApproved: z.boolean().default(false),
+  createdAt: z.coerce.date(),
+});
+
+export const insertCommentApiSchema = z.object({
+  articleId: z.number(),
+  name: z.string().min(1).max(100),
+  message: z.string().min(1).max(5000),
+});
+
 export const articleSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -537,6 +581,8 @@ export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
+export type Comment = z.infer<typeof commentSchema>;
+export type SiteSettings = typeof siteSettingsTable.$inferSelect;
 export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
@@ -550,6 +596,8 @@ export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
+export type InsertComment = z.infer<typeof insertCommentApiSchema>;
+export type InsertSiteSettings = typeof siteSettingsTable.$inferInsert;
 
 // ================= TYPE GUARDS =================
 
