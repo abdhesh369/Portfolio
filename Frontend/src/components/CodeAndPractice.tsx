@@ -182,11 +182,9 @@ export default function CodeAndPractice() {
               <div className="mt-8 pt-8 border-t border-border/50">
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                  <img
+                  <OptimizedImage
                     src="https://ghchart.rshah.org/00d4ff/abdhesh369"
                     alt="GitHub Contribution Graph"
-                    loading="lazy"
-                    decoding="async"
                     width={800}
                     height={128}
                     className="relative w-full rounded-lg opacity-90 hover:opacity-100 transition-all duration-300 filter hue-rotate-0"

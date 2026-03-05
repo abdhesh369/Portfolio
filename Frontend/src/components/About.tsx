@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle, hoverScale } from "@/lib/animation";
 import { User, GraduationCap, MapPin, Mail, Code, Calendar, Zap, Heart, Target, BookOpen, Layers, Monitor, Terminal, Cpu, Sparkles } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
+import { OptimizedImage } from "@/components/OptimizedImage";
 // ...existing code... (profile image moved to public/images/hero.svg)
 
 // Glitch Text Component
@@ -222,15 +223,12 @@ export default function About() {
                   <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 z-10 mix-blend-overlay" />
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 z-10 mix-blend-color-dodge opacity-50" />
 
-                  <img
+                  <OptimizedImage
                     src="/images/Myphoto.webp"
-                    srcSet="/images/Myphoto-500.webp 500w, /images/Myphoto-800.webp 800w, /images/Myphoto.webp 1080w"
-                    sizes="(max-width: 1024px) 80vw, 450px"
                     alt="Abdhesh Sah - Full-Stack Engineer"
-                    loading="lazy"
-                    decoding="async"
                     width={400}
                     height={500}
+                    loading="lazy"
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
                   />
 

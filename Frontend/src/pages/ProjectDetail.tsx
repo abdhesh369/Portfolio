@@ -19,6 +19,7 @@ import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
 import { getDynamicOgImage } from "@/lib/cloudinary";
 import { ApiResponseViewer } from "@/components/ApiResponseViewer";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 // Floating particles (reused from main components)
 const FloatingParticles = () => {
@@ -421,13 +422,12 @@ export default function ProjectDetail() {
                 <div className="aspect-video relative">
                   {project.imageUrl ? (
                     <>
-                      <img
+                      <OptimizedImage
                         src={project.imageUrl}
                         alt={project.title}
-                        loading="lazy"
-                        decoding="async"
                         width={1200}
                         height={675}
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
@@ -611,7 +611,7 @@ export default function ProjectDetail() {
                           }}
                         >
                           <div className="aspect-video rounded-xl overflow-hidden mb-4">
-                            <img
+                            <OptimizedImage
                               src={p.imageUrl}
                               alt={`Thumbnail of ${p.title}`}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

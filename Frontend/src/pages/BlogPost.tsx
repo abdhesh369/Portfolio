@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Link2, Check, Eye } from "lucide-react";
 import { Link } from "wouter";
 import { AUTHOR } from "@/lib/author";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 function PostSkeleton() {
     return (
@@ -202,7 +203,7 @@ export default function BlogPost() {
                                         transition={{ delay: 0.2 }}
                                         className="aspect-video relative rounded-3xl overflow-hidden bg-white/5 border border-white/10"
                                     >
-                                        <img
+                                        <OptimizedImage
                                             src={article.featuredImage}
                                             alt={article.featuredImageAlt || `${article.title} - Featured image for blog post`}
                                             className="w-full h-full object-cover"
@@ -253,7 +254,7 @@ export default function BlogPost() {
                                                 >
                                                     <div className="aspect-video bg-white/5 relative overflow-hidden">
                                                         {related.featuredImage ? (
-                                                            <img src={related.featuredImage} alt={`${related.title} - Related article thumbnail`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                            <OptimizedImage src={related.featuredImage} alt={`${related.title} - Related article thumbnail`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📝</div>
                                                         )}

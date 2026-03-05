@@ -3,6 +3,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
 import { type Project } from "@shared/schema";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu, Eye, Zap, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -79,6 +80,25 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
     "Vanilla JS": "bg-yellow-400/15 text-yellow-300 border-yellow-400/30",
   };
 
+  // Tech Icon mapping
+  const techIcons: Record<string, React.ReactNode> = {
+    React: <Code className="w-3 h-3" />,
+    "Node.js": <Cpu className="w-3 h-3" />,
+    TypeScript: <Layers className="w-3 h-3" />,
+    JavaScript: <Layers className="w-3 h-3" />,
+    Python: <Terminal className="w-3 h-3" />,
+    PostgreSQL: <Layers className="w-3 h-3" />,
+    Express: <Cpu className="w-3 h-3" />,
+    C: <Terminal className="w-3 h-3" />,
+    "C++": <Terminal className="w-3 h-3" />,
+    TailwindCSS: <Sparkles className="w-3 h-3" />,
+    SQLite: <Layers className="w-3 h-3" />,
+    CSS3: <Sparkles className="w-3 h-3" />,
+    "Drizzle ORM": <Layers className="w-3 h-3" />,
+    "Framer Motion": <Zap className="w-3 h-3" />,
+    "Three.js": <Sparkles className="w-3 h-3" />,
+  };
+
   return (
     <m.div
       ref={cardRef}
@@ -149,16 +169,14 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
         <div className="relative h-48 overflow-hidden">
           {project.imageUrl ? (
             <>
-              <m.img
+              <OptimizedImage
                 src={project.imageUrl}
                 alt={project.imageAlt || `Screenshot of ${project.title}: ${project.description.substring(0, 100)}...`}
-                loading="lazy"
-                decoding="async"
-                width={600}
-                height={300}
                 animate={{ scale: isHovered ? 1.1 : 1 }}
                 transition={{ duration: 0.5 }}
                 className="w-full h-full object-cover"
+                width={600}
+                height={300}
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
@@ -298,8 +316,9 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`text-[10px] font-semibold px-2.5 py-1 rounded-md border ${techColors[tech] || "bg-gray-500/15 text-gray-400 border-gray-500/30"}`}
+                className={`text-[10px] font-semibold px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${techColors[tech] || "bg-gray-500/15 text-gray-400 border-gray-500/30"}`}
               >
+                {techIcons[tech]}
                 {tech}
               </m.span>
             ))}
@@ -500,12 +519,12 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         <div className="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar">
           {project.imageUrl && (
             <div className="relative rounded-xl overflow-hidden mb-5">
-              <img
+              <OptimizedImage
                 src={project.imageUrl}
                 alt={project.imageAlt || `Detailed view of the ${project.title} project interface and key features`}
-                loading="lazy"
-                decoding="async"
                 className="w-full h-48 md:h-64 object-cover"
+                width={1200}
+                height={640}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
             </div>
@@ -788,6 +807,7 @@ export default function Projects() {
             <PreviewModal project={previewProject} onClose={() => setPreviewProject(null)} />
           )}
         </AnimatePresence>
+      </div>
     </section>
   );
 }

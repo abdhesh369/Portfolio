@@ -4,7 +4,9 @@ import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATI
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
+import { useServerStatus } from "@/hooks/use-server-status";
 import { useTheme } from "./theme-provider";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {
@@ -150,16 +152,12 @@ const ProfileCard = () => {
       {/* Main Card Container */}
       <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
         {/* Profile Image */}
-        <img
+        <OptimizedImage
           src="/images/Myphoto.webp"
-          srcSet="/images/Myphoto-500.webp 500w, /images/Myphoto-800.webp 800w, /images/Myphoto.webp 1080w"
-          sizes="(max-width: 1024px) 80vw, 450px"
           alt="Portrait of Abdhesh Sah - Senior Full Stack Engineer & System Designer"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
           width={800}
           height={800}
+          loading="eager"
           className="absolute inset-0 w-full h-full object-cover opacity-85 mix-blend-luminosity grayscale-[30%] hover:grayscale-0 transition-all duration-700"
         />
 
@@ -336,13 +334,12 @@ export default function Hero() {
             >
               <div className="relative">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-60 blur-md animate-pulse" />
-                <img
+                <OptimizedImage
                   src="/images/Myphoto-500.webp"
                   alt="Abdhesh Sah Avatar"
                   width={120}
                   height={120}
                   loading="eager"
-                  fetchPriority="high"
                   className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-white/20 shadow-xl"
                 />
               </div>
@@ -355,10 +352,16 @@ export default function Hero() {
               initial={fadeUp.initial}
               animate={fadeUp.animate}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-[10px] sm:text-xs backdrop-blur-sm mx-auto lg:mx-0"
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono backdrop-blur-sm mx-auto lg:mx-0 transition-colors duration-500 ${status === "online"
+                ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+                : status === "waking"
+                  ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
+                  : "bg-red-500/10 border-red-500/20 text-red-500"
+                }`}
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_var(--color-cyan)]" />
-              SYSTEM_READY_FOR_WORK
+              <div className={`w-2 h-2 rounded-full animate-pulse shadow-glow ${status === "online" ? "bg-cyan-400" : status === "waking" ? "bg-yellow-500" : "bg-red-500"
+                }`} />
+              {status === "online" ? "SYSTEM_ACTIVE" : status === "checking" ? "SEARCHING_FOR_UPLINK" : "SYSTEM_DEGRADED"}
             </m.div>
 
             <div className="space-y-4">

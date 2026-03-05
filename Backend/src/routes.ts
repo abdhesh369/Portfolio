@@ -16,6 +16,8 @@ import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
 import feedRoutes from "./routes/feed.js";
+import githubRoutes from "./routes/github.js";
+import guestbookRoutes from "./routes/guestbook.js";
 import auditLogRoutes from "./routes/audit-log.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
@@ -34,6 +36,8 @@ export function registerRoutes(app: Express) {
   v1Router.use("/sitemap", sitemapRoutes);
   v1Router.use("/articles", articlesRouter);
   v1Router.use("/feed", feedRoutes);
+  v1Router.use("/github", githubRoutes);
+  v1Router.use("/guestbook", guestbookRoutes);
 
   // CSP violation reporting route
   v1Router.post(

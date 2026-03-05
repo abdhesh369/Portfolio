@@ -142,8 +142,11 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 space-y-1 text-center md:text-left">
             <p>© 2025–{currentYear} Abdhesh Sah. All rights reserved.</p>
+            <p className="text-[10px] font-mono opacity-50 uppercase tracking-tighter">
+              System last updated: Mar 05, 2026 • Build: v3.2.0-stable
+            </p>
           </div>
 
           <m.button

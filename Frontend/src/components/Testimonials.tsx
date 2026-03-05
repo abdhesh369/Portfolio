@@ -112,9 +112,11 @@ export default function Testimonials() {
                                 {/* Author info */}
                                 <div className="flex items-center gap-3 mt-auto">
                                     {t.avatarUrl ? (
-                                        <img
+                                        <OptimizedImage
                                             src={t.avatarUrl}
                                             alt={t.name}
+                                            width={100}
+                                            height={100}
                                             className="w-10 h-10 rounded-full object-cover border border-white/10"
                                         />
                                     ) : (

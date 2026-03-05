@@ -4,6 +4,7 @@ import { fadeLeft, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, hoverSc
 import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useArticles, useExperiences } from "@/hooks/use-portfolio";
+import { trackEvent } from "@/lib/analytics";
 
 // Animated Counter
 const AnimatedCounter = ({ value, suffix = "", label }: { value: number; suffix?: string; label: string }) => {
@@ -330,7 +331,8 @@ export default function WhyHireMe() {
                 <Button
                   size="lg"
                   className="h-14 px-8 gap-3 rounded-full font-bold shadow-lg shadow-primary/25 text-base"
-                  onClick={() => {
+                  onClick={async () => {
+                    await trackEvent({ type: "resume_download", fileName: "Abdhesh_Sah_CV.docx" });
                     const link = document.createElement("a");
                     link.href = "/Abdhesh_Sah_CV.docx";
                     link.download = "Abdhesh_Sah_CV.docx";

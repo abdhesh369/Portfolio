@@ -20,6 +20,8 @@ import {
     articleWithRelatedSchema,
     insertArticleApiSchema,
     emailTemplateSchema,
+    guestbookSchema,
+    insertGuestbookApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -586,6 +588,68 @@ export const api = {
                 200: z.array(emailTemplateSchema),
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- GUESTBOOK ----------
+    guestbook: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/guestbook",
+            description: "List all approved guestbook entries (public)",
+            responses: {
+                200: z.array(guestbookSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/v1/guestbook",
+            description: "Submit guestbook entry (public, rate-limited)",
+            input: insertGuestbookApiSchema,
+            responses: {
+                201: createSuccessResponse(guestbookSchema),
+                400: errorSchemas.validation,
+                429: z.object({ message: z.string() }),
+                500: errorSchemas.internal,
+            },
+        },
+        adminList: {
+            method: "GET" as const,
+            path: "/api/v1/admin/guestbook",
+            description: "List all guestbook entries (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.array(guestbookSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        approve: {
+            method: "PATCH" as const,
+            path: "/api/v1/admin/guestbook/:id/approve",
+            description: "Approve guestbook entry (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(guestbookSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/v1/admin/guestbook/:id",
+            description: "Delete guestbook entry (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
                 500: errorSchemas.internal,
             },
         },

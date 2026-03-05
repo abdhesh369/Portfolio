@@ -12,3 +12,4 @@ export { useMessages, useSendMessage } from "./use-contact";
 export { useAnalyticsSummary, useVitalsSummary } from "./use-analytics";
 export { useEmailTemplates } from "./use-email-templates";
 export { useLogin } from "./use-auth";
+export { useGuestbook, useSubmitGuestbook } from "./use-guestbook";

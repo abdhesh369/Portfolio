@@ -196,8 +196,20 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden"
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 100) {
+                setIsOpen(false);
+              }
+            }}
+            className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden touch-none"
           >
+            {/* Grab handle for swipe */}
+            <div className="flex justify-center pt-2 pb-1">
+              <div className="w-12 h-1.5 rounded-full bg-white/10" />
+            </div>
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navItems.map((item) => {
                 const isActive = (item.href === "/" && activeSection === "hero") ||

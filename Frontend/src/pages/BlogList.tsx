@@ -10,7 +10,9 @@ import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { Eye } from "lucide-react";
+import { Eye, Clock } from "lucide-react";
+
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 function BlogCard({ article }: { article: Article }) {
     return (
@@ -24,10 +26,12 @@ function BlogCard({ article }: { article: Article }) {
                 <Card className="group cursor-pointer bg-card/50 border-white/5 hover:border-primary/20 transition-all duration-300 overflow-hidden h-full flex flex-col">
                     <div className="aspect-video relative overflow-hidden bg-white/5">
                         {article.featuredImage ? (
-                            <img
+                            <OptimizedImage
                                 src={article.featuredImage}
                                 alt={article.featuredImageAlt || `Cover illustration for the article "${article.title}": ${article.excerpt?.substring(0, 100)}...`}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                width={800}
+                                height={450}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-4xl opacity-20 group-hover:scale-110 transition-transform duration-500">
@@ -42,7 +46,10 @@ function BlogCard({ article }: { article: Article }) {
                                 {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Draft"}
                             </Badge>
                             <span className="text-[10px] text-white/30">•</span>
-                            <span className="text-[10px] text-white/30">{article.readTimeMinutes || 5} min read</span>
+                            <span className="text-[10px] text-white/40 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {article.readTimeMinutes || 5} min read
+                            </span>
                             <span className="text-[10px] text-white/30">•</span>
                             <span className="text-[10px] text-white/40 flex items-center gap-1">
                                 <Eye className="w-3 h-3" />

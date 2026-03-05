@@ -252,6 +252,9 @@ export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
 export const selectAuditLogSchema = createSelectSchema(auditLogTable);
 export const insertAuditLogSchema = createInsertSchema(auditLogTable);
 
+export const selectGuestbookSchema = createSelectSchema(guestbookTable);
+export const insertGuestbookSchema = createInsertSchema(guestbookTable);
+
 // ================= CUSTOM API SCHEMAS =================
 
 function isValidUrl(url: string | null | undefined): boolean {
@@ -435,7 +438,22 @@ export const insertMessageApiSchema = z.object({
   website: z.string().optional(), // Honeypot field for spam prevention
 });
 
-export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form"] as const;
+export const guestbookSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(255),
+  content: z.string().min(1).max(5000),
+  email: z.string().email().max(255).nullish(),
+  isApproved: z.boolean(),
+  createdAt: z.coerce.date(),
+});
+
+export const insertGuestbookApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  content: z.string().min(1).max(5000),
+  email: z.string().email().max(255).nullish(),
+});
+
+export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form", "resume_download"] as const;
 
 export const analyticsSchema = z.object({
   id: z.number(),
@@ -573,6 +591,8 @@ export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
+export type GuestbookEntry = z.infer<typeof guestbookSchema>;
+export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 
 // ================= TYPE GUARDS =================
 
@@ -599,4 +619,7 @@ export function isSeoSettings(obj: unknown): obj is SeoSettings {
 }
 export function isTestimonial(obj: unknown): obj is Testimonial {
   return testimonialSchema.safeParse(obj).success;
+}
+export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
+  return guestbookSchema.safeParse(obj).success;
 }
