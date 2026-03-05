@@ -1,9 +1,8 @@
-// Validate environment variables immediately
-import "./env.js";
+// Must be first: initialize Sentry instrumentation before other imports
+import "./instrument.js";
 
 import express, { type Request, Response, NextFunction } from "express";
 import * as Sentry from "@sentry/node";
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import { env } from "./env.js";
 import { createServer } from "http";
 import cors from "cors";
@@ -25,22 +24,6 @@ import { randomUUID } from "crypto";
 const app = express();
 app.set("trust proxy", 1); // For production environments behind proxies (Render, Heroku, etc.)
 const httpServer = createServer(app);
-
-// Initialize Sentry
-if (env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: env.SENTRY_DSN,
-    environment: env.SENTRY_ENVIRONMENT || env.NODE_ENV,
-    integrations: [
-      nodeProfilingIntegration(),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: env.NODE_ENV === "production" ? 0.1 : 1.0,
-    // Set sampling rate for profiling - this is relative to tracesSampleRate
-    profilesSampleRate: 1.0,
-  });
-  logger.info({ context: "sentry" }, "Sentry initialized");
-}
 
 declare module "http" {
   interface IncomingMessage {
@@ -198,6 +181,11 @@ app.get("/", (_req: Request, res: Response) => {
 // Must NOT touch the database so it stays fast even when Neon is cold.
 app.get("/ping", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
+});
+
+// Sentry debug route (for verifying error capture pipeline)
+app.get("/debug-sentry", function mainHandler(_req: Request, _res: Response) {
+  throw new Error("My first Sentry error!");
 });
 
 // Readiness / deep health check — includes database connectivity.
