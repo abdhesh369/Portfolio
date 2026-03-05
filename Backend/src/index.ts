@@ -62,9 +62,11 @@ const allowedOrigins = [
   "https://abdheshsah.com.np",
   "https://www.abdheshsah.com.np",
   process.env.FRONTEND_URL,
-  "http://localhost:3000", // Add common development ports
-  "http://localhost:8080", // Add common development ports
-].filter(Boolean) as string[];
+  ...(process.env.NODE_ENV !== "production" ? [
+    "http://localhost:3000",
+    "http://localhost:8080",
+  ] : []),
+].filter((origin): origin is string => Boolean(origin));
 
 app.use(compression());
 app.use(cookieParser());
