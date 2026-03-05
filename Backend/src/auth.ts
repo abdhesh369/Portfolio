@@ -129,14 +129,20 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
             }
         }
 
-        try {
-            const decoded = jwt.verify(token, env.JWT_SECRET);
-            // Attach decoded token to request if needed
-            (req as any).user = decoded;
-            return next();
-        } catch (err) {
-            return res.status(401).json({ message: "Invalid or expired token" });
-        }
+try {
+    const decoded = jwt.verify(token, env.JWT_SECRET);
+    // Attach decoded token to request if needed
+    (req as any).user = decoded;
+    return next();
+} catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({ message: "Token expired" });
+    } else if (err instanceof jwt.JsonWebTokenError) {
+        return res.status(401).json({ message: "Invalid token" });
+    } else {
+        return res.status(401).json({ message: "Token verification failed" });
+    }
+}
     }
 
     res.status(401).json({ message: "Unauthorized. Please provide a valid token." });

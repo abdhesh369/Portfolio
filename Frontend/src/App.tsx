@@ -41,7 +41,7 @@ function PageLoader() {
 }
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { ServerStatusBanner } from "@/components/ServerStatusBanner";
+import { ServerStatusBanner } from "./components/ServerStatusBanner";
 
 // Only show PlexusBackground on public routes
 function ConditionalBackground() {

@@ -129,7 +129,7 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     cssCodeSplit: true,
     // Only preload chunks needed on every page — skip admin-only heavy chunks
-    modulePreload: {
+modulePreload: {
       resolveDependencies: (_filename: string, deps: string[]) => {
         return deps.filter(dep =>
           !dep.includes('vendor-editor') &&
@@ -137,7 +137,9 @@ export default defineConfig(({ mode }) => ({
           !dep.includes('vendor-charts') &&
           !dep.includes('vendor-three') &&
           !dep.includes('AdminDashboard') &&
-          !dep.includes('RichTextEditor')
+          !dep.includes('RichTextEditor') &&
+          !dep.includes('vendor-animation') &&
+          !dep.includes('vendor-ui')
         );
       },
     },

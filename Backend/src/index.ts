@@ -15,7 +15,7 @@ import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker } from "./lib/queue.js";
-import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance or the helper
+import { redis } from "./lib/redis.js"; // Import redis instance
 import { logger } from "./lib/logger.js";
 
 import rateLimit from "express-rate-limit";
@@ -62,6 +62,8 @@ const allowedOrigins = [
   "https://abdheshsah.com.np",
   "https://www.abdheshsah.com.np",
   process.env.FRONTEND_URL,
+  "http://localhost:3000", // Add common development ports
+  "http://localhost:8080", // Add common development ports
 ].filter(Boolean) as string[];
 
 app.use(compression());
@@ -201,7 +203,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 // so Render doesn't mark the deploy as failed during Neon cold starts.
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const redisHealth = await RedisClient.checkHealth();
+  const redisHealth = redis ? await (redis as any).checkHealth() : { healthy: false, message: "Redis client not initialized" };
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
 
@@ -223,7 +225,7 @@ app.get("/health", async (_req: Request, res: Response) => {
 // Formal API Health Check for monitoring tools
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const redisHealth = await RedisClient.checkHealth();
+  const redisHealth = redis ? await (redis as any).checkHealth() : { healthy: false, message: "Redis client not initialized" };
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
 
@@ -262,8 +264,10 @@ function setupGracefulShutdown() {
         if (emailWorker) await emailWorker.close();
 
         // Disconnect main Redis client
-        await RedisClient.quit();
-
+        // Disconnect main Redis client
+        if (redis) {
+          await redis.quit();
+        }
         logger.info({ context: "shutdown" }, "Redis and queues closed");
       } catch (qErr) {
         logger.error({ context: "shutdown", error: qErr }, `Error closing Redis/Queue`);
@@ -307,6 +311,33 @@ async function startServer() {
       process.exit(1);
     }
     logger.info({ context: "startup" }, "✓ Database is healthy");
+
+    // ── 3. Ensure database is ready before proceeding ──
+    if (process.env.NODE_ENV !== "production") {
+      logger.info({ context: "startup" }, "📍 Ensuring database is ready...");
+      const maxAttempts = 10;
+      let attempts = 0;
+      let dbReady = false;
+
+      while (attempts < maxAttempts && !dbReady) {
+        try {
+          await checkDatabaseHealth();
+          dbReady = true;
+        } catch (err) {
+          attempts++;
+          if (attempts < maxAttempts) {
+            logger.info({ context: "startup" }, `📍 Database not ready, retrying (${attempts}/${maxAttempts})...`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
+      if (!dbReady) {
+        logger.error({ context: "startup" }, "❌ Database failed to become ready. Shutting down...");
+        process.exit(1);
+      }
+      logger.info({ context: "startup" }, "✓ Database is ready");
+    }
 
     // Controlled seeding: Skip in production unless explicitly forced
     const shouldSeed = process.env.NODE_ENV !== "production" || process.env.FORCE_SEED === "true";

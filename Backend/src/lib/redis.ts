@@ -9,7 +9,7 @@ const DEFAULT_REDIS_URL = "redis://localhost:6379";
  * Provides a unified way to access Redis for caching and session management.
  */
 export class RedisClient {
-    private static instance: Redis | null = null;
+    private static instance: any = null;
     private static isConnected: boolean = false;
 
     public static getInstance(): Redis | null {
@@ -42,11 +42,10 @@ export class RedisClient {
                     logger.info({ context: "redis" }, "Connected successfully");
                 });
 
-                this.instance.on("error", (err) => {
+                this.instance.on("error", (err: Error) => {
                     this.isConnected = false;
                     logger.error({ context: "redis", error: err.message }, "Connection error");
                 });
-
             } catch (error) {
                 logger.error({ context: "redis", error }, "Failed to initialize");
                 return null;

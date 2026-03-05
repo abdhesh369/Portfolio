@@ -71,13 +71,22 @@ export async function buildSystemPrompt(): Promise<string> {
     return systemPrompt;
 }
 
+const CHAT_MODELS = [
+    "arcee-ai/trinity-large-preview:free",
+    "meta-llama/llama-4-scout:free",
+    "google/gemma-3-1b-it:free",
+];
+
 let openRouterClient: OpenRouter | null = null;
 
 function getOpenRouterClient() {
     if (!openRouterClient) {
         const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
         if (!apiKey) {
-            throw new Error("OpenRouter API key is not configured.");
+            throw new Error(
+                "OPENROUTER_API_KEY is not configured. " +
+                "Set it in Render Environment Variables or your local .env file."
+            );
         }
         openRouterClient = new OpenRouter({ apiKey });
     }
@@ -109,7 +118,16 @@ export const registerChatRoutes = (router: Router) => {
             const validatedData: z.infer<typeof chatSchema> = req.body;
 
             // Build system prompt (cached in Redis with 15-min TTL)
-            const systemPrompt = await buildSystemPrompt();
+            let systemPrompt: string;
+            try {
+                systemPrompt = await buildSystemPrompt();
+            } catch (dbErr: any) {
+                logger.error({ context: "chat", error: dbErr.message }, "Failed to build system prompt from DB");
+                return res.status(503).json({
+                    success: false,
+                    message: "Chat is temporarily unavailable. Database connection issue."
+                });
+            }
 
             // Map internal history to OpenRouter messages format { role, content }
             // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
@@ -128,23 +146,35 @@ export const registerChatRoutes = (router: Router) => {
                 ...messages
             ];
 
-            const response = await openrouter.chat.send({
-                chatGenerationParams: {
-                    model: "arcee-ai/trinity-large-preview:free",
-                    messages: finalMessages,
-                    stream: false // Using non-streaming for the unified response
+            // Try each model in order until one succeeds
+            let lastError: any = null;
+            for (const model of CHAT_MODELS) {
+                try {
+                    const response = await openrouter.chat.send({
+                        chatGenerationParams: {
+                            model,
+                            messages: finalMessages,
+                            stream: false
+                        }
+                    });
+
+                    const text = response.choices?.[0]?.message?.content || "No response generated.";
+
+                    return res.json({
+                        success: true,
+                        message: "Response generated successfully",
+                        data: { message: text }
+                    });
+                } catch (modelErr: any) {
+                    lastError = modelErr;
+                    logger.warn({ context: "chat", model, error: modelErr.message }, `Model ${model} failed, trying next`);
+                    continue;
                 }
-            });
+            }
 
-            // Handle the response based on SDK structure
-            // Usually response.choices[0].message.content
-            const text = response.choices?.[0]?.message?.content || "No response generated.";
-
-            return res.json({
-                success: true,
-                message: "Response generated successfully",
-                data: { message: text }
-            });
+            // All models failed
+            logger.error({ context: "chat", error: lastError?.message }, "All chat models failed");
+            throw lastError;
         } catch (error: any) {
             logger.error({
                 context: "chat",
