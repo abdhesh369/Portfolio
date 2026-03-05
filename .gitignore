@@ -54,7 +54,3 @@ tsc_output*.txt
 test-results/
 playwright-report/
 stats.html
-
-# Internal planning docs (local only)
-Portfolio_Engineering_Masterplan.md
-Portfolio_PRD.md

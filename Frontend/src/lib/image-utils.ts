@@ -20,12 +20,6 @@ export function getOptimizedImageUrl(url: string | null | undefined, options: Op
     if (!url) return "";
     if (!url.includes("cloudinary.com")) return url;
 
-    // If transformations are already present, we might want to avoid double-transforming
-    // but for simplicity, we assume raw upload URLs for now.
-    if (url.includes("/upload/v")) {
-        // Handle URLs with version numbers
-    }
-
     const {
         width,
         height,

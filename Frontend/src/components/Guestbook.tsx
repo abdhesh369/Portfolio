@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useGuestbook, useSubmitGuestbook } from "@/hooks/use-portfolio";
@@ -36,13 +36,13 @@ export const Guestbook = () => {
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col items-center mb-12 text-center">
-                        <motion.div
+                        <m.div
                             initial={{ scale: 0 }}
                             whileInView={{ scale: 1 }}
                             className="p-3 rounded-2xl bg-primary/10 mb-4"
                         >
                             <MessageSquare className="w-8 h-8 text-primary" />
-                        </motion.div>
+                        </m.div>
                         <h2 className="text-4xl font-bold mb-4 tracking-tighter">Guestbook</h2>
                         <p className="text-muted-foreground text-lg max-w-xl">
                             Leave a message, some feedback, or just say hello!
@@ -83,7 +83,7 @@ export const Guestbook = () => {
 
                                     <AnimatePresence>
                                         {status && (
-                                            <motion.div
+                                            <m.div
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
                                                 exit={{ opacity: 0, height: 0 }}
@@ -92,7 +92,7 @@ export const Guestbook = () => {
                                             >
                                                 {status.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                                                 {status.text}
-                                            </motion.div>
+                                            </m.div>
                                         )}
                                     </AnimatePresence>
 
@@ -124,7 +124,7 @@ export const Guestbook = () => {
                             ) : (
                                 <AnimatePresence mode="popLayout">
                                     {entries.map((entry: GuestbookEntry, index: number) => (
-                                        <motion.div
+                                        <m.div
                                             key={entry.id}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
@@ -146,7 +146,7 @@ export const Guestbook = () => {
                                             <p className="text-muted-foreground text-sm leading-relaxed italic">
                                                 "{entry.content}"
                                             </p>
-                                        </motion.div>
+                                        </m.div>
                                     ))}
                                 </AnimatePresence>
                             )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Github, GitCommit, GitBranch, ExternalLink, RefreshCw } from "lucide-react";
 import { apiFetch } from "../lib/api-helpers";
 import { formatDistanceToNow } from "date-fns";
@@ -109,7 +109,7 @@ export const GithubFeed = () => {
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {events.map((event, index) => (
-                            <motion.div
+                            <m.div
                                 key={event.id}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -136,7 +136,7 @@ export const GithubFeed = () => {
                                         </a>
                                     </p>
                                 </div>
-                            </motion.div>
+                            </m.div>
                         ))}
                     </AnimatePresence>
                 )}
