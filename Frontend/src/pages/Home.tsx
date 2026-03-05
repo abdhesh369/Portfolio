@@ -4,7 +4,6 @@ import Hero from "@/components/Hero";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
-import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
@@ -94,9 +93,6 @@ export default function Home() {
   useHashScroll();
   return (
     <div className="min-h-screen selection:bg-primary/20">
-      {/* Scroll Progress Bar — pure JS, no framer-motion */}
-      <ScrollProgressBar />
-
       <SEO
         slug="home"
         title="Abdhesh Sah - Full-Stack Engineer Portfolio"

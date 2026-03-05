@@ -3,7 +3,6 @@ import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { TableOfContents } from "@/components/TableOfContents";
 import { useArticle } from "@/hooks/use-portfolio";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
@@ -92,7 +91,6 @@ export default function BlogPost() {
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
-            <ScrollProgressBar />
             <SEO
                 slug={`blog/${article.slug}`}
                 title={`${article.title} | ${AUTHOR.name}`}
