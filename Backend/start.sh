@@ -12,4 +12,4 @@ echo "Running database migrations..."
 node dist/src/migrate.js || echo "Migration skipped or failed (non-fatal)"
 
 # Start the compiled backend
-node dist/src/index.js
+node --import ./dist/src/instrument.js ./dist/src/index.js

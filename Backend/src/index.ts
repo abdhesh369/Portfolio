@@ -1,6 +1,3 @@
-// Must be first: initialize Sentry instrumentation before other imports
-import "./instrument.js";
-
 import express, { type Request, Response, NextFunction } from "express";
 import * as Sentry from "@sentry/node";
 import { env } from "./env.js";

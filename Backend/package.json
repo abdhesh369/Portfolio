@@ -9,7 +9,7 @@
     "dev": "tsx --watch src/index.ts",
     "build": "tsc --project tsconfig.json",
     "prestart": "npm run env:validate",
-    "start": "node dist/src/index.js",
+    "start": "node --import ./dist/src/instrument.js ./dist/src/index.js",
     "migrate": "npx drizzle-kit migrate",
     "generate": "npx drizzle-kit generate",
     "db:backup": "cd scripts && ./backup-db.sh",
