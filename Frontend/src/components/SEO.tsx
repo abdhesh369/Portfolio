@@ -82,7 +82,7 @@ export function SEO({
             {structuredData && (
                 Array.isArray(structuredData) ? (
                     structuredData.map((data, i) => (
-                        <script key={i} type="application/ld+json">
+                        <script key={data['@type'] || i} type="application/ld+json">
                             {safeJsonLd(data)}
                         </script>
                     ))

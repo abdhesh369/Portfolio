@@ -7,8 +7,14 @@ export class SettingsService {
     private readonly CACHE_TTL = 3600;
 
     async getSettings(): Promise<SiteSettings> {
-        const cached = await redis?.get(this.CACHE_KEY);
-        if (cached) return JSON.parse(cached);
+        try {
+            const cached = await redis?.get(this.CACHE_KEY);
+            if (cached) {
+                try { return JSON.parse(cached); } catch { /* ignore corrupted JSON */ }
+            }
+        } catch (err) {
+            // Error logged by redis internally usually, or can add logger if needed
+        }
 
         let settings = await settingsRepository.getSettings();
 
@@ -17,16 +23,24 @@ export class SettingsService {
             settings = await settingsRepository.updateSettings({ isOpenToWork: true });
         }
 
-        if (redis) {
-            await redis.setex(this.CACHE_KEY, this.CACHE_TTL, JSON.stringify(settings));
+        try {
+            if (redis) {
+                await redis.setex(this.CACHE_KEY, this.CACHE_TTL, JSON.stringify(settings));
+            }
+        } catch (err) {
+            // Ignore cache write error
         }
         return settings;
     }
 
     async updateSettings(data: InsertSiteSettings): Promise<SiteSettings> {
         const settings = await settingsRepository.updateSettings(data);
-        if (redis) {
-            await redis.del(this.CACHE_KEY);
+        try {
+            if (redis) {
+                await redis.del(this.CACHE_KEY);
+            }
+        } catch (err) {
+            // Ignore cache delete error
         }
         return settings;
     }

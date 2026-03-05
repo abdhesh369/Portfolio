@@ -6,6 +6,7 @@ import { cachePublic } from "../middleware/cache.js";
 import { articleService } from "../services/article.service.js";
 import { logger } from "../lib/logger.js";
 import { recordAudit } from "../lib/audit.js";
+import { redis } from "../lib/redis.js";
 
 export const articlesRouter = Router();
 
@@ -75,10 +76,25 @@ articlesRouter.get(
         res.json({ ...article, relatedArticles });
 
         if (!isAdmin) {
+            const ip = req.ip || req.socket.remoteAddress || 'unknown';
+            const viewKey = `article_view:${article.id}:${ip}`;
+
             // Fire-and-forget: don't await, don't block response
-            articleService.incrementViewCount(article.id).catch((err) => {
-                logger.error({ context: "article", id: article.id, error: err }, "Failed to increment view count");
-            });
+            (async () => {
+                try {
+                    let hasViewed = false;
+                    if (redis) {
+                        // Set key only if it doesn't exist, expire in 1 hour
+                        const result = await redis.set(viewKey, '1', 'NX', 'EX', 3600);
+                        hasViewed = result === null;
+                    }
+                    if (!hasViewed) {
+                        await articleService.incrementViewCount(article.id);
+                    }
+                } catch (err) {
+                    logger.error({ context: "article", id: article.id, error: err }, "Failed to increment view count");
+                }
+            })();
         }
     })
 );

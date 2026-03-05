@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     const { logout } = useAuth();
 
     // SSE real-time notifications (TICKET-031)
-    const { unreadCount, resetUnread } = useMessageStream(true);
+    const { unreadCount, resetUnread, requestNotificationPermission } = useMessageStream(true);
 
     // Search state
     const [searchOpen, setSearchOpen] = useState(false);
@@ -449,6 +449,22 @@ export default function AdminDashboard() {
                                     >
                                         <Settings size={13} />
                                         <span>SEO Settings</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { requestNotificationPermission(); setProfileOpen(false); }}
+                                        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs text-slate-300 hover:text-cyan-300 cursor-pointer"
+                                        style={{
+                                            borderBottom: "1px solid rgba(255,255,255,0.04)",
+                                            background: "transparent",
+                                            transition: "all 0.15s ease",
+                                            fontFamily: "inherit",
+                                            letterSpacing: "0.04em",
+                                        }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(34,211,238,0.08)")}
+                                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                                    >
+                                        <Bell size={13} />
+                                        <span>Desktop Notifications</span>
                                     </button>
                                     {/* Logout */}
                                     <button

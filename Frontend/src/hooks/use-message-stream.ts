@@ -89,11 +89,6 @@ export function useMessageStream(enabled: boolean = true) {
       fallbackRef.current = setInterval(poll, 60_000);
     }
 
-    // Request notification permission
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-
     connect();
 
     return () => {
@@ -103,5 +98,11 @@ export function useMessageStream(enabled: boolean = true) {
     };
   }, [enabled]);
 
-  return { unreadCount, lastMessage, resetUnread };
+  const requestNotificationPermission = useCallback(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  return { unreadCount, lastMessage, resetUnread, requestNotificationPermission };
 }

@@ -400,7 +400,7 @@ export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().max(100).nullable().optional(),
-  startDate: z.string().or(z.date()).optional(),
+  startDate: z.string().or(z.date()),
   endDate: z.string().or(z.date()).nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
@@ -474,7 +474,7 @@ export const insertGuestbookApiSchema = z.object({
   email: z.string().email().max(255).nullish(),
 });
 
-export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form", "resume_download"] as const;
+export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form", "resume_download", "vital"] as const;
 
 export const analyticsSchema = z.object({
   id: z.number(),

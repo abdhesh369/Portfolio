@@ -6,6 +6,7 @@ export function useSiteSettings() {
     return useQuery<SiteSettings>({
         queryKey: ["/api/v1/settings"],
         queryFn: () => apiFetch("/api/v1/settings"),
+        staleTime: 1000 * 60 * 60, // 1 hour
     });
 }
 

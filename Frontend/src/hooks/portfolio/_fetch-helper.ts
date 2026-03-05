@@ -13,11 +13,11 @@ export async function fetchAndParse<T>(
     const jsonData = await apiFetch(path);
     return schema.parse(jsonData);
   } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error('Network error: Unable to connect to the server. Please check your internet connection or if the backend is down.');
+    }
     if (error instanceof Error) {
       throw error;
-    }
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Network error: Unable to connect to the server. Please check your internet connection or if the backend is down.');
     }
     throw new Error(`${errorMessage}: ${String(error)}`);
   }

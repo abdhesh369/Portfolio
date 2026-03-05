@@ -10,8 +10,18 @@ export class ProjectRepository {
         };
     }
 
+    /** Public: returns only visible (non-hidden) projects */
     async findAll(): Promise<Project[]> {
-        const results = await db.select().from(projectsTable).orderBy(asc(projectsTable.displayOrder));
+        const results = await db.select().from(projectsTable)
+            .where(eq(projectsTable.isHidden, false))
+            .orderBy(asc(projectsTable.displayOrder));
+        return results.map(p => this.transformProject(p));
+    }
+
+    /** Admin: returns ALL projects including hidden ones */
+    async findAllAdmin(): Promise<Project[]> {
+        const results = await db.select().from(projectsTable)
+            .orderBy(asc(projectsTable.displayOrder));
         return results.map(p => this.transformProject(p));
     }
 

@@ -33,7 +33,7 @@ const emptyProject = {
     title: "", description: "", techStack: [] as string[], imageUrl: "",
     githubUrl: "", liveUrl: "", category: "", status: "Completed",
     problemStatement: "", motivation: "", systemDesign: "", challenges: "", learnings: "",
-    isFlagship: false, impact: "", role: "",
+    isFlagship: false, isHidden: false, impact: "", role: "",
 };
 
 function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSelect }: {
@@ -94,6 +94,11 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
                     {project.isFlagship && (
                         <Badge variant="outline" className="text-[10px] border border-amber-400/40 text-amber-300 bg-amber-500/10">
                             Flagship
+                        </Badge>
+                    )}
+                    {project.isHidden && (
+                        <Badge variant="outline" className="text-[10px] border border-red-400/40 text-red-300 bg-red-500/10">
+                            Hidden
                         </Badge>
                     )}
                     {project.status && (
@@ -202,6 +207,7 @@ export function ProjectsTab({ }: AdminTabProps) {
             challenges: p.challenges ?? "",
             learnings: p.learnings ?? "",
             isFlagship: p.isFlagship ?? false,
+            isHidden: p.isHidden ?? false,
             impact: p.impact ?? "",
             role: p.role ?? "",
         });
@@ -217,6 +223,7 @@ export function ProjectsTab({ }: AdminTabProps) {
             techStack: techInput.split(",").map((s) => s.trim()).filter(Boolean),
             githubUrl: editing.githubUrl || null,
             liveUrl: editing.liveUrl || null,
+            isHidden: editing.isHidden,
         };
 
         // Optimistic UI update
@@ -302,6 +309,15 @@ export function ProjectsTab({ }: AdminTabProps) {
                                     onChange={(e) => setEditing({ ...editing, isFlagship: e.target.checked })}
                                 />
                                 Mark as flagship case study
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs text-white/70">
+                                <input
+                                    type="checkbox"
+                                    className="rounded border-white/30 bg-transparent"
+                                    checked={Boolean(editing.isHidden)}
+                                    onChange={(e) => setEditing({ ...editing, isHidden: e.target.checked })}
+                                />
+                                Hidden from public
                             </label>
                         </div>
                     </div>

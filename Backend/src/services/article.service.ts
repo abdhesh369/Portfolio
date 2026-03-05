@@ -31,17 +31,24 @@ export class ArticleService {
      */
     async getAll(status?: string): Promise<Article[]> {
         const cacheKey = status ? `${CACHE_KEY}:status:${status}` : CACHE_KEY;
-        const cached = redis ? await redis.get(cacheKey) : null;
-
-        if (cached) {
-            return JSON.parse(cached);
+        try {
+            const cached = redis ? await redis.get(cacheKey) : null;
+            if (cached) {
+                try { return JSON.parse(cached); } catch { /* ignore corrupted JSON */ }
+            }
+        } catch (err) {
+            logger.error({ context: "article", error: err }, "Redis read failed, falling back to DB");
         }
 
-
         const articles = await articleRepository.findAll(status);
-        if (redis) {
-            await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
-            await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
+
+        try {
+            if (redis) {
+                await redis.setex(cacheKey, 3600, JSON.stringify(articles)); // 1 hour cache
+                await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
+            }
+        } catch (err) {
+            logger.error({ context: "article", error: err }, "Redis write failed");
         }
         return articles;
     }
@@ -53,17 +60,24 @@ export class ArticleService {
      */
     async getBySlug(slug: string): Promise<Article | null> {
         const cacheKey = `${ARTICLE_CACHE_PREFIX}${slug}`;
-        const cached = redis ? await redis.get(cacheKey) : null;
-
-        if (cached) {
-            return JSON.parse(cached);
+        try {
+            const cached = redis ? await redis.get(cacheKey) : null;
+            if (cached) {
+                try { return JSON.parse(cached); } catch { /* ignore corrupted JSON */ }
+            }
+        } catch (err) {
+            logger.error({ context: "article", error: err }, "Redis read failed, falling back to DB");
         }
 
-
         const article = await articleRepository.findBySlug(slug);
-        if (article && redis) {
-            await redis.setex(cacheKey, 3600, JSON.stringify(article));
-            await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
+
+        try {
+            if (article && redis) {
+                await redis.setex(cacheKey, 3600, JSON.stringify(article));
+                await redis.sadd(`${CACHE_KEY}:tracked-keys`, cacheKey);
+            }
+        } catch (err) {
+            logger.error({ context: "article", error: err }, "Redis write failed");
         }
         return article;
     }
@@ -161,10 +175,12 @@ export class ArticleService {
             await this.invalidateCache();
         }
         if (redis) {
-            for (const article of articles) {
-                if (article) {
-                    await redis.del(`${ARTICLE_CACHE_PREFIX}${article.slug}`);
-                }
+            const keysToDelete = articles
+                .filter(article => article != null)
+                .map(article => `${ARTICLE_CACHE_PREFIX}${article.slug}`);
+
+            if (keysToDelete.length > 0) {
+                await redis.del(...keysToDelete);
             }
         }
     }

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useRoute, Link } from "wouter";
 import { useProjects } from "@/hooks/use-portfolio";
 import { m } from "framer-motion";
@@ -22,48 +23,57 @@ import { ApiResponseViewer } from "@/components/ApiResponseViewer";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
 // Floating particles (reused from main components)
-const FloatingParticles = () => {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    delay: Math.random() * 6,
-    duration: 10 + Math.random() * 8,
-    size: 2 + Math.random() * 4,
-    color: Math.random() > 0.5 ? 'cyan' : 'purple'
-  }));
+const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  delay: Math.random() * 6,
+  duration: 10 + Math.random() * 8,
+  size: 2 + Math.random() * 4,
+  color: Math.random() > 0.5 ? 'cyan' : 'purple'
+}));
 
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((p) => (
-        <m.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: p.size,
-            height: p.size,
-            background: p.color === 'cyan'
-              ? 'radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 70%)'
-          }}
-          animate={{
-            y: [-20, 20, -20],
-            x: [-10, 10, -10],
-            opacity: [0.2, 0.7, 0.2],
-            scale: [0.8, 1.2, 0.8]
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: 'easeInOut'
-          }}
-        />
-      ))}
-    </div>
-  );
+const FloatingParticles = () => {
+  id: i,
+    x: Math.random() * 100,
+      y: Math.random() * 100,
+        delay: Math.random() * 6,
+          duration: 10 + Math.random() * 8,
+            size: 2 + Math.random() * 4,
+              color: Math.random() > 0.5 ? 'cyan' : 'purple'
+}));
+
+return (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {PARTICLE_DATA.map((p) => (
+      <m.div
+        key={p.id}
+        className="absolute rounded-full"
+        style={{
+          left: `${p.x}%`,
+          top: `${p.y}%`,
+          width: p.size,
+          height: p.size,
+          background: p.color === 'cyan'
+            ? 'radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 70%)'
+        }}
+        animate={{
+          y: [-20, 20, -20],
+          x: [-10, 10, -10],
+          opacity: [0.2, 0.7, 0.2],
+          scale: [0.8, 1.2, 0.8]
+        }}
+        transition={{
+          duration: p.duration,
+          delay: p.delay,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+      />
+    ))}
+  </div>
+);
 };
 
 // Section Card Component
@@ -170,10 +180,12 @@ export default function ProjectDetail() {
   const project = projects?.find(p => p.id === parseInt(params?.id || "0"));
 
   // Calculate other projects for the recommendation section
-  const otherProjects = projects
-    ?.filter(p => p.id !== project?.id)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 3);
+  const otherProjects = useMemo(() => {
+    return projects
+      ?.filter(p => p.id !== project?.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+  }, [projects, project?.id]);
 
 
 

@@ -46,7 +46,16 @@ const MenuBar = ({ editor }: { editor: any }) => {
     const addImage = () => {
         const url = window.prompt('Enter the URL of the image:');
         if (url) {
-            editor.chain().focus().setImage({ src: url }).run();
+            try {
+                const parsedUrl = new URL(url);
+                if (['http:', 'https:'].includes(parsedUrl.protocol)) {
+                    editor.chain().focus().setImage({ src: parsedUrl.href }).run();
+                } else {
+                    alert('Invalid image URL protocol. Only http and https are allowed.');
+                }
+            } catch (e) {
+                alert('Invalid image URL format.');
+            }
         }
     };
 

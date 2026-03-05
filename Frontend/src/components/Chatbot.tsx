@@ -11,6 +11,7 @@ const MAX_CLIENT_MESSAGES = 20; // Cap messages sent to API
 const MAX_RENDERED_MESSAGES = 50; // Cap messages kept in state to prevent unbounded DOM growth
 
 interface ChatMessage {
+    id: string;
     role: Role;
     parts: { text: string }[];
     timestamp: number; // Unix ms when message was created
@@ -19,7 +20,7 @@ interface ChatMessage {
 export function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { role: "model", parts: [{ text: "Hi there! I'm Abdhesh's AI assistant. How can I help you today?" }], timestamp: Date.now() }
+        { id: crypto.randomUUID(), role: "model", parts: [{ text: "Hi there! I'm Abdhesh's AI assistant. How can I help you today?" }], timestamp: Date.now() }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +101,7 @@ export function Chatbot() {
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
-        const userMsg: ChatMessage = { role: "user", parts: [{ text: input.trim() }], timestamp: Date.now() };
+        const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", parts: [{ text: input.trim() }], timestamp: Date.now() };
         const newMessages = [...messages, userMsg].slice(-MAX_RENDERED_MESSAGES);
 
         setMessages(newMessages);
@@ -116,11 +117,11 @@ export function Chatbot() {
                 body: JSON.stringify({ messages: recentMessages })
             });
 
-            setMessages([...newMessages, { role: "model", parts: [{ text: data.message }], timestamp: Date.now() }]);
+            setMessages([...newMessages, { id: crypto.randomUUID(), role: "model", parts: [{ text: data.message }], timestamp: Date.now() }]);
         } catch (error: any) {
             setMessages([
                 ...newMessages,
-                { role: "model", parts: [{ text: error.message || "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form." }], timestamp: Date.now() }
+                { id: crypto.randomUUID(), role: "model", parts: [{ text: error.message || "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form." }], timestamp: Date.now() }
             ]);
         } finally {
             setIsLoading(false);
@@ -233,7 +234,7 @@ export function Chatbot() {
                         >
                             {messages.map((msg) => (
                                 <m.div
-                                    key={`${msg.timestamp}-${msg.role}`}
+                                    key={msg.id}
                                     initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse text-right" : "flex-row text-left"}`}

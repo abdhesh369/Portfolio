@@ -20,18 +20,13 @@ const SECTION_IDS = ["hero", "about", "skills", "projects", "experience", "conta
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   const [location, setLocation] = useLocation();
   const activeSection = useScrollSpy(SECTION_IDS, 80);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-
   const { scrollY, scrollDirection } = useScrollStore();
 
-  useEffect(() => {
-    setScrolled(scrollY > 20);
-    setIsVisible(scrollDirection === "up" || scrollY <= 80);
-  }, [scrollY, scrollDirection]);
+  const scrolled = scrollY > 20;
+  const isVisible = scrollDirection === "up" || scrollY <= 80;
 
 
   const handleNavClick = (href: string) => {

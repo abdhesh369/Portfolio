@@ -50,7 +50,10 @@ export async function storeRefreshToken(tokenHash: string): Promise<void> {
  * Validates whether a hashed refresh token exists in Redis
  */
 export async function validateRefreshToken(tokenHash: string): Promise<boolean> {
-    if (!redis) return true; // Graceful degradation — allow refresh without Redis
+    if (!redis) {
+        logger.warn({ context: "auth" }, "Redis unavailable — denying refresh (fail-closed)");
+        return false; // Fail closed if no Redis
+    }
     try {
         const exists = await redis.get(`refresh:${tokenHash}`);
         return exists === "1";
