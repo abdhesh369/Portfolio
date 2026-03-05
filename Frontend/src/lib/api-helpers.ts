@@ -16,13 +16,30 @@ export const API_BASE_URL = (() => {
     return prodUrl;
 })();
 
+// In-memory storage for CSRF token to handle cross-origin SOP restrictions
+let memCsrfToken: string | null = null;
+
+export function setCsrfToken(token: string) {
+    memCsrfToken = token;
+}
+
+export function getCsrfToken() {
+    return memCsrfToken;
+}
+
 export function authHeaders() {
     const headers: Record<string, string> = { "Content-Type": "application/json" };
 
-    // Read CSRF token from cookie and attach as header (Double Submit Cookie pattern)
-    const csrfMatch = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
-    if (csrfMatch) {
-        headers["X-CSRF-Token"] = decodeURIComponent(csrfMatch[1]);
+    // 1. Try in-memory token (captured from login/refresh response body)
+    if (memCsrfToken) {
+        headers["X-CSRF-Token"] = memCsrfToken;
+    }
+    // 2. Fallback to reading from cookie (Double Submit)
+    else {
+        const csrfMatch = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
+        if (csrfMatch) {
+            headers["X-CSRF-Token"] = decodeURIComponent(csrfMatch[1]);
+        }
     }
 
     return headers;
@@ -39,7 +56,14 @@ async function attemptRefresh(): Promise<boolean> {
             method: "POST",
             credentials: "include",
         });
-        return res.ok;
+        if (res.ok) {
+            const data = await res.json();
+            if (data.csrfToken) {
+                setCsrfToken(data.csrfToken);
+            }
+            return true;
+        }
+        return false;
     } catch {
         return false;
     }

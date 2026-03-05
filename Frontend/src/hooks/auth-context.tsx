@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useLocation } from "wouter";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL, setCsrfToken } from "@/lib/api-helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 
@@ -25,6 +25,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 credentials: 'include'
             });
             if (res.ok) {
+                const data = await res.json();
+                if (data.csrfToken) {
+                    setCsrfToken(data.csrfToken);
+                }
                 setIsAuthenticated(true);
             } else if (res.status === 401) {
                 // Access token expired — try silent refresh before giving up
@@ -34,6 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 });
                 if (refreshRes.ok) {
                     // Refresh succeeded — new access token cookie is set, verify status
+                    const data = await refreshRes.json();
+                    if (data.csrfToken) {
+                        setCsrfToken(data.csrfToken);
+                    }
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);

@@ -23,8 +23,9 @@ const SeoTab = lazy(() => import("@/components/admin/tabs/SeoTab").then(m => ({ 
 const ArticlesTab = lazy(() => import("@/components/admin/tabs/ArticlesTab").then(m => ({ default: m.ArticlesTab })));
 const TestimonialsTab = lazy(() => import("@/components/admin/tabs/TestimonialsTab").then(m => ({ default: m.TestimonialsTab })));
 const AuditLogTab = lazy(() => import("@/components/admin/tabs/AuditLogTab").then(m => ({ default: m.AuditLogTab })));
+const GuestbookTab = lazy(() => import("@/components/admin/tabs/GuestbookTab").then(m => ({ default: m.GuestbookTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "audit";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit";
 
 const NAV_ITEMS: { key: Tab; label: string; icon: React.ElementType; badge?: number }[] = [
     { key: "overview", label: "Overview", icon: LayoutDashboard },
@@ -38,6 +39,7 @@ const NAV_ITEMS: { key: Tab; label: string; icon: React.ElementType; badge?: num
     { key: "seo", label: "SEO", icon: Search },
     { key: "articles", label: "Articles", icon: PenTool },
     { key: "testimonials", label: "Testimonials", icon: Star },
+    { key: "guestbook", label: "Guestbook", icon: FileText },
     { key: "audit", label: "Audit Log", icon: Shield },
 ];
 
@@ -53,6 +55,7 @@ const TAB_LABELS: Record<Tab, string> = {
     seo: "SEO",
     articles: "ARTICLES",
     testimonials: "TESTIMONIALS",
+    guestbook: "GUESTBOOK",
     audit: "AUDIT LOG",
 };
 
@@ -489,6 +492,7 @@ export default function AdminDashboard() {
                             {tab === "services" && <ServicesTab />}
                             {tab === "articles" && <ArticlesTab />}
                             {tab === "testimonials" && <TestimonialsTab />}
+                            {tab === "guestbook" && <GuestbookTab />}
                             {tab === "audit" && <AuditLogTab />}
                         </TabErrorBoundary>
                     </Suspense>

@@ -111,7 +111,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
 
-    res.json({ success: true, message: "Login successful" });
+    res.json({ success: true, message: "Login successful", csrfToken });
 }));
 
 /**
@@ -169,7 +169,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match login TTL)
     });
 
-    res.json({ success: true, message: "Token refreshed" });
+    res.json({ success: true, message: "Token refreshed", csrfToken: newCsrfToken });
 }));
 
 /**

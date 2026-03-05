@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/auth-context";
 import { useToast } from "@/hooks/use-toast";
 
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL, setCsrfToken } from "@/lib/api-helpers";
 
 export default function AdminLogin() {
     const [password, setPassword] = useState("");
@@ -38,7 +38,10 @@ export default function AdminLogin() {
                 throw new Error(err.message || "Invalid credentials");
             }
 
-            await res.json();
+            const data = await res.json();
+            if (data.csrfToken) {
+                setCsrfToken(data.csrfToken);
+            }
             login();
             toast({
                 title: "Welcome back, Admin!",
