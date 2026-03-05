@@ -1,5 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { hydrateFromCache, subscribeToQueryCache } from "./query-cache-persister";
+import { apiFetch } from "./api-helpers";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -13,15 +14,21 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  // Delegate to apiFetch for automatic 401 refresh handling.
+  // apiFetch returns parsed JSON, so we wrap it to return a Response-like result
+  // for backward compatibility with callers that may call .json() on the result.
+  const result = await apiFetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
   });
 
-  await throwIfResNotOk(res);
-  return res;
+  // Return a synthetic Response so callers that do `await apiRequest(...)`
+  // without calling `.json()` still work. Those that call `.json()`
+  // on the return value will get the already-parsed data.
+  return new Response(JSON.stringify(result), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

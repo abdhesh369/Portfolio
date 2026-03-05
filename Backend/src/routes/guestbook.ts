@@ -46,14 +46,22 @@ guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req, res) =>
 
 // PATCH /guestbook/:id/approve - Approve an entry
 guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid guestbook entry ID" });
+        return;
+    }
     const entry = await guestbookService.approveMessage(id);
     res.json(entry);
 }));
 
 // DELETE /guestbook/:id - Delete an entry
 guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid guestbook entry ID" });
+        return;
+    }
     await guestbookService.deleteMessage(id);
     res.status(204).end();
 }));

@@ -71,7 +71,10 @@ export function useMessageStream(enabled: boolean = true) {
 
       async function poll() {
         try {
-          const res = await fetch("/api/v1/messages", { credentials: "include" });
+          const res = await fetch("/api/v1/messages", {
+            credentials: "include",
+            headers: { "Accept": "application/json" },
+          });
           if (res.ok) {
             const messages = await res.json();
             if (Array.isArray(messages) && messages.length > lastKnownCount) {

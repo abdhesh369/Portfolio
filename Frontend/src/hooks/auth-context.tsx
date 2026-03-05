@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +26,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
             if (res.ok) {
                 setIsAuthenticated(true);
+            } else if (res.status === 401) {
+                // Access token expired — try silent refresh before giving up
+                const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (refreshRes.ok) {
+                    // Refresh succeeded — new access token cookie is set, verify status
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
             } else {
                 setIsAuthenticated(false);
             }
@@ -42,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
     };
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         try {
             await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
                 method: "POST",
@@ -53,11 +65,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.removeItem("auth_last_exit");
             queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
         }
-    };
+    }, [queryClient]);
 
     useEffect(() => {
         checkAuth();
     }, []);
+
+    // Listen for session-expired events from apiFetch
+    useEffect(() => {
+        const handler = () => { logout(); };
+        window.addEventListener("auth:session-expired", handler);
+        return () => window.removeEventListener("auth:session-expired", handler);
+    }, [logout]);
 
     // Session Lock / Timeout Logic (5 minutes absence)
     // Now simpler: just clears the session if user was gone too long
@@ -99,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             window.removeEventListener("visibilitychange", handleExit);
             window.removeEventListener("focus", focusHandler);
         };
-    }, [isAuthenticated]);
+    }, [isAuthenticated, logout]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth }}>

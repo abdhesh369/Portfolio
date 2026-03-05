@@ -38,6 +38,13 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction):
         return;
     }
 
+    // Skip auth entry-point routes — login and refresh must work even when
+    // a stale auth_token cookie exists from a previous session
+    if (req.path === "/auth/login" || req.path === "/auth/refresh" || req.path === "/auth/logout") {
+        next();
+        return;
+    }
+
     // Skip unauthenticated requests (public endpoints like /chat, /messages)
     if (!req.cookies?.auth_token) {
         next();

@@ -160,7 +160,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         httpOnly: false,
         secure: isProd,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000, // Match access token TTL
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match login TTL)
     });
 
     res.json({ success: true, message: "Token refreshed" });
@@ -170,8 +170,8 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
  * POST /api/auth/logout
  * Blacklists current token and clears cookie
  */
-router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
-    // 1. Revoke access token in blacklist (whether from header or cookie)
+router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
+    // Best-effort: revoke access token if present and valid
     let token: string | undefined;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -181,19 +181,19 @@ router.post("/logout", isAuthenticated, asyncHandler(async (req: Request, res: R
     }
 
     if (token) {
-        await revokeToken(token);
+        try { await revokeToken(token); } catch { /* best-effort */ }
     }
 
-    // 2. Revoke refresh token from Redis
+    // Best-effort: revoke refresh token from Redis
     const refreshToken = req.cookies?.refresh_token;
     if (refreshToken) {
         const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-        await revokeRefreshToken(refreshTokenHash);
+        try { await revokeRefreshToken(refreshTokenHash); } catch { /* best-effort */ }
     }
 
     const isProd = process.env.NODE_ENV === "production";
 
-    // 3. Clear all cookies (must match flags used when setting)
+    // Always clear all cookies regardless of token validity
     res.clearCookie("auth_token", {
         httpOnly: true,
         secure: isProd,

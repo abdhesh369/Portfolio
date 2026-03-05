@@ -76,8 +76,8 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
             return retryRes.json();
         }
 
-        // Refresh failed — redirect to login
-        window.location.href = "/admin/login";
+        // Refresh failed — notify AuthProvider via event (avoids full page reload)
+        window.dispatchEvent(new CustomEvent("auth:session-expired"));
         throw new Error("Session expired. Please login again.");
     }
 

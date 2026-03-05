@@ -45,7 +45,14 @@ function storageKey(queryKey: readonly unknown[]): string {
 }
 
 function isCacheable(queryKey: readonly unknown[]): boolean {
-  return typeof queryKey[0] === "string" && CACHEABLE_KEYS.has(queryKey[0]);
+  const first = queryKey[0];
+  if (typeof first !== "string") return false;
+
+  // Exact match (e.g. ["projects"])
+  if (CACHEABLE_KEYS.has(first)) return true;
+
+  // Path match (e.g. ["/api/v1/projects"])
+  return [...CACHEABLE_KEYS].some(k => first.endsWith(`/${k}`) || first.endsWith(`${k}`));
 }
 
 function writeToStorage(key: string, data: unknown): void {

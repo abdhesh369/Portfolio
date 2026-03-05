@@ -109,7 +109,8 @@ export function Chatbot() {
 
         try {
             // Only send the last N messages to avoid unbounded payload
-            const recentMessages = newMessages.slice(-MAX_CLIENT_MESSAGES);
+            // Strip `timestamp` — backend Zod schema only expects { role, parts }
+            const recentMessages = newMessages.slice(-MAX_CLIENT_MESSAGES).map(({ role, parts }) => ({ role, parts }));
             const data = await apiFetch("/api/v1/chat", {
                 method: "POST",
                 body: JSON.stringify({ messages: recentMessages })
@@ -230,9 +231,9 @@ export function Chatbot() {
                             aria-live="polite"
                             aria-relevant="additions"
                         >
-                            {messages.map((msg, i) => (
+                            {messages.map((msg) => (
                                 <m.div
-                                    key={i}
+                                    key={`${msg.timestamp}-${msg.role}`}
                                     initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse text-right" : "flex-row text-left"}`}

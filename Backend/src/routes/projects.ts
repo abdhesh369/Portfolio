@@ -25,6 +25,18 @@ export function registerProjectRoutes(app: Router) {
 
   // Static named routes BEFORE dynamic :id routes
 
+  // POST /projects - Create project
+  app.post(
+    "/projects",
+    isAuthenticated,
+    validateBody(insertProjectApiSchema),
+    asyncHandler(async (req, res) => {
+      const project = await projectService.create(req.body);
+      recordAudit("CREATE", "project", project.id, null, req.body);
+      res.status(201).json(project);
+    })
+  );
+
   // PUT /projects/reorder - Reorder projects
   app.put(
     "/projects/reorder",
