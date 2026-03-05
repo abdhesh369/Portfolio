@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL, getCsrfToken } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
@@ -38,9 +38,11 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
         formData.append('image', file);
 
         try {
+            const csrfToken = getCsrfToken();
             const response = await fetch(`${API_BASE_URL}/api/v1/upload`, {
                 method: 'POST',
                 credentials: 'include',
+                headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : {},
                 body: formData
             });
 

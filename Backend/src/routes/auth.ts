@@ -119,9 +119,26 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
  * Returns current auth status
  */
 router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+    // Return existing CSRF token from cookie if present, otherwise generate a new one
+    // to ensure frontend memory store is always populated after reload
+    let csrfToken = req.cookies?.csrf_token;
+
+    if (!csrfToken) {
+        csrfToken = generateCsrfToken();
+        const isProd = process.env.NODE_ENV === "production";
+        res.cookie("csrf_token", csrfToken, {
+            httpOnly: false,
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+    }
+
     res.json({
         success: true,
-        authenticated: true
+        authenticated: true,
+        csrfToken
     });
 }));
 
