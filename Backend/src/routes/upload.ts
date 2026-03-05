@@ -59,9 +59,17 @@ export function registerUploadRoutes(app: Router) {
                     },
                     (error, result) => {
                         if (error || !result) {
-                            return res.status(500).json({ message: "Cloudinary upload failed", details: error?.message });
+                            return res.status(500).json({
+                                success: false,
+                                message: "Cloudinary upload failed",
+                                details: error?.message
+                            });
                         }
-                        res.json({ url: result.secure_url });
+                        res.json({
+                            success: true,
+                            message: "File uploaded successfully",
+                            data: { url: result.secure_url }
+                        });
                     }
                 );
 

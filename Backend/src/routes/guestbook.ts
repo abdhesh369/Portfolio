@@ -7,7 +7,7 @@ import rateLimit from "express-rate-limit";
 
 import { cachePublic } from "../middleware/cache.js";
 
-const guestbookRoutes = Router();
+import { insertGuestbookApiSchema } from "../../shared/schema.js";
 
 const guestbookLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
@@ -15,11 +15,7 @@ const guestbookLimiter = rateLimit({
     message: { message: "Too many guestbook entries, please try again in an hour" }
 });
 
-const insertGuestbookSchema = z.object({
-    name: z.string().min(1).max(255),
-    content: z.string().min(1).max(1000),
-    email: z.string().email().max(255).optional().or(z.literal("")),
-});
+const guestbookRoutes = Router();
 
 // GET /guestbook - Fetch approved entries
 guestbookRoutes.get("/", cachePublic(60), asyncHandler(async (_req, res) => {
@@ -28,11 +24,12 @@ guestbookRoutes.get("/", cachePublic(60), asyncHandler(async (_req, res) => {
 }));
 
 // POST /guestbook - Submit a new entry
-guestbookRoutes.post("/", guestbookLimiter, validateBody(insertGuestbookSchema), asyncHandler(async (req, res) => {
+guestbookRoutes.post("/", guestbookLimiter, validateBody(insertGuestbookApiSchema), asyncHandler(async (req, res) => {
     const entry = await guestbookService.addMessage(req.body);
     res.status(201).json({
+        success: true,
         message: "Thank you for your message! It will appear once approved.",
-        entry
+        data: entry
     });
 }));
 
@@ -48,18 +45,22 @@ guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req, res) =>
 guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid guestbook entry ID" });
+        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
         return;
     }
     const entry = await guestbookService.approveMessage(id);
-    res.json(entry);
+    res.json({
+        success: true,
+        message: "Entry approved",
+        data: entry
+    });
 }));
 
 // DELETE /guestbook/:id - Delete an entry
 guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid guestbook entry ID" });
+        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
         return;
     }
     await guestbookService.deleteMessage(id);

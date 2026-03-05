@@ -24,12 +24,12 @@ export function registerServiceRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid service ID" });
+        res.status(400).json({ success: false, message: "Invalid service ID" });
         return;
       }
       const service = await portfolioServiceService.getById(id);
       if (!service) {
-        res.status(404).json({ message: "Service not found" });
+        res.status(404).json({ success: false, message: "Service not found" });
         return;
       }
       res.json(service);
@@ -44,7 +44,11 @@ export function registerServiceRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const service = await portfolioServiceService.create(req.body);
       recordAudit("CREATE", "service", service.id, null, req.body);
-      res.status(201).json(service);
+      res.status(201).json({
+        success: true,
+        message: "Service created successfully",
+        data: service
+      });
     })
   );
 
@@ -56,12 +60,16 @@ export function registerServiceRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid service ID" });
+        res.status(400).json({ success: false, message: "Invalid service ID" });
         return;
       }
       const service = await portfolioServiceService.update(id, req.body);
       recordAudit("UPDATE", "service", id, null, req.body);
-      res.json(service);
+      res.json({
+        success: true,
+        message: "Service updated successfully",
+        data: service
+      });
     })
   );
 
@@ -72,7 +80,7 @@ export function registerServiceRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid service ID" });
+        res.status(400).json({ success: false, message: "Invalid service ID" });
         return;
       }
       await portfolioServiceService.delete(id);

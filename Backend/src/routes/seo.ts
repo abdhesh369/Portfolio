@@ -44,7 +44,11 @@ router.post(
             return;
         }
         const settings = await seoSettingsService.create(data);
-        res.status(201).json(settings);
+        res.status(201).json({
+            success: true,
+            message: "SEO settings created successfully",
+            data: settings
+        });
     })
 );
 
@@ -60,7 +64,11 @@ router.patch(
         }
         const data = insertSeoSettingsApiSchema.partial().parse(req.body);
         const updated = await seoSettingsService.update(id, data);
-        res.json(updated);
+        res.json({
+            success: true,
+            message: "SEO settings updated successfully",
+            data: updated
+        });
     })
 );
 

@@ -88,12 +88,12 @@ export function registerMessageRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid message ID" });
+                res.status(400).json({ success: false, message: "Invalid message ID" });
                 return;
             }
             const message = await messageService.getById(id);
             if (!message) {
-                res.status(404).json({ message: "Message not found" });
+                res.status(404).json({ success: false, message: "Message not found" });
                 return;
             }
             res.json(message);
@@ -160,7 +160,7 @@ export function registerMessageRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid message ID" });
+                res.status(400).json({ success: false, message: "Invalid message ID" });
                 return;
             }
 
@@ -173,12 +173,12 @@ export function registerMessageRoutes(app: Router) {
 
             const message = await messageService.getById(id);
             if (!message) {
-                res.status(404).json({ message: "Message not found" });
+                res.status(404).json({ success: false, message: "Message not found" });
                 return;
             }
 
             if (!env.RESEND_API_KEY) {
-                res.status(500).json({ message: "Email service not configured (RESEND_API_KEY missing)" });
+                res.status(500).json({ success: false, message: "Email service not configured (RESEND_API_KEY missing)" });
                 return;
             }
 
@@ -213,10 +213,10 @@ export function registerMessageRoutes(app: Router) {
                     res.json({ success: true, message: "Reply queued successfully" });
                 } catch (queueError: any) {
                     logger.error({ context: "messages", to: message.email, error: queueError.message }, "Failed to queue reply");
-                    res.status(500).json({ message: `Failed to queue email: ${queueError.message}` });
+                    res.status(500).json({ success: false, message: `Failed to queue email: ${queueError.message}` });
                 }
             } else {
-                res.status(500).json({ message: "Email queue not configured (Redis required)" });
+                res.status(500).json({ success: false, message: "Email queue not configured (Redis required)" });
             }
         })
     );
@@ -228,12 +228,12 @@ export function registerMessageRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid message ID" });
+                res.status(400).json({ success: false, message: "Invalid message ID" });
                 return;
             }
             const deleted = await messageService.delete(id);
             if (!deleted) {
-                res.status(404).json({ message: "Message not found" });
+                res.status(404).json({ success: false, message: "Message not found" });
                 return;
             }
             res.status(204).send();

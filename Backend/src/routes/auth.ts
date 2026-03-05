@@ -41,7 +41,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     const { password } = req.body;
 
     if (!password) {
-        return res.status(400).json({ message: "Password is required" });
+        return res.status(400).json({ success: false, message: "Password is required" });
     }
 
     const normalizedInput = String(password).trim();
@@ -64,7 +64,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     if (!isValid) {
         // Delay to further prevent brute-force attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     // Generate short-lived access token (15 minutes)
@@ -117,6 +117,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
  */
 router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
     res.json({
+        success: true,
         authenticated: true
     });
 }));
@@ -129,14 +130,14 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     const refreshToken = req.cookies?.refresh_token;
 
     if (!refreshToken) {
-        return res.status(401).json({ message: "No refresh token provided" });
+        return res.status(401).json({ success: false, message: "No refresh token provided" });
     }
 
     const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
     const isValid = await validateRefreshToken(refreshTokenHash);
 
     if (!isValid) {
-        return res.status(401).json({ message: "Invalid or expired refresh token" });
+        return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
     }
 
     // Issue new short-lived access token
@@ -210,7 +211,10 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
         sameSite: "strict"
     });
 
-    res.json({ message: "Logged out successfully" });
+    res.json({
+        success: true,
+        message: "Logged out successfully"
+    });
 }));
 
 export { router as authRoutes };

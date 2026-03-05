@@ -132,7 +132,11 @@ export const registerChatRoutes = (router: Router) => {
             // Usually response.choices[0].message.content
             const text = response.choices?.[0]?.message?.content || "No response generated.";
 
-            return res.json({ message: text });
+            return res.json({
+                success: true,
+                message: "Response generated successfully",
+                data: { message: text }
+            });
         } catch (error: any) {
             logger.error({
                 context: "chat",
@@ -142,12 +146,14 @@ export const registerChatRoutes = (router: Router) => {
 
             if (error.status === 429 || error.message.includes("429")) {
                 return res.status(429).json({
+                    success: false,
                     message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
                     details: "Quota exceeded"
                 });
             }
 
             return res.status(500).json({
+                success: false,
                 message: "Internal server error during chat processing."
             });
         }

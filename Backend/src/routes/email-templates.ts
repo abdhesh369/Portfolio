@@ -28,7 +28,10 @@ export function registerEmailTemplateRoutes(app: Router) {
             }
             const template = await emailTemplateService.getById(id);
             if (!template) {
-                res.status(404).json({ message: "Template not found" });
+                res.status(404).json({
+                    success: false,
+                    message: "Template not found"
+                });
                 return;
             }
             res.json(template);
@@ -42,7 +45,11 @@ export function registerEmailTemplateRoutes(app: Router) {
         validateBody(insertEmailTemplateApiSchema),
         asyncHandler(async (req, res) => {
             const template = await emailTemplateService.create(req.body);
-            res.status(201).json(template);
+            res.status(201).json({
+                success: true,
+                message: "Email template created successfully",
+                data: template
+            });
         })
     );
 
@@ -58,7 +65,11 @@ export function registerEmailTemplateRoutes(app: Router) {
                 return;
             }
             const template = await emailTemplateService.update(id, req.body);
-            res.json(template);
+            res.json({
+                success: true,
+                message: "Email template updated successfully",
+                data: template
+            });
         })
     );
 

@@ -91,7 +91,11 @@ articlesRouter.post(
         const data = insertArticleApiSchema.parse(req.body);
         const article = await articleService.create(data);
         recordAudit("CREATE", "article", article.id, null, data as Record<string, unknown>);
-        res.status(201).json(article);
+        res.status(201).json({
+            success: true,
+            message: "Article created successfully",
+            data: article
+        });
     })
 );
 
@@ -120,7 +124,11 @@ articlesRouter.patch(
         const data = updateArticleApiSchema.parse(req.body);
         const article = await articleService.update(id, data);
         recordAudit("UPDATE", "article", id, null, data as Record<string, unknown>);
-        res.json(article);
+        res.json({
+            success: true,
+            message: "Article updated successfully",
+            data: article
+        });
     })
 );
 

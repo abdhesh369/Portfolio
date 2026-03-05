@@ -71,7 +71,11 @@ export function registerAnalyticsRoutes(app: Router) {
                 return res.status(202).json({ message: "Request accepted (bot filtered)" });
             }
             const event = await analyticsService.logEvent(req.body);
-            res.status(201).json(event);
+            res.status(201).json({
+                success: true,
+                message: "Event tracked successfully",
+                data: event
+            });
         })
     );
 

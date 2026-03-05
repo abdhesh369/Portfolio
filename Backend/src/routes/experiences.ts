@@ -23,12 +23,12 @@ export function registerExperienceRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid experience ID" });
+                res.status(400).json({ success: false, message: "Invalid experience ID" });
                 return;
             }
             const experience = await experienceService.getById(id);
             if (!experience) {
-                res.status(404).json({ message: "Experience not found" });
+                res.status(404).json({ success: false, message: "Experience not found" });
                 return;
             }
             res.json(experience);
@@ -43,7 +43,11 @@ export function registerExperienceRoutes(app: Router) {
             const data = insertExperienceApiSchema.parse(req.body);
             const experience = await experienceService.create(data);
             recordAudit("CREATE", "experience", experience.id, null, data as Record<string, unknown>);
-            res.status(201).json(experience);
+            res.status(201).json({
+                success: true,
+                message: "Experience created successfully",
+                data: experience
+            });
         })
     );
 
@@ -54,13 +58,17 @@ export function registerExperienceRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid experience ID" });
+                res.status(400).json({ success: false, message: "Invalid experience ID" });
                 return;
             }
             const data = insertExperienceApiSchema.partial().parse(req.body);
             const experience = await experienceService.update(id, data);
             recordAudit("UPDATE", "experience", id, null, data as Record<string, unknown>);
-            res.json(experience);
+            res.json({
+                success: true,
+                message: "Experience updated successfully",
+                data: experience
+            });
         })
     );
 
@@ -71,7 +79,7 @@ export function registerExperienceRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid experience ID" });
+                res.status(400).json({ success: false, message: "Invalid experience ID" });
                 return;
             }
             await experienceService.delete(id);

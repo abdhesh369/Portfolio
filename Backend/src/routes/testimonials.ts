@@ -43,7 +43,11 @@ export function registerTestimonialRoutes(app: Router) {
             const data = insertTestimonialApiSchema.parse(req.body);
             const testimonial = await testimonialService.create(data);
             recordAudit("CREATE", "testimonial", testimonial.id, null, data as Record<string, unknown>);
-            res.status(201).json(testimonial);
+            res.status(201).json({
+                success: true,
+                message: "Testimonial created successfully",
+                data: testimonial
+            });
         })
     );
 
@@ -60,7 +64,11 @@ export function registerTestimonialRoutes(app: Router) {
             const data = insertTestimonialApiSchema.partial().parse(req.body);
             const testimonial = await testimonialService.update(id, data);
             recordAudit("UPDATE", "testimonial", id, null, data as Record<string, unknown>);
-            res.json(testimonial);
+            res.json({
+                success: true,
+                message: "Testimonial updated successfully",
+                data: testimonial
+            });
         })
     );
 

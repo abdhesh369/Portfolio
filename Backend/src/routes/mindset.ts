@@ -25,7 +25,11 @@ export function registerMindsetRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const mindset = await mindsetService.create(req.body);
             recordAudit("CREATE", "mindset", mindset.id, null, req.body as Record<string, unknown>);
-            res.status(201).json(mindset);
+            res.status(201).json({
+                success: true,
+                message: "Mindset principle created successfully",
+                data: mindset
+            });
         })
     );
 
@@ -41,7 +45,10 @@ export function registerMindsetRoutes(app: Router) {
             }
             const mindset = await mindsetService.getById(id);
             if (!mindset) {
-                res.status(404).json({ message: "Mindset principle not found" });
+                res.status(404).json({
+                    success: false,
+                    message: "Mindset principle not found"
+                });
                 return;
             }
             res.json(mindset);
@@ -61,7 +68,11 @@ export function registerMindsetRoutes(app: Router) {
             }
             const mindset = await mindsetService.update(id, req.body);
             recordAudit("UPDATE", "mindset", id, null, req.body as Record<string, unknown>);
-            res.json(mindset);
+            res.json({
+                success: true,
+                message: "Mindset principle updated successfully",
+                data: mindset
+            });
         })
     );
 

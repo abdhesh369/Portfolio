@@ -33,7 +33,11 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const project = await projectService.create(req.body);
       recordAudit("CREATE", "project", project.id, null, req.body);
-      res.status(201).json(project);
+      res.status(201).json({
+        success: true,
+        message: "Project created successfully",
+        data: project
+      });
     })
   );
 
@@ -86,12 +90,12 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid project ID" });
+        res.status(400).json({ success: false, message: "Invalid project ID" });
         return;
       }
       const project = await projectService.getById(id);
       if (!project) {
-        res.status(404).json({ message: "Project not found" });
+        res.status(404).json({ success: false, message: "Project not found" });
         return;
       }
       res.json(project);
@@ -111,12 +115,16 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid project ID" });
+        res.status(400).json({ success: false, message: "Invalid project ID" });
         return;
       }
       const project = await projectService.update(id, req.body);
       recordAudit("UPDATE", "project", id, null, req.body);
-      res.json(project);
+      res.json({
+        success: true,
+        message: "Project updated successfully",
+        data: project
+      });
     })
   );
 
@@ -127,7 +135,7 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid project ID" });
+        res.status(400).json({ success: false, message: "Invalid project ID" });
         return;
       }
       await projectService.delete(id);

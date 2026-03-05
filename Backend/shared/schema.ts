@@ -46,17 +46,17 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: integer("from_skill_id").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
-  toSkillId: integer("to_skill_id").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
+  fromSkillId: integer("from_skill_id").notNull().references(() => skillsTable.id),
+  toSkillId: integer("to_skill_id").notNull().references(() => skillsTable.id),
 });
 
 export const experiencesTable = pgTable("experiences", {
   id: serial("id").primaryKey(),
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
-  period: varchar("period", { length: 100 }).notNull(),
-  startDate: timestamp("startDate"),
-  endDate: timestamp("endDate"),
+  period: varchar("period", { length: 100 }), // Deprecated in favor of start/end dates
+  startDate: timestamp("startDate").notNull().defaultNow(),
+  endDate: timestamp("endDate"), // Nullable for current roles
   description: text("description").notNull(),
   type: varchar("type", { length: 100 }).notNull().default("Experience"),
 });
@@ -71,7 +71,6 @@ export const messagesTable = pgTable("messages", {
   budget: varchar("budget", { length: 100 }),
   timeline: varchar("timeline", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-
 });
 
 export const mindsetTable = pgTable("mindset", {
@@ -147,7 +146,7 @@ export const articlesTable = pgTable("articles", {
   readTimeMinutes: integer("readTimeMinutes").notNull().default(0),
   metaTitle: varchar("metaTitle", { length: 255 }),
   metaDescription: text("metaDescription"),
-  authorId: integer("authorId"), // Reserved for multi-author support
+  authorId: integer("authorId"),
   featuredImageAlt: text("featuredImageAlt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -196,26 +195,10 @@ export const testimonialsTable = pgTable("testimonials", {
   };
 });
 
-export const siteSettingsTable = pgTable("site_settings", {
-  key: varchar("key", { length: 100 }).primaryKey(),
-  value: text("value").notNull(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-});
-
-export const commentsTable = pgTable("comments", {
-  id: serial("id").primaryKey(),
-  articleId: integer("article_id").notNull().references(() => articlesTable.id, { onDelete: "cascade" }),
-  name: varchar("name", { length: 100 }).notNull(),
-  message: text("message").notNull(),
-  isApproved: boolean("is_approved").notNull().default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-// TICKET-032: Append-only audit log
 export const auditLogTable = pgTable("audit_log", {
   id: serial("id").primaryKey(),
-  action: varchar("action", { length: 20 }).notNull(), // CREATE, UPDATE, DELETE
-  entity: varchar("entity", { length: 50 }).notNull(), // projects, articles, skills, etc.
+  action: varchar("action", { length: 20 }).notNull(),
+  entity: varchar("entity", { length: 50 }).notNull(),
   entityId: integer("entity_id"),
   oldValues: jsonb("old_values"),
   newValues: jsonb("new_values"),
@@ -244,6 +227,16 @@ export const insertExperienceSchema = createInsertSchema(experiencesTable);
 export const selectMessageSchema = createSelectSchema(messagesTable);
 export const insertMessageSchema = createInsertSchema(messagesTable);
 
+export const auditLogSchema = z.object({
+  id: z.number(),
+  action: z.enum(["CREATE", "UPDATE", "DELETE"]),
+  entity: z.string().min(1).max(50),
+  entityId: z.number().nullable().optional(),
+  oldValues: z.record(z.unknown()).nullable().optional(),
+  newValues: z.record(z.unknown()).nullable().optional(),
+  createdAt: z.coerce.date(),
+});
+
 export const selectMindsetSchema = createSelectSchema(mindsetTable);
 export const insertMindsetSchema = createInsertSchema(mindsetTable);
 
@@ -270,12 +263,6 @@ export const insertAuditLogSchema = createInsertSchema(auditLogTable);
 
 export const selectGuestbookSchema = createSelectSchema(guestbookTable);
 export const insertGuestbookSchema = createInsertSchema(guestbookTable);
-
-export const selectSiteSettingsSchema = createSelectSchema(siteSettingsTable);
-export const insertSiteSettingsSchema = createInsertSchema(siteSettingsTable);
-
-export const selectCommentSchema = createSelectSchema(commentsTable);
-export const insertCommentSchema = createInsertSchema(commentsTable);
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -380,9 +367,9 @@ export const experienceSchema = z.object({
   id: z.number(),
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
-  period: z.string().min(1).max(100),
-  startDate: z.coerce.date().nullable().optional(),
-  endDate: z.coerce.date().nullable().optional(),
+  period: z.string().max(100).nullish(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().nullish(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100),
 });
@@ -400,9 +387,9 @@ export const serviceSchema = z.object({
 export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
-  period: z.string().min(1).max(100),
-  startDate: z.string().nullable().optional(),
-  endDate: z.string().nullable().optional(),
+  period: z.string().max(100).nullable().optional(),
+  startDate: z.string().or(z.date()).optional(),
+  endDate: z.string().or(z.date()).nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
 });
@@ -544,21 +531,6 @@ export const insertSeoSettingsApiSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
 });
 
-export const commentSchema = z.object({
-  id: z.number(),
-  articleId: z.number(),
-  name: z.string().min(1).max(100),
-  message: z.string().min(1).max(5000),
-  isApproved: z.boolean().default(false),
-  createdAt: z.coerce.date(),
-});
-
-export const insertCommentApiSchema = z.object({
-  articleId: z.number(),
-  name: z.string().min(1).max(100),
-  message: z.string().min(1).max(5000),
-});
-
 export const articleSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -615,10 +587,7 @@ export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
-export type Comment = z.infer<typeof commentSchema>;
-export type GuestbookEntry = z.infer<typeof guestbookSchema>;
-export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
-export type SiteSettings = typeof siteSettingsTable.$inferSelect;
+export type AuditLog = z.infer<typeof auditLogSchema>;
 export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
@@ -632,8 +601,8 @@ export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
 export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
-export type InsertComment = z.infer<typeof insertCommentApiSchema>;
-export type InsertSiteSettings = typeof siteSettingsTable.$inferInsert;
+export type GuestbookEntry = z.infer<typeof guestbookSchema>;
+export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 
 // ================= TYPE GUARDS =================
 
@@ -663,4 +632,7 @@ export function isTestimonial(obj: unknown): obj is Testimonial {
 }
 export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
   return guestbookSchema.safeParse(obj).success;
+}
+export function isAuditLog(obj: unknown): obj is AuditLog {
+  return auditLogSchema.safeParse(obj).success;
 }

@@ -5,7 +5,6 @@ import {
     skillConnectionSchema,
     experienceSchema,
     messageSchema,
-    mindsetSchema,
     analyticsSchema,
     serviceSchema,
     insertProjectApiSchema,
@@ -19,6 +18,15 @@ import {
     articleSchema,
     articleWithRelatedSchema,
     insertArticleApiSchema,
+    seoSettingsSchema,
+    insertSeoSettingsApiSchema,
+    mindsetSchema,
+    insertMindsetApiSchema,
+    auditLogSchema,
+    emailTemplateSchema,
+    insertEmailTemplateApiSchema,
+    guestbookSchema,
+    insertGuestbookApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -221,10 +229,49 @@ export const api = {
         get: {
             method: "GET" as const,
             path: "/api/v1/mindset/:id",
-            description: "Get single mindset principle by ID (public)",
+            description: "Get single mindset principle",
             responses: {
                 200: mindsetSchema,
                 400: errorSchemas.badRequest,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/v1/mindset",
+            description: "Create new mindset principle (admin only)",
+            input: insertMindsetApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: createSuccessResponse(mindsetSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/v1/mindset/:id",
+            description: "Update mindset principle by ID (admin only)",
+            input: insertMindsetApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(mindsetSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/v1/mindset/:id",
+            description: "Delete mindset principle by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
                 404: errorSchemas.notFound,
                 500: errorSchemas.internal,
             },
@@ -431,7 +478,7 @@ export const api = {
             description: "Log an analytics event (public)",
             input: insertAnalyticsSchema,
             responses: {
-                201: analyticsSchema,
+                201: createSuccessResponse(analyticsSchema),
                 400: errorSchemas.validation,
                 500: errorSchemas.internal,
             },
@@ -479,7 +526,7 @@ export const api = {
             input: insertTestimonialApiSchema,
             requiresAuth: true,
             responses: {
-                201: testimonialSchema,
+                201: createSuccessResponse(testimonialSchema),
                 400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 500: errorSchemas.internal,
@@ -492,7 +539,7 @@ export const api = {
             input: insertTestimonialApiSchema.partial(),
             requiresAuth: true,
             responses: {
-                200: testimonialSchema,
+                200: createSuccessResponse(testimonialSchema),
                 400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 404: errorSchemas.notFound,
@@ -540,7 +587,7 @@ export const api = {
             input: insertArticleApiSchema,
             requiresAuth: true,
             responses: {
-                201: articleSchema,
+                201: createSuccessResponse(articleSchema),
                 400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 500: errorSchemas.internal,
@@ -553,7 +600,7 @@ export const api = {
             input: insertArticleApiSchema.partial(),
             requiresAuth: true,
             responses: {
-                200: articleSchema,
+                200: createSuccessResponse(articleSchema),
                 400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 404: errorSchemas.notFound,
@@ -569,6 +616,239 @@ export const api = {
                 204: z.void(),
                 401: errorSchemas.unauthorized,
                 404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
+    // ---------- EMAIL TEMPLATES ----------
+    emailTemplates: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/email-templates",
+            description: "List all email templates (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.array(emailTemplateSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/v1/email-templates/:id",
+            description: "Get single email template (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: emailTemplateSchema,
+                400: errorSchemas.badRequest,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/v1/email-templates",
+            description: "Create new email template (admin only)",
+            input: insertEmailTemplateApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: createSuccessResponse(emailTemplateSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PUT" as const,
+            path: "/api/v1/email-templates/:id",
+            description: "Update email template by ID (admin only)",
+            input: insertEmailTemplateApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(emailTemplateSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/v1/email-templates/:id",
+            description: "Delete email template by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- SEO ----------
+    seo: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/seo",
+            description: "List all SEO settings (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.array(seoSettingsSchema),
+                401: errorSchemas.unauthorized,
+                500: errorSchemas.internal,
+            },
+        },
+        get: {
+            method: "GET" as const,
+            path: "/api/v1/seo/:slug",
+            description: "Get SEO settings by slug (public)",
+            responses: {
+                200: seoSettingsSchema,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/v1/seo",
+            description: "Create new SEO settings (admin only)",
+            input: insertSeoSettingsApiSchema,
+            requiresAuth: true,
+            responses: {
+                201: createSuccessResponse(seoSettingsSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                409: z.object({ message: z.string() }),
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/v1/seo/:id",
+            description: "Update SEO settings by ID (admin only)",
+            input: insertSeoSettingsApiSchema.partial(),
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(seoSettingsSchema),
+                400: errorSchemas.validation,
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/v1/seo/:id",
+            description: "Delete SEO settings by ID (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- GUESTBOOK ----------
+    guestbook: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/guestbook",
+            description: "List all approved guestbook entries (public)",
+            responses: {
+                200: z.array(guestbookSchema),
+                500: errorSchemas.internal,
+            },
+        },
+        create: {
+            method: "POST" as const,
+            path: "/api/v1/guestbook",
+            description: "Submit guestbook entry (public, rate-limited)",
+            input: insertGuestbookApiSchema,
+            responses: {
+                201: createSuccessResponse(guestbookSchema),
+                400: errorSchemas.validation,
+                500: errorSchemas.internal,
+            },
+        },
+        adminList: {
+            method: "GET" as const,
+            path: "/api/v1/admin/guestbook",
+            description: "List all guestbook entries (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.array(guestbookSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        approve: {
+            method: "PATCH" as const,
+            path: "/api/v1/admin/guestbook/:id/approve",
+            description: "Approve guestbook entry (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: createSuccessResponse(guestbookSchema),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        delete: {
+            method: "DELETE" as const,
+            path: "/api/v1/admin/guestbook/:id",
+            description: "Delete guestbook entry (admin only)",
+            requiresAuth: true,
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- CHAT ----------
+    chat: {
+        send: {
+            method: "POST" as const,
+            path: "/api/v1/chat",
+            description: "Send message to AI assistant (public, rate limited)",
+            input: z.object({
+                messages: z.array(z.object({
+                    role: z.enum(["user", "model"]),
+                    parts: z.array(z.object({
+                        text: z.string()
+                    }))
+                }))
+            }),
+            responses: {
+                200: createSuccessResponse(z.object({ message: z.string() })),
+                400: errorSchemas.validation,
+                429: z.object({ success: z.literal(false), message: z.string(), details: z.string().optional() }),
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- AUDIT LOG ----------
+    auditLog: {
+        list: {
+            method: "GET" as const,
+            path: "/api/v1/admin/audit-log",
+            description: "List audit log entries (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.object({
+                    entries: z.array(auditLogSchema),
+                    total: z.number(),
+                }),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
                 500: errorSchemas.internal,
             },
         },
