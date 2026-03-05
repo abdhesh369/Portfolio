@@ -40,12 +40,9 @@ export function AuditLogTab() {
     try {
       const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
       if (filter !== "all") params.set("entity", filter);
-      const res = await apiFetch(`/api/v1/admin/audit-log?${params}`);
-      if (res.ok) {
-        const data: AuditResponse = await res.json();
-        setEntries(data.entries);
-        setTotal(data.total);
-      }
+      const data: AuditResponse = await apiFetch(`/api/v1/admin/audit-log?${params}`);
+      setEntries(data.entries);
+      setTotal(data.total);
     } catch {
       // Silently fail
     } finally {

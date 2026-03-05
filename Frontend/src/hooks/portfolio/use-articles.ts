@@ -33,9 +33,7 @@ export function useArticleSearch(query: string) {
     queryKey: ["articles", "search", query],
     queryFn: async () => {
       const { apiFetch } = await import("@/lib/api-helpers");
-      const res = await apiFetch(`/api/v1/articles/search?q=${encodeURIComponent(query)}`);
-      if (!res.ok) throw new Error("Search failed");
-      return res.json();
+      return await apiFetch(`/api/v1/articles/search?q=${encodeURIComponent(query)}`);
     },
     enabled: query.trim().length >= 2,
     placeholderData: (prev) => prev,

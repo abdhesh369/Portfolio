@@ -116,7 +116,7 @@ app.use(
       useDefaults: true,
       directives: {
         "default-src": ["'self'"],
-        "script-src": ["'self'", "https://www.googletagmanager.com"],
+        "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
         "object-src": ["'none'"],
         "connect-src": [
           "'self'",

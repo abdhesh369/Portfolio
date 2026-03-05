@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiFetch } from "@/lib/api-helpers";
 import type { SiteSettings, InsertSiteSettings } from "../../shared/schema";
 
 export function useSiteSettings() {
     return useQuery<SiteSettings>({
         queryKey: ["/api/v1/settings"],
+        queryFn: () => apiFetch("/api/v1/settings"),
     });
 }
 
@@ -13,8 +14,10 @@ export function useUpdateSiteSettings() {
 
     return useMutation({
         mutationFn: async (data: InsertSiteSettings) => {
-            const res = await apiRequest("PATCH", "/api/v1/settings", data);
-            return res.json();
+            return apiFetch("/api/v1/settings", {
+                method: "PATCH",
+                body: JSON.stringify(data),
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["/api/v1/settings"] });
