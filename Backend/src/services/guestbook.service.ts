@@ -6,12 +6,9 @@ import { logger } from "../lib/logger.js";
 export class GuestbookService {
     async getMessages(onlyApproved = true) {
         try {
-            const query = db.select().from(guestbookTable);
-
-            if (onlyApproved) {
-                query.where(eq(guestbookTable.isApproved, true));
-            }
-
+            const query = onlyApproved
+                ? db.select().from(guestbookTable).where(eq(guestbookTable.isApproved, true))
+                : db.select().from(guestbookTable);
             return await query.orderBy(desc(guestbookTable.createdAt));
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error fetching guestbook messages");

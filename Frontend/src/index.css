@@ -449,16 +449,6 @@
     animation: glitch-glow 4s infinite;
   }
 
-  /* Premium Tilt Animation */
-  .animate-tilt {
-    animation: tilt 10s infinite linear;
-  }
-
-  /* Glitch Glow */
-  .glitch-glow {
-    animation: glitch-glow 4s infinite;
-  }
-
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
