@@ -4,6 +4,7 @@ import { asyncHandler, isAuthenticated } from "../auth.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
 import rateLimit from "express-rate-limit";
+import { recordAudit } from "../lib/audit.js";
 
 import { cachePublic } from "../middleware/cache.js";
 
@@ -49,6 +50,10 @@ guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, 
         return;
     }
     const entry = await guestbookService.approveMessage(id);
+
+    // Audit log (A1)
+    recordAudit("UPDATE", "guestbook", id, null, { approved: true });
+
     res.json({
         success: true,
         message: "Entry approved",
@@ -64,6 +69,10 @@ guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) =>
         return;
     }
     await guestbookService.deleteMessage(id);
+
+    // Audit log (A1)
+    recordAudit("DELETE", "guestbook", id);
+
     res.status(204).end();
 }));
 

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { apiFetch } from "@/lib/api-helpers";
 
 /**
  * Generic fetch + Zod parse helper shared by all portfolio hooks.
@@ -10,24 +10,7 @@ export async function fetchAndParse<T>(
   errorMessage: string
 ): Promise<T> {
   try {
-    const url = `${API_BASE_URL}${path}`;
-
-    const res = await fetch(url, {
-      credentials: 'include'
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = { message: errorText };
-      }
-      throw new Error(errorData.message || `${errorMessage} (${res.status})`);
-    }
-
-    const jsonData = await res.json();
+    const jsonData = await apiFetch(path);
     return schema.parse(jsonData);
   } catch (error) {
     if (error instanceof Error) {

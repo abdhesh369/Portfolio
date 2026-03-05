@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { apiFetch } from "@/lib/api-helpers";
 
 interface SeoProps {
     slug?: string;
@@ -29,9 +29,7 @@ export function SEO({
         queryKey: ["seo", slug],
         queryFn: async () => {
             if (!slug) return null;
-            const res = await fetch(`${API_BASE_URL}/api/v1/seo/${slug}`);
-            if (!res.ok) return null;
-            return res.json();
+            return apiFetch(`/api/v1/seo/${slug}`);
         },
         enabled: !!slug,
     });

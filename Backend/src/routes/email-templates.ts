@@ -4,6 +4,7 @@ import { insertEmailTemplateApiSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerEmailTemplateRoutes(app: Router) {
     // GET /email-templates - List all templates (admin only)
@@ -45,6 +46,10 @@ export function registerEmailTemplateRoutes(app: Router) {
         validateBody(insertEmailTemplateApiSchema),
         asyncHandler(async (req, res) => {
             const template = await emailTemplateService.create(req.body);
+
+            // Audit log (A4)
+            recordAudit("CREATE", "email_template", template.id, null, req.body);
+
             res.status(201).json({
                 success: true,
                 message: "Email template created successfully",
@@ -65,6 +70,10 @@ export function registerEmailTemplateRoutes(app: Router) {
                 return;
             }
             const template = await emailTemplateService.update(id, req.body);
+
+            // Audit log (A4)
+            recordAudit("UPDATE", "email_template", id, null, req.body);
+
             res.json({
                 success: true,
                 message: "Email template updated successfully",
@@ -84,6 +93,10 @@ export function registerEmailTemplateRoutes(app: Router) {
                 return;
             }
             await emailTemplateService.delete(id);
+
+            // Audit log (A4)
+            recordAudit("DELETE", "email_template", id);
+
             res.status(204).send();
         })
     );

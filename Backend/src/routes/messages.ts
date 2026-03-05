@@ -10,6 +10,7 @@ import { isAuthenticated, asyncHandler } from "../auth.js";
 import DOMPurify from 'isomorphic-dompurify';
 import { emailQueue } from "../lib/queue.js";
 import { logger } from "../lib/logger.js";
+import { recordAudit } from "../lib/audit.js";
 function escapeHtml(text: string): string {
     return text
         .replace(/&/g, "&amp;")
@@ -77,6 +78,10 @@ export function registerMessageRoutes(app: Router) {
             const schema = z.object({ ids: z.array(z.number()) });
             const { ids } = schema.parse(req.body);
             await messageService.bulkDelete(ids);
+
+            // Audit log (A2)
+            recordAudit("DELETE", "message_bulk", undefined, null, { deletedIds: ids });
+
             res.status(204).send();
         })
     );
@@ -210,6 +215,10 @@ export function registerMessageRoutes(app: Router) {
                         }
                     });
                     logger.info({ context: "messages", to: message.email }, "Queued reply");
+
+                    // Audit log (A2)
+                    recordAudit("CREATE", "message_reply", id, null, { subject });
+
                     res.json({ success: true, message: "Reply queued successfully" });
                 } catch (queueError: any) {
                     logger.error({ context: "messages", to: message.email, error: queueError.message }, "Failed to queue reply");
@@ -236,6 +245,10 @@ export function registerMessageRoutes(app: Router) {
                 res.status(404).json({ success: false, message: "Message not found" });
                 return;
             }
+
+            // Audit log (A2)
+            recordAudit("DELETE", "message", id);
+
             res.status(204).send();
         })
     );

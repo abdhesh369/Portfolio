@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Code2, Copy, Check, Terminal, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL, apiFetch } from "@/lib/api-helpers";
 
 /* ------------------------------------------------------------------ */
 /* Syntax-highlighted JSON renderer (no external deps)                 */
@@ -70,20 +70,18 @@ export function ApiResponseViewer({
     setError(null);
     const start = performance.now();
     try {
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      // apiFetch automatically handles credentials and JSON parsing
+      const json = await apiFetch(endpoint, {
         method,
-        credentials: "include",
-        cache: "no-store",
       });
       const elapsed = Math.round(performance.now() - start);
       setLatency(elapsed);
-      setStatusCode(res.status);
-      const json = await res.json();
+      setStatusCode(200); // apiFetch throws on non-ok statuses
       setResponseData(json);
       fetchedRef.current = true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Request failed");
-      setStatusCode(null);
+      setStatusCode(500); // approximate if unknown
     } finally {
       setLoading(false);
     }

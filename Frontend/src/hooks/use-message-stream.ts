@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { apiFetch } from "../lib/api-helpers";
 
 interface SSEMessage {
   id: number;
@@ -71,10 +72,7 @@ export function useMessageStream(enabled: boolean = true) {
 
       async function poll() {
         try {
-          const res = await fetch("/api/v1/messages", {
-            credentials: "include",
-            headers: { "Accept": "application/json" },
-          });
+          const res = await apiFetch("/api/v1/messages");
           if (res.ok) {
             const messages = await res.json();
             if (Array.isArray(messages) && messages.length > lastKnownCount) {

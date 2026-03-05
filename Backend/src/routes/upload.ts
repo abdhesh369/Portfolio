@@ -1,6 +1,7 @@
 import { Router, type Express } from "express";
 import { upload } from "../lib/cloudinary.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
+import { recordAudit } from "../lib/audit.js";
 
 export function registerUploadRoutes(app: Router) {
     // POST /upload - Upload file to Cloudinary
@@ -65,6 +66,15 @@ export function registerUploadRoutes(app: Router) {
                                 details: error?.message
                             });
                         }
+
+                        // Audit log (A5)
+                        recordAudit("CREATE", "upload", undefined, null, {
+                            url: result.secure_url,
+                            publicId: result.public_id,
+                            format: result.format,
+                            originalName: file.originalname
+                        });
+
                         res.json({
                             success: true,
                             message: "File uploaded successfully",
