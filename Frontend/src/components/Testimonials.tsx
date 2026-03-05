@@ -1,6 +1,7 @@
 import { m } from "framer-motion";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { Quote, Linkedin } from "lucide-react";
+import { OptimizedImage } from "./OptimizedImage";
 import { staggerContainer, staggerChild, fadeUp, hoverLiftSmall } from "@/lib/animation";
 
 export default function Testimonials() {

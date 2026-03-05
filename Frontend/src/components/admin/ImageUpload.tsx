@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface ImageUploadProps {
     value: string;
@@ -77,9 +78,11 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
             <div className="border border-white/10 rounded-lg p-4 bg-[hsl(224_71%_4%_/_0.5)]">
                 {value ? (
                     <div className="relative group aspect-video w-full max-w-[200px] rounded-md overflow-hidden bg-black/50 border border-white/10">
-                        <img
+                        <OptimizedImage
                             src={value}
                             alt="Uploaded preview"
+                            width={400}
+                            height={300}
                             className="w-full h-full object-cover"
                         />
                         <button

@@ -1,6 +1,7 @@
 import { m } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus } from "lucide-react";
+import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
 
 type GitHubEvent = {

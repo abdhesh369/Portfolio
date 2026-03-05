@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
@@ -80,7 +81,13 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
                     ⋮⋮
                 </div>
             </div>
-            <img src={project.imageUrl} alt={project.title} className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5" />
+            <OptimizedImage
+                src={project.imageUrl}
+                alt={project.title}
+                width={100}
+                height={100}
+                className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5"
+            />
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <p className="font-semibold text-white text-sm">{project.title}</p>

@@ -8,7 +8,7 @@ import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@shared/schema";
 
-const emptyExperience = { role: "", organization: "", period: "", description: "", type: "Experience" };
+const emptyExperience = { role: "", organization: "", startDate: new Date(), endDate: null as Date | null, description: "", type: "Experience" };
 
 import type { AdminTabProps } from "./types";
 
@@ -58,10 +58,13 @@ export function ExperiencesTab({ }: AdminTabProps) {
                 <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
                     {editing.id ? "Edit Experience" : "New Experience"}
                 </h2>
-                <form onSubmit={save} className="space-y-4 max-w-2xl">
+                <form onSubmit={save} className="space-y-4 max-w-2xl text-white">
                     <FormField label="Role *" value={editing.role} onChange={(v) => setEditing({ ...editing, role: v })} required />
                     <FormField label="Organization *" value={editing.organization} onChange={(v) => setEditing({ ...editing, organization: v })} required />
-                    <FormField label="Period *" value={editing.period} onChange={(v) => setEditing({ ...editing, period: v })} placeholder="e.g. Jan 2024 – Present" required />
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField label="Start Date *" type="date" value={editing.startDate instanceof Date ? editing.startDate.toISOString().split('T')[0] : (editing.startDate as string).split('T')[0]} onChange={(v) => setEditing({ ...editing, startDate: new Date(v) })} required />
+                        <FormField label="End Date" type="date" value={editing.endDate instanceof Date ? editing.endDate.toISOString().split('T')[0] : (editing.endDate ? (editing.endDate as string).split('T')[0] : "")} onChange={(v) => setEditing({ ...editing, endDate: v ? new Date(v) : null })} />
+                    </div>
                     <FormTextarea label="Description *" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} required />
                     <FormField label="Type" value={editing.type} onChange={(v) => setEditing({ ...editing, type: v })} placeholder="Experience, Education, etc." />
 
@@ -92,11 +95,13 @@ export function ExperiencesTab({ }: AdminTabProps) {
                             <div className="flex-1 min-w-0">
                                 <p className="font-semibold text-white text-sm">{exp.role}</p>
                                 <p className="text-xs text-purple-400">{exp.organization}</p>
-                                <p className="text-xs text-white/40 mt-0.5">{exp.period}</p>
+                                <p className="text-xs text-white/40 mt-0.5">
+                                    {new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – {exp.endDate ? new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "Present"}
+                                </p>
                                 <p className="text-sm text-white/60 mt-2 line-clamp-2">{exp.description}</p>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                                <Button variant="outline" size="sm" onClick={() => setEditing({ ...exp })} className="text-white/60">Edit</Button>
+                                <Button variant="outline" size="sm" onClick={() => setEditing({ ...exp, endDate: exp.endDate ?? null })} className="text-white/60">Edit</Button>
                                 <Button variant="destructive" size="sm" onClick={() => deleteExp(exp.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
                             </div>
                         </div>
