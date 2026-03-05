@@ -4,6 +4,16 @@ import { Resend } from "resend";
 import { env } from "../env.js";
 import { logger } from "./logger.js";
 
+function isLocalRedisUrl(url: string): boolean {
+    try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^\[|\]$/g, "");
+        return host === "localhost" || host === "127.0.0.1" || host === "::1";
+    } catch {
+        return false;
+    }
+}
+
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
 // These are intentionally separate from the app-level redis singleton in redis.ts.
@@ -18,7 +28,21 @@ function getRedisConnection() {
 
 // Ensure BullMQ is only active if REDIS validation passes or running locally
 const isProd = process.env.NODE_ENV === "production";
-const canUseRedis = !isProd || !!env.REDIS_URL;
+const hasRedisUrl = !!env.REDIS_URL;
+const isProdLocalRedis = isProd && hasRedisUrl && isLocalRedisUrl(env.REDIS_URL as string);
+
+if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
+    logger.warn(
+        {
+            context: "queue",
+            redisConfigured: hasRedisUrl,
+            redisUrl: env.REDIS_URL,
+        },
+        "Queue disabled in production: REDIS_URL is missing or points to localhost"
+    );
+}
+
+const canUseRedis = !isProd || (hasRedisUrl && !isProdLocalRedis);
 
 export const emailQueue = canUseRedis ? new Queue("email", {
     connection: getRedisConnection() as any

@@ -4,6 +4,16 @@ import { logger } from "./logger.js";
 
 const DEFAULT_REDIS_URL = "redis://localhost:6379";
 
+function isLocalRedisUrl(url: string): boolean {
+    try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^\[|\]$/g, "");
+        return host === "localhost" || host === "127.0.0.1" || host === "::1";
+    } catch {
+        return false;
+    }
+}
+
 /**
  * Global Redis Client
  * Provides a unified way to access Redis for caching and session management.
@@ -12,9 +22,19 @@ export class RedisClient {
     private static instance: Redis | null = null; private static isConnected: boolean = false;
 
     public static getInstance(): Redis | null {
-        if (!env.REDIS_URL && env.NODE_ENV === "production") {
-            logger.error({ context: "redis" }, "REDIS_URL is missing in production");
-            return null;
+        if (env.NODE_ENV === "production") {
+            if (!env.REDIS_URL) {
+                logger.warn({ context: "redis" }, "REDIS_URL is missing in production. Redis will be disabled.");
+                return null;
+            }
+
+            if (isLocalRedisUrl(env.REDIS_URL)) {
+                logger.warn(
+                    { context: "redis", url: env.REDIS_URL },
+                    "REDIS_URL points to localhost in production. Redis will be disabled."
+                );
+                return null;
+            }
         }
 
         if (!this.instance) {

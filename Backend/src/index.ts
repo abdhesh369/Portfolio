@@ -14,7 +14,7 @@ import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker } from "./lib/queue.js";
-import { redis } from "./lib/redis.js"; // Import redis instance
+import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
 import { logger } from "./lib/logger.js";
 
 import rateLimit from "express-rate-limit";
@@ -188,12 +188,28 @@ app.get("/debug-sentry", function mainHandler(_req: Request, _res: Response) {
   throw new Error("My first Sentry error!");
 });
 
+async function getRedisHealthSafe(): Promise<{ healthy: boolean; message: string }> {
+  try {
+    const redisAny = redis as any;
+    if (redisAny && typeof redisAny.checkHealth === "function") {
+      return await redisAny.checkHealth();
+    }
+
+    return await RedisClient.checkHealth();
+  } catch (error: any) {
+    return {
+      healthy: false,
+      message: error?.message || "Redis health check failed",
+    };
+  }
+}
+
 // Readiness / deep health check — includes database connectivity.
 // Returns 200 even if DB is waking up, with a "degraded" flag,
 // so Render doesn't mark the deploy as failed during Neon cold starts.
 app.get("/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const redisHealth = redis ? await (redis as any).checkHealth() : { healthy: false, message: "Redis client not initialized" };
+  const redisHealth = await getRedisHealthSafe();
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
 
@@ -215,7 +231,7 @@ app.get("/health", async (_req: Request, res: Response) => {
 // Formal API Health Check for monitoring tools
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const dbHealth = await checkDatabaseHealth();
-  const redisHealth = redis ? await (redis as any).checkHealth() : { healthy: false, message: "Redis client not initialized" };
+  const redisHealth = await getRedisHealthSafe();
 
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
 
