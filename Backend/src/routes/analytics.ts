@@ -5,6 +5,7 @@ import { analyticsService } from "../services/analytics.service.js";
 import { insertAnalyticsSchema } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { validateBody } from "../middleware/validate.js";
+import type { Request } from "express";
 
 const analyticsLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -29,6 +30,36 @@ const insertVitalSchema = z.object({
     path: z.string().min(1).max(500),
 });
 
+/**
+ * Detection logic for bots using Cloudflare headers and UA fallback.
+ * https://developers.cloudflare.com/bots/concepts/bot-score/
+ */
+function isBotRequest(req: Request): boolean {
+    const cfBotScore = req.headers["cf-bot-score"];
+    const cfVerifiedBot = req.headers["cf-verified-bot"];
+    const userAgent = req.headers["user-agent"]?.toLowerCase() || "";
+
+    // 1. Cloudflare verified bots (Search engines, etc.)
+    if (cfVerifiedBot === "true") return true;
+
+    // 2. Cloudflare Bot Score (1-29 is likely automated/malicious)
+    if (cfBotScore) {
+        const score = parseInt(cfBotScore as string, 10);
+        if (!isNaN(score) && score < 30) return true;
+    }
+
+    // 3. Fallback: Common bot signatures in User-Agent
+    const botPatterns = [
+        "bot", "crawler", "spider", "slurp", "lighthouse", "headless",
+        "googlebot", "bingbot", "yandex", "baiduspider", "facebookexternalhit",
+        "twitterbot", "rogerbot", "linkedinbot", "embedly", "quora link preview",
+        "showyoubot", "outbrain", "pinterest/0.", "slackbot", "vkShare",
+        "W3C_Validator", "redditbot", "Applebot", "WhatsApp"
+    ];
+
+    return botPatterns.some(pattern => userAgent.includes(pattern));
+}
+
 export function registerAnalyticsRoutes(app: Router) {
     // POST /analytics/track - Log an analytics event
     app.post(
@@ -36,6 +67,9 @@ export function registerAnalyticsRoutes(app: Router) {
         analyticsLimiter,
         validateBody(insertAnalyticsSchema),
         asyncHandler(async (req, res) => {
+            if (isBotRequest(req)) {
+                return res.status(202).json({ message: "Request accepted (bot filtered)" });
+            }
             const event = await analyticsService.logEvent(req.body);
             res.status(201).json(event);
         })
@@ -47,6 +81,9 @@ export function registerAnalyticsRoutes(app: Router) {
         vitalsLimiter,
         validateBody(insertVitalSchema),
         asyncHandler(async (req, res) => {
+            if (isBotRequest(req)) {
+                return res.status(204).end();
+            }
             await analyticsService.logVital(req.body);
             res.status(204).end();
         })
