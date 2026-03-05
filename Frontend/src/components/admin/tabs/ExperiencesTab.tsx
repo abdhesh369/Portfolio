@@ -119,7 +119,12 @@ export function ExperiencesTab({ }: AdminTabProps) {
                                 <p className="text-sm text-white/60 mt-2 line-clamp-2">{exp.description}</p>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                                <Button variant="outline" size="sm" onClick={() => setEditing({ ...exp, endDate: exp.endDate ?? null })} className="text-white/60">Edit</Button>
+                                <Button variant="outline" size="sm" onClick={() => setEditing({
+                                    ...exp,
+                                    period: exp.period ?? "",
+                                    startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
+                                    endDate: exp.endDate ? new Date(exp.endDate) : null
+                                })} className="text-white/60">Edit</Button>
                                 <Button variant="destructive" size="sm" onClick={() => deleteExp(exp.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
                             </div>
                         </div>
