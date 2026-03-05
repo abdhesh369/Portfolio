@@ -19,6 +19,8 @@ const Testimonials = lazy(() => import("@/components/Testimonials"));
 const Contact = lazy(() => import("@/components/Contact"));
 const Footer = lazy(() => import("@/components/Footer"));
 const BackToTop = lazy(() => import("@/components/BackToTop"));
+const SectionReveal = lazy(() => import("@/components/SectionReveal"));
+
 
 // Skeleton loading states that match section shapes
 function SectionFallback() {
@@ -171,25 +173,26 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <SectionDivider />
-        <SafeSection><About /></SafeSection>
+        <SectionReveal><SafeSection><About /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Skills /></SafeSection>
+        <SectionReveal><SafeSection><Skills /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><WhyHireMe /></SafeSection>
+        <SectionReveal><SafeSection><WhyHireMe /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Services /></SafeSection>
+        <SectionReveal><SafeSection><Services /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><EngineeringMindset /></SafeSection>
+        <SectionReveal><SafeSection><EngineeringMindset /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Projects /></SafeSection>
+        <SectionReveal><SafeSection><Projects /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><CodeAndPractice /></SafeSection>
+        <SectionReveal><SafeSection><CodeAndPractice /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Experience /></SafeSection>
+        <SectionReveal><SafeSection><Experience /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Testimonials /></SafeSection>
+        <SectionReveal><SafeSection><Testimonials /></SafeSection></SectionReveal>
         <SectionDivider />
-        <SafeSection><Contact /></SafeSection>
+        <SectionReveal><SafeSection><Contact /></SafeSection></SectionReveal>
+
       </main>
 
       <ErrorBoundary>
@@ -201,6 +204,6 @@ export default function Home() {
       <Suspense fallback={null}>
         <BackToTop />
       </Suspense>
-    </div>
+    </div >
   );
 }

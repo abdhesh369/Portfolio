@@ -54,6 +54,8 @@ const TimelineItem = ({
   role,
   org,
   period,
+  startDate,
+  endDate,
   desc,
   delay,
   type,
@@ -61,7 +63,9 @@ const TimelineItem = ({
 }: {
   role: string;
   org: string;
-  period: string;
+  period?: string | null;
+  startDate?: Date | string;
+  endDate?: Date | string | null;
   desc: string;
   delay: number;
   type: "education" | "work";
@@ -70,6 +74,12 @@ const TimelineItem = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const formatDate = (date: Date | string) => {
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  const displayPeriod = period || (startDate ? `${formatDate(startDate)} - ${endDate ? formatDate(endDate) : 'Present'}` : '');
 
   return (
     <m.div
@@ -90,17 +100,17 @@ const TimelineItem = ({
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+            <h4 className="text-base md:text-lg font-bold text-foreground group-hover:text-primary transition-colors">
               {role}
             </h4>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-              <span className="text-primary font-semibold flex items-center gap-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 mt-1">
+              <span className="text-primary font-semibold flex items-center gap-1 text-sm md:text-base">
                 {type === "education" ? <GraduationCap className="w-4 h-4" /> : <Briefcase className="w-4 h-4" />}
                 {org}
               </span>
               <span className="flex items-center text-sm text-muted-foreground gap-1">
                 <Calendar className="w-3 h-3" />
-                {period}
+                {displayPeriod}
               </span>
             </div>
           </div>
@@ -254,6 +264,8 @@ export default function Experience() {
                   role={edu.role}
                   org={edu.organization}
                   period={edu.period}
+                  startDate={edu.startDate}
+                  endDate={edu.endDate}
                   desc={edu.description}
                   delay={idx * 0.15}
                   type="education"
@@ -363,6 +375,8 @@ export default function Experience() {
                   role={exp.role}
                   org={exp.organization}
                   period={exp.period}
+                  startDate={exp.startDate}
+                  endDate={exp.endDate}
                   desc={exp.description}
                   delay={idx * 0.15}
                   type="work"

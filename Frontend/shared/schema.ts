@@ -46,15 +46,17 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: integer("from_skill_id").notNull(),
-  toSkillId: integer("to_skill_id").notNull(),
+  fromSkillId: integer("from_skill_id").notNull().references(() => skillsTable.id),
+  toSkillId: integer("to_skill_id").notNull().references(() => skillsTable.id),
 });
 
 export const experiencesTable = pgTable("experiences", {
   id: serial("id").primaryKey(),
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
-  period: varchar("period", { length: 100 }).notNull(),
+  period: varchar("period", { length: 100 }), // Deprecated in favor of start/end dates
+  startDate: timestamp("startDate").notNull().defaultNow(),
+  endDate: timestamp("endDate"), // Nullable for current roles
   description: text("description").notNull(),
   type: varchar("type", { length: 100 }).notNull().default("Experience"),
 });
@@ -65,6 +67,9 @@ export const messagesTable = pgTable("messages", {
   email: varchar("email", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 500 }).notNull().default(""),
   message: text("message").notNull(),
+  projectType: varchar("projectType", { length: 100 }), // Optional for project inquiries
+  budget: varchar("budget", { length: 100 }),
+  timeline: varchar("timeline", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -79,7 +84,7 @@ export const mindsetTable = pgTable("mindset", {
 export const analyticsTable = pgTable("analytics", {
   id: serial("id").primaryKey(),
   type: varchar("type", { length: 50 }).notNull(), // page_view, project_view, contact_form
-  targetId: integer("targetId"), // ID of project for project_view
+  targetId: integer("targetId").references(() => projectsTable.id, { onDelete: "set null" }), // ID of project for project_view
   path: varchar("path", { length: 500 }).notNull(),
   browser: varchar("browser", { length: 100 }),
   os: varchar("os", { length: 100 }),
@@ -92,6 +97,15 @@ export const analyticsTable = pgTable("analytics", {
     typeIdx: index("analytics_type_idx").on(table.type),
     createdIdx: index("analytics_created_at_idx").on(table.createdAt),
   };
+});
+
+export const guestbookTable = pgTable("guestbook", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  email: varchar("email", { length: 255 }), // Optional
+  isApproved: boolean("isApproved").notNull().default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const emailTemplatesTable = pgTable("email_templates", {
@@ -341,7 +355,9 @@ export const experienceSchema = z.object({
   id: z.number(),
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
-  period: z.string().min(1).max(100),
+  period: z.string().max(100).nullish(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().nullish(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100),
 });
@@ -359,7 +375,9 @@ export const serviceSchema = z.object({
 export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
-  period: z.string().min(1).max(100),
+  period: z.string().max(100).nullable().optional(),
+  startDate: z.string().or(z.date()).optional(),
+  endDate: z.string().or(z.date()).nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
 });
@@ -411,6 +429,9 @@ export const insertMessageApiSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500).default(""),
   message: z.string().min(1).max(5000),
+  projectType: z.string().max(100).optional(),
+  budget: z.string().max(100).optional(),
+  timeline: z.string().max(100).optional(),
   website: z.string().optional(), // Honeypot field for spam prevention
 });
 

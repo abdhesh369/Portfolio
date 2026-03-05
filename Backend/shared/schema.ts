@@ -67,7 +67,11 @@ export const messagesTable = pgTable("messages", {
   email: varchar("email", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 500 }).notNull().default(""),
   message: text("message").notNull(),
+  projectType: varchar("projectType", { length: 100 }), // Optional for project inquiries
+  budget: varchar("budget", { length: 100 }),
+  timeline: varchar("timeline", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+
 });
 
 export const mindsetTable = pgTable("mindset", {
@@ -438,7 +442,11 @@ export const insertMessageApiSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500).default(""),
   message: z.string().min(1).max(5000),
+  projectType: z.string().max(100).optional(),
+  budget: z.string().max(100).optional(),
+  timeline: z.string().max(100).optional(),
   website: z.string().optional(), // Honeypot field for spam prevention
+
 });
 
 export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form"] as const;

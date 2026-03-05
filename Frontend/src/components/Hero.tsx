@@ -16,15 +16,20 @@ const MouseGradient = () => {
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisible = true; // For now, we will assume it's visible if the component is mounted in Hero
+
   useEffect(() => {
     if (prefersReducedMotion) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
+
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 
@@ -49,12 +54,14 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const stringsJson = JSON.stringify(strings);
+
   // Reset state when strings prop changes
   useEffect(() => {
     setDisplayed("");
     setIsDeleting(false);
     setIndex(0);
-  }, [strings]);
+  }, [stringsJson]);
 
   useEffect(() => {
     const current = strings[index];
@@ -348,9 +355,9 @@ export default function Hero() {
               initial={fadeUp.initial}
               animate={fadeUp.animate}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs backdrop-blur-sm mx-auto lg:mx-0"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-[10px] sm:text-xs backdrop-blur-sm mx-auto lg:mx-0"
             >
-              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_var(--color-cyan)]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_var(--color-cyan)]" />
               SYSTEM_READY_FOR_WORK
             </m.div>
 
@@ -402,16 +409,16 @@ export default function Hero() {
               <Button
                 onClick={scrollToProjects}
                 size="lg"
-                className="bg-cyan-500 text-black hover:bg-cyan-400 font-bold rounded-full px-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all"
+                className="w-full sm:w-auto bg-cyan-500 text-black hover:bg-cyan-400 font-bold rounded-full px-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all"
               >
                 View My Work <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
-
+              -
               <Button
                 onClick={scrollToContact}
                 variant="outline"
                 size="lg"
-                className="border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
+                className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
               >
                 Contact Me <Mail className="ml-2 w-4 h-4" />
               </Button>

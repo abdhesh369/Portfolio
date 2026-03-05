@@ -138,11 +138,11 @@ export default function BlogList() {
             />
             <Navbar />
 
-            <main className="container mx-auto px-6 pt-32 pb-24">
+            <main className="container mx-auto px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
                 <header className="max-w-2xl mb-16">
                     <m.h1
                         {...fadeLeft}
-                        className="text-4xl md:text-5xl font-bold text-white mb-4"
+                        className="text-3xl md:text-5xl font-bold text-white mb-4"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
                         Thoughts & <span className="text-primary italic">Insights</span>
@@ -151,7 +151,7 @@ export default function BlogList() {
                         initial={fadeLeft.initial}
                         animate={fadeLeft.animate}
                         transition={{ delay: 0.1 }}
-                        className="text-white/60 text-lg"
+                        className="text-white/60 text-base md:text-lg"
                     >
                         Deep dives into full-stack development, software architecture, and the engineering mindset.
                     </m.p>
@@ -175,7 +175,7 @@ export default function BlogList() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="flex flex-wrap gap-2"
+                            className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 md:mx-0 md:px-0"
                         >
                             <button
                                 onClick={() => setSelectedTag(null)}

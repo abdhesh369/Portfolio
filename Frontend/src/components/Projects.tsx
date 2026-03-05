@@ -469,7 +469,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative w-full max-w-3xl rounded-2xl overflow-hidden"
+        className="relative w-full max-w-3xl md:rounded-2xl overflow-hidden h-full md:h-auto md:max-h-[90vh] flex flex-col"
         style={{
           background: 'linear-gradient(180deg, rgba(15, 10, 40, 0.98) 0%, rgba(10, 8, 30, 0.98) 100%)',
           border: `1px solid ${catColor.text}40`,
@@ -497,7 +497,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         </div>
 
         {/* Content */}
-        <div className="p-5 max-h-[70vh] overflow-y-auto">
+        <div className="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar">
           {project.imageUrl && (
             <div className="relative rounded-xl overflow-hidden mb-5">
               <img
@@ -505,11 +505,9 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 alt={project.imageAlt || `Detailed view of the ${project.title} project interface and key features`}
                 loading="lazy"
                 decoding="async"
-                width={600}
-                height={224}
-                className="w-full h-56 object-cover"
+                className="w-full h-48 md:h-64 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
             </div>
           )}
 
@@ -534,13 +532,13 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:bg-white/10"
                 style={{
                   background: 'rgba(30, 30, 50, 0.8)',
                   border: '1px solid rgba(100, 100, 140, 0.3)',
@@ -556,7 +554,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:brightness-110 flex-1"
                 style={{
                   background: `linear-gradient(135deg, ${catColor.glow}, rgba(15, 10, 35, 0.9))`,
                   border: `1px solid ${catColor.text}50`,
@@ -692,108 +690,104 @@ export default function Projects() {
           >
             A collection of projects demonstrating my journey through software engineering and system design.
           </m.p>
-        </div>
-
-        {/* Filter Tabs */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 md:gap-3 mb-12"
-        >
-          {categories.map((cat) => (
-            <FilterButton
-              key={cat}
-              label={cat}
-              isActive={filter === cat}
-              onClick={() => setFilter(cat)}
-              count={getCategoryCount(cat)}
-            />
-          ))}
-        </m.div>
-
-        {/* Projects Grid - Bento Style */}
-        {isLoading ? (
-          <div className="flex flex-wrap justify-center gap-8">
-            {[1, 2, 3].map(i => (
-              <div
-                key={i}
-                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] h-[450px] rounded-3xl animate-pulse"
-                style={{ background: 'rgba(20, 15, 40, 0.5)', border: '1px solid rgba(255,255,255,0.05)' }}
+          <m.div
+            className="flex flex-nowrap md:flex-wrap items-center justify-start md:justify-center gap-3 mb-12 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            {categories.map((category) => (
+              <FilterButton
+                key={category}
+                label={category}
+                isActive={filter === category}
+                onClick={() => setFilter(category)}
+                count={getCategoryCount(category)}
               />
             ))}
-          </div>
-        ) : (
-          <m.div
-            layout
-            className="flex flex-wrap justify-center gap-8"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, index) => {
-                return (
-                  <div
-                    key={project.id}
-                    className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm"
-                  >
+          </m.div>
+
+          {/* Projects Grid - Bento Style */}
+          {isLoading ? (
+            <div className="flex flex-wrap justify-center gap-8">
+              {[1, 2, 3].map(i => (
+                <div
+                  key={i}
+                  className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] h-[450px] rounded-3xl animate-pulse"
+                  style={{ background: 'rgba(20, 15, 40, 0.5)', border: '1px solid rgba(255,255,255,0.05)' }}
+                />
+              ))}
+            </div>
+          ) : (
+            <m.div
+              layout
+              className="flex flex-wrap justify-center gap-8"
+            >
+              <AnimatePresence mode="popLayout">
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+                >
+                  {filteredProjects.map((project, index) => (
                     <ProjectCard
+                      key={project.id}
                       project={project}
                       onPreview={setPreviewProject}
                       index={index}
                     />
-                  </div>
-                );
-              })}
-            </AnimatePresence>
-          </m.div>
-        )}
+                  ))}
+                </div>
+              </AnimatePresence>
+            </m.div>
+          )}
 
-        {error && (
-          <div className="text-center py-16">
-            <p className="text-red-400 mb-2">Failed to load projects.</p>
-            <p className="text-sm text-gray-500">
-              {error instanceof Error ? error.message : 'Please try again later.'}
-            </p>
-          </div>
-        )}
+          {error && (
+            <div className="text-center py-16">
+              <p className="text-red-400 mb-2">Failed to load projects.</p>
+              <p className="text-sm text-gray-500">
+                {error instanceof Error ? error.message : 'Please try again later.'}
+              </p>
+            </div>
+          )}
 
-        {filteredProjects.length === 0 && !isLoading && !error && (
+          {filteredProjects.length === 0 && !isLoading && !error && (
+            <m.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16"
+            >
+              <Folder className="w-16 h-16 mx-auto text-gray-700 mb-4" />
+              <p className="text-gray-500">No projects found in this category.</p>
+            </m.div>
+          )}
+
+          {/* Project Count */}
           <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
           >
-            <Folder className="w-16 h-16 mx-auto text-gray-700 mb-4" />
-            <p className="text-gray-500">No projects found in this category.</p>
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+              style={{
+                background: 'rgba(168, 85, 247, 0.1)',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+                color: 'var(--color-purple)'
+              }}
+            >
+              <Cpu className="w-4 h-4" />
+              {filteredProjects.length} Projects Displayed
+            </div>
           </m.div>
-        )}
+        </div>
 
-        {/* Project Count */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
-            style={{
-              background: 'rgba(168, 85, 247, 0.1)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-              color: 'var(--color-purple)'
-            }}
-          >
-            <Cpu className="w-4 h-4" />
-            {filteredProjects.length} Projects Displayed
-          </div>
-        </m.div>
-      </div>
-
-      {/* Preview Modal */}
-      <AnimatePresence>
-        {previewProject && (
-          <PreviewModal project={previewProject} onClose={() => setPreviewProject(null)} />
-        )}
-      </AnimatePresence>
+        {/* Preview Modal */}
+        <AnimatePresence>
+          {previewProject && (
+            <PreviewModal project={previewProject} onClose={() => setPreviewProject(null)} />
+          )}
+        </AnimatePresence>
     </section>
   );
 }

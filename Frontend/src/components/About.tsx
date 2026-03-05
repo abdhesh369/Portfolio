@@ -183,7 +183,7 @@ export default function About() {
   const { data: experiences } = useExperiences();
   const scrollRef = useRef(null);
   return (
-    <section id="about" className="section-container scroll-mt-20 overflow-hidden py-24 relative">
+    <section id="about" className="section-container scroll-mt-20 overflow-hidden py-16 md:py-24 relative">
       <div className="text-center mb-20 relative z-10">
         <m.div
           initial={scaleIn.initial}
@@ -191,7 +191,7 @@ export default function About() {
           viewport={{ once: true }}
           className="inline-block px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-sm font-mono mb-4 backdrop-blur-md"
         >
-           // SYSTEM_PROFILE_LOADED
+          {/* SYSTEM_PROFILE_LOADED */}
         </m.div>
 
         <m.h2
@@ -199,7 +199,7 @@ export default function About() {
           whileInView={fadeDown.animate}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold font-display"
+          className="text-3xl md:text-5xl font-bold font-display"
         >
           <span className="text-white">About</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"><GlitchText text="Me" /></span>
         </m.h2>
@@ -340,9 +340,9 @@ export default function About() {
           initial={fadeUpLarge.initial}
           whileInView={fadeUpLarge.animate}
           viewport={{ once: true }}
-          className="mt-20 max-w-4xl mx-auto"
+          className="mt-16 md:mt-20 max-w-4xl mx-auto"
         >
-          <div className="bg-card/50 p-8 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
+          <div className="bg-card/50 p-6 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Calendar className="w-32 h-32 text-white" />
             </div>

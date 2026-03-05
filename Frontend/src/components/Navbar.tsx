@@ -18,15 +18,33 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [location, setLocation] = useLocation();
   const activeSection = useScrollSpy(["hero", "about", "skills", "projects", "experience", "contact"], 80);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Determine if we've scrolled enough to style the navbar
+      setScrolled(currentScrollY > 20);
+
+      // Handle visibility based on scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsVisible(false); // Scrolling down - hide
+      } else {
+        setIsVisible(true); // Scrolling up - show
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
+
 
   const handleNavClick = (href: string) => {
     setIsOpen(false);
@@ -94,11 +112,12 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${scrolled
+      className={`fixed w-full z-50 transition-all duration-500 ease-in-out ${scrolled
         ? "bg-background/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-cyan-500/5"
         : "bg-transparent"
-        }`}
+        } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Brand Logo */}

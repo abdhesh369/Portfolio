@@ -112,6 +112,8 @@ export default function Contact() {
   const { mutate: sendMessage, isPending, error: apiError } = useSendMessage();
   const [showSuccess, setShowSuccess] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [formMode, setFormMode] = useState<"message" | "project">("message");
+
 
   // Auto-dismiss success message
   const dismissSuccess = () => setShowSuccess(false);
@@ -122,8 +124,12 @@ export default function Contact() {
       email: "",
       subject: "",
       message: "",
+      projectType: "",
+      budget: "",
+      timeline: "",
     },
   });
+
 
   const onSubmit = (data: InsertMessage) => {
     if (cooldown > 0) return;
@@ -146,7 +152,7 @@ export default function Contact() {
   }, [cooldown]);
 
   return (
-    <section id="contact" className="section-container relative overflow-hidden py-24">
+    <section id="contact" className="section-container relative overflow-hidden py-16 md:py-24">
       {/* Background Grid */}
 
 
@@ -166,7 +172,7 @@ export default function Contact() {
             initial={fadeDown.initial}
             whileInView={fadeDown.animate}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold font-display text-white mb-4"
+            className="text-3xl md:text-5xl font-bold font-display text-white mb-4"
           >
             Initialize <span className="text-cyan-400">Connection</span>
           </m.h2>
@@ -291,14 +297,52 @@ export default function Contact() {
                   ) : null}
                 </AnimatePresence>
 
+                {/* Form Mode Toggle */}
+                <div className="flex flex-col sm:flex-row p-1 bg-white/5 rounded-lg mb-8 border border-white/10 w-full sm:w-fit mx-auto md:mx-0 gap-1 sm:gap-0">
+                  <button
+                    onClick={() => setFormMode("message")}
+                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "message" ? "bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]" : "text-gray-400 hover:text-white"}`}
+                  >
+                    Standard Message
+                  </button>
+                  <button
+                    onClick={() => setFormMode("project")}
+                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "project" ? "bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]" : "text-gray-400 hover:text-white"}`}
+                  >
+                    Project Request
+                  </button>
+                </div>
+
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
                   <div className="grid md:grid-cols-2 gap-6">
                     <CyberInput id="name" label="Identity" register={form.register} error={form.formState.errors.name?.message} required />
                     <CyberInput id="email" label="Return Address" type="email" register={form.register} error={form.formState.errors.email?.message} required />
                   </div>
 
-                  <CyberInput id="subject" label="Header / Subject" register={form.register} error={form.formState.errors.subject?.message} required />
-                  <CyberInput id="message" label="Packet Payload" isTextarea register={form.register} error={form.formState.errors.message?.message} required />
+                  <CyberInput id="subject" label={formMode === "project" ? "Project Name" : "Header / Subject"} register={form.register} error={form.formState.errors.subject?.message} required />
+
+                  <AnimatePresence mode="wait">
+                    {formMode === "project" && (
+                      <m.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden"
+                      >
+                        <div className="space-y-6">
+                          <CyberInput id="projectType" label="Project Type" register={form.register} error={form.formState.errors.projectType?.message} />
+                          <CyberInput id="budget" label="Budget Range" register={form.register} error={form.formState.errors.budget?.message} />
+                        </div>
+                        <div className="md:col-span-1">
+                          <CyberInput id="timeline" label="Timeline / Deadline" register={form.register} error={form.formState.errors.timeline?.message} />
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+
+                  <CyberInput id="message" label={formMode === "project" ? "Project Details & Goals" : "Packet Payload"} isTextarea register={form.register} error={form.formState.errors.message?.message} required />
+
 
                   {/* Honeypot field for spam protection */}
                   <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
@@ -319,17 +363,18 @@ export default function Contact() {
                   >
                     {isPending ? (
                       <span className="flex items-center gap-2">
-                        <span className="animate-spin">/</span> UPLOADING...
+                        <span className="animate-spin text-lg">/</span> UPLOADING...
                       </span>
                     ) : cooldown > 0 ? (
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-2 text-xs sm:text-sm">
                         TRANSMISSION_COOLDOWN [{cooldown}s]
                       </span>
                     ) : (
-                      <span className="relative z-10 flex items-center gap-2 group-hover:gap-4 transition-all">
-                        INITIATE_TRANSMISSION <Send className="w-4 h-4" />
+                      <span className="relative z-10 flex items-center gap-2 group-hover:gap-4 transition-all text-xs sm:text-sm">
+                        {formMode === "project" ? "INITIALIZE_PROJECT_INQUIRY" : "INITIATE_TRANSMISSION"} <Send className="w-4 h-4" />
                       </span>
                     )}
+
                     <div className="absolute inset-0 bg-white/10 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
                   </Button>
                 </form>

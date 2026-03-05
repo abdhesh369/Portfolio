@@ -148,7 +148,7 @@ export default function BlogPost() {
             />
             <Navbar />
 
-            <main className="container mx-auto px-6 pt-32 pb-24">
+            <main className="container mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24">
                 <div className="max-w-4xl xl:max-w-6xl mx-auto">
                     <m.div
                         initial={{ opacity: 0, x: -20 }}
@@ -166,7 +166,7 @@ export default function BlogPost() {
                     <div className="flex gap-12">
                         {/* Main article content */}
                         <div className="flex-1 max-w-4xl">
-                            <header className="mb-12">
+                            <header className="mb-8 md:mb-12">
                                 <m.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -189,7 +189,7 @@ export default function BlogPost() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
-                                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight"
+                                    className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 md:mb-8 leading-tight"
                                     style={{ fontFamily: "var(--font-display)" }}
                                 >
                                     {article.title}
@@ -216,11 +216,11 @@ export default function BlogPost() {
                                 ref={articleRef}
                                 className="prose prose-invert prose-purple max-w-none 
                         prose-headings:font-display prose-headings:font-bold prose-headings:text-white
-                        prose-p:text-white/70 prose-p:leading-relaxed prose-p:text-lg
+                        prose-p:text-white/70 prose-p:leading-relaxed prose-p:text-base md:text-lg
                         prose-a:text-primary prose-a:no-underline hover:prose-a:underline
                         prose-strong:text-white prose-code:text-primary prose-pre:bg-white/5
                         prose-img:rounded-2xl prose-img:border prose-img:border-white/10
-                        animate-fade-in pt-8"
+                        animate-fade-in pt-4 md:pt-8"
                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
                             />
 
