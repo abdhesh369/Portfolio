@@ -21,7 +21,6 @@ const Contact = lazy(() => import("@/components/Contact"));
 const Footer = lazy(() => import("@/components/Footer"));
 const BackToTop = lazy(() => import("@/components/BackToTop"));
 const SectionReveal = lazy(() => import("@/components/SectionReveal"));
-const GithubFeed = lazy(() => import("@/components/GithubFeed").then(m => ({ default: m.GithubFeed })));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
 
 
@@ -144,18 +143,7 @@ export default function Home() {
         <SectionReveal><SafeSection><About /></SafeSection></SectionReveal>
         <SectionDivider />
         <SectionReveal><SafeSection><Skills /></SafeSection></SectionReveal>
-        <div className="section-container mb-24">
-          <div className="grid lg:grid-cols-12 gap-12 items-start">
-            <div className="lg:col-span-8">
-              <SectionReveal><SafeSection><WhyHireMe /></SafeSection></SectionReveal>
-            </div>
-            <div className="lg:col-span-4 sticky top-24">
-              <SafeSection>
-                <GithubFeed />
-              </SafeSection>
-            </div>
-          </div>
-        </div>
+        <SectionReveal><SafeSection><WhyHireMe /></SafeSection></SectionReveal>
         <SectionDivider />
         <SectionReveal><SafeSection><Services /></SafeSection></SectionReveal>
         <SectionDivider />

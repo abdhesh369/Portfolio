@@ -1,6 +1,6 @@
 import { m } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus } from "lucide-react";
+import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus, AlertCircle, Zap } from "lucide-react";
 import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
 
@@ -65,11 +65,23 @@ export default function CodeAndPractice() {
                 time: date,
                 type: "star"
               }];
-            } else if (e.type === "PullRequestEvent") {
+            } else if (e.type === "IssuesEvent") {
               return [{
-                task: `PR in ${e.repo.name}`,
+                task: `${e.payload.action} an issue in ${e.repo.name}`,
                 time: date,
-                type: "pr"
+                type: "issue"
+              }];
+            } else if (e.type === "ForkEvent") {
+              return [{
+                task: `Forked ${e.repo.name}`,
+                time: date,
+                type: "fork"
+              }];
+            } else if (e.type === "ReleaseEvent") {
+              return [{
+                task: `Released ${e.payload.ref_type || 'version'} of ${e.repo.name}`,
+                time: date,
+                type: "release"
               }];
             }
             return [];
@@ -167,7 +179,10 @@ export default function CodeAndPractice() {
                         {item.type === "star" && <Star className="w-4 h-4 text-yellow-500" />}
                         {item.type === "create" && <Plus className="w-4 h-4 text-green-500" />}
                         {item.type === "pr" && <GitPullRequest className="w-4 h-4 text-purple-500" />}
-                        {!["push", "star", "create", "pr"].includes(item.type) && <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />}
+                        {item.type === "issue" && <AlertCircle className="w-4 h-4 text-orange-400" />}
+                        {item.type === "fork" && <GitBranch className="w-4 h-4 text-purple-400" />}
+                        {item.type === "release" && <Zap className="w-4 h-4 text-cyan-400" />}
+                        {!["push", "star", "create", "pr", "issue", "fork", "release"].includes(item.type) && <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />}
                       </div>
                       <div className="flex-1">
                         <div className="text-sm font-medium line-clamp-2">{item.task}</div>
