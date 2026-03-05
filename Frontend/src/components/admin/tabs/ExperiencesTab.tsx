@@ -8,7 +8,7 @@ import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@shared/schema";
 
-const emptyExperience = { role: "", organization: "", startDate: new Date(), endDate: null as Date | null, description: "", type: "Experience" };
+const emptyExperience = { role: "", organization: "", period: "", startDate: new Date(), endDate: null as Date | null, description: "", type: "Experience" };
 
 import type { AdminTabProps } from "./types";
 
@@ -23,11 +23,17 @@ export function ExperiencesTab({ }: AdminTabProps) {
         if (!editing) return;
         setSaving(true);
         try {
+            const payload = {
+                ...editing,
+                startDate: editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString() : editing.startDate) : null,
+                endDate: editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString() : editing.endDate) : null,
+            };
+
             if (editing.id) {
-                await apiFetch(`/api/v1/experiences/${editing.id}`, { method: "PUT", body: JSON.stringify(editing) });
+                await apiFetch(`/api/v1/experiences/${editing.id}`, { method: "PUT", body: JSON.stringify(payload) });
                 toast({ title: "Experience updated" });
             } else {
-                await apiFetch("/api/v1/experiences", { method: "POST", body: JSON.stringify(editing) });
+                await apiFetch("/api/v1/experiences", { method: "POST", body: JSON.stringify(payload) });
                 toast({ title: "Experience created" });
             }
             setEditing(null);
@@ -61,9 +67,21 @@ export function ExperiencesTab({ }: AdminTabProps) {
                 <form onSubmit={save} className="space-y-4 max-w-2xl text-white">
                     <FormField label="Role *" value={editing.role} onChange={(v) => setEditing({ ...editing, role: v })} required />
                     <FormField label="Organization *" value={editing.organization} onChange={(v) => setEditing({ ...editing, organization: v })} required />
+                    <FormField label="Period * (e.g. Jan 2020 - Present)" value={editing.period} onChange={(v) => setEditing({ ...editing, period: v })} required />
                     <div className="grid grid-cols-2 gap-4">
-                        <FormField label="Start Date *" type="date" value={editing.startDate instanceof Date ? editing.startDate.toISOString().split('T')[0] : (editing.startDate as string).split('T')[0]} onChange={(v) => setEditing({ ...editing, startDate: new Date(v) })} required />
-                        <FormField label="End Date" type="date" value={editing.endDate instanceof Date ? editing.endDate.toISOString().split('T')[0] : (editing.endDate ? (editing.endDate as string).split('T')[0] : "")} onChange={(v) => setEditing({ ...editing, endDate: v ? new Date(v) : null })} />
+                        <FormField
+                            label="Start Date *"
+                            type="date"
+                            value={editing.startDate ? new Date(editing.startDate).toISOString().split('T')[0] : ""}
+                            onChange={(v) => setEditing({ ...editing, startDate: new Date(v) })}
+                            required
+                        />
+                        <FormField
+                            label="End Date"
+                            type="date"
+                            value={editing.endDate ? new Date(editing.endDate).toISOString().split('T')[0] : ""}
+                            onChange={(v) => setEditing({ ...editing, endDate: v ? new Date(v) : null })}
+                        />
                     </div>
                     <FormTextarea label="Description *" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} required />
                     <FormField label="Type" value={editing.type} onChange={(v) => setEditing({ ...editing, type: v })} placeholder="Experience, Education, etc." />

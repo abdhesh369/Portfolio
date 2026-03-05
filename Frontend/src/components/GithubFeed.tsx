@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { Github, GitCommit, GitBranch, ExternalLink, RefreshCw } from "lucide-react";
+import { Github, GitCommit, GitBranch, ExternalLink, RefreshCw, Sparkles, AlertCircle, Zap } from "lucide-react";
 import { apiFetch } from "../lib/api-helpers";
 import { formatDistanceToNow } from "date-fns";
 
@@ -42,6 +42,11 @@ export const GithubFeed = () => {
         switch (type) {
             case "PushEvent": return <GitCommit className="w-4 h-4 text-primary" />;
             case "CreateEvent": return <GitBranch className="w-4 h-4 text-green-400" />;
+            case "PullRequestEvent": return <ExternalLink className="w-4 h-4 text-blue-400" />;
+            case "WatchEvent": return <Sparkles className="w-4 h-4 text-yellow-400" />;
+            case "IssuesEvent": return <AlertCircle className="w-4 h-4 text-orange-400" />;
+            case "ForkEvent": return <GitBranch className="w-4 h-4 text-purple-400" />;
+            case "ReleaseEvent": return <Zap className="w-4 h-4 text-cyan-400" />;
             default: return <Github className="w-4 h-4 text-muted-foreground" />;
         }
     };
@@ -65,7 +70,31 @@ export const GithubFeed = () => {
             case "PullRequestEvent":
                 return (
                     <span>
-                        Opened a PR in <span className="text-blue-400 font-semibold">{repoName}</span>
+                        {event.payload.action === 'closed' ? 'Merged' : 'Opened'} a PR in <span className="text-blue-400 font-semibold">{repoName}</span>
+                    </span>
+                );
+            case "WatchEvent":
+                return (
+                    <span>
+                        Starred <span className="text-yellow-400 font-semibold">{repoName}</span>
+                    </span>
+                );
+            case "IssuesEvent":
+                return (
+                    <span>
+                        {event.payload.action} an issue in <span className="text-orange-400 font-semibold">{repoName}</span>
+                    </span>
+                );
+            case "ForkEvent":
+                return (
+                    <span>
+                        Forked <span className="text-purple-400 font-semibold">{repoName}</span>
+                    </span>
+                );
+            case "ReleaseEvent":
+                return (
+                    <span>
+                        Released a new version of <span className="text-cyan-400 font-semibold">{repoName}</span>
                     </span>
                 );
             default:
@@ -103,8 +132,15 @@ export const GithubFeed = () => {
                         </div>
                     ))
                 ) : error ? (
-                    <div className="text-center py-4 text-muted-foreground text-sm">
+                    <div className="text-center py-8 text-muted-foreground text-sm flex flex-col items-center gap-2">
+                        <div className="p-2 rounded-full bg-red-400/10">
+                            <Github className="w-4 h-4 text-red-400/60" />
+                        </div>
                         Failed to sync with GitHub.
+                    </div>
+                ) : events.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm italic">
+                        No recent activity found.
                     </div>
                 ) : (
                     <AnimatePresence mode="popLayout">

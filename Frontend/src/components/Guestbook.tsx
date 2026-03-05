@@ -118,9 +118,19 @@ export const Guestbook = () => {
                                     </div>
                                 ))
                             ) : entries.length === 0 ? (
-                                <div className="text-center py-12 bg-card/10 rounded-2xl border border-dashed border-border/50">
-                                    <p className="text-muted-foreground italic">No messages yet. Be the first!</p>
-                                </div>
+                                <m.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="text-center py-16 bg-card/20 rounded-3xl border border-dashed border-border/50 flex flex-col items-center gap-4"
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center">
+                                        <MessageSquare className="w-8 h-8 text-muted-foreground/40" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-foreground/80 font-medium">No messages yet</p>
+                                        <p className="text-muted-foreground text-sm italic">Be the first to leave a mark in the digital sand!</p>
+                                    </div>
+                                </m.div>
                             ) : (
                                 <AnimatePresence mode="popLayout">
                                     {entries.map((entry: GuestbookEntry, index: number) => (

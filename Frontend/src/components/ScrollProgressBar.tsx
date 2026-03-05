@@ -1,23 +1,12 @@
-import { useEffect, useState } from "react";
+import { useScrollStore } from "@/hooks/use-scroll-store";
 
 /**
  * TICKET-030: Reading progress bar — fixed at top of viewport.
- * Uses passive scroll listener for performance.
+ * Uses shared scroll store for performance.
  * aria-hidden so screen readers don't announce it.
  */
 export function ScrollProgressBar() {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    function handleScroll() {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0);
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { progress } = useScrollStore();
 
   return (
     <div

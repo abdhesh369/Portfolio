@@ -5,6 +5,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
+import { useScrollStore } from "@/hooks/use-scroll-store";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -24,26 +25,12 @@ export default function Navbar() {
   const activeSection = useScrollSpy(["hero", "about", "skills", "projects", "experience", "contact"], 80);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  const { scrollY, scrollDirection } = useScrollStore();
+
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Determine if we've scrolled enough to style the navbar
-      setScrolled(currentScrollY > 20);
-
-      // Handle visibility based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setIsVisible(false); // Scrolling down - hide
-      } else {
-        setIsVisible(true); // Scrolling up - show
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+    setScrolled(scrollY > 20);
+    setIsVisible(scrollDirection === "up" || scrollY <= 80);
+  }, [scrollY, scrollDirection]);
 
 
   const handleNavClick = (href: string) => {

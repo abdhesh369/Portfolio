@@ -87,7 +87,7 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
       }, speed);
     }
     return () => clearTimeout(timeout);
-  }, [displayed, isDeleting, index, strings]);
+  }, [displayed, isDeleting, index, stringsJson, strings.length]);
 
   return (
     <span className="inline-flex items-center">

@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
+import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
@@ -53,41 +54,6 @@ function SectionFallback() {
   );
 }
 
-// Lightweight scroll progress bar — no framer-motion needed
-function ScrollProgressBar() {
-  const barRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-        if (barRef.current) {
-          barRef.current.style.transform = `scaleX(${progress})`;
-        }
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <div
-      ref={barRef}
-      className="fixed top-0 left-0 right-0 h-1 z-[100] origin-left"
-      style={{
-        transform: "scaleX(0)",
-        willChange: "transform",
-        background: "linear-gradient(90deg, #06b6d4, #3b82f6, #a855f7)",
-      }}
-    />
-  );
-}
 
 function SafeSection({ children }: { children: React.ReactNode }) {
   return (
