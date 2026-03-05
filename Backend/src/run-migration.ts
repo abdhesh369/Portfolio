@@ -1,16 +1,24 @@
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
 
-const connectionString = "postgresql://neondb_owner:npg_DxSXsPlB3zc8@ep-floral-frost-a1zk9v1f-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
+dotenv.config();
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  console.error("DATABASE_URL environment variable is not set.");
+  process.exit(1);
+}
 
 const pool = new Pool({
-    connectionString,
+  connectionString,
 });
 
 async function run() {
-    const client = await pool.connect();
-    try {
-        console.log("Running missing migrations...");
-        const queries = `
+  const client = await pool.connect();
+  try {
+    console.log("Running missing migrations...");
+    const queries = `
       CREATE TABLE IF NOT EXISTS "comments" (
         "id" serial PRIMARY KEY NOT NULL,
         "article_id" integer NOT NULL,
@@ -26,17 +34,26 @@ async function run() {
         "updatedAt" timestamp DEFAULT now() NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS "guestbook" (
+        "id" serial PRIMARY KEY NOT NULL,
+        "name" varchar(255) NOT NULL,
+        "content" text NOT NULL,
+        "email" varchar(255),
+        "isApproved" boolean DEFAULT false NOT NULL,
+        "createdAt" timestamp DEFAULT now() NOT NULL
+      );
+
       ALTER TABLE "experiences" ADD COLUMN IF NOT EXISTS "startDate" timestamp;
       ALTER TABLE "experiences" ADD COLUMN IF NOT EXISTS "endDate" timestamp;
       ALTER TABLE "projects" ADD COLUMN IF NOT EXISTS "viewCount" integer DEFAULT 0 NOT NULL;
       ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "featuredImageAlt" text;
     `;
-        await client.query(queries);
-        console.log("Tables and columns created/verified.");
+    await client.query(queries);
+    console.log("Tables and columns created/verified.");
 
-        // Adding constraints carefully. They might throw if they exist and IF NOT EXISTS is not supported for adding constraints in older PG,
-        // but we can try catching the specific error or use a DO block.
-        const constraintQueries = `
+    // Adding constraints carefully. They might throw if they exist and IF NOT EXISTS is not supported for adding constraints in older PG,
+    // but we can try catching the specific error or use a DO block.
+    const constraintQueries = `
       DO $$
       BEGIN
           IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'skill_connections_from_skill_id_skills_id_fk') THEN
@@ -56,15 +73,15 @@ async function run() {
           END IF;
       END $$;
     `;
-        await client.query(constraintQueries);
-        console.log("Constraints added/verified.");
+    await client.query(constraintQueries);
+    console.log("Constraints added/verified.");
 
-    } catch (error) {
-        console.error("Migration failed:", error);
-    } finally {
-        client.release();
-        await pool.end();
-    }
+  } catch (error) {
+    console.error("Migration failed:", error);
+  } finally {
+    client.release();
+    await pool.end();
+  }
 }
 
 run();
