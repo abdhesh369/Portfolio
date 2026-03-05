@@ -34,46 +34,37 @@ const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const FloatingParticles = () => {
-  id: i,
-    x: Math.random() * 100,
-      y: Math.random() * 100,
-        delay: Math.random() * 6,
-          duration: 10 + Math.random() * 8,
-            size: 2 + Math.random() * 4,
-              color: Math.random() > 0.5 ? 'cyan' : 'purple'
-}));
-
-return (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {PARTICLE_DATA.map((p) => (
-      <m.div
-        key={p.id}
-        className="absolute rounded-full"
-        style={{
-          left: `${p.x}%`,
-          top: `${p.y}%`,
-          width: p.size,
-          height: p.size,
-          background: p.color === 'cyan'
-            ? 'radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 70%)'
-        }}
-        animate={{
-          y: [-20, 20, -20],
-          x: [-10, 10, -10],
-          opacity: [0.2, 0.7, 0.2],
-          scale: [0.8, 1.2, 0.8]
-        }}
-        transition={{
-          duration: p.duration,
-          delay: p.delay,
-          repeat: Infinity,
-          ease: 'easeInOut'
-        }}
-      />
-    ))}
-  </div>
-);
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {PARTICLE_DATA.map((p) => (
+        <m.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+            background: p.color === 'cyan'
+              ? 'radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 70%)'
+          }}
+          animate={{
+            y: [-20, 20, -20],
+            x: [-10, 10, -10],
+            opacity: [0.2, 0.7, 0.2],
+            scale: [0.8, 1.2, 0.8]
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: 'easeInOut'
+          }}
+        />
+      ))}
+    </div>
+  );
 };
 
 // Section Card Component

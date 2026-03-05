@@ -1,0 +1,5 @@
+src/routes/articles.ts(88,70): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '"NX"' is not assignable to parameter of type '"KEEPTTL"'.
+src/seed.ts(293,40): error TS2345: Argument of type '{ role: string; organization: string; period: string; description: string; type: string; }' is not assignable to parameter of type '{ type: string; description: string; role: string; organization: string; startDate: string | Date; period?: string | null | undefined; endDate?: string | Date | null | undefined; }'.
+  Property 'startDate' is missing in type '{ role: string; organization: string; period: string; description: string; type: string; }' but required in type '{ type: string; description: string; role: string; organization: string; startDate: string | Date; period?: string | null | undefined; endDate?: string | Date | null | undefined; }'.

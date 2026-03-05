@@ -85,7 +85,7 @@ articlesRouter.get(
                     let hasViewed = false;
                     if (redis) {
                         // Set key only if it doesn't exist, expire in 1 hour
-                        const result = await redis.set(viewKey, '1', 'NX', 'EX', 3600);
+                        const result = await redis.set(viewKey, '1', 'EX', 3600, 'NX');
                         hasViewed = result === null;
                     }
                     if (!hasViewed) {
