@@ -5,6 +5,7 @@ import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cp
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useTheme } from "./theme-provider";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
@@ -305,6 +306,7 @@ export default function Hero() {
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
   const { data: experiences } = useExperiences();
+  const { data: settings } = useSiteSettings();
 
   const scrollToProjects = () => {
     document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' });
@@ -312,6 +314,8 @@ export default function Hero() {
   const scrollToContact = () => {
     document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const showBanner = settings?.isOpenToWork ?? true; // Default to true if loading or error
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
@@ -346,7 +350,7 @@ export default function Hero() {
               </div>
             </m.div>
 
-            <OpenToWorkBanner />
+            {showBanner && <OpenToWorkBanner />}
 
             {/* Status Pill */}
             <m.div

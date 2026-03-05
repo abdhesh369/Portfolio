@@ -212,6 +212,12 @@ export const auditLogTable = pgTable("audit_log", {
   };
 });
 
+export const siteSettingsTable = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  isOpenToWork: boolean("isOpenToWork").notNull().default(true),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
 
 export const selectProjectSchema = createSelectSchema(projectsTable);
@@ -255,6 +261,9 @@ export const insertAuditLogSchema = createInsertSchema(auditLogTable);
 
 export const selectGuestbookSchema = createSelectSchema(guestbookTable);
 export const insertGuestbookSchema = createInsertSchema(guestbookTable);
+
+export const selectSiteSettingsSchema = createSelectSchema(siteSettingsTable);
+export const insertSiteSettingsSchema = createInsertSchema(siteSettingsTable);
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -525,6 +534,16 @@ export const insertSeoSettingsApiSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
 });
 
+export const siteSettingsSchema = z.object({
+  id: z.number(),
+  isOpenToWork: z.boolean(),
+  updatedAt: z.coerce.date(),
+});
+
+export const insertSiteSettingsApiSchema = z.object({
+  isOpenToWork: z.boolean().optional(),
+});
+
 export const articleSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -596,6 +615,8 @@ export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
+export type SiteSettings = z.infer<typeof siteSettingsSchema>;
+export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
 
 // ================= TYPE GUARDS =================
 

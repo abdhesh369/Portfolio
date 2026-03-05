@@ -15,6 +15,7 @@ import sitemapRoutes from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
+import { registerSettingsRoutes } from "./routes/settings.js";
 import feedRoutes from "./routes/feed.js";
 import githubRoutes from "./routes/github.js";
 import guestbookRoutes from "./routes/guestbook.js";
@@ -61,6 +62,7 @@ export function registerRoutes(app: Express) {
   registerEmailTemplateRoutes(v1Router);
   registerTestimonialRoutes(v1Router);
   registerChatRoutes(v1Router);
+  registerSettingsRoutes(v1Router);
 
   // Admin audit log (TICKET-032)
   v1Router.use("/admin", auditLogRoutes);
