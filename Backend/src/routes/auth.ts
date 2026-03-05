@@ -87,7 +87,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     res.cookie("auth_token", token, {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 15 * 60 * 1000, // 15 minutes
     });
@@ -96,7 +96,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -106,7 +106,7 @@ router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Respo
     res.cookie("csrf_token", csrfToken, {
         httpOnly: false,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
@@ -155,7 +155,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     res.cookie("auth_token", accessToken, {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 15 * 60 * 1000, // 15 minutes
     });
@@ -164,7 +164,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     res.cookie("csrf_token", newCsrfToken, {
         httpOnly: false,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match login TTL)
     });
@@ -203,19 +203,19 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
     res.clearCookie("auth_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/"
     });
     res.clearCookie("refresh_token", {
         httpOnly: true,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/"
     });
     res.clearCookie("csrf_token", {
         httpOnly: false,
         secure: isProd,
-        sameSite: "strict",
+        sameSite: isProd ? "none" : "lax",
         path: "/"
     });
 
