@@ -267,7 +267,7 @@ export async function seedDatabase() {
         role: "Bachelor of Engineering Student",
         organization: "Tribhuvan University",
         period: "2024 – 2028",
-        startDate: "2024-01-01", // Approximate seed data
+        startDate: new Date("2024-01-01"), // Approximate seed data
         description: "Pursuing B.E. in Electronics & Communication Engineering. Relevant coursework: Data Structures, Computer Programming, Digital Electronics, Microprocessors, and Engineering Mathematics.",
         type: "Education",
       },
@@ -275,7 +275,7 @@ export async function seedDatabase() {
         role: "Self-Taught Developer",
         organization: "Personal Projects",
         period: "2023 – Present",
-        startDate: "2023-01-01", // Approximate seed data
+        startDate: new Date("2023-01-01"), // Approximate seed data
         description: "Building web applications and automation tools. Learning modern web technologies including React, TypeScript, and Node.js through hands-on projects.",
         type: "Experience",
       },

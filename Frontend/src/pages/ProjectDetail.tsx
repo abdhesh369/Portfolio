@@ -534,8 +534,8 @@ export default function ProjectDetail() {
                     Technologies Used
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech: string, idx: number) => (
-                      <TechBadge key={idx} tech={tech} />
+                    {project.techStack.map((tech: string) => (
+                      <TechBadge key={tech} tech={tech} />
                     ))}
                   </div>
 

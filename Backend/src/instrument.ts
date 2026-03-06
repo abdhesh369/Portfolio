@@ -34,7 +34,7 @@ if (env.SENTRY_DSN) {
     Sentry.init({
         dsn: env.SENTRY_DSN,
         // Setting this option to true sends default PII data (e.g. user IP)
-        sendDefaultPii: true,
+        sendDefaultPii: false,
         environment: env.SENTRY_ENVIRONMENT || env.NODE_ENV,
         integrations,
         // Performance Monitoring

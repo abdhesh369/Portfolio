@@ -12,6 +12,7 @@ export function GuestbookTab() {
     const deleteMutation = useDeleteGuestbook();
     const entries = entriesData ?? [];
     const [searchQuery, setSearchQuery] = useState("");
+    const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
 
     if (isLoading) return <LoadingSkeleton />;
 
@@ -30,10 +31,10 @@ export function GuestbookTab() {
         queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] });
     };
 
-    const handleDelete = async (id: number) => {
-        if (!confirm("Delete this entry?")) return;
+    const handleDeleteConfirm = async (id: number) => {
         await deleteMutation.mutateAsync(id);
         queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] });
+        setIsDeletingId(null);
     };
 
     return (
@@ -93,15 +94,38 @@ export function GuestbookTab() {
                                         Approve
                                     </Button>
                                 )}
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => handleDelete(entry.id)}
-                                    disabled={deleteMutation.isPending}
-                                    className="opacity-60 group-hover:opacity-100 transition-opacity h-8"
-                                >
-                                    <Trash2 size={14} />
-                                </Button>
+                                {isDeletingId === entry.id ? (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs text-white/70">Are you sure?</span>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() => handleDeleteConfirm(entry.id)}
+                                            disabled={deleteMutation.isPending}
+                                            className="h-8"
+                                        >
+                                            Yes
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setIsDeletingId(null)}
+                                            className="h-8 text-white/60"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => setIsDeletingId(entry.id)}
+                                        disabled={deleteMutation.isPending}
+                                        className="opacity-60 group-hover:opacity-100 transition-opacity h-8"
+                                    >
+                                        <Trash2 size={14} />
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     ))}

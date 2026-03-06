@@ -7,6 +7,15 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    groups:
+      server-dependencies:
+        patterns:
+          - "express*"
+          - "@types/express*"
+          - "nodemon*"
+      backend-types:
+        patterns:
+          - "@types/*"
     labels:
       - "dependencies"
       - "backend"
@@ -20,6 +29,15 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    groups:
+      frontend-framework:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "tailwind*"
+      frontend-types:
+        patterns:
+          - "@types/*"
     labels:
       - "dependencies"
       - "frontend"
@@ -36,5 +54,3 @@ updates:
     labels:
       - "dependencies"
       - "ci"
-    commit-message:
-      prefix: "chore(ci):"

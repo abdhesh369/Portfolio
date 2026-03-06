@@ -160,11 +160,7 @@ export const registerChatRoutes = (router: Router) => {
 
                     const text = response.choices?.[0]?.message?.content || "No response generated.";
 
-                    return res.json({
-                        success: true,
-                        message: "Response generated successfully",
-                        data: { message: text }
-                    });
+                    return res.json({ message: text });
                 } catch (modelErr: any) {
                     lastError = modelErr;
                     logger.warn({ context: "chat", model, error: modelErr.message }, `Model ${model} failed, trying next`);
