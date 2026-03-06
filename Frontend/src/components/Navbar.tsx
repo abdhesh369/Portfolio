@@ -114,18 +114,18 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Brand Logo */}
           <button
-            className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl transition-all group"
+            className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl transition-all group"
             onClick={() => handleNavClick("/")}
-            aria-label={`${settings?.personalName || "Abdhesh Sah"} Portfolio - Home`}
+            aria-label={`${settings?.personalName || "Portfolio"} - Home`}
           >
-            <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30 overflow-hidden">
-              <Code2 className="w-6 h-6 text-cyan-400 relative z-10 group-hover:scale-110 transition-transform" />
-              <div className="absolute inset-0 bg-cyan-500/20 blur-md opacity-50 group-hover:opacity-100 transition-opacity" />
+            <div className="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-xl border border-primary/30 overflow-hidden">
+              <Code2 className="w-6 h-6 text-primary relative z-10 group-hover:scale-110 transition-transform" />
+              <div className="absolute inset-0 bg-primary/20 blur-md opacity-50 group-hover:opacity-100 transition-opacity" />
               {/* Scanline effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight text-white">
-              {settings?.personalName?.split(' ')[0] || "Abdhesh"}<span className="text-cyan-400">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
+            <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
+              {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-primary">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
             </span>
           </button>
 
@@ -147,7 +147,7 @@ export default function Navbar() {
                   <span className="relative z-10">{item.name}</span>
                   {/* Hover Glow Background */}
                   <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
-                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_var(--color-cyan)] ${isActive
+                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-primary transition-all duration-300 shadow-[0_0_10px_var(--primary)] ${isActive
                     ? "w-[60%]"
                     : "w-0 group-hover:w-[60%]"
                     }`} />
@@ -159,9 +159,9 @@ export default function Navbar() {
               <PerformanceToggle />
               <Button
                 onClick={() => handleNavClick("#contact")}
-                className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-full px-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all"
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/50 rounded-full px-6 shadow-[0_0_15px_var(--primary-glow)] hover:shadow-[0_0_25px_var(--primary-glow)] transition-all"
               >
-                Hire Me
+                {settings?.heroCtaSecondary || "Hire Me"}
               </Button>
             </div>
           </div>
@@ -211,7 +211,7 @@ export default function Navbar() {
                     key={item.name}
                     onClick={() => handleNavClick(item.href)}
                     aria-current={isActive ? "page" : undefined}
-                    className={`block w-full text-left px-4 py-3 text-base font-medium transition-all border-l-2 rounded-lg ${isActive ? "text-white bg-white/5 border-cyan-400" : "text-gray-300 border-transparent hover:text-white hover:bg-white/5 hover:border-cyan-400"}`}
+                    className={`block w-full text-left px-4 py-3 text-base font-medium transition-all border-l-2 rounded-lg ${isActive ? "text-white bg-white/5 border-primary" : "text-gray-300 border-transparent hover:text-white hover:bg-white/5 hover:border-primary"}`}
                   >
                     {item.name}
                   </button>
@@ -219,9 +219,9 @@ export default function Navbar() {
               })}
               <Button
                 onClick={() => handleNavClick("#contact")}
-                className="w-full mt-4 bg-cyan-500 text-black hover:bg-cyan-400"
+                className="w-full mt-4 bg-primary text-black hover:bg-primary/90 font-bold"
               >
-                Hire Me
+                {settings?.heroCtaSecondary || "Hire Me"}
               </Button>
             </div>
           </m.div>

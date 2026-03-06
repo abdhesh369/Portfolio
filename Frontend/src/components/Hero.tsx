@@ -44,7 +44,7 @@ const MouseGradient = () => {
       <div
         className="absolute w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 60%)",
+          background: "radial-gradient(circle, var(--primary-rgb-20) 0%, transparent 60%)",
         }}
       />
     </m.div>
@@ -148,10 +148,10 @@ const ProfileCard = ({ settings }: { settings: any }) => {
       }}
     >
       {/* Glow Ring */}
-      <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-20 blur-2xl animate-pulse" />
+      <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-primary via-secondary to-accent opacity-20 blur-2xl animate-pulse" />
 
       {/* Main Card Container */}
-      <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
+      <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-primary/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
         {/* Profile Image */}
         <OptimizedImage
           src={settings?.personalAvatar || "/images/Myphoto.webp"}
@@ -171,13 +171,13 @@ const ProfileCard = ({ settings }: { settings: any }) => {
               <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse delay-75" />
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse delay-150" />
             </div>
-            <div className="px-2 py-1 rounded bg-cyan-500/20 border border-cyan-500/30 text-[10px] text-cyan-400 font-mono">
+            <div className="px-2 py-1 rounded bg-primary/20 border border-primary/30 text-[10px] text-primary font-mono">
               SYS.ONLINE
             </div>
           </div>
 
           {/* Holographic Code Stream */}
-          <div className="space-y-2 font-mono text-[10px] text-cyan-500/50 overflow-hidden h-32 opacity-50">
+          <div className="space-y-2 font-mono text-[10px] text-primary/50 overflow-hidden h-32 opacity-50">
             {Array.from({ length: 8 }).map((_, i) => (
               <m.div
                 key={i}
@@ -192,7 +192,7 @@ const ProfileCard = ({ settings }: { settings: any }) => {
 
           {/* Bottom Details */}
           <div className="bg-background/80 p-6 rounded-xl border border-white/10 backdrop-blur-md">
-            <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
               Active Protocols
             </div>
@@ -213,15 +213,15 @@ const ProfileCard = ({ settings }: { settings: any }) => {
         </div>
 
         {/* Scanline */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent pointer-events-none animate-scan" style={{ backgroundSize: '100% 3px' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none animate-scan" style={{ backgroundSize: '100% 3px' }} />
       </div>
 
       {/* Floating Orbital Elements */}
       {!reducedMotion && (
         <>
-          <OrbitItem icon={Cpu} label="System Arch" color="cyan" delay={0} x={-20} y={-20} />
-          <OrbitItem icon={Globe} label="Full Stack" color="purple" delay={1} x={20} y={20} />
-          <OrbitItem icon={Terminal} label="DevOps" color="pink" delay={2} x={-20} y={20} />
+          <OrbitItem icon={Cpu} label="System Arch" color="primary" delay={0} x={-20} y={-20} />
+          <OrbitItem icon={Globe} label="Full Stack" color="secondary" delay={1} x={20} y={20} />
+          <OrbitItem icon={Terminal} label="DevOps" color="accent" delay={2} x={-20} y={20} />
         </>
       )}
 
@@ -232,7 +232,7 @@ const ProfileCard = ({ settings }: { settings: any }) => {
 interface OrbitItemProps {
   icon: React.ElementType;
   label: string;
-  color: "cyan" | "purple" | "pink";
+  color: "primary" | "secondary" | "accent";
   delay: number;
   x: number;
   y: number;
@@ -240,9 +240,9 @@ interface OrbitItemProps {
 
 const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) => {
   const colors = {
-    cyan: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
-    purple: "text-purple-400 bg-purple-500/10 border-purple-500/30",
-    pink: "text-pink-400 bg-pink-500/10 border-pink-500/30"
+    primary: "text-primary bg-primary/10 border-primary/30",
+    secondary: "text-secondary bg-secondary/10 border-secondary/30",
+    accent: "text-accent bg-accent/10 border-accent/30"
   };
 
   return (
@@ -270,23 +270,23 @@ const OpenToWorkBanner = () => {
       className="relative group mb-8 inline-block"
     >
       {/* Dynamic Background Glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/50 to-purple-500/50 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-secondary/50 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
 
       {/* Banner Body */}
       <div className="relative flex items-center gap-3 px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.3)]">
         <span className="flex items-center gap-2">
           <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500 shadow-[0_0_8px_#22d3ee]"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary shadow-[0_0_8px_var(--primary)]"></span>
           </span>
-          <span className="text-cyan-300 font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap">
+          <span className="text-primary/90 font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap">
             Status: Open for opportunities
           </span>
         </span>
 
         <div className="h-4 w-[1px] bg-white/20 mx-1" />
 
-        <span className="flex items-center gap-1.5 text-purple-400 font-display text-xs font-semibold group-hover:text-purple-300 transition-colors">
+        <span className="flex items-center gap-1.5 text-secondary font-display text-xs font-semibold group-hover:text-secondary/80 transition-colors">
           <Sparkles className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Hiring? Let's Talk</span>
           <span className="sm:hidden text-[10px]">Hiring?</span>
@@ -338,7 +338,7 @@ export default function Hero() {
               className="flex justify-center lg:hidden"
             >
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-60 blur-md animate-pulse" />
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-secondary to-accent opacity-60 blur-md animate-pulse" />
                 <OptimizedImage
                   src={settings?.personalAvatar || "/images/Myphoto-500.webp"}
                   alt={`${settings?.personalName || "Abdhesh Sah"} Avatar`}
@@ -358,13 +358,13 @@ export default function Hero() {
               animate={fadeUp.animate}
               transition={{ delay: 0.2 }}
               className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono backdrop-blur-sm mx-auto lg:mx-0 transition-colors duration-500 ${status === "online"
-                ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+                ? "bg-primary/10 border-primary/20 text-primary"
                 : status === "waking"
                   ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
                   : "bg-red-500/10 border-red-500/20 text-red-500"
                 }`}
             >
-              <div className={`w-2 h-2 rounded-full animate-pulse shadow-glow ${status === "online" ? "bg-cyan-400" : status === "waking" ? "bg-yellow-500" : "bg-red-500"
+              <div className={`w-2 h-2 rounded-full animate-pulse shadow-glow ${status === "online" ? "bg-primary" : status === "waking" ? "bg-yellow-500" : "bg-red-500"
                 }`} />
               {status === "online" ? "SYSTEM_ACTIVE" : status === "checking" ? "SEARCHING_FOR_UPLINK" : status === "waking" ? "WAKING_UP" : "SYSTEM_DEGRADED"}
             </m.div>
@@ -376,9 +376,9 @@ export default function Hero() {
                 transition={{ delay: 0.3 }}
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
-                <span className="sr-only">{settings?.personalName || "Abdhesh Sah"} - </span>
+                <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
                 {settings?.heroGreeting || "Start building"} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient-x relative inline-block pb-2">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
                   {settings?.personalName || "The Future"}
                   <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
                 </span>
@@ -390,7 +390,7 @@ export default function Hero() {
                 transition={{ delay: 0.5 }}
                 className="text-xl md:text-2xl text-gray-400 font-light h-[60px] flex items-center justify-center lg:justify-start"
               >
-                <span className="text-cyan-400 mr-2">{">"}</span>
+                <span className="text-primary mr-2">{">"}</span>
                 <RotatingText
                   strings={settings?.heroTaglines?.length ? settings.heroTaglines : [
                     "Engineering scalable systems.",
@@ -427,7 +427,7 @@ export default function Hero() {
                   }
                 }}
                 size="lg"
-                className="w-full sm:w-auto bg-cyan-500 text-black hover:bg-cyan-400 font-bold rounded-full px-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all"
+                className="w-full sm:w-auto bg-primary text-black hover:bg-primary/90 font-bold rounded-full px-8 shadow-[0_0_20px_var(--primary-glow)] hover:shadow-[0_0_30px_var(--primary-glow)] transition-all"
               >
                 {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
@@ -499,7 +499,7 @@ export default function Hero() {
           className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer hidden md:block group"
           onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: 'smooth' })}
         >
-          <ChevronDown className="w-8 h-8 text-cyan-500/50 group-hover:text-cyan-400 transition-colors" />
+          <ChevronDown className="w-8 h-8 text-primary/50 group-hover:text-primary transition-colors" />
         </m.div>
       </div>
     </section>

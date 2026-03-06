@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { TableOfContents } from "@/components/TableOfContents";
 import { useArticle } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
 import type { ArticleWithRelated } from "@shared/schema";
 import { useRoute } from "wouter";
@@ -40,6 +41,7 @@ function PostSkeleton() {
 import { getDynamicOgImage } from "@/lib/cloudinary";
 
 export default function BlogPost() {
+    const { data: settings } = useSiteSettings();
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
@@ -89,11 +91,14 @@ export default function BlogPost() {
         );
     }
 
+    const authorName = settings?.personalName || AUTHOR.name;
+    const authorBio = settings?.personalBio || AUTHOR.bio;
+
     return (
-        <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
+        <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground" style={{ fontFamily: "var(--font-body)" }}>
             <SEO
                 slug={`blog/${article.slug}`}
-                title={`${article.title} | ${AUTHOR.name}`}
+                title={`${article.title} | ${authorName}`}
                 description={article.excerpt || article.title}
                 image={ogImage}
                 structuredData={[
@@ -107,12 +112,12 @@ export default function BlogPost() {
                         "wordCount": article.content ? article.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length : 0,
                         "author": {
                             "@type": "Person",
-                            "name": AUTHOR.name,
+                            "name": authorName,
                             "url": "https://abdheshsah.com.np"
                         },
                         "publisher": {
                             "@type": "Person",
-                            "name": AUTHOR.name
+                            "name": authorName
                         },
                         "mainEntityOfPage": {
                             "@type": "WebPage",
@@ -273,17 +278,17 @@ export default function BlogPost() {
                             <footer className="mt-16 pt-16 border-t border-white/10">
                                 <div className="bg-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-white/5">
                                     <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-4xl shrink-0">
-                                        AS
+                                        {authorName.split(' ').map((n: string) => n[0]).join('')}
                                     </div>
                                     <div className="text-center md:text-left">
-                                        <h3 className="text-xl font-bold text-white mb-2">Written by {AUTHOR.name}</h3>
+                                        <h3 className="text-xl font-bold text-white mb-2">Written by {authorName}</h3>
                                         <p className="text-white/50 mb-4">
-                                            {AUTHOR.bio}
+                                            {authorBio}
                                         </p>
                                         <div className="flex justify-center md:justify-start gap-4">
-                                            <a href={AUTHOR.socials.twitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>
-                                            <a href={AUTHOR.socials.linkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>
-                                            <a href={AUTHOR.socials.github} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>
+                                            {settings?.socialTwitter && <a href={settings.socialTwitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>}
+                                            {settings?.socialLinkedin && <a href={settings.socialLinkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>}
+                                            {settings?.socialGithub && <a href={settings.socialGithub} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>}
                                         </div>
                                     </div>
                                 </div>

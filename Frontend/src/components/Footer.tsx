@@ -77,7 +77,7 @@ export default function Footer() {
         />
 
         {/* Glowing Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent box-shadow-glow" />
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent box-shadow-glow" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
@@ -91,12 +91,12 @@ export default function Footer() {
               viewport={{ once: true }}
               className="flex items-center gap-2"
             >
-              <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30">
-                <Code2 className="w-6 h-6 text-cyan-400" />
-                <div className="absolute -inset-1 bg-cyan-500/20 blur-lg rounded-full opacity-50" />
+              <div className="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-xl border border-primary/30">
+                <Code2 className="w-6 h-6 text-primary" />
+                <div className="absolute -inset-1 bg-primary/20 blur-lg rounded-full opacity-50" />
               </div>
               <h3 className="text-2xl font-bold font-display tracking-tight text-white">
-                {settings?.personalName?.split(' ')[0] || "Abdhesh"}<span className="text-cyan-400">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
+                {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-primary">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
               </h3>
             </m.div>
 
@@ -105,9 +105,9 @@ export default function Footer() {
             </p>
 
             <div className="flex flex-wrap gap-3">
-              <Badge icon={Cpu} text="System Design" color="cyan" />
-              <Badge icon={Globe} text="Web Dev" color="purple" />
-              <Badge icon={Code2} text="Algorithms" color="pink" />
+              <Badge icon={Cpu} text="System Design" color="primary" />
+              <Badge icon={Globe} text="Web Dev" color="secondary" />
+              <Badge icon={Code2} text="Algorithms" color="accent" />
             </div>
           </div>
 
@@ -119,9 +119,9 @@ export default function Footer() {
                 <li key={item.name}>
                   <button
                     onClick={() => handleNavClick(item.href)}
-                    className="text-gray-400 hover:text-cyan-400 transition-colors flex items-center gap-2 group"
+                    className="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50 group-hover:scale-150 transition-transform" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:scale-150 transition-transform" />
                     {item.name}
                   </button>
                 </li>
@@ -143,14 +143,14 @@ export default function Footer() {
 
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm mt-6">
               <div className="flex items-center gap-3 text-gray-300 mb-2">
-                <Mail className="w-4 h-4 text-cyan-400" />
+                <Mail className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium">Get in touch</span>
               </div>
               <a
-                href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Contact%20from%20Portfolio`}
-                className="text-lg font-bold text-white hover:text-cyan-400 transition-colors truncate block"
+                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact%20from%20Portfolio`}
+                className="text-lg font-bold text-white hover:text-primary transition-colors truncate block"
               >
-                {settings?.socialEmail || "abdheshshah111@gmail.com"}
+                {settings?.socialEmail || "contact@example.com"}
               </a>
             </div>
           </div>
@@ -159,7 +159,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-gray-500 space-y-1 text-center md:text-left">
-            <p>{settings?.footerCopyright || `© 2025–${currentYear} Abdhesh Sah. All rights reserved.`}</p>
+            <p>{settings?.footerCopyright || `© ${currentYear} Portfolio. All rights reserved.`}</p>
             <p className="text-[10px] font-mono opacity-50 uppercase tracking-tighter">
               System last updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"} • Build: v3.2.0-stable
             </p>
@@ -172,11 +172,11 @@ export default function Footer() {
   );
 }
 
-function Badge({ icon: Icon, text, color }: { icon: React.ElementType, text: string, color: 'cyan' | 'purple' | 'pink' }) {
+function Badge({ icon: Icon, text, color }: { icon: React.ElementType, text: string, color: 'primary' | 'secondary' | 'accent' }) {
   const colors = {
-    cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    pink: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
+    primary: 'bg-primary/10 text-primary border-primary/20',
+    secondary: 'bg-secondary/10 text-secondary border-secondary/20',
+    accent: 'bg-accent/10 text-accent border-accent/20',
   };
 
   return (

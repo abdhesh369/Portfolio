@@ -35,7 +35,7 @@ export default function SystemStatus({
                 </h2>
                 <button
                     onClick={(e) => { ripple(e); onRefresh?.(); }}
-                    className="w-10 h-10 nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all flex items-center justify-center p-0"
+                    className="w-10 h-10 nm-button text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-all flex items-center justify-center p-0"
                     title="Refresh Heartbeat"
                 >
                     <RefreshCw size={16} strokeWidth={3} className={cn(apiHealth === "loading" && "animate-spin")} />
@@ -47,7 +47,7 @@ export default function SystemStatus({
                 <div className="space-y-4">
                     <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.2em] text-[var(--admin-text-secondary)]">
                         <div className="flex items-center gap-2.5">
-                            <Activity size={14} strokeWidth={3} className="text-indigo-500" />
+                            <Activity size={14} strokeWidth={3} className="text-[var(--nm-accent)]" />
                             <span>CORE_API</span>
                         </div>
                         <span className={cn(
@@ -67,7 +67,7 @@ export default function SystemStatus({
                         <div className="flex items-center gap-2">
                             <Clock size={10} className="text-[var(--admin-text-secondary)]" />
                             <p className="text-[10px] text-[var(--admin-text-secondary)] font-bold uppercase tracking-widest">
-                                LATENCY: <span className="text-indigo-600">{responseTime}ms</span>
+                                LATENCY: <span className="text-[var(--nm-accent)]">{responseTime}ms</span>
                             </p>
                         </div>
                     )}
@@ -99,9 +99,9 @@ export default function SystemStatus({
                 </div>
 
                 {/* Security Placeholder */}
-                <div className="p-5 rounded-2xl nm-inset flex items-center justify-between border-l-2 border-indigo-500/30">
+                <div className="p-5 rounded-2xl nm-inset flex items-center justify-between border-l-2 border-[var(--nm-accent)]/30">
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl nm-flat flex items-center justify-center text-indigo-600">
+                        <div className="w-10 h-10 rounded-xl nm-flat flex items-center justify-center text-[var(--nm-accent)]">
                             <Shield size={18} strokeWidth={2.5} />
                         </div>
                         <div>
@@ -109,7 +109,7 @@ export default function SystemStatus({
                             <p className="text-xs font-black text-[var(--admin-text-primary)] tracking-widest uppercase">SSL_ENCRYPTED</p>
                         </div>
                     </div>
-                    <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                    <div className="w-2 h-2 rounded-full bg-[var(--nm-accent)] shadow-[0_0_10px_var(--nm-accent)]/50" />
                 </div>
             </div>
 

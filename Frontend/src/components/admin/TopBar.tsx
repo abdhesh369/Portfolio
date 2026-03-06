@@ -41,7 +41,7 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                     </button>
 
                     <div className={cn("hidden sm:flex items-center gap-3 text-[var(--admin-text-secondary)] text-[11px] font-bold uppercase tracking-widest")}>
-                        <span className="hover:text-indigo-500 transition-colors cursor-pointer">System</span>
+                        <span className="hover:text-[var(--nm-accent)] transition-colors cursor-pointer">System</span>
                         <ChevronRight size={12} className="opacity-50" />
                         <span className="text-[var(--admin-text-primary)] tracking-[0.15em]">
                             {activeTab.replaceAll("-", "_")}
@@ -61,12 +61,12 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all relative group">
+                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-all relative group">
                             <Bell size={18} />
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
                         </button>
 
-                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all hidden sm:flex">
+                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-all hidden sm:flex">
                             <Settings size={18} />
                         </button>
 
@@ -78,7 +78,7 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                                 onClick={() => setProfileOpen(!profileOpen)}
                                 className="flex items-center gap-3 p-1.5 rounded-full nm-button hover:nm-flat transition-all group"
                             >
-                                <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
+                                <div className="w-7 h-7 rounded-full bg-[var(--nm-accent)] flex items-center justify-center text-white shadow-lg shadow-[var(--nm-accent)]/30">
                                     <User size={14} />
                                 </div>
                                 <span className="text-[11px] font-bold text-[var(--admin-text-primary)] hidden lg:block pr-2 tracking-widest uppercase">

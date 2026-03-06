@@ -82,17 +82,17 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             {/* Welcome Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-[#2d3748] tracking-tight uppercase">
+                    <h1 className="text-3xl font-black text-[var(--admin-text-primary)] tracking-tight uppercase">
                         Unified_Dashboard
                     </h1>
-                    <p className="text-[#a3b1c6] text-xs mt-2 font-bold uppercase tracking-[0.3em] flex items-center gap-2">
+                    <p className="text-[var(--admin-text-secondary)] text-xs mt-2 font-bold uppercase tracking-[0.3em] flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         System_Status: Operational
                     </p>
                 </div>
                 <button
                     onClick={() => onNavigate?.("projects")}
-                    className="h-12 px-8 rounded-2xl nm-button text-[11px] font-black uppercase tracking-[0.2em] text-[#2d3748] hover:text-indigo-600 transition-all flex items-center gap-3"
+                    className="h-12 px-8 rounded-2xl nm-button text-[11px] font-black uppercase tracking-[0.2em] text-[var(--admin-text-primary)] hover:text-[var(--nm-accent)] transition-all flex items-center gap-3"
                 >
                     <Plus size={18} strokeWidth={3} />
                     Deploy_Module

@@ -2,6 +2,7 @@ import { useState, ReactNode } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import TopBar from "@/components/admin/TopBar";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -19,9 +20,10 @@ export default function AdminLayout({
     setSidebarCollapsed,
 }: AdminLayoutProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { data: settings } = useSiteSettings();
 
     return (
-        <div className="min-h-screen bg-[var(--nm-bg)] text-[var(--admin-text-primary)] font-sans selection:bg-blue-100 selection:text-blue-700">
+        <div className="min-h-screen bg-[var(--nm-bg)] text-[var(--admin-text-primary)] font-sans selection:bg-[var(--nm-accent)]/20 selection:text-[var(--nm-accent)]">
             {/* Sidebar Overlay (Mobile) */}
             {mobileMenuOpen && (
                 <div
@@ -60,7 +62,7 @@ export default function AdminLayout({
                 </main>
 
                 <footer className="py-6 px-4 lg:px-8 text-center text-[var(--admin-text-secondary)] text-xs font-bold uppercase tracking-[0.2em]">
-                    &copy; {new Date().getFullYear()} ABDHESH | NEUMORPHIC_OS_v3.0                </footer>
+                    &copy; {new Date().getFullYear()} {settings?.personalName?.toUpperCase() || "ABDHESH"} | NEUMORPHIC_OS_v3.0                </footer>
             </div>
         </div>
     );

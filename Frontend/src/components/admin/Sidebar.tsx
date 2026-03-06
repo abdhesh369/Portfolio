@@ -4,6 +4,7 @@ import {
     Brain, Sliders, ChevronLeft, ChevronRight, X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 interface SidebarProps {
     collapsed: boolean;
@@ -40,6 +41,10 @@ export default function Sidebar({
     mobileOpen,
     setMobileOpen
 }: SidebarProps) {
+    const { data: settings } = useSiteSettings();
+    const brandName = settings?.personalName || "OS_ADMIN";
+    const brandInitial = brandName.charAt(0).toUpperCase();
+
     return (
         <aside
             className={cn(
@@ -55,12 +60,16 @@ export default function Sidebar({
                         "flex items-center gap-3 overflow-hidden p-2 rounded-xl nm-flat",
                         collapsed && "p-1"
                     )}>
-                        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-600/30">
-                            <span className="text-white font-bold text-lg">A</span>
+                        <div className="w-8 h-8 rounded-lg bg-[var(--nm-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-[var(--nm-accent)]/30 overflow-hidden">
+                            {settings?.personalAvatar ? (
+                                <img src={settings.personalAvatar} alt="Logo" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-white font-bold text-lg">{brandInitial}</span>
+                            )}
                         </div>
                         {!collapsed && (
                             <span className="font-heading font-bold text-base tracking-tight whitespace-nowrap text-[var(--admin-text-primary)]">
-                                OS_ADMIN_v3
+                                {brandName.replace(/\s+/g, '_').toUpperCase()}_OS
                             </span>
                         )}
                     </div>
@@ -68,7 +77,7 @@ export default function Sidebar({
                     {/* Mobile Close */}
                     <button
                         onClick={() => setMobileOpen(false)}
-                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-colors"
+                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-colors"
                     >
                         <X size={20} />
                     </button>
@@ -93,7 +102,7 @@ export default function Sidebar({
                                 )}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon size={20} className={cn("shrink-0 transition-all", active ? "text-indigo-500" : "group-hover:scale-110")} />
+                                <Icon size={20} className={cn("shrink-0 transition-all", active ? "text-[var(--nm-accent)]" : "group-hover:scale-110")} />
                                 {!collapsed && (
                                     <span className="text-[13px] font-bold uppercase tracking-wider truncate">
                                         {item.label}
@@ -108,7 +117,7 @@ export default function Sidebar({
                 <div className="p-4">
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all"
+                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl nm-button text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-all"
                     >
                         {collapsed ? <ChevronRight size={20} /> : (
                             <div className="flex items-center gap-2">

@@ -44,22 +44,50 @@ function PageLoader() {
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ServerStatusBanner } from "./components/ServerStatusBanner";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import type { SiteSettings } from "@shared/schema";
 
 // SettingsApplicator: Applies dynamic CSS variables and custom CSS from site settings
 function SettingsApplicator() {
-  const { data: settings } = useSiteSettings();
+  const { data: settings } = useSiteSettings() as { data: SiteSettings | undefined };
 
   useEffect(() => {
     if (!settings) return;
 
     const root = document.documentElement;
 
-    // Apply color variables
-    if (settings.colorBackground) {
-      root.style.setProperty("--background", settings.colorBackground);
+    // Helper to convert hex to rgb for CSS variable usage
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ?
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` :
+        null;
+    };
+
+    // Apply base colors from dynamic settings
+    if (settings.colorBackground) root.style.setProperty("--background", settings.colorBackground);
+    if (settings.colorSurface) root.style.setProperty("--card", settings.colorSurface);
+    if (settings.colorPrimary) {
+      root.style.setProperty("--primary", settings.colorPrimary);
+      const rgb = hexToRgb(settings.colorPrimary);
+      if (rgb) {
+        root.style.setProperty("--primary-rgb", rgb);
+        root.style.setProperty("--primary-rgb-20", `rgba(${rgb}, 0.2)`);
+        root.style.setProperty("--primary-glow", `rgba(${rgb}, 0.3)`);
+      }
     }
-    if (settings.colorSurface) {
-      root.style.setProperty("--card", settings.colorSurface);
+    if (settings.colorSecondary) root.style.setProperty("--secondary", settings.colorSecondary);
+    if (settings.colorAccent) root.style.setProperty("--accent", settings.colorAccent);
+    if (settings.colorBorder) root.style.setProperty("--border", settings.colorBorder);
+    if (settings.colorText) root.style.setProperty("--foreground", settings.colorText);
+    if (settings.colorMuted) root.style.setProperty("--muted-foreground", settings.colorMuted);
+
+    // Set derived versions of primary for backgrounds
+    if (settings.colorPrimary) {
+      root.style.setProperty("--primary-muted", `${settings.colorPrimary}1a`); // 0.1 opacity for Hex
+      root.style.setProperty("--primary-faint", `${settings.colorPrimary}0d`); // 0.05 opacity for Hex
+    } else {
+      root.style.setProperty("--primary-muted", "hsl(var(--primary) / 0.1)");
+      root.style.setProperty("--primary-faint", "hsl(var(--primary) / 0.05)");
     }
 
     // Apply custom CSS if provided
@@ -153,8 +181,13 @@ function DeferredAnalytics() {
 // Router component
 function Router() {
   const [location] = useLocation();
+  const { data: settings } = useSiteSettings();
   const { reducedMotion } = useTheme();
   const transition = withReducedMotion(pageTransition, reducedMotion);
+  // Feature toggles from settings
+  const showBlog = settings?.featureBlog ?? true;
+  const showGuestbook = settings?.featureGuestbook ?? true;
+
   return (
     <Suspense fallback={<PageLoader />}>
       <m.div
@@ -167,8 +200,20 @@ function Router() {
           {/* Public routes */}
           <Route path="/" component={Home} />
           <Route path="/project/:id" component={ProjectDetail} />
-          <Route path="/blog" component={BlogList} />
-          <Route path="/blog/:slug" component={BlogPost} />
+
+          {/* Feature-guarded routes */}
+          {showBlog && (
+            <>
+              <Route path="/blog" component={BlogList} />
+              <Route path="/blog/:slug" component={BlogPost} />
+            </>
+          )}
+
+          {showGuestbook && (
+            <Route path="/guestbook">
+              {() => <Home />}
+            </Route>
+          )}
 
           {/* Admin routes */}
           <Route path="/admin/login" component={AdminLogin} />

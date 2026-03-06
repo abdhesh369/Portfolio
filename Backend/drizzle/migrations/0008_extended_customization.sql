@@ -31,6 +31,12 @@ ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS heroCtaSecondaryUrl VARCHAR(5
 -- Appearance & Typography
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorBackground VARCHAR(50) DEFAULT 'hsl(224, 71%, 4%)';
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorSurface VARCHAR(50) DEFAULT 'hsl(224, 71%, 10%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorPrimary VARCHAR(50) DEFAULT 'hsl(263.4, 70%, 50.4%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorSecondary VARCHAR(50) DEFAULT 'hsl(215.4, 16.3%, 46.9%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorAccent VARCHAR(50) DEFAULT 'hsl(263.4, 70%, 50.4%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorBorder VARCHAR(50) DEFAULT 'hsl(214.3, 31.8%, 91.4%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorText VARCHAR(50) DEFAULT 'hsl(222.2, 84%, 4.9%)';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS colorMuted VARCHAR(50) DEFAULT 'hsl(215.4, 16.3%, 46.9%)';
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS fontDisplay VARCHAR(255) DEFAULT 'Inter';
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS fontBody VARCHAR(255) DEFAULT 'Inter';
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS customCss TEXT;

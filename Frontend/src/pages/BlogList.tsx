@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useArticles, useArticleSearch } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { m } from "framer-motion";
 import { fadeUp, fadeLeft } from "@/lib/animation";
 import { Link } from "wouter";
@@ -92,6 +93,7 @@ function BlogSkeleton() {
 }
 
 export default function BlogList() {
+    const { data: settings } = useSiteSettings();
     const { data: articles, isLoading } = useArticles("published");
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -137,11 +139,11 @@ export default function BlogList() {
     })();
 
     return (
-        <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground">
+        <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground" style={{ fontFamily: "var(--font-body)" }}>
             <SEO
                 slug="blog"
-                title="Blog | Abdhesh Sah - Tech Thoughts & Tutorials"
-                description="Articles about web development, engineering mindset, and modern technologies by Abdhesh Sah."
+                title={`Blog | ${settings?.personalName || "Abdhesh Sah"} - Tech Thoughts & Tutorials`}
+                description="Articles about web development, engineering mindset, and modern technologies."
             />
             <Navbar />
 
@@ -160,7 +162,7 @@ export default function BlogList() {
                         transition={{ delay: 0.1 }}
                         className="text-white/60 text-base md:text-lg"
                     >
-                        Deep dives into full-stack development, software architecture, and the engineering mindset.
+                        {settings?.personalBio ? `Insights and articles by ${settings.personalName}.` : "Deep dives into full-stack development, software architecture, and the engineering mindset."}
                     </m.p>
                 </header>
 

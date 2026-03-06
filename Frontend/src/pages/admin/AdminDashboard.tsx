@@ -72,7 +72,7 @@ export default function AdminDashboard() {
         >
             <Suspense fallback={
                 <div className="flex justify-center py-20">
-                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-4 border-[var(--nm-accent)] border-t-transparent rounded-full animate-spin" />
                 </div>
             }>
                 <TabErrorBoundary tabName={TAB_LABELS[tab]}>
