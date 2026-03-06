@@ -13,6 +13,7 @@ import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker } from "./lib/queue.js";
 import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
 import { logger } from "./lib/logger.js";
+import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -314,6 +315,11 @@ async function startServer() {
       process.exit(1);
     }
     logger.info({ context: "startup" }, "✓ Database is healthy");
+
+    // ── 2.1. Ensure schema compatibility for production safety ──
+    logger.info({ context: "startup" }, "📍 Ensuring schema compatibility...");
+    await bootstrapDatabaseSchema();
+    logger.info({ context: "startup" }, "✓ Schema compatibility ensured");
 
     // ── 3. Ensure database is ready before proceeding ──
     if (process.env.NODE_ENV !== "production") {
