@@ -69,13 +69,12 @@ export function ThemeProvider({
   }, []);
 
   const [performanceMode, setPerformanceMode] = useState<"high" | "low">(
-    () => (localStorage.getItem("performance-mode") as "high" | "low") || "high"
+    () => (typeof window !== "undefined" && localStorage.getItem("performance-mode") as "high" | "low") || "high"
   );
 
   const [treePerformanceMode, setTreePerformanceMode] = useState<"normal" | "power">(
-    () => (localStorage.getItem("tree-performance-mode") as "normal" | "power") || "power"
+    () => (typeof window !== "undefined" && localStorage.getItem("tree-performance-mode") as "normal" | "power") || "power"
   );
-
   const value = {
     theme,
     setTheme: (theme: Theme) => {

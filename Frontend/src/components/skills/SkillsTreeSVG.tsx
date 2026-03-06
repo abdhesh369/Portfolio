@@ -104,11 +104,9 @@ export const SkillsTreeSVG = ({
                 viewport={{ once: true }}
                 transition={isTreePower ? {
                     pathLength: { duration: 2, ease: 'easeOut' },
-                    opacity: { duration: 0.5 },
+                    opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                     strokeWidth: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-                    opacity_pulse: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-                } : { duration: isLowPower ? 0.5 : 2, ease: 'easeOut' }}
-            />
+                } : { duration: isLowPower ? 0.5 : 2, ease: 'easeOut' }} />
 
             {/* Connection lines */}
             {connections.map((conn, i) => {
