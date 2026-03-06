@@ -1,218 +1,180 @@
-/* ==================== ADMIN DASHBOARD ==================== */
+/* ==================== MINIMALIST ADMIN DASHBOARD ==================== */
 
-/* Animated grid background */
-.admin-grid-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&f[]=general-sans@600,500,400&display=swap');
+
+:root {
+  --font-sans: 'General Sans', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+  --admin-bg: #f8fafc;
+  --admin-card-bg: rgba(255, 255, 255, 0.8);
+  --admin-border: #e2e8f0;
+  --admin-text-primary: #0f172a;
+  --admin-text-secondary: #64748b;
+  --admin-sidebar-bg: #ffffff;
+  --admin-accent: #3b82f6;
+  --admin-accent-soft: rgba(59, 130, 246, 0.08);
 }
 
-/* Glow orbs */
-.admin-glow-tl {
-  position: fixed;
-  top: -200px;
-  left: -100px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+body.admin-mode {
+  font-family: var(--font-body);
+  background-color: var(--admin-bg);
+  color: var(--admin-text-primary);
 }
 
-.admin-glow-br {
-  position: fixed;
-  bottom: -200px;
-  right: -100px;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(167, 139, 250, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+.font-heading {
+  font-family: var(--font-sans);
+}
+
+/* Glass Card Definition */
+.glass-card {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.01), 0 1px 2px -1px rgba(0, 0, 0, 0.01);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Sidebar */
 .admin-sidebar {
-  background: rgba(10, 10, 20, 0.95);
-  border-right: 1px solid rgba(34, 211, 238, 0.1);
-  backdrop-filter: blur(20px);
+  background: var(--admin-sidebar-bg);
+  border-right: 1px solid var(--admin-border);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 40;
 }
 
-.admin-sidebar-nav-btn {
-  width: 100%;
+.sidebar-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  min-height: 44px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 2px;
-  background: transparent;
-  border-left: 2px solid transparent;
-  color: rgba(148, 163, 184, 0.7);
-  font-size: 12px;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  letter-spacing: 0.04em;
-  transition: all 0.15s ease;
-}
-
-.admin-sidebar-nav-btn:hover {
-  background: rgba(34, 211, 238, 0.06);
-  color: rgba(148, 163, 184, 0.9);
-}
-
-.admin-sidebar-nav-btn.active {
-  background: linear-gradient(90deg, rgba(34, 211, 238, 0.12), rgba(167, 139, 250, 0.08));
-  border-left-color: var(--color-cyan);
-  color: var(--color-cyan);
-}
-
-.admin-sidebar-nav-btn.collapsed {
-  padding: 10px 0;
-  min-height: 44px;
-  justify-content: center;
-}
-
-/* Admin topbar */
-.admin-topbar {
-  border-bottom: 1px solid rgba(34, 211, 238, 0.08);
-  background: rgba(5, 5, 8, 0.8);
-  backdrop-filter: blur(20px);
-}
-
-/* Stat card */
-.admin-stat-card {
-  background: rgba(10, 10, 20, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: default;
-  position: relative;
-  overflow: hidden;
-}
-
-.admin-stat-card:hover {
-  transform: translateY(-3px);
-}
-
-/* Quick action button */
-.admin-quick-action {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 10px 16px;
-  border-radius: 6px;
-  background: rgba(10, 10, 20, 0.7);
+  border-radius: 8px;
+  color: var(--admin-text-secondary);
+  font-weight: 500;
+  transition: all 0.2s ease;
   cursor: pointer;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  letter-spacing: 0.05em;
-  backdrop-filter: blur(10px);
-  transition: all 0.15s ease;
 }
 
-.admin-quick-action:hover {
-  transform: translateY(-1px);
+.sidebar-link:hover {
+  background: #f1f5f9;
+  color: var(--admin-text-primary);
 }
 
-/* Admin panel card */
-.admin-panel-card {
-  background: rgba(10, 10, 20, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
+.sidebar-link.active {
+  background: var(--admin-accent-soft);
+  color: var(--admin-accent);
 }
 
-/* Progress bars */
-.admin-progress-bar {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 2px;
+/* Topbar */
+.admin-topbar {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--admin-border);
+  z-index: 30;
+}
+
+/* Stat Cards */
+.stat-card {
+  @extend .glass-card;
+  padding: 24px;
+}
+
+.stat-value {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--admin-text-primary);
+}
+
+.stat-label {
+  color: var(--admin-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Progress Bars */
+.admin-progress {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
   overflow: hidden;
 }
 
 .admin-progress-fill {
   height: 100%;
-  border-radius: 2px;
-  transition: width 1s ease;
+  background: var(--admin-accent);
+  border-radius: 999px;
+  transition: width 0.5s ease;
 }
 
-/* Terminal block */
-.admin-terminal {
-  margin-top: 20px;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 6px;
-  border: 1px solid rgba(34, 211, 238, 0.1);
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 11px;
+/* Status Indicators */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-/* Admin footer */
-.admin-footer {
-  padding: 14px 28px;
-  border-top: 1px solid rgba(34, 211, 238, 0.06);
-  font-size: 10px;
-  color: rgba(148, 163, 184, 0.3);
-  letter-spacing: 0.1em;
+.status-healthy {
+  background: #ecfdf5;
+  color: #059669;
 }
 
-/* Scrollbar inside admin sidebar */
-.admin-sidebar nav::-webkit-scrollbar {
-  width: 4px;
+.status-warning {
+  background: #fffbeb;
+  color: #d97706;
 }
 
-.admin-sidebar nav::-webkit-scrollbar-track {
+.status-error {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.admin-sidebar nav::-webkit-scrollbar-thumb {
-  background: rgba(34, 211, 238, 0.15);
-  border-radius: 2px;
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 
-/* Admin content area inherits dark theme for tab panels */
-.admin-content .glass-card,
-.admin-content [style*="hsl(222 47% 11%"] {
-  background: rgba(10, 10, 20, 0.7) !important;
-  border-color: rgba(255, 255, 255, 0.07) !important;
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-@keyframes admin-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.admin-animate-in {
-  animation: admin-fade-in 0.4s ease-out forwards;
-}
-
-/* Responsive: stack sidebar on mobile */
+/* Mobile Adjustments */
 @media (max-width: 768px) {
   .admin-sidebar {
-    position: fixed !important;
-    z-index: 50 !important;
+    position: fixed;
+    transform: translateX(-100%);
   }
   
-  .admin-main {
-    margin-left: 64px !important;
+  .admin-sidebar.open {
+    transform: translateX(0);
   }
 }
+

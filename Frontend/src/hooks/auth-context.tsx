@@ -7,7 +7,8 @@ import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: () => void;
+    user: any;
+    login: (userData?: any) => void;
     logout: () => void;
     checkAuth: () => Promise<void>;
 }
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState<any>(null);
     const queryClient = useQueryClient();
 
     const checkAuth = useCallback(async () => {
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (data.csrfToken) {
                     setCsrfToken(data.csrfToken);
                 }
+                setUser(data.user || { username: 'Admin' });
                 setIsAuthenticated(true);
             } else if (res.status === 401) {
                 // Access token expired — try silent refresh before giving up
@@ -42,22 +45,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     if (data.csrfToken) {
                         setCsrfToken(data.csrfToken);
                     }
+                    setUser(data.user || { username: 'Admin' });
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);
                 }
             } else {
                 setIsAuthenticated(false);
+                setUser(null);
             }
         } catch (err) {
             setIsAuthenticated(false);
+            setUser(null);
         } finally {
             setIsLoading(false);
         }
     }, [queryClient]); // queryClient is stable from useQueryClient()
 
-    const login = () => {
+    const login = (userData?: any) => {
         localStorage.removeItem("auth_last_exit");
+        if (userData) setUser(userData);
         setIsAuthenticated(true);
         queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
     };
@@ -70,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
         } finally {
             setIsAuthenticated(false);
+            setUser(null);
             localStorage.removeItem("auth_last_exit");
             queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
         }
@@ -129,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [isAuthenticated, logout]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );
