@@ -1,10 +1,13 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { skillConnectionsTable, type SkillConnection, type InsertSkillConnection } from "../../shared/schema.js";
 
+type DbSkillConnection = InferSelectModel<typeof skillConnectionsTable>;
+type DbInsertSkillConnection = InferInsertModel<typeof skillConnectionsTable>;
+
 export class SkillConnectionRepository {
     async findAll(): Promise<SkillConnection[]> {
-        return db.select().from(skillConnectionsTable);
+        return db.select().from(skillConnectionsTable) as Promise<SkillConnection[]>;
     }
 
     async findById(id: number): Promise<SkillConnection | null> {
@@ -13,16 +16,20 @@ export class SkillConnectionRepository {
             .from(skillConnectionsTable)
             .where(eq(skillConnectionsTable.id, id))
             .limit(1);
-        return result || null;
+        return (result as SkillConnection) || null;
     }
 
-    async create(connection: { fromSkillId: number; toSkillId: number }): Promise<SkillConnection> {
+    async create(data: { fromSkillId: number; toSkillId: number }): Promise<SkillConnection> {
+        const connectionData: DbInsertSkillConnection = {
+            ...data,
+        };
+
         const [inserted] = await db
             .insert(skillConnectionsTable)
-            .values(connection)
+            .values(connectionData)
             .returning();
         if (!inserted) throw new Error("Failed to create skill connection");
-        return inserted;
+        return inserted as SkillConnection;
     }
 
     async delete(id: number): Promise<void> {

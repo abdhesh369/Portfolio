@@ -1,12 +1,25 @@
-import { eq, asc, inArray, sql } from "drizzle-orm";
+import { eq, asc, inArray, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { projectsTable, type Project, type InsertProject } from "../../shared/schema.js";
 
+type DbProject = InferSelectModel<typeof projectsTable>;
+type DbInsertProject = InferInsertModel<typeof projectsTable>;
+
 export class ProjectRepository {
-    private transformProject(project: any): Project {
+    private transformProject(project: DbProject): Project {
         return {
             ...project,
             techStack: (project.techStack as string[]) || [],
+            githubUrl: project.githubUrl ?? null,
+            liveUrl: project.liveUrl ?? null,
+            problemStatement: project.problemStatement ?? null,
+            motivation: project.motivation ?? null,
+            systemDesign: project.systemDesign ?? null,
+            challenges: project.challenges ?? null,
+            learnings: project.learnings ?? null,
+            impact: project.impact ?? null,
+            role: project.role ?? null,
+            imageAlt: project.imageAlt ?? null,
         };
     }
 
@@ -34,19 +47,47 @@ export class ProjectRepository {
         return result ? this.transformProject(result) : null;
     }
 
-    async create(project: InsertProject): Promise<Project> {
+    async create(data: InsertProject): Promise<Project> {
+        const articleData: DbInsertProject = {
+            ...data,
+            githubUrl: data.githubUrl ?? null,
+            liveUrl: data.liveUrl ?? null,
+            problemStatement: data.problemStatement ?? null,
+            motivation: data.motivation ?? null,
+            systemDesign: data.systemDesign ?? null,
+            challenges: data.challenges ?? null,
+            learnings: data.learnings ?? null,
+            impact: data.impact ?? null,
+            role: data.role ?? null,
+            imageAlt: data.imageAlt ?? null,
+        };
+
         const [inserted] = await db
             .insert(projectsTable)
-            .values(project)
+            .values(articleData)
             .returning();
         if (!inserted) throw new Error("Failed to create project");
         return this.transformProject(inserted);
     }
 
-    async update(id: number, project: Partial<InsertProject>): Promise<Project> {
+    async update(id: number, data: Partial<InsertProject>): Promise<Project> {
+        const articleData: Partial<DbInsertProject> = {
+            ...data,
+            githubUrl: data.githubUrl ?? undefined,
+            liveUrl: data.liveUrl ?? undefined,
+            problemStatement: data.problemStatement ?? undefined,
+            motivation: data.motivation ?? undefined,
+            systemDesign: data.systemDesign ?? undefined,
+            challenges: data.challenges ?? undefined,
+            learnings: data.learnings ?? undefined,
+            impact: data.impact ?? undefined,
+            role: data.role ?? undefined,
+            imageAlt: data.imageAlt ?? undefined,
+        };
+
         const [updated] = await db
             .update(projectsTable)
-            .set(project)
+            .set(articleData)
             .where(eq(projectsTable.id, id))
             .returning();
         if (!updated) throw new Error(`Project with id ${id} not found`);
@@ -73,7 +114,7 @@ export class ProjectRepository {
         await db.delete(projectsTable).where(inArray(projectsTable.id, ids));
     }
 
-    async bulkUpdateStatus(ids: number[], status: string): Promise<void> {
+    async bulkUpdateStatus(ids: number[], status: DbProject["status"]): Promise<void> {
         if (ids.length === 0) return;
         await db.update(projectsTable).set({ status }).where(inArray(projectsTable.id, ids));
     }

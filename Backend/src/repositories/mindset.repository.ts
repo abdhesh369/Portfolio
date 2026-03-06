@@ -1,9 +1,12 @@
-import { eq } from "drizzle-orm";
+import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { mindsetTable, type Mindset, type InsertMindset } from "../../shared/schema.js";
 
+type DbMindset = InferSelectModel<typeof mindsetTable>;
+type DbInsertMindset = InferInsertModel<typeof mindsetTable>;
+
 export class MindsetRepository {
-    private transformMindset(mindset: any): Mindset {
+    private transformMindset(mindset: DbMindset): Mindset {
         return {
             ...mindset,
             tags: (mindset.tags as string[]) || [],
@@ -24,19 +27,27 @@ export class MindsetRepository {
         return result ? this.transformMindset(result) : null;
     }
 
-    async create(mindset: InsertMindset): Promise<Mindset> {
+    async create(data: InsertMindset): Promise<Mindset> {
+        const mindsetData: DbInsertMindset = {
+            ...data,
+        };
+
         const [inserted] = await db
             .insert(mindsetTable)
-            .values(mindset as any)
+            .values(mindsetData)
             .returning();
         if (!inserted) throw new Error("Failed to create mindset entry");
         return this.transformMindset(inserted);
     }
 
-    async update(id: number, mindset: Partial<InsertMindset>): Promise<Mindset> {
+    async update(id: number, data: Partial<InsertMindset>): Promise<Mindset> {
+        const mindsetData: Partial<DbInsertMindset> = {
+            ...(data as any),
+        };
+
         const [updated] = await db
             .update(mindsetTable)
-            .set(mindset as any)
+            .set(mindsetData)
             .where(eq(mindsetTable.id, id))
             .returning();
         if (!updated) throw new Error(`Mindset principle with id ${id} not found`);

@@ -2,6 +2,9 @@ import { Router, type Express } from "express";
 import { upload } from "../lib/cloudinary.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { recordAudit } from "../lib/audit.js";
+import multer from "multer";
+import { fileTypeFromBuffer } from 'file-type';
+import { cloudinary } from "../lib/cloudinary.js";
 
 export function registerUploadRoutes(app: Router) {
     // POST /upload - Upload file to Cloudinary
@@ -14,8 +17,6 @@ export function registerUploadRoutes(app: Router) {
             // Let's use it as a manual call to have full control over the buffer.
 
             // Use memory storage for validation before streaming to Cloudinary
-            const multerModule = await import("multer");
-            const multer = multerModule.default;
             const storage = multer.memoryStorage();
             const uploadMem = multer({
                 storage,
@@ -41,7 +42,6 @@ export function registerUploadRoutes(app: Router) {
 
                 // MAGIC-BYTE VALIDATION
                 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
-                const { fileTypeFromBuffer } = await import('file-type');
                 const type = await fileTypeFromBuffer(file.buffer);
 
                 if (!type || !ALLOWED_MIME_TYPES.includes(type.mime)) {
@@ -51,7 +51,6 @@ export function registerUploadRoutes(app: Router) {
                 }
 
                 // SECURE STREAM TO CLOUDINARY
-                const { cloudinary } = await import("../lib/cloudinary.js");
                 const uploadStream = cloudinary.uploader.upload_stream(
                     {
                         folder: 'portfolio_uploads',

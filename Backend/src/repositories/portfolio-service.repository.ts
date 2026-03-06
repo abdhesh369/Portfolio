@@ -1,9 +1,12 @@
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { servicesTable, type Service, type InsertService } from "../../shared/schema.js";
 
+type DbService = InferSelectModel<typeof servicesTable>;
+type DbInsertService = InferInsertModel<typeof servicesTable>;
+
 export class PortfolioServiceRepository {
-    private transformService(service: any): Service {
+    private transformService(service: DbService): Service {
         return {
             ...service,
             tags: (service.tags as string[]) || [],
@@ -24,19 +27,27 @@ export class PortfolioServiceRepository {
         return result ? this.transformService(result) : null;
     }
 
-    async create(service: InsertService): Promise<Service> {
+    async create(data: InsertService): Promise<Service> {
+        const serviceData: DbInsertService = {
+            ...data,
+        };
+
         const [inserted] = await db
             .insert(servicesTable)
-            .values(service as any)
+            .values(serviceData)
             .returning();
         if (!inserted) throw new Error("Failed to create portfolio service");
         return this.transformService(inserted);
     }
 
-    async update(id: number, service: Partial<InsertService>): Promise<Service> {
+    async update(id: number, data: Partial<InsertService>): Promise<Service> {
+        const serviceData: Partial<DbInsertService> = {
+            ...(data as any),
+        };
+
         const [updated] = await db
             .update(servicesTable)
-            .set(service as any)
+            .set(serviceData)
             .where(eq(servicesTable.id, id))
             .returning();
         if (!updated) throw new Error(`Portfolio service with id ${id} not found`);

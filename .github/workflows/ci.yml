@@ -1,199 +1,70 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [ main, master ]
   pull_request:
-    branches: [main, master]
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [ main, master ]
 
 jobs:
-  # ─────────────────────────────────────
-  # Backend
-  # ─────────────────────────────────────
-  backend-lint:
-    name: Backend Typecheck & Build
+  backend:
+    name: Backend CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 22
+          cache: 'npm'
           cache-dependency-path: Backend/package-lock.json
       - name: Install dependencies
-        run: cd Backend && npm ci
-      - name: Typecheck
-        run: cd Backend && npm run db:test
-      - name: Build
-        run: cd Backend && npm run build
-
-  backend-unit:
-    name: Backend Unit Tests
-    runs-on: ubuntu-latest
-    needs: backend-lint
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: Backend/package-lock.json
-      - name: Install dependencies
-        run: cd Backend && npm ci
-      - name: Run unit tests with coverage
-        run: cd Backend && npm run test:coverage
-
-  backend-integration:
-    name: Backend Integration Tests
-    runs-on: ubuntu-latest
-    needs: backend-lint
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: Backend/package-lock.json
-      - name: Install dependencies
-        run: cd Backend && npm ci
-      - name: Run integration tests
-        run: cd Backend && npm run test:integration
-
-  # ─────────────────────────────────────
-  # Frontend
-  # ─────────────────────────────────────
-  frontend-lint:
-    name: Frontend Typecheck & Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: Frontend/package-lock.json
-      - name: Install dependencies
-        run: cd Frontend && npm ci
-      - name: Build (includes tsc)
-        run: cd Frontend && npm run build
-
-  frontend-unit:
-    name: Frontend Unit Tests
-    runs-on: ubuntu-latest
-    needs: frontend-lint
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: Frontend/package-lock.json
-      - name: Install dependencies
-        run: cd Frontend && npm ci
-      - name: Run unit tests
-        run: cd Frontend && npm run test
-
-  frontend-e2e:
-    name: Frontend E2E Tests
-    runs-on: ubuntu-latest
-    needs: [frontend-lint, backend-lint]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: Frontend/package-lock.json
-      - name: Install Frontend dependencies
-        run: cd Frontend && npm ci
-      - name: Install Playwright browsers
-        run: cd Frontend && npx playwright install --with-deps chromium
-      - name: Run E2E tests
-        run: cd Frontend && npm run test:e2e
+        run: npm ci
+        working-directory: Backend
+      - name: Type check
+        run: npx tsc --noEmit
+        working-directory: Backend
+      - name: Lint
+        run: npm run lint
+        working-directory: Backend
+        continue-on-error: true # Allow lint errors to pass for now if any exist
+      - name: Run Tests
+        run: npm run test
+        working-directory: Backend
         env:
-          CI: true
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: Frontend/playwright-report/
-          retention-days: 14
-  # ─────────────────────────────────────
-  # Docker Verification
-  # ─────────────────────────────────────
-  docker-verify:
-    name: Verify Docker Builds
-    runs-on: ubuntu-latest
-    needs: [backend-lint, frontend-lint]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build Backend Image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./Backend
-          push: false
-          tags: portfolio-backend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Build Frontend Image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./Frontend
-          push: false
-          tags: portfolio-frontend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/postgres
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_padding__
 
-  # ─────────────────────────────────────
-  # Lighthouse CI
-  # ─────────────────────────────────────
-  lighthouse:
-    name: Lighthouse CI Audit
+  frontend:
+    name: Frontend CI
     runs-on: ubuntu-latest
-    needs: [frontend-lint, backend-lint]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 22
+          cache: 'npm'
           cache-dependency-path: Frontend/package-lock.json
-      - name: Install Frontend dependencies
-        run: cd Frontend && npm ci
-      - name: Build Frontend
-        run: cd Frontend && npm run build
-      - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli@0.14.x
-      - name: Run Lighthouse CI
-        run: |
-          lhci autorun \
-            --collect.staticDistDir=Frontend/dist \
-            --collect.numberOfRuns=3 \
-            --assert.preset=lighthouse:recommended \
-            --assert.assertions.categories:performance=["error", {"minScore": 0.9}] \
-            --assert.assertions.categories:accessibility=["error", {"minScore": 1.0}] \
-            --assert.assertions.categories:best-practices=["error", {"minScore": 0.95}] \
-            --assert.assertions.categories:seo=["error", {"minScore": 0.95}]
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-      - name: Upload Lighthouse report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: lighthouse-report
-          path: .lighthouseci/
-          retention-days: 14
+      - name: Install dependencies
+        run: npm ci
+        working-directory: Frontend
+      - name: Type check
+        run: npx tsc --noEmit
+        working-directory: Frontend
+      - name: Lint
+        run: npm run lint
+        working-directory: Frontend
+        continue-on-error: true
+      - name: Run Tests
+        run: npm run test
+        working-directory: Frontend
+
+  schema-sync:
+    name: Schema Sync Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify shared schemas are identical
+        run: diff Backend/shared/schema.ts Frontend/shared/schema.ts

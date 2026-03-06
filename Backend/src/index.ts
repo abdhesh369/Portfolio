@@ -14,6 +14,7 @@ import { emailQueue, emailWorker } from "./lib/queue.js";
 import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
 import { logger } from "./lib/logger.js";
 import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
+import { nonceMiddleware } from "./middleware/nonce.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -23,16 +24,12 @@ const app = express();
 app.set("trust proxy", 1); // For production environments behind proxies (Render, Heroku, etc.)
 const httpServer = createServer(app);
 
-declare module "http" {
-  interface IncomingMessage {
-    rawBody: Buffer;
-  }
-}
+// Request Tracing and Types are handled via src/types/express.d.ts
 
 // Request Tracing
 app.use((req: Request, res: Response, next: NextFunction) => {
-  (req as any).id = randomUUID();
-  res.setHeader("X-Request-ID", (req as any).id);
+  req.id = randomUUID();
+  res.setHeader("X-Request-ID", req.id);
   next();
 });
 
@@ -51,6 +48,7 @@ const allowedOrigins = [
 
 app.use(compression());
 app.use(cookieParser());
+app.use(nonceMiddleware);
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -93,15 +91,19 @@ app.use(
   })
 );
 
-// Tighten Helmet CSP
+// Tighten Helmet CSP with Nonces
 app.use(
   helmet({
     hidePoweredBy: true, // Remove X-Powered-By in all environments
-    contentSecurityPolicy: process.env.NODE_ENV === "production" ? {
+    contentSecurityPolicy: {
       useDefaults: true,
       directives: {
         "default-src": ["'self'"],
-        "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
+        "script-src": [
+          "'self'",
+          "https://www.googletagmanager.com",
+          (_req, res: any) => `'nonce-${res.locals.nonce}'`
+        ],
         "object-src": ["'none'"],
         "connect-src": [
           "'self'",
@@ -118,13 +120,17 @@ app.use(
           "https://res.cloudinary.com",
           "https://*.cloudinary.com",
         ],
-        "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        "style-src": [
+          "'self'",
+          "https://fonts.googleapis.com",
+          (_req, res: any) => `'nonce-${res.locals.nonce}'`
+        ],
         "font-src": ["'self'", "https://fonts.gstatic.com"],
         "frame-ancestors": ["'none'"],
         "form-action": ["'self'"],
         "report-uri": ["/api/v1/csp-report"],
       },
-    } : false,
+    },
     crossOriginEmbedderPolicy: process.env.NODE_ENV === "production",
     crossOriginOpenerPolicy: process.env.NODE_ENV === "production",
     crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -154,7 +160,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.path.startsWith("/api")) {
       const duration = Date.now() - start;
       logger.info({
-        requestId: (req as any).id,
+        requestId: req.id,
         method: req.method,
         path: req.path,
         status: res.statusCode,
@@ -182,17 +188,15 @@ app.get("/ping", (_req: Request, res: Response) => {
 });
 
 // Sentry debug route (for verifying error capture pipeline)
-app.get("/debug-sentry", function mainHandler(_req: Request, _res: Response) {
-  throw new Error("My first Sentry error!");
-});
+// Guarded to only run in development/staging, never production
+if (process.env.NODE_ENV !== "production") {
+  app.get("/api/v1/debug-sentry", function mainHandler(_req: Request, _res: Response) {
+    throw new Error("My first Sentry error!");
+  });
+}
 
 async function getRedisHealthSafe(): Promise<{ healthy: boolean; message: string }> {
   try {
-    const redisAny = redis as any;
-    if (redisAny && typeof redisAny.checkHealth === "function") {
-      return await redisAny.checkHealth();
-    }
-
     return await RedisClient.checkHealth();
   } catch (error: any) {
     return {

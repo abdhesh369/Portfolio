@@ -3,30 +3,8 @@ import { Redis } from "ioredis";
 import { Resend } from "resend";
 import { env } from "../env.js";
 import { logger } from "./logger.js";
+import { isLocalRedisUrl, formatRedisUrlForLog } from "./redis.js";
 
-function isLocalRedisUrl(url: string): boolean {
-    try {
-        const parsed = new URL(url);
-        const host = parsed.hostname.replace(/^\[|\]$/g, "");
-        return host === "localhost" || host === "127.0.0.1" || host === "::1";
-    } catch {
-        return false;
-    }
-}
-
-function formatRedisUrlForLog(url?: string): string | undefined {
-    if (!url) return undefined;
-
-    try {
-        const parsed = new URL(url);
-        const host = parsed.hostname.replace(/^\[|\]$/g, "");
-        const port = parsed.port ? `:${parsed.port}` : "";
-        const dbPath = parsed.pathname && parsed.pathname !== "/" ? parsed.pathname : "";
-        return `${parsed.protocol}//${host}${port}${dbPath}`;
-    } catch {
-        return "[invalid REDIS_URL]";
-    }
-}
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).

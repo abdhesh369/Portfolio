@@ -12,10 +12,16 @@ import { emailTemplateService } from "./services/email-template.service.js";
 import { seoSettingsService } from "./services/seo-settings.service.js";
 import type { Project, InsertProject, InsertSeoSettings } from "../shared/schema.js";
 
+import { logger } from "./lib/logger.js";
+
 function logSeed(message: string, level: "info" | "error" | "warn" = "info") {
-  const timestamp = new Date().toISOString();
-  const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "✓";
-  console.log(`${prefix} [${timestamp}][SEED] ${message} `);
+  if (level === "error") {
+    logger.error({ context: "seed" }, message);
+  } else if (level === "warn") {
+    logger.warn({ context: "seed" }, message);
+  } else {
+    logger.info({ context: "seed" }, message);
+  }
 }
 
 export async function seedDatabase() {

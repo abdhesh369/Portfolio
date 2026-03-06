@@ -1,11 +1,14 @@
 import { eq, desc, and, sql, inArray } from "drizzle-orm";
 import { db } from "../db.js";
 import { articlesTable, articleTagsTable, type Article, type InsertArticle } from "../../shared/schema.js";
+import type { InferInsertModel } from "drizzle-orm";
+
+type DbInsertArticle = InferInsertModel<typeof articlesTable>;
 
 export class ArticleRepository {
-    async findAll(status?: string): Promise<Article[]> {
+    async findAll(status?: Article["status"]): Promise<Article[]> {
         const baseQuery = status
-            ? db.select().from(articlesTable).where(eq(articlesTable.status, status as any))
+            ? db.select().from(articlesTable).where(eq(articlesTable.status, status))
             : db.select().from(articlesTable);
         const results = await baseQuery.orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt));
         if (results.length === 0) return [];
@@ -73,10 +76,17 @@ export class ArticleRepository {
     }
 
     async create(data: InsertArticle & { tags?: string[] }): Promise<Article> {
-        const { tags, ...articleData } = data;
+        const { tags, ...apiData } = data;
+
+        // Map API data to DB data
+        const articleData: DbInsertArticle = {
+            ...apiData,
+            slug: apiData.slug!, // Ensure slug is present, or it will fail at DB level anyway
+            publishedAt: apiData.publishedAt ? new Date(apiData.publishedAt) : null,
+        };
 
         return await db.transaction(async (tx) => {
-            const [inserted] = await tx.insert(articlesTable).values(articleData as any).returning();
+            const [inserted] = await tx.insert(articlesTable).values(articleData).returning();
             if (!inserted) throw new Error("Failed to create article");
 
             if (tags && tags.length > 0) {
@@ -85,15 +95,30 @@ export class ArticleRepository {
                 );
             }
 
-            return { ...inserted, tags: tags || [] } as Article;
+            return {
+                ...inserted,
+                tags: tags || [],
+                authorId: inserted.authorId ?? undefined,
+                featuredImage: inserted.featuredImage ?? undefined,
+                featuredImageAlt: inserted.featuredImageAlt ?? undefined,
+                excerpt: inserted.excerpt ?? undefined,
+                metaTitle: inserted.metaTitle ?? undefined,
+                metaDescription: inserted.metaDescription ?? undefined,
+            };
         });
     }
 
     async update(id: number, data: Partial<InsertArticle> & { tags?: string[] }): Promise<Article> {
-        const { tags, ...articleData } = data;
+        const { tags, ...apiData } = data;
+
+        // Map API data to DB data for updates
+        const articleData: Partial<DbInsertArticle> = {
+            ...apiData,
+            publishedAt: apiData.publishedAt ? new Date(apiData.publishedAt) : apiData.publishedAt === null ? null : undefined,
+        };
 
         return await db.transaction(async (tx) => {
-            const [updated] = await tx.update(articlesTable).set(articleData as any).where(eq(articlesTable.id, id)).returning();
+            const [updated] = await tx.update(articlesTable).set(articleData).where(eq(articlesTable.id, id)).returning();
             if (!updated) throw new Error(`Article with id ${id} not found`);
 
             if (tags !== undefined) {
@@ -106,7 +131,16 @@ export class ArticleRepository {
             }
 
             const currentTags = await tx.select().from(articleTagsTable).where(eq(articleTagsTable.articleId, id));
-            return { ...updated, tags: currentTags.map(t => t.tag) } as Article;
+            return {
+                ...updated,
+                tags: currentTags.map(t => t.tag),
+                authorId: updated.authorId ?? undefined,
+                featuredImage: updated.featuredImage ?? undefined,
+                featuredImageAlt: updated.featuredImageAlt ?? undefined,
+                excerpt: updated.excerpt ?? undefined,
+                metaTitle: updated.metaTitle ?? undefined,
+                metaDescription: updated.metaDescription ?? undefined,
+            };
         });
     }
 
@@ -126,6 +160,26 @@ export class ArticleRepository {
     }
 
     async search(query: string, limit: number = 10): Promise<Article[]> {
+        interface RawArticleRow {
+            id: number;
+            title: string;
+            slug: string;
+            content: string;
+            excerpt: string | null;
+            featuredImage: string | null;
+            status: Article["status"];
+            publishedAt: string | Date | null;
+            viewCount: number;
+            readTimeMinutes: number;
+            metaTitle: string | null;
+            metaDescription: string | null;
+            authorId: number | null;
+            featuredImageAlt: string | null;
+            createdAt: string | Date;
+            updatedAt: string | Date;
+            rank: number;
+        }
+
         const results = await db.execute(sql`
             SELECT a.*, ts_rank(a.search_vector, plainto_tsquery('english', ${query})) AS rank
             FROM articles a
@@ -137,24 +191,24 @@ export class ArticleRepository {
 
         if (!results.rows || results.rows.length === 0) return [];
 
-        const articles = results.rows.map((r: any) => ({
+        const articles = (results.rows as unknown as RawArticleRow[]).map((r) => ({
             id: r.id,
             title: r.title,
             slug: r.slug,
             content: r.content,
-            excerpt: r.excerpt,
-            featuredImage: r.featuredImage,
+            excerpt: r.excerpt ?? undefined,
+            featuredImage: r.featuredImage ?? undefined,
             status: r.status,
             publishedAt: r.publishedAt ? new Date(r.publishedAt) : null,
             viewCount: r.viewCount,
             readTimeMinutes: r.readTimeMinutes,
-            metaTitle: r.metaTitle,
-            metaDescription: r.metaDescription,
-            authorId: r.authorId,
-            featuredImageAlt: r.featuredImageAlt,
+            metaTitle: r.metaTitle ?? undefined,
+            metaDescription: r.metaDescription ?? undefined,
+            authorId: r.authorId ?? undefined,
+            featuredImageAlt: r.featuredImageAlt ?? undefined,
             createdAt: new Date(r.createdAt),
             updatedAt: new Date(r.updatedAt),
-        })) as Article[];
+        }));
 
         // Fetch tags for results
         const ids = articles.map(a => a.id);
@@ -172,8 +226,26 @@ export class ArticleRepository {
     }
 
     async findRelated(articleId: number, limit: number = 3): Promise<Article[]> {
-        // Query to find articles with overlapping tags using a specialized SQL join
-        // Using sql.raw carefully or structured sql template
+        interface RelatedArticleRow {
+            id: number;
+            title: string;
+            slug: string;
+            content: string;
+            excerpt: string | null;
+            featuredImage: string | null;
+            status: Article["status"];
+            publishedAt: string | Date | null;
+            viewCount: number;
+            readTimeMinutes: number;
+            metaTitle: string | null;
+            metaDescription: string | null;
+            authorId: number | null;
+            featuredImageAlt: string | null;
+            createdAt: string | Date;
+            updatedAt: string | Date;
+            score: number;
+        }
+
         const relatedResults = await db.execute(sql`
             SELECT a.*, COUNT(at2.tag) as score
             FROM articles a
@@ -187,26 +259,24 @@ export class ArticleRepository {
 
         if (!relatedResults.rows || relatedResults.rows.length === 0) return [];
 
-        // Map results if column names differ from schema (snake_case to camelCase)
-        // Drizzle usually handles this but execute() returns raw rows
-        const results = relatedResults.rows.map((r: any) => ({
+        const results = (relatedResults.rows as unknown as RelatedArticleRow[]).map((r) => ({
             id: r.id,
             title: r.title,
             slug: r.slug,
             content: r.content,
-            excerpt: r.excerpt,
-            featuredImage: r.featuredImage,
+            excerpt: r.excerpt ?? undefined,
+            featuredImage: r.featuredImage ?? undefined,
             status: r.status,
             publishedAt: r.publishedAt ? new Date(r.publishedAt) : null,
             viewCount: r.viewCount,
             readTimeMinutes: r.readTimeMinutes,
-            metaTitle: r.metaTitle,
-            metaDescription: r.metaDescription,
-            authorId: r.authorId,
-            featuredImageAlt: r.featuredImageAlt,
+            metaTitle: r.metaTitle ?? undefined,
+            metaDescription: r.metaDescription ?? undefined,
+            authorId: r.authorId ?? undefined,
+            featuredImageAlt: r.featuredImageAlt ?? undefined,
             createdAt: new Date(r.createdAt),
             updatedAt: new Date(r.updatedAt),
-        })) as Article[];
+        }));
 
         // Fetch tags for results
         const ids = results.map(r => r.id);

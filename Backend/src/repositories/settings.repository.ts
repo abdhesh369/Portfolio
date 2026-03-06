@@ -1,6 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { siteSettingsTable, type SiteSettings, type InsertSiteSettings } from "../../shared/schema.js";
+
+type DbSiteSettings = InferSelectModel<typeof siteSettingsTable>;
+type DbInsertSiteSettings = InferInsertModel<typeof siteSettingsTable>;
 
 export class SettingsRepository {
     async getSettings(): Promise<SiteSettings | null> {
@@ -8,30 +11,35 @@ export class SettingsRepository {
             .select()
             .from(siteSettingsTable)
             .limit(1);
-        return result || null;
+        return (result as SiteSettings) || null;
     }
 
     async updateSettings(data: InsertSiteSettings): Promise<SiteSettings> {
         const existing = await this.getSettings();
 
         if (existing) {
+            const updateData: Partial<DbInsertSiteSettings> = {
+                ...data,
+                updatedAt: new Date(),
+            };
+
             const [updated] = await db
                 .update(siteSettingsTable)
-                .set({
-                    ...data,
-                    updatedAt: new Date(),
-                })
+                .set(updateData)
                 .where(eq(siteSettingsTable.id, existing.id))
                 .returning();
-            return updated;
+            return updated as SiteSettings;
         } else {
+            const insertData: DbInsertSiteSettings = {
+                ...data,
+                isOpenToWork: data.isOpenToWork ?? true,
+            };
+
             const [inserted] = await db
                 .insert(siteSettingsTable)
-                .values({
-                    isOpenToWork: data.isOpenToWork ?? true,
-                })
+                .values(insertData)
                 .returning();
-            return inserted;
+            return inserted as SiteSettings;
         }
     }
 }

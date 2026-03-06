@@ -4,7 +4,7 @@ import { logger } from "./logger.js";
 
 const DEFAULT_REDIS_URL = "redis://localhost:6379";
 
-function isLocalRedisUrl(url: string): boolean {
+export function isLocalRedisUrl(url: string): boolean {
     try {
         const parsed = new URL(url);
         const host = parsed.hostname.replace(/^\[|\]$/g, "");
@@ -14,7 +14,8 @@ function isLocalRedisUrl(url: string): boolean {
     }
 }
 
-function formatRedisUrlForLog(url: string): string {
+export function formatRedisUrlForLog(url?: string): string {
+    if (!url) return "[missing REDIS_URL]";
     try {
         const parsed = new URL(url);
         const host = parsed.hostname.replace(/^\[|\]$/g, "");

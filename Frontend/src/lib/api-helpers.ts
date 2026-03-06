@@ -16,6 +16,13 @@ export const API_BASE_URL = (() => {
     return prodUrl;
 })();
 
+export class ApiError extends Error {
+    constructor(public status: number, message: string, public data?: any) {
+        super(message);
+        this.name = "ApiError";
+    }
+}
+
 // In-memory storage for CSRF token to handle cross-origin SOP restrictions
 let memCsrfToken: string | null = null;
 
@@ -94,7 +101,7 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
             });
             if (!retryRes.ok) {
                 const err = await retryRes.json().catch(() => ({ message: retryRes.statusText }));
-                throw new Error(err.message || `Request failed (${retryRes.status})`);
+                throw new ApiError(retryRes.status, err.message || `Request failed (${retryRes.status})`, err);
             }
             if (retryRes.status === 204) return null;
             return retryRes.json();
@@ -102,12 +109,12 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
 
         // Refresh failed — notify AuthProvider via event (avoids full page reload)
         window.dispatchEvent(new CustomEvent("auth:session-expired"));
-        throw new Error("Session expired. Please login again.");
+        throw new ApiError(401, "Session expired. Please login again.");
     }
 
     if (!res.ok) {
         const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw new Error(err.message || `Request failed (${res.status})`);
+        throw new ApiError(res.status, err.message || `Request failed (${res.status})`, err);
     }
     if (res.status === 204) return null;
     return res.json();

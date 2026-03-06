@@ -1,6 +1,9 @@
 import { db } from "../db.js";
 import { auditLogTable } from "../../shared/schema.js";
-import { desc, eq, and, gte, sql } from "drizzle-orm";
+import { desc, eq, and, gte, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+
+type DbAuditLog = InferSelectModel<typeof auditLogTable>;
+type DbInsertAuditLog = InferInsertModel<typeof auditLogTable>;
 
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE";
 
@@ -15,13 +18,15 @@ export interface AuditLogEntry {
 export const auditLogRepository = {
   /** Record an audit event (append-only) */
   async record(entry: AuditLogEntry) {
-    await db.insert(auditLogTable).values({
+    const logData: DbInsertAuditLog = {
       action: entry.action,
       entity: entry.entity,
       entityId: entry.entityId ?? null,
       oldValues: entry.oldValues ?? null,
       newValues: entry.newValues ?? null,
-    });
+    };
+
+    await db.insert(auditLogTable).values(logData);
   },
 
   /** Paginated list of audit log entries (newest first) */
@@ -52,7 +57,7 @@ export const auditLogRepository = {
     ]);
 
     return {
-      entries: rows,
+      entries: rows as DbAuditLog[],
       total: countResult[0]?.count ?? 0,
     };
   },

@@ -1,13 +1,16 @@
-import { eq, desc, inArray } from "drizzle-orm";
+import { eq, desc, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { messagesTable, type Message, type InsertMessage } from "../../shared/schema.js";
 
+type DbMessage = InferSelectModel<typeof messagesTable>;
+type DbInsertMessage = InferInsertModel<typeof messagesTable>;
+
 export class MessageRepository {
-    private transformMessage(message: any): Message {
+    private transformMessage(message: DbMessage): Message {
         return {
             ...message,
-            createdAt: message.createdAt instanceof Date ? message.createdAt.toISOString() : message.createdAt,
-        };
+            createdAt: message.createdAt ? message.createdAt.toISOString() : null,
+        } as Message;
     }
 
     async findAll(): Promise<Message[]> {
@@ -24,10 +27,14 @@ export class MessageRepository {
         return result ? this.transformMessage(result) : null;
     }
 
-    async create(message: InsertMessage): Promise<Message> {
+    async create(data: InsertMessage): Promise<Message> {
+        const messageData: DbInsertMessage = {
+            ...data,
+        };
+
         const [inserted] = await db
             .insert(messagesTable)
-            .values(message)
+            .values(messageData)
             .returning();
         if (!inserted) throw new Error("Failed to create message");
         return this.transformMessage(inserted);
@@ -39,9 +46,13 @@ export class MessageRepository {
     }
 
     async update(id: number, data: Partial<InsertMessage>): Promise<Message> {
+        const messageData: Partial<DbInsertMessage> = {
+            ...data,
+        };
+
         const [updated] = await db
             .update(messagesTable)
-            .set(data)
+            .set(messageData)
             .where(eq(messagesTable.id, id))
             .returning();
         if (!updated) throw new Error(`Message with id ${id} not found`);

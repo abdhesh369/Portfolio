@@ -1,6 +1,8 @@
-import { eq, count, sql, desc, gte, and } from "drizzle-orm";
+import { eq, count, sql, desc, gte, and, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { analyticsTable, type InsertAnalytics, type Analytics } from "../../shared/schema.js";
+
+type DbAnalytics = InferSelectModel<typeof analyticsTable>;
 
 /* ── Response types ── */
 
@@ -34,18 +36,15 @@ export interface AnalyticsSummary {
     topCountries: TopCountry[];
 }
 
-function transformAnalytics(dbAnalytics: any): Analytics {
+function transformAnalytics(dbAnalytics: DbAnalytics): Analytics {
     return {
-        id: dbAnalytics.id,
-        type: dbAnalytics.type,
-        targetId: dbAnalytics.targetId,
-        path: dbAnalytics.path,
-        browser: dbAnalytics.browser,
-        os: dbAnalytics.os,
-        device: dbAnalytics.device,
-        country: dbAnalytics.country,
-        city: dbAnalytics.city,
-        createdAt: dbAnalytics.createdAt,
+        ...dbAnalytics,
+        targetId: dbAnalytics.targetId ?? null,
+        browser: dbAnalytics.browser ?? null,
+        os: dbAnalytics.os ?? null,
+        device: dbAnalytics.device ?? null,
+        country: dbAnalytics.country ?? null,
+        city: dbAnalytics.city ?? null,
     };
 }
 

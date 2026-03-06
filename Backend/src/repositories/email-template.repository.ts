@@ -1,15 +1,18 @@
-import { eq } from "drizzle-orm";
+import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { emailTemplatesTable, type EmailTemplate, type InsertEmailTemplate } from "../../shared/schema.js";
 
-function transformEmailTemplate(dbTemplate: any): EmailTemplate {
+type DbEmailTemplate = InferSelectModel<typeof emailTemplatesTable>;
+type DbInsertEmailTemplate = InferInsertModel<typeof emailTemplatesTable>;
+
+function transformEmailTemplate(dbTemplate: DbEmailTemplate): EmailTemplate {
     return {
         id: dbTemplate.id,
         name: dbTemplate.name,
         subject: dbTemplate.subject,
         body: dbTemplate.body,
-        createdAt: dbTemplate.createdAt,
-    };
+        createdAt: dbTemplate.createdAt ? dbTemplate.createdAt.toISOString() : null,
+    } as EmailTemplate;
 }
 
 export class EmailTemplateRepository {
@@ -27,16 +30,24 @@ export class EmailTemplateRepository {
         return result ? transformEmailTemplate(result) : null;
     }
 
-    async create(template: InsertEmailTemplate): Promise<EmailTemplate> {
-        const [inserted] = await db.insert(emailTemplatesTable).values(template).returning();
+    async create(data: InsertEmailTemplate): Promise<EmailTemplate> {
+        const templateData: DbInsertEmailTemplate = {
+            ...data,
+        };
+
+        const [inserted] = await db.insert(emailTemplatesTable).values(templateData).returning();
         if (!inserted) throw new Error("Failed to create email template");
         return transformEmailTemplate(inserted);
     }
 
-    async update(id: number, template: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
+    async update(id: number, data: Partial<InsertEmailTemplate>): Promise<EmailTemplate> {
+        const templateData: Partial<DbInsertEmailTemplate> = {
+            ...data,
+        };
+
         const [updated] = await db
             .update(emailTemplatesTable)
-            .set(template)
+            .set(templateData)
             .where(eq(emailTemplatesTable.id, id))
             .returning();
         if (!updated) throw new Error(`Email template ${id} not found after update`);
