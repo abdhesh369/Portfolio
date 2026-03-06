@@ -133,6 +133,23 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
+        "nm-stagger-in": {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-bounce-left": {
+          "0%": { transform: "translateX(-20px)", opacity: "0" },
+          "60%": { transform: "translateX(8px)", opacity: "1" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "reveal-line": {
+          from: { transform: "scaleX(0)", opacity: "0" },
+          to: { transform: "scaleX(1)", opacity: "1" },
+        },
+        "float-icon": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

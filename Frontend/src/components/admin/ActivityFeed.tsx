@@ -12,6 +12,7 @@ interface ActivityItem {
 interface ActivityFeedProps {
     activities: ActivityItem[];
     loading?: boolean;
+    onFetchAll?: () => void;
 }
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -28,14 +29,17 @@ const COLOR_MAP: Record<string, string> = {
     system: "bg-slate-50 text-slate-600 border-slate-100",
 };
 
-export default function ActivityFeed({ activities, loading }: ActivityFeedProps) {
+export default function ActivityFeed({ activities, loading, onFetchAll }: ActivityFeedProps) {
     return (
         <div className="nm-flat rounded-[2rem] flex flex-col h-full overflow-hidden">
             <div className="p-7 flex items-center justify-between">
                 <h2 className="text-xl font-black text-[var(--admin-text-primary)] uppercase tracking-tighter">
                     ACTIVITY_LOG
                 </h2>
-                <button className="text-[10px] font-black text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-colors uppercase tracking-[0.2em] nm-button px-4 py-2 rounded-full">
+                <button
+                    onClick={onFetchAll}
+                    className="text-[10px] font-black text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-colors uppercase tracking-[0.2em] nm-button px-4 py-2 rounded-full"
+                >
                     FETCH_ALL
                 </button>
             </div>

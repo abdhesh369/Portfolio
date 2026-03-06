@@ -59,9 +59,8 @@ export default function AdminLayout({
                     </div>
                 </main>
 
-                <footer className="py-6 px-4 lg:px-8 text-center text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.2em]">
-                    &copy; {new Date().getFullYear()} ABDHESH | NEUMORPHIC_OS_v3.0
-                </footer>
+                <footer className="py-6 px-4 lg:px-8 text-center text-[var(--admin-text-secondary)] text-xs font-bold uppercase tracking-[0.2em]">
+                    &copy; {new Date().getFullYear()} ABDHESH | NEUMORPHIC_OS_v3.0                </footer>
             </div>
         </div>
     );

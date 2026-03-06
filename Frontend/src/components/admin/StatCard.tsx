@@ -20,7 +20,7 @@ export default function StatCard({ label, value, icon: Icon, trend, color = "blu
     const [isPulsing, setIsPulsing] = useState(false);
 
     useEffect(() => {
-        let isNumber = typeof value === 'number' || !isNaN(Number(value));
+        let isNumber = value !== '' && (typeof value === 'number' || !isNaN(Number(value)));
         if (!isNumber) {
             setDisplayValue(value);
             return;
@@ -32,6 +32,7 @@ export default function StatCard({ label, value, icon: Icon, trend, color = "blu
         const frameRate = 1000 / 60;
         const totalFrames = Math.round(duration / frameRate);
         let frame = 0;
+        let pulseTimeout: ReturnType<typeof setTimeout>;
 
         const easeOutExpo = (t: number): number => {
             return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
@@ -48,11 +49,14 @@ export default function StatCard({ label, value, icon: Icon, trend, color = "blu
                 clearInterval(counter);
                 setDisplayValue(targetValue);
                 setIsPulsing(true);
-                setTimeout(() => setIsPulsing(false), 400); // 0.4s pulse duration
+                pulseTimeout = setTimeout(() => setIsPulsing(false), 400);
             }
         }, frameRate);
 
-        return () => clearInterval(counter);
+        return () => {
+            clearInterval(counter);
+            clearTimeout(pulseTimeout);
+        };
     }, [value]);
 
     return (
@@ -61,7 +65,7 @@ export default function StatCard({ label, value, icon: Icon, trend, color = "blu
             style={{ animationDelay: delay }}
         >
             <div className="flex items-start justify-between">
-                <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-[var(--admin-text-secondary)] group-hover:text-indigo-500 transition-colors animate-floating">
+                <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-[var(--admin-text-secondary)] group-hover:text-indigo-500 transition-colors float-icon">
                     <Icon size={24} strokeWidth={2.5} />
                 </div>
 
@@ -71,9 +75,8 @@ export default function StatCard({ label, value, icon: Icon, trend, color = "blu
                         trend.isUp ? "text-emerald-500" : "text-rose-500"
                     )}>
                         <span className="text-[10px] font-black uppercase tracking-widest">
-                            {trend.isUp ? "+" : "-"}{trend.value}
-                        </span>
-                    </div>
+                            {trend.isUp === true ? "+" : trend.isUp === false ? "-" : ""}{trend.value}
+                        </span>                    </div>
                 )}
             </div>
 

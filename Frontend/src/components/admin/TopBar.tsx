@@ -16,6 +16,7 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
     const { user, logout } = useAuth();
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
+    const ripple = useRipple();
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -43,9 +44,8 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                         <span className="hover:text-indigo-500 transition-colors cursor-pointer">System</span>
                         <ChevronRight size={12} className="opacity-50" />
                         <span className="text-[var(--admin-text-primary)] tracking-[0.15em]">
-                            {activeTab.replace("-", "_")}
-                        </span>
-                    </div>
+                            {activeTab.replaceAll("-", "_")}
+                        </span>                    </div>
                 </div>
 
                 {/* Right Side: Search + Tools + User */}
@@ -92,11 +92,11 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                                         <p className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] mb-1">Access Protocol</p>
                                         <p className="text-xs font-black text-[var(--admin-text-primary)] truncate">{user?.username}</p>
                                     </div>
-                                    <button className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] hover:bg-white/10 hover:text-indigo-500 transition-all">
+                                    <button disabled aria-disabled="true" className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] opacity-50 cursor-not-allowed">
                                         <User size={14} />
                                         User Profile
                                     </button>
-                                    <button className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] hover:bg-white/10 hover:text-indigo-500 transition-all">
+                                    <button disabled aria-disabled="true" className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] opacity-50 cursor-not-allowed">
                                         <Settings size={14} />
                                         Kernel Config
                                     </button>

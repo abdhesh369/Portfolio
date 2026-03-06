@@ -28,6 +28,11 @@
   --nm-bg: #1e2030;
   --nm-light: #2a2d42;
   --nm-dark: #14152a;
+  --nm-accent: #7a8ade;
+  --nm-accent-dark: #6f81de;
+  --nm-emerald: #38a175;
+  --nm-rose: #e36688;
+  --nm-violet: #a079f2;
 
   --admin-text-primary: #f8fafc;
   --admin-text-secondary: #cbd5e1;
@@ -206,18 +211,16 @@ body.admin-mode {
 }
 
 /* --- Animations --- */
-.animate-floating {
-  animation: float-icon 3s ease-in-out infinite;
+.float-icon {
+  animation: float-icon 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
 }
 
 @keyframes float-icon {
-
-  0%,
-  100% {
+  0% {
     transform: translateY(0);
   }
 
-  50% {
+  100% {
     transform: translateY(-5px);
   }
 }

@@ -79,8 +79,18 @@ export function SkillsTab({ }: AdminTabProps) {
                 <form onSubmit={save} className="space-y-4 max-w-2xl">
                     <FormField label="Name *" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v })} required />
                     <FormField label="Category *" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} placeholder="e.g. Frontend, Backend, Tools" required />
-                    <FormField label="Status" value={editing.status} onChange={(v) => setEditing({ ...editing, status: v as "Core" | "Advanced" | "Learning" })} placeholder="Core, Learning, etc." />
-                    <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
+                    <div className="space-y-1">
+                        <label className="text-sm text-white/70">Status</label>
+                        <select
+                            value={editing.status}
+                            onChange={(e) => setEditing({ ...editing, status: e.target.value as "Core" | "Advanced" | "Learning" })}
+                            className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-white"
+                        >
+                            <option value="Core">Core</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Learning">Learning</option>
+                        </select>
+                    </div>                    <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
                     <FormTextarea label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} />
                     <FormTextarea label="Proof" value={editing.proof} onChange={(v) => setEditing({ ...editing, proof: v })} />
 

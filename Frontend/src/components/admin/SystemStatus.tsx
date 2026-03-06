@@ -1,5 +1,6 @@
 import { Database, Server, Shield, Activity, RefreshCw, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRipple } from "@/hooks/use-ripple";
 
 interface SystemStatusProps {
     apiHealth: "healthy" | "unreachable" | "degraded" | "loading";
@@ -18,6 +19,8 @@ export default function SystemStatus({
     lastChecked,
     onRefresh
 }: SystemStatusProps) {
+    const ripple = useRipple();
+
     const getIndicatorColor = (status: string) => {
         if (status === "healthy" || status === "connected") return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
         if (status === "loading" || status === "checking") return "bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]";
@@ -31,7 +34,7 @@ export default function SystemStatus({
                     HEARTBEAT
                 </h2>
                 <button
-                    onClick={onRefresh}
+                    onClick={(e) => { ripple(e); onRefresh?.(); }}
                     className="w-10 h-10 nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all flex items-center justify-center p-0"
                     title="Refresh Heartbeat"
                 >

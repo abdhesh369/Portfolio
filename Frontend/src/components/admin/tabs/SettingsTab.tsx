@@ -4,8 +4,10 @@ import { LoadingSkeleton } from "@/components/admin/AdminShared";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Briefcase } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function SettingsTab() {
+    const { toast } = useToast();
     const { data: settings, isLoading, isError } = useSiteSettings();
     const updateMutation = useUpdateSiteSettings();
 
@@ -16,8 +18,8 @@ export function SettingsTab() {
         updateMutation.mutate(
             { isOpenToWork: checked },
             {
-                onError: () => {
-                    // Show toast or error feedback to user
+                onError: (error: Error) => {
+                    toast({ title: "Error", description: error.message || "Failed to update settings", variant: "destructive" });
                 },
             }
         );

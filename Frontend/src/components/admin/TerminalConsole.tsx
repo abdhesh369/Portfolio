@@ -6,6 +6,7 @@ interface TerminalLine {
     id: number;
     text: string;
     type: "info" | "success" | "warning" | "error";
+    timestamp: Date;
 }
 
 export default function TerminalConsole() {
@@ -24,7 +25,7 @@ export default function TerminalConsole() {
         let currentIdx = 0;
         const interval = setInterval(() => {
             if (currentIdx < initialLines.length) {
-                const lineToAdd = initialLines[currentIdx];
+                const lineToAdd = { ...initialLines[currentIdx], timestamp: new Date() };
                 setLines(prev => [...prev, lineToAdd]);
                 currentIdx++;
             } else {
@@ -65,7 +66,7 @@ export default function TerminalConsole() {
                 <div className="flex-1 overflow-y-auto custom-terminal-scrollbar space-y-1.5" ref={scrollRef}>
                     {lines.filter(Boolean).map((line) => (
                         <div key={line.id} className="flex gap-3 animate-nm-in">
-                            <span className="text-[var(--admin-text-secondary)] shrink-0">[{new Date().toLocaleTimeString([], { hour12: false })}]</span>
+                            <span className="text-[var(--admin-text-secondary)] shrink-0">[{line.timestamp.toLocaleTimeString([], { hour12: false })}]</span>
                             <span className={cn(
                                 "tracking-wider",
                                 line.type === "success" && "text-emerald-400",

@@ -136,7 +136,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Activity Feed */}
                 <div className="lg:col-span-2">
-                    <ActivityFeed activities={activities} />
+                    <ActivityFeed activities={activities} onFetchAll={() => onNavigate?.("messages")} />
                 </div>
 
                 {/* System Health */}

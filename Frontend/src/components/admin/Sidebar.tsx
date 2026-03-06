@@ -113,8 +113,7 @@ export default function Sidebar({
                         {collapsed ? <ChevronRight size={20} /> : (
                             <div className="flex items-center gap-2">
                                 <ChevronLeft size={20} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Dock System</span>
-                            </div>
+                                <span className="text-xs font-bold uppercase tracking-widest">Dock System</span>                            </div>
                         )}
                     </button>
                 </div>
