@@ -880,8 +880,7 @@ export const api = {
                 500: errorSchemas.internal,
             },
         }
-    },
-},
+    }
 };
 
 export type Api = typeof api;
