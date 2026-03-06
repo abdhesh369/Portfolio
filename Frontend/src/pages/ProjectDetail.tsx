@@ -21,6 +21,7 @@ import { SEO } from "@/components/SEO";
 import { getDynamicOgImage } from "@/lib/cloudinary";
 import { ApiResponseViewer } from "@/components/ApiResponseViewer";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { InteractivePlayground } from "@/components/InteractivePlayground";
 
 // Floating particles (reused from main components)
 const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
@@ -488,6 +489,16 @@ export default function ProjectDetail() {
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.systemDesign || "System design details coming soon.") }}
                   />
                 </SectionCard>
+
+                {/* Interactive Playground */}
+                <InteractivePlayground
+                  projectId={project.id}
+                  projectTitle={project.title}
+                  githubUrl={project.githubUrl}
+                  liveUrl={project.liveUrl}
+                  techStack={project.techStack}
+                  description={project.description}
+                />
 
                 {/* Challenges, Learnings & Role Grid */}
                 <div className="grid md:grid-cols-2 gap-6">

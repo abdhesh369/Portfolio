@@ -20,9 +20,10 @@ const TestimonialsTab = lazy(() => import("@/components/admin/tabs/TestimonialsT
 const AuditLogTab = lazy(() => import("@/components/admin/tabs/AuditLogTab").then(m => ({ default: m.AuditLogTab })));
 const GuestbookTab = lazy(() => import("@/components/admin/tabs/GuestbookTab").then(m => ({ default: m.GuestbookTab })));
 const MindsetTab = lazy(() => import("@/components/admin/tabs/MindsetTab"));
+const CustomizationTab = lazy(() => import("@/components/admin/tabs/CustomizationTab").then(m => ({ default: m.CustomizationTab })));
 const SettingsTab = lazy(() => import("@/components/admin/tabs/SettingsTab").then(m => ({ default: m.SettingsTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "settings";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings";
 
 const TAB_LABELS: Record<Tab, string> = {
     overview: "OVERVIEW",
@@ -39,6 +40,7 @@ const TAB_LABELS: Record<Tab, string> = {
     guestbook: "GUESTBOOK",
     audit: "AUDIT LOG",
     mindset: "MINDSET",
+    customization: "CUSTOMIZATION",
     settings: "SITE SETTINGS",
 };
 
@@ -88,6 +90,7 @@ export default function AdminDashboard() {
                     {tab === "guestbook" && <GuestbookTab />}
                     {tab === "audit" && <AuditLogTab />}
                     {tab === "mindset" && <MindsetTab />}
+                    {tab === "customization" && <CustomizationTab />}
                     {tab === "settings" && <SettingsTab />}
                 </TabErrorBoundary>
             </Suspense>

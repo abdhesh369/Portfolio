@@ -1,9 +1,10 @@
-import { Github, Linkedin, Twitter, Facebook, Instagram, ArrowUp, Mail, Code2, Cpu, Globe } from "lucide-react";
+import { Github, Linkedin, Twitter, Facebook, Instagram, ArrowUp, Mail, Code2, Cpu, Globe, Youtube, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { m } from "framer-motion";
 import { useLocation } from "wouter";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
-const footerNavItems = [
+const defaultFooterNavItems = [
   { name: "Home", href: "/" },
   { name: "Projects", href: "#projects" },
   { name: "Skills", href: "#skills" },
@@ -12,17 +13,30 @@ const footerNavItems = [
   { name: "Contact", href: "#contact" },
 ];
 
-const socialLinks = [
-  { href: "https://github.com/abdhesh369", icon: Github, label: "Github", color: "var(--brand-github)" },
-  { href: "https://www.linkedin.com/in/abdhesh369", icon: Linkedin, label: "LinkedIn", color: "var(--brand-linkedin)" },
-  { href: "https://x.com/abdhesh369", icon: Twitter, label: "Twitter", color: "var(--brand-twitter)" },
-  { href: "https://www.instagram.com/abdhesh.369", icon: Instagram, label: "Instagram", color: "var(--brand-instagram)" },
-  { href: "https://www.facebook.com/abdhesh.369", icon: Facebook, label: "Facebook", color: "var(--brand-facebook)" },
-];
+const socialIconMap: Record<string, React.ElementType> = {
+  github: Github,
+  linkedin: Linkedin,
+  twitter: Twitter,
+  instagram: Instagram,
+  facebook: Facebook,
+  youtube: Youtube,
+  discord: MessageCircle,
+};
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [location, setLocation] = useLocation();
+  const { data: settings } = useSiteSettings();
+
+  // Build social links from settings
+  const socialLinks = [
+    settings?.socialGithub && { href: settings.socialGithub, icon: Github, label: "GitHub", color: "var(--brand-github)" },
+    settings?.socialLinkedin && { href: settings.socialLinkedin, icon: Linkedin, label: "LinkedIn", color: "var(--brand-linkedin)" },
+    settings?.socialTwitter && { href: settings.socialTwitter, icon: Twitter, label: "Twitter", color: "var(--brand-twitter)" },
+    settings?.socialInstagram && { href: settings.socialInstagram, icon: Instagram, label: "Instagram", color: "var(--brand-instagram)" },
+    settings?.socialFacebook && { href: settings.socialFacebook, icon: Facebook, label: "Facebook", color: "var(--brand-facebook)" },
+    settings?.socialYoutube && { href: settings.socialYoutube, icon: Youtube, label: "YouTube", color: "var(--brand-youtube)" },
+  ].filter(Boolean) as Array<{ href: string; icon: React.ElementType; label: string; color: string }>;
 
 
 
@@ -97,7 +111,7 @@ export default function Footer() {
           <div className="md:col-span-3 space-y-6">
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Navigation</h4>
             <ul className="space-y-3">
-              {footerNavItems.map((item) => (
+              {defaultFooterNavItems.map((item) => (
                 <li key={item.name}>
                   <button
                     onClick={() => handleNavClick(item.href)}

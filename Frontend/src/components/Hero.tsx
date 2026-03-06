@@ -376,10 +376,10 @@ export default function Hero() {
                 transition={{ delay: 0.3 }}
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
-                <span className="sr-only">Abdhesh Sah - </span>
-                Start building <br />
+                <span className="sr-only">{settings?.personalName || "Abdhesh Sah"} - </span>
+                {settings?.heroGreeting || "Start building"} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient-x relative inline-block pb-2">
-                  The Future
+                  {settings?.personalName || "The Future"}
                   <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
                 </span>
               </m.h1>
@@ -392,7 +392,7 @@ export default function Hero() {
               >
                 <span className="text-cyan-400 mr-2">{">"}</span>
                 <RotatingText
-                  strings={[
+                  strings={settings?.heroTaglines || [
                     "Engineering scalable systems.",
                     "Crafting intuitive interfaces.",
                     "Bridging hardware & software.",
@@ -404,7 +404,7 @@ export default function Hero() {
 
             {/* LCP element — no animation delay so it paints immediately */}
             <p className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              I'm <strong className="text-white">Abdhesh Sah</strong>, a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive.
+              I'm <strong className="text-white">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
             </p>
 
             {/* CTA Buttons */}
@@ -415,19 +415,33 @@ export default function Hero() {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
               <Button
-                onClick={scrollToProjects}
+                onClick={() => {
+                  const url = settings?.heroCtaPrimaryUrl || "#projects";
+                  if (url.startsWith("#")) {
+                    document.getElementById(url.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    window.location.href = url;
+                  }
+                }}
                 size="lg"
                 className="w-full sm:w-auto bg-cyan-500 text-black hover:bg-cyan-400 font-bold rounded-full px-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all"
               >
-                View My Work <ArrowRight className="ml-2 w-4 h-4" />
+                {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
               <Button
-                onClick={scrollToContact}
+                onClick={() => {
+                  const url = settings?.heroCtaSecondaryUrl || "#contact";
+                  if (url.startsWith("#")) {
+                    document.getElementById(url.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    window.location.href = url;
+                  }
+                }}
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
               >
-                Contact Me <Mail className="ml-2 w-4 h-4" />
+                {settings?.heroCtaSecondary || "Contact Me"} <Mail className="ml-2 w-4 h-4" />
               </Button>
             </m.div>
 

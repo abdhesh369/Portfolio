@@ -215,6 +215,60 @@ export const siteSettingsTable = pgTable("site_settings", {
   id: serial("id").primaryKey(),
   isOpenToWork: boolean("isOpenToWork").notNull().default(true),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  
+  // Personal Branding
+  personalName: varchar("personalName", { length: 255 }).default("Your Name"),
+  personalTitle: varchar("personalTitle", { length: 255 }).default("Full Stack Developer"),
+  personalBio: text("personalBio").default("Passionate about building amazing products"),
+  personalAvatar: varchar("personalAvatar", { length: 500 }),
+  
+  // Social Links (10 platforms)
+  socialGithub: varchar("socialGithub", { length: 500 }),
+  socialLinkedin: varchar("socialLinkedin", { length: 500 }),
+  socialTwitter: varchar("socialTwitter", { length: 500 }),
+  socialInstagram: varchar("socialInstagram", { length: 500 }),
+  socialFacebook: varchar("socialFacebook", { length: 500 }),
+  socialYoutube: varchar("socialYoutube", { length: 500 }),
+  socialDiscord: varchar("socialDiscord", { length: 500 }),
+  socialStackoverflow: varchar("socialStackoverflow", { length: 500 }),
+  socialDevto: varchar("socialDevto", { length: 500 }),
+  socialMedium: varchar("socialMedium", { length: 500 }),
+  
+  // Hero Section
+  heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
+  heroBadgeText: varchar("heroBadgeText", { length: 255 }).default("Available for work"),
+  heroTaglines: jsonb("heroTaglines").default(["Building amazing products", "Solving complex problems"]),
+  
+  // Hero CTAs
+  heroCtaPrimary: varchar("heroCtaPrimary", { length: 255 }).default("View My Work"),
+  heroCtaPrimaryUrl: varchar("heroCtaPrimaryUrl", { length: 500 }).default("#projects"),
+  heroCtaSecondary: varchar("heroCtaSecondary", { length: 255 }).default("Get In Touch"),
+  heroCtaSecondaryUrl: varchar("heroCtaSecondaryUrl", { length: 500 }).default("#contact"),
+  
+  // Appearance & Typography
+  colorBackground: varchar("colorBackground", { length: 50 }).default("hsl(224, 71%, 4%)"),
+  colorSurface: varchar("colorSurface", { length: 50 }).default("hsl(224, 71%, 10%)"),
+  fontDisplay: varchar("fontDisplay", { length: 255 }).default("Inter"),
+  fontBody: varchar("fontBody", { length: 255 }).default("Inter"),
+  customCss: text("customCss"),
+  
+  // Navbar Configuration
+  navbarLinks: jsonb("navbarLinks").default([]),
+  
+  // Footer Configuration
+  footerCopyright: varchar("footerCopyright", { length: 255 }).default("© 2024 Your Name. All rights reserved."),
+  footerTagline: varchar("footerTagline", { length: 500 }).default("Building the future, one line of code at a time."),
+  
+  // Section Ordering & Visibility
+  sectionOrder: jsonb("sectionOrder").default(["hero", "about", "projects", "skills", "testimonials", "contact"]),
+  sectionVisibility: jsonb("sectionVisibility").default({ hero: true, about: true, projects: true, skills: true, testimonials: true, contact: true }),
+  
+  // Feature Toggles
+  featureBlog: boolean("featureBlog").notNull().default(true),
+  featureGuestbook: boolean("featureGuestbook").notNull().default(true),
+  featureTestimonials: boolean("featureTestimonials").notNull().default(true),
+  featureServices: boolean("featureServices").notNull().default(true),
+  featurePlayground: boolean("featurePlayground").notNull().default(false),
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
@@ -547,10 +601,126 @@ export const siteSettingsSchema = z.object({
   id: z.number(),
   isOpenToWork: z.boolean(),
   updatedAt: z.coerce.date(),
+  
+  // Personal Branding
+  personalName: z.string().max(255).optional(),
+  personalTitle: z.string().max(255).optional(),
+  personalBio: z.string().max(5000).optional(),
+  personalAvatar: z.string().url().max(500).nullable().optional(),
+  
+  // Social Links (10 platforms)
+  socialGithub: z.string().url().max(500).nullable().optional(),
+  socialLinkedin: z.string().url().max(500).nullable().optional(),
+  socialTwitter: z.string().url().max(500).nullable().optional(),
+  socialInstagram: z.string().url().max(500).nullable().optional(),
+  socialFacebook: z.string().url().max(500).nullable().optional(),
+  socialYoutube: z.string().url().max(500).nullable().optional(),
+  socialDiscord: z.string().url().max(500).nullable().optional(),
+  socialStackoverflow: z.string().url().max(500).nullable().optional(),
+  socialDevto: z.string().url().max(500).nullable().optional(),
+  socialMedium: z.string().url().max(500).nullable().optional(),
+  
+  // Hero Section
+  heroGreeting: z.string().max(255).optional(),
+  heroBadgeText: z.string().max(255).optional(),
+  heroTaglines: z.array(z.string()).optional(),
+  
+  // Hero CTAs
+  heroCtaPrimary: z.string().max(255).optional(),
+  heroCtaPrimaryUrl: z.string().max(500).optional(),
+  heroCtaSecondary: z.string().max(255).optional(),
+  heroCtaSecondaryUrl: z.string().max(500).optional(),
+  
+  // Appearance & Typography
+  colorBackground: z.string().max(50).optional(),
+  colorSurface: z.string().max(50).optional(),
+  fontDisplay: z.string().max(255).optional(),
+  fontBody: z.string().max(255).optional(),
+  customCss: z.string().max(50000).nullable().optional(),
+  
+  // Navbar Configuration
+  navbarLinks: z.array(z.object({
+    label: z.string(),
+    href: z.string(),
+    icon: z.string().optional(),
+  })).optional(),
+  
+  // Footer Configuration
+  footerCopyright: z.string().max(255).optional(),
+  footerTagline: z.string().max(500).optional(),
+  
+  // Section Ordering & Visibility
+  sectionOrder: z.array(z.string()).optional(),
+  sectionVisibility: z.record(z.boolean()).optional(),
+  
+  // Feature Toggles
+  featureBlog: z.boolean().optional(),
+  featureGuestbook: z.boolean().optional(),
+  featureTestimonials: z.boolean().optional(),
+  featureServices: z.boolean().optional(),
+  featurePlayground: z.boolean().optional(),
 });
 
 export const insertSiteSettingsApiSchema = z.object({
   isOpenToWork: z.boolean().optional(),
+  
+  // Personal Branding
+  personalName: z.string().max(255).optional(),
+  personalTitle: z.string().max(255).optional(),
+  personalBio: z.string().max(5000).optional(),
+  personalAvatar: z.string().url().max(500).nullable().optional(),
+  
+  // Social Links (10 platforms)
+  socialGithub: z.string().url().max(500).nullable().optional(),
+  socialLinkedin: z.string().url().max(500).nullable().optional(),
+  socialTwitter: z.string().url().max(500).nullable().optional(),
+  socialInstagram: z.string().url().max(500).nullable().optional(),
+  socialFacebook: z.string().url().max(500).nullable().optional(),
+  socialYoutube: z.string().url().max(500).nullable().optional(),
+  socialDiscord: z.string().url().max(500).nullable().optional(),
+  socialStackoverflow: z.string().url().max(500).nullable().optional(),
+  socialDevto: z.string().url().max(500).nullable().optional(),
+  socialMedium: z.string().url().max(500).nullable().optional(),
+  
+  // Hero Section
+  heroGreeting: z.string().max(255).optional(),
+  heroBadgeText: z.string().max(255).optional(),
+  heroTaglines: z.array(z.string()).optional(),
+  
+  // Hero CTAs
+  heroCtaPrimary: z.string().max(255).optional(),
+  heroCtaPrimaryUrl: z.string().max(500).optional(),
+  heroCtaSecondary: z.string().max(255).optional(),
+  heroCtaSecondaryUrl: z.string().max(500).optional(),
+  
+  // Appearance & Typography
+  colorBackground: z.string().max(50).optional(),
+  colorSurface: z.string().max(50).optional(),
+  fontDisplay: z.string().max(255).optional(),
+  fontBody: z.string().max(255).optional(),
+  customCss: z.string().max(50000).nullable().optional(),
+  
+  // Navbar Configuration
+  navbarLinks: z.array(z.object({
+    label: z.string(),
+    href: z.string(),
+    icon: z.string().optional(),
+  })).optional(),
+  
+  // Footer Configuration
+  footerCopyright: z.string().max(255).optional(),
+  footerTagline: z.string().max(500).optional(),
+  
+  // Section Ordering & Visibility
+  sectionOrder: z.array(z.string()).optional(),
+  sectionVisibility: z.record(z.boolean()).optional(),
+  
+  // Feature Toggles
+  featureBlog: z.boolean().optional(),
+  featureGuestbook: z.boolean().optional(),
+  featureTestimonials: z.boolean().optional(),
+  featureServices: z.boolean().optional(),
+  featurePlayground: z.boolean().optional(),
 });
 
 export const articleSchema = z.object({

@@ -42,6 +42,90 @@ function PageLoader() {
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ServerStatusBanner } from "./components/ServerStatusBanner";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+
+// SettingsApplicator: Applies dynamic CSS variables and custom CSS from site settings
+function SettingsApplicator() {
+  const { data: settings } = useSiteSettings();
+
+  useEffect(() => {
+    if (!settings) return;
+
+    const root = document.documentElement;
+
+    // Apply color variables
+    if (settings.colorBackground) {
+      root.style.setProperty("--background", settings.colorBackground);
+    }
+    if (settings.colorSurface) {
+      root.style.setProperty("--card", settings.colorSurface);
+    }
+
+    // Apply custom CSS if provided
+    if (settings.customCss) {
+      let styleEl = document.getElementById("custom-portfolio-styles");
+      if (!styleEl) {
+        styleEl = document.createElement("style");
+        styleEl.id = "custom-portfolio-styles";
+        document.head.appendChild(styleEl);
+      }
+      styleEl.textContent = settings.customCss;
+    }
+  }, [settings]);
+
+  return null;
+}
+
+// SettingsFontLoader: Dynamically loads Google Fonts based on settings
+function SettingsFontLoader() {
+  const { data: settings } = useSiteSettings();
+
+  useEffect(() => {
+    if (!settings) return;
+
+    const fonts = new Set<string>();
+    if (settings.fontDisplay && settings.fontDisplay !== "Inter") {
+      fonts.add(settings.fontDisplay);
+    }
+    if (settings.fontBody && settings.fontBody !== "Inter") {
+      fonts.add(settings.fontBody);
+    }
+
+    if (fonts.size === 0) return;
+
+    // Build Google Fonts URL
+    const fontList = Array.from(fonts)
+      .map(f => f.replace(/\s+/g, "+"))
+      .join("&family=");
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${fontList}&display=swap`;
+
+    // Check if link already exists
+    const existingLink = document.querySelector(`link[href="${fontUrl}"]`);
+    if (existingLink) return;
+
+    // Remove old custom font links to prevent duplicates
+    const oldFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"][data-custom-font="true"]');
+    oldFontLinks.forEach(link => link.remove());
+
+    // Create and inject link tag
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = fontUrl;
+    link.setAttribute("data-custom-font", "true");
+    document.head.appendChild(link);
+
+    // Apply font variables to root
+    const root = document.documentElement;
+    if (settings.fontDisplay) {
+      root.style.setProperty("--font-display", `"${settings.fontDisplay}", sans-serif`);
+    }
+    if (settings.fontBody) {
+      root.style.setProperty("--font-body", `"${settings.fontBody}", sans-serif`);
+    }
+  }, [settings]);
+
+  return null;
+}
 
 // Only show PlexusBackground on public routes
 function ConditionalBackground() {
@@ -161,6 +245,10 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={loadFramerFeatures}>
+              {/* Apply dynamic settings early */}
+              <SettingsApplicator />
+              <SettingsFontLoader />
+              
               <a
                 href="#main-content"
                 className="skip-to-content sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"
