@@ -19,7 +19,7 @@ vi.mock("../db.js", () => ({
     },
 }));
 
-vi.mock("../../shared/schema.js", () => ({
+vi.mock("@portfolio/shared", () => ({
     articlesTable: "articles",
     projectsTable: "projects",
     skillsTable: "skills",

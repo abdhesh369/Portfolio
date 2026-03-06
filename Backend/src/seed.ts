@@ -10,7 +10,7 @@ import { experienceService } from "./services/experience.service.js";
 import { messageService } from "./services/message.service.js";
 import { emailTemplateService } from "./services/email-template.service.js";
 import { seoSettingsService } from "./services/seo-settings.service.js";
-import type { Project, InsertProject, InsertSeoSettings } from "../shared/schema.js";
+import type { Project, InsertProject, InsertSeoSettings } from "@portfolio/shared";
 
 import { logger } from "./lib/logger.js";
 

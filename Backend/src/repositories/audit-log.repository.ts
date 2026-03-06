@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-import { auditLogTable } from "../../shared/schema.js";
+import { auditLogTable } from "@portfolio/shared";
 import { desc, eq, and, gte, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 
 type DbAuditLog = InferSelectModel<typeof auditLogTable>;

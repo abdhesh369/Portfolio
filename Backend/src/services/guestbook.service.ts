@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-import { guestbookTable } from "../../shared/schema.js";
+import { guestbookTable } from "@portfolio/shared";
 import { eq, desc } from "drizzle-orm";
 import { logger } from "../lib/logger.js";
 import { CacheService } from "../lib/cache.js";

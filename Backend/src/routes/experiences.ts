@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { insertExperienceApiSchema } from "../../shared/schema.js";
+import { insertExperienceApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { experienceService } from "../services/experience.service.js";

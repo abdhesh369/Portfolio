@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { skillService } from "../services/skill.service.js";
 import { skillConnectionService } from "../services/skill-connection.service.js";
-import { insertSkillApiSchema } from "../../shared/schema.js";
+import { insertSkillApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";

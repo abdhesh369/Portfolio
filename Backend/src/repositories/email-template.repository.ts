@@ -1,6 +1,6 @@
 import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { emailTemplatesTable, type EmailTemplate, type InsertEmailTemplate } from "../../shared/schema.js";
+import { emailTemplatesTable, type EmailTemplate, type InsertEmailTemplate } from "@portfolio/shared";
 
 type DbEmailTemplate = InferSelectModel<typeof emailTemplatesTable>;
 type DbInsertEmailTemplate = InferInsertModel<typeof emailTemplatesTable>;

@@ -31,7 +31,7 @@ vi.mock("../db.js", () => ({
     },
 }));
 
-vi.mock("../../shared/schema.js", () => ({
+vi.mock("@portfolio/shared", () => ({
     analyticsTable: {
         id: "id",
         type: "type",

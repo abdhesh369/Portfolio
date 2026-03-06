@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { portfolioServiceService } from "../services/portfolio-service.service.js";
-import { insertServiceApiSchema } from "../../shared/schema.js";
+import { insertServiceApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";

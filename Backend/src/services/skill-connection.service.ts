@@ -1,5 +1,5 @@
 import { skillConnectionRepository } from "../repositories/skill-connection.repository.js";
-import type { SkillConnection } from "../../shared/schema.js";
+import type { SkillConnection } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "skill";

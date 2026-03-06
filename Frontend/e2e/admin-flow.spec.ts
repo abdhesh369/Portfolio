@@ -40,19 +40,9 @@ test.describe("Admin Authentication Flow", () => {
       .first();
     await submitBtn.click();
 
-    // Should stay on login page or show error
-    // Wait a bit for the response
-    await page.waitForTimeout(2000);
-
-    // Either we see an error message or we're still on login
-    const isStillOnLogin = page.url().includes("/admin/login");
-    const errorVisible = await page
-      .getByText(/invalid|incorrect|wrong|unauthorized|error/i)
-      .first()
-      .isVisible()
-      .catch(() => false);
-
-    expect(isStillOnLogin || errorVisible).toBeTruthy();
+    // We should see an error message and still be on the login page
+    await expect(page.getByText(/invalid|incorrect|wrong|unauthorized|error/i).first()).toBeVisible({ timeout: 8000 });
+    await expect(page).toHaveURL(/\/admin\/login/);
   });
 
   test("unauthenticated access to admin dashboard redirects to login", async ({
@@ -67,65 +57,30 @@ test.describe("Admin Authentication Flow", () => {
 });
 
 test.describe("Admin Dashboard (requires auth)", () => {
-  // These tests document the expected behavior but will only fully pass
-  // when a test backend is running with known credentials.
-  // They gracefully handle the case where auth isn't available.
-
-  test("dashboard shows navigation sidebar when authenticated", async ({
-    page,
-  }) => {
-    // Attempt login with env-provided credentials
+  test.beforeEach(async ({ page }) => {
     const adminPassword = process.env.TEST_ADMIN_PASSWORD;
     if (!adminPassword) {
-      test.skip();
-      return;
+      throw new Error("TEST_ADMIN_PASSWORD environment variable is required for these tests.");
     }
 
     await page.goto("/admin/login");
-
     const passwordInput = page.locator('input[type="password"]').first();
     await passwordInput.fill(adminPassword);
-
-    const submitBtn = page
-      .getByRole("button", { name: /login|sign in|submit/i })
-      .first();
+    const submitBtn = page.getByRole("button", { name: /login|sign in|submit/i }).first();
     await submitBtn.click();
-
-    // Wait for redirect to admin dashboard
     await page.waitForURL("**/admin", { timeout: 10000 });
+  });
 
-    // Dashboard should have navigation items
-    const dashboardContent = page.locator(
-      '[data-testid="admin-sidebar"], nav, aside'
-    );
-    await expect(dashboardContent.first()).toBeVisible({ timeout: 5000 });
+  test("dashboard shows navigation sidebar when authenticated", async ({ page }) => {
+    const sidebar = page.locator('[data-testid="admin-sidebar"], nav, aside').first();
+    await expect(sidebar).toBeVisible({ timeout: 5000 });
   });
 
   test("admin can logout and be redirected to login", async ({ page }) => {
-    const adminPassword = process.env.TEST_ADMIN_PASSWORD;
-    if (!adminPassword) {
-      test.skip();
-      return;
-    }
-
-    // Login first
-    await page.goto("/admin/login");
-    const passwordInput = page.locator('input[type="password"]').first();
-    await passwordInput.fill(adminPassword);
-    const submitBtn = page
-      .getByRole("button", { name: /login|sign in|submit/i })
-      .first();
-    await submitBtn.click();
-    await page.waitForURL("**/admin", { timeout: 10000 });
-
-    // Find and click logout
-    const logoutBtn = page
-      .getByRole("button", { name: /logout|sign out/i })
-      .first();
+    const logoutBtn = page.getByRole("button", { name: /logout|sign out/i }).first();
     await expect(logoutBtn).toBeVisible({ timeout: 5000 });
     await logoutBtn.click();
 
-    // Should redirect back to login
     await page.waitForURL("**/admin/login", { timeout: 10000 });
     await expect(page).toHaveURL(/\/admin\/login/);
   });

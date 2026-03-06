@@ -9,8 +9,7 @@ declare global {
                 role: string;
                 token?: string;
                 via?: "bearer" | "cookie";
-                [key: string]: any;
-            };
+            } | string;
         }
     }
 }

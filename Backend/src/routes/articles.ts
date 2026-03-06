@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "../../shared/schema.js";
+import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler, checkAuthStatus } from "../auth.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";

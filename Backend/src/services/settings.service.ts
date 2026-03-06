@@ -1,5 +1,5 @@
 import { settingsRepository } from "../repositories/settings.repository.js";
-import { type SiteSettings, type InsertSiteSettings, siteSettingsSchema, insertSiteSettingsApiSchema } from "../../shared/schema.js";
+import { type SiteSettings, type InsertSiteSettings, siteSettingsSchema, insertSiteSettingsApiSchema } from "@portfolio/shared";
 import { logger } from "../lib/logger.js";
 import { CacheService } from "../lib/cache.js";
 

@@ -2,7 +2,7 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { analyticsService } from "../services/analytics.service.js";
-import { insertAnalyticsSchema } from "../../shared/schema.js";
+import { insertAnalyticsSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { validateBody } from "../middleware/validate.js";
 import type { Request } from "express";

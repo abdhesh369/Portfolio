@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { projectService } from "../services/project.service.js";
-import { insertProjectApiSchema } from "../../shared/schema.js";
-import { api } from "../../shared/routes.js";
+import { insertProjectApiSchema } from "@portfolio/shared";
+import { api } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 
 const router = Router();

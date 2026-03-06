@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { mindsetService } from "../services/mindset.service.js";
-import { insertMindsetApiSchema } from "../../shared/schema.js";
+import { insertMindsetApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { validateBody } from "../middleware/validate.js";

@@ -1,6 +1,6 @@
 import { eq, count, sql, desc, gte, and, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { analyticsTable, type InsertAnalytics, type Analytics } from "../../shared/schema.js";
+import { analyticsTable, type InsertAnalytics, type Analytics } from "@portfolio/shared";
 
 type DbAnalytics = InferSelectModel<typeof analyticsTable>;
 

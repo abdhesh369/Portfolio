@@ -1,6 +1,6 @@
 import { eq, desc, and, sql, inArray } from "drizzle-orm";
 import { db } from "../db.js";
-import { articlesTable, articleTagsTable, type Article, type InsertArticle } from "../../shared/schema.js";
+import { articlesTable, articleTagsTable, type Article, type InsertArticle } from "@portfolio/shared";
 import type { InferInsertModel } from "drizzle-orm";
 
 type DbInsertArticle = InferInsertModel<typeof articlesTable>;

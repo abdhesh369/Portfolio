@@ -4,7 +4,7 @@ import { z } from "zod";
 import rateLimit from "express-rate-limit";
 import DOMPurify from 'isomorphic-dompurify';
 import { db } from "../db.js";
-import { articlesTable, projectsTable, skillsTable, experiencesTable } from "../../shared/schema.js";
+import { articlesTable, projectsTable, skillsTable, experiencesTable } from "@portfolio/shared";
 import { env } from "../env.js";
 import { redis } from "../lib/redis.js";
 

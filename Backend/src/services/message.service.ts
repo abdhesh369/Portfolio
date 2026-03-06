@@ -1,6 +1,6 @@
 import { messageRepository } from "../repositories/message.repository.js";
 import DOMPurify from "isomorphic-dompurify";
-import type { Message, InsertMessage } from "../../shared/schema.js";
+import type { Message, InsertMessage } from "@portfolio/shared";
 import { logger } from "../lib/logger.js";
 
 export class MessageService {

@@ -6,7 +6,7 @@ import { validateBody } from "../middleware/validate.js";
 import { guestbookLimiter } from "../lib/rate-limit.js";
 import { recordAudit } from "../lib/audit.js";
 import { cachePublic } from "../middleware/cache.js";
-import { insertGuestbookApiSchema } from "../../shared/schema.js";
+import { insertGuestbookApiSchema } from "@portfolio/shared";
 
 const guestbookRoutes = Router();
 

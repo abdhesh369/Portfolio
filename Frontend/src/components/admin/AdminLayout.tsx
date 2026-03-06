@@ -20,7 +20,7 @@ export default function AdminLayout({
     setSidebarCollapsed,
 }: AdminLayoutProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { data: settings } = useSiteSettings();
+    const { data: settings, isFetching: isRefreshing } = useSiteSettings();
 
     return (
         <div className="min-h-screen bg-[var(--nm-bg)] text-[var(--admin-text-primary)] font-sans selection:bg-[var(--nm-accent)]/20 selection:text-[var(--nm-accent)]">
@@ -53,6 +53,7 @@ export default function AdminLayout({
                     activeTab={activeTab}
                     setMobileMenuOpen={setMobileMenuOpen}
                     sidebarCollapsed={sidebarCollapsed}
+                    isRefreshing={isRefreshing}
                 />
 
                 <main className="flex-1 p-4 lg:p-8 animate-in">

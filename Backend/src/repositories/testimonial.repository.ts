@@ -1,6 +1,6 @@
 import { eq, asc, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { testimonialsTable, type Testimonial, type InsertTestimonial } from "../../shared/schema.js";
+import { testimonialsTable, type Testimonial, type InsertTestimonial } from "@portfolio/shared";
 
 type DbTestimonial = InferSelectModel<typeof testimonialsTable>;
 type DbInsertTestimonial = InferInsertModel<typeof testimonialsTable>;

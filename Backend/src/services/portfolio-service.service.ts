@@ -1,6 +1,6 @@
 import { portfolioServiceRepository } from "../repositories/portfolio-service.repository.js";
 import { redis } from "../lib/redis.js";
-import type { Service, InsertService } from "../../shared/schema.js";
+import type { Service, InsertService } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "portfolio_service";

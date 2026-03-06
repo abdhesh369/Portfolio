@@ -23,7 +23,7 @@ vi.mock("../db.js", () => ({
     },
 }));
 
-vi.mock("../../shared/schema.js", () => ({
+vi.mock("@portfolio/shared", () => ({
     articlesTable: { id: "id", status: "status", slug: "slug", publishedAt: "publishedAt", createdAt: "createdAt", viewCount: "viewCount" },
     articleTagsTable: { id: "id", articleId: "articleId", tag: "tag" },
 }));

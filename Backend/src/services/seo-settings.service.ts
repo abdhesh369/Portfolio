@@ -1,5 +1,5 @@
 import { seoSettingsRepository } from "../repositories/seo-settings.repository.js";
-import type { InsertSeoSettings, SeoSettings } from "../../shared/schema.js";
+import type { InsertSeoSettings, SeoSettings } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "seo";

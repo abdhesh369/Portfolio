@@ -1,6 +1,6 @@
 import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { seoSettingsTable, type SeoSettings, type InsertSeoSettings } from "../../shared/schema.js";
+import { seoSettingsTable, type SeoSettings, type InsertSeoSettings } from "@portfolio/shared";
 
 type DbSeoSettings = InferSelectModel<typeof seoSettingsTable>;
 type DbInsertSeoSettings = InferInsertModel<typeof seoSettingsTable>;

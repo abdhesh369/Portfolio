@@ -1,6 +1,6 @@
 import { mindsetRepository } from "../repositories/mindset.repository.js";
 import { redis } from "../lib/redis.js";
-import type { Mindset, InsertMindset } from "../../shared/schema.js";
+import type { Mindset, InsertMindset } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "mindset";

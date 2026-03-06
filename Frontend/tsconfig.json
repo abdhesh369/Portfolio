@@ -18,20 +18,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "types": ["node", "vite/client"],
+    "types": [
+      "node",
+      "vite/client"
+    ],
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@shared/*": [
-        "./shared/*"
       ]
     }
   },
   "include": [
-    "src",
-    "shared"
+    "src"
   ],
   "references": [
     {

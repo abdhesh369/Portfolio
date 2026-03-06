@@ -1,6 +1,6 @@
 import { testimonialRepository } from "../repositories/testimonial.repository.js";
 import { redis } from "../lib/redis.js";
-import type { Testimonial, InsertTestimonial } from "../../shared/schema.js";
+import type { Testimonial, InsertTestimonial } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "testimonial";

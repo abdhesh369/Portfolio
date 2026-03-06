@@ -24,6 +24,7 @@
     "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
+    "@portfolio/shared": "*",
     "@openrouter/sdk": "^0.9.11",
     "@sentry/node": "^10.42.0",
     "@sentry/profiling-node": "^10.42.0",

@@ -10,9 +10,10 @@ interface TopBarProps {
     activeTab: string;
     setMobileMenuOpen: (open: boolean) => void;
     sidebarCollapsed: boolean;
+    isRefreshing?: boolean;
 }
 
-export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
+export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: TopBarProps) {
     const { user, logout } = useAuth();
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -45,7 +46,14 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
                         <ChevronRight size={12} className="opacity-50" />
                         <span className="text-[var(--admin-text-primary)] tracking-[0.15em]">
                             {activeTab.replaceAll("-", "_")}
-                        </span>                    </div>
+                        </span>
+                        {isRefreshing && (
+                            <div className="flex items-center gap-2 ml-4 px-2 py-1 rounded bg-[var(--nm-accent)]/10 text-[var(--nm-accent)]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--nm-accent)] animate-pulse" />
+                                <span className="text-[9px] font-black tracking-tighter">REFRESHING...</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Right Side: Search + Tools + User */}

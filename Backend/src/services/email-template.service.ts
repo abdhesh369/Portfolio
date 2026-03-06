@@ -1,5 +1,5 @@
 import { emailTemplateRepository } from "../repositories/email-template.repository.js";
-import type { InsertEmailTemplate, EmailTemplate } from "../../shared/schema.js";
+import type { InsertEmailTemplate, EmailTemplate } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "email";

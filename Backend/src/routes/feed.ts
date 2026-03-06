@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { articleService } from "../services/article.service.js";
-import type { Article } from "../../shared/schema.js";
+import type { Article } from "@portfolio/shared";
 import { escapeXml } from "../lib/xml-utils.js";
 import { logger } from "../lib/logger.js";
 

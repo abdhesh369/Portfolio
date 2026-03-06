@@ -1,6 +1,6 @@
 import { eq, asc, inArray, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { projectsTable, type Project, type InsertProject } from "../../shared/schema.js";
+import { projectsTable, type Project, type InsertProject } from "@portfolio/shared";
 
 type DbProject = InferSelectModel<typeof projectsTable>;
 type DbInsertProject = InferInsertModel<typeof projectsTable>;

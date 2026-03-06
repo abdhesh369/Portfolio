@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-helpers";
-import type { SiteSettings, InsertSiteSettings } from "../../shared/schema";
+import type { SiteSettings, InsertSiteSettings } from "@portfolio/shared";
 
 export function useSiteSettings() {
     return useQuery<SiteSettings>({

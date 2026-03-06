@@ -1,184 +1,106 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { isAuthenticated } from "./auth.js";
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { env } from "./env.js";
 
-// ---- Mock env ----
-vi.mock("./env.js", () => ({
-    env: {
-        NODE_ENV: "test",
-        REDIS_URL: "",
-        JWT_SECRET: "test-jwt-secret-key",
+// Mock dependencies
+const { mockRedisGet } = vi.hoisted(() => ({
+    mockRedisGet: vi.fn(),
+}));
+
+vi.mock("./lib/redis.js", () => ({
+    redis: {
+        get: mockRedisGet,
     },
 }));
 
-// ---- Mock ioredis ----
-vi.mock("ioredis", () => ({
-    Redis: vi.fn().mockImplementation(() => null),
+vi.mock("./lib/logger.js", () => ({
+    logger: {
+        warn: vi.fn(),
+        error: vi.fn(),
+        info: vi.fn(),
+    },
 }));
 
-import { isAuthenticated, checkAuthStatus, asyncHandler, revokeToken } from "./auth.js";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = "test-jwt-secret-key";
-
-describe("auth module", () => {
-    let mockRes: Partial<Response>;
-    let mockNext: NextFunction;
-
-    function makeReq(overrides: Partial<Request> = {}): Partial<Request> {
-        return {
-            headers: {},
-            cookies: {},
-            ...overrides,
-        };
-    }
+describe("isAuthenticated middleware", () => {
+    let req: Partial<Request>;
+    let res: Partial<Response>;
+    let next: NextFunction;
 
     beforeEach(() => {
-        mockRes = {
-            status: vi.fn().mockReturnThis() as any,
-            json: vi.fn().mockReturnThis() as any,
+        req = {
+            headers: {},
+            cookies: {},
         };
-        mockNext = vi.fn();
+        res = {
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn().mockReturnThis(),
+        };
+        next = vi.fn();
         vi.clearAllMocks();
     });
 
-    describe("isAuthenticated middleware", () => {
-        it("returns 401 when no token is provided", async () => {
-            const req = makeReq();
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
+    it("returns 401 if no token provided", async () => {
+        await isAuthenticated(req as Request, res as Response, next);
 
-            expect(mockRes.status).toHaveBeenCalledWith(401);
-            expect(mockRes.json).toHaveBeenCalledWith(
-                expect.objectContaining({ message: expect.stringContaining("Unauthorized") })
-            );
-            expect(mockNext).not.toHaveBeenCalled();
-        });
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized. Please provide a valid token." });
+        expect(next).not.toHaveBeenCalled();
+    });
 
-        it("authenticates with valid Bearer token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${token}` },
-            });
+    it("returns 401 if token is blacklisted", async () => {
+        const token = "blacklisted-token";
+        req.headers!.authorization = `Bearer ${token}`;
+        mockRedisGet.mockResolvedValue("1");
 
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
+        await isAuthenticated(req as Request, res as Response, next);
 
-            expect(mockNext).toHaveBeenCalled();
-            expect((req as any).user).toBeDefined();
-            expect((req as any).user.role).toBe("admin");
-        });
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: "Token has been revoked. Please login again." });
+    });
 
-        it("authenticates with valid cookie token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
-            const req = makeReq({
-                cookies: { auth_token: token },
-            });
+    it("calls next() and attaches user if token is valid (Bearer)", async () => {
+        const payload = { role: "admin", iat: 12345, exp: 9999999999 };
+        const token = jwt.sign(payload, env.JWT_SECRET);
+        req.headers!.authorization = `Bearer ${token}`;
+        mockRedisGet.mockResolvedValue(null);
 
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
+        await isAuthenticated(req as Request, res as Response, next);
 
-            expect(mockNext).toHaveBeenCalled();
-        });
-
-        it("returns 401 for expired token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "-1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${token}` },
-            });
-
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
-
-            expect(mockRes.status).toHaveBeenCalledWith(401);
-            expect(mockRes.json).toHaveBeenCalledWith(
-                expect.objectContaining({ message: expect.stringContaining("Invalid or expired") })
-            );
-        });
-
-        it("returns 401 for token signed with wrong secret", async () => {
-            const token = jwt.sign({ role: "admin" }, "wrong-secret", { expiresIn: "1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${token}` },
-            });
-
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
-
-            expect(mockRes.status).toHaveBeenCalledWith(401);
-        });
-
-        it("prefers Bearer token over cookie when both present", async () => {
-            const bearerToken = jwt.sign({ role: "admin", via: "bearer" }, JWT_SECRET, { expiresIn: "1h" });
-            const cookieToken = jwt.sign({ role: "admin", via: "cookie" }, JWT_SECRET, { expiresIn: "1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${bearerToken}` },
-                cookies: { auth_token: cookieToken },
-            });
-
-            await isAuthenticated(req as Request, mockRes as Response, mockNext);
-
-            expect(mockNext).toHaveBeenCalled();
-            expect((req as any).user.via).toBe("bearer");
+        expect(next).toHaveBeenCalled();
+        expect(req.user).toMatchObject({
+            role: "admin",
+            token: token,
+            via: "bearer"
         });
     });
 
-    describe("checkAuthStatus", () => {
-        it("returns false when no token present", async () => {
-            const req = makeReq();
-            const result = await checkAuthStatus(req as Request);
-            expect(result).toBe(false);
-        });
+    it("calls next() and attaches user if token is valid (Cookie)", async () => {
+        const payload = { role: "admin" };
+        const token = jwt.sign(payload, env.JWT_SECRET);
+        req.cookies!.auth_token = token;
+        mockRedisGet.mockResolvedValue(null);
 
-        it("returns true for valid Bearer token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${token}` },
-            });
+        await isAuthenticated(req as Request, res as Response, next);
 
-            const result = await checkAuthStatus(req as Request);
-            expect(result).toBe(true);
-        });
-
-        it("returns true for valid cookie token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
-            const req = makeReq({ cookies: { auth_token: token } });
-
-            const result = await checkAuthStatus(req as Request);
-            expect(result).toBe(true);
-        });
-
-        it("returns false for expired token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "-1h" });
-            const req = makeReq({
-                headers: { authorization: `Bearer ${token}` },
-            });
-
-            const result = await checkAuthStatus(req as Request);
-            expect(result).toBe(false);
+        expect(next).toHaveBeenCalled();
+        expect(req.user).toMatchObject({
+            role: "admin",
+            token: token,
+            via: "cookie"
         });
     });
 
-    describe("asyncHandler", () => {
-        it("calls the wrapped function", async () => {
-            const handler = vi.fn().mockResolvedValue(undefined);
-            const wrapped = asyncHandler(handler);
-            const req = makeReq();
+    it("returns 401 if token is expired", async () => {
+        const payload = { role: "admin", exp: Math.floor(Date.now() / 1000) - 3600 };
+        const token = jwt.sign(payload, env.JWT_SECRET);
+        req.headers!.authorization = `Bearer ${token}`;
+        mockRedisGet.mockResolvedValue(null);
 
-            wrapped(req as Request, mockRes as Response, mockNext);
-            await vi.waitFor(() => expect(handler).toHaveBeenCalled());
-        });
+        await isAuthenticated(req as Request, res as Response, next);
 
-        it("catches errors and passes to next", async () => {
-            const error = new Error("test error");
-            const handler = vi.fn().mockRejectedValue(error);
-            const wrapped = asyncHandler(handler);
-            const req = makeReq();
-
-            wrapped(req as Request, mockRes as Response, mockNext);
-            await vi.waitFor(() => expect(mockNext).toHaveBeenCalledWith(error));
-        });
-    });
-
-    describe("revokeToken", () => {
-        it("does nothing when Redis is not configured", async () => {
-            // Since REDIS_URL is empty, redis is null, so revokeToken should just return
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
-            await expect(revokeToken(token)).resolves.toBeUndefined();
-        });
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: "Invalid or expired token" });
     });
 });

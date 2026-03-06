@@ -1,6 +1,6 @@
 import { experienceRepository } from "../repositories/experience.repository.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
-import type { Experience, InsertExperience } from "../../shared/schema.js";
+import type { Experience, InsertExperience } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "experience";

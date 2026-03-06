@@ -1,6 +1,6 @@
 import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { mindsetTable, type Mindset, type InsertMindset } from "../../shared/schema.js";
+import { mindsetTable, type Mindset, type InsertMindset } from "@portfolio/shared";
 
 type DbMindset = InferSelectModel<typeof mindsetTable>;
 type DbInsertMindset = InferInsertModel<typeof mindsetTable>;

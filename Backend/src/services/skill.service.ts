@@ -1,6 +1,6 @@
 import { skillRepository } from "../repositories/skill.repository.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
-import type { Skill, InsertSkill } from "../../shared/schema.js";
+import type { Skill, InsertSkill } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "skill";

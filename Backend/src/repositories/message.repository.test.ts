@@ -28,7 +28,7 @@ vi.mock("../db.js", () => ({
     },
 }));
 
-vi.mock("../../shared/schema.js", () => ({
+vi.mock("@portfolio/shared", () => ({
     messagesTable: { id: "id", createdAt: "createdAt" },
 }));
 

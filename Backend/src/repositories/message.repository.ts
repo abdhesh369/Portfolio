@@ -1,6 +1,6 @@
 import { eq, desc, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { messagesTable, type Message, type InsertMessage } from "../../shared/schema.js";
+import { messagesTable, type Message, type InsertMessage } from "@portfolio/shared";
 
 type DbMessage = InferSelectModel<typeof messagesTable>;
 type DbInsertMessage = InferInsertModel<typeof messagesTable>;

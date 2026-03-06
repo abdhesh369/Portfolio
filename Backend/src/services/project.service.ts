@@ -1,7 +1,7 @@
 import { projectRepository } from "../repositories/project.repository.js";
 import { redis } from "../lib/redis.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
-import type { Project, InsertProject } from "../../shared/schema.js";
+import type { Project, InsertProject } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "project";

@@ -1,6 +1,6 @@
 import { eq, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
-import { skillConnectionsTable, type SkillConnection, type InsertSkillConnection } from "../../shared/schema.js";
+import { skillConnectionsTable, type SkillConnection, type InsertSkillConnection } from "@portfolio/shared";
 
 type DbSkillConnection = InferSelectModel<typeof skillConnectionsTable>;
 type DbInsertSkillConnection = InferInsertModel<typeof skillConnectionsTable>;

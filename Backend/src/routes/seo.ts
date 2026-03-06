@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { seoSettingsService } from "../services/seo-settings.service.js";
-import { insertSeoSettingsApiSchema } from "../../shared/schema.js";
+import { insertSeoSettingsApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";

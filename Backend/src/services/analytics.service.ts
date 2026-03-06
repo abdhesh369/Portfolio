@@ -1,5 +1,5 @@
 import { analyticsRepository, type AnalyticsSummary, type VitalEntry, type VitalsSummary } from "../repositories/analytics.repository.js";
-import type { InsertAnalytics, Analytics } from "../../shared/schema.js";
+import type { InsertAnalytics, Analytics } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 
 const FEATURE = "analytics";

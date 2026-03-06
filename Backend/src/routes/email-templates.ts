@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { emailTemplateService } from "../services/email-template.service.js";
-import { insertEmailTemplateApiSchema } from "../../shared/schema.js";
+import { insertEmailTemplateApiSchema } from "@portfolio/shared";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
