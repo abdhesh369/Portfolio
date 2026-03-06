@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
-import type { Service } from "@shared/schema";
+import type { Service } from "@portfolio/shared/schema";
 
 const emptyService = {
   title: "",

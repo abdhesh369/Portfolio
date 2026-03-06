@@ -7,7 +7,7 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { useArticle } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
-import type { ArticleWithRelated } from "@shared/schema";
+import type { ArticleWithRelated } from "@portfolio/shared/schema";
 import { useRoute } from "wouter";
 import { m } from "framer-motion";
 import { Badge } from "@/components/ui/badge";

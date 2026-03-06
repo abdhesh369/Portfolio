@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
-import type { Mindset } from "@shared/schema";
+import type { Mindset } from "@portfolio/shared/schema";
 import { Loader2, Plus, Pencil, Trash2, Brain, Lightbulb, Zap, Anchor, Target, Compass } from "lucide-react";
 
 const ICON_OPTIONS = [

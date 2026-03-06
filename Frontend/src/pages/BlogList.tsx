@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { Article } from "@shared/schema";
+import type { Article } from "@portfolio/shared/schema";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";

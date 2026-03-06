@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertSeoSettingsApiSchema, type SeoSettings, type InsertSeoSettings } from "@shared/schema";
+import { insertSeoSettingsApiSchema, type SeoSettings, type InsertSeoSettings } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus, Pencil, Trash2, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";

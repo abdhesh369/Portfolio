@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
-import type { Skill } from "@shared/schema";
+import type { Skill } from "@portfolio/shared/schema";
 
 const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50 };
 

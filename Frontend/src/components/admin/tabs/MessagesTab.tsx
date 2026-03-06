@@ -7,7 +7,7 @@ import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
-import type { Message, EmailTemplate } from "@shared/schema";
+import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 
 import type { AdminTabProps } from "./types";
 

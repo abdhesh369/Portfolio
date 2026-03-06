@@ -2,7 +2,7 @@ import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale } from "@/lib/animation";
 import { useExperiences } from "@/hooks/use-portfolio";
-import type { Experience as ExperienceType } from "@shared/schema";
+import type { Experience as ExperienceType } from "@portfolio/shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin, ExternalLink } from "lucide-react";
 
 // Animated Timeline Line

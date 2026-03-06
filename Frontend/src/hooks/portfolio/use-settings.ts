@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { apiFetch } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
 

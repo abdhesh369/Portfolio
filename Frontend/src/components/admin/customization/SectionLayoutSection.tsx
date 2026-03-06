@@ -4,7 +4,7 @@ import { GripVertical, ChevronDown } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
-import { InsertSiteSettings } from "@shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared/schema";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
 
 interface SectionLayoutSectionProps {

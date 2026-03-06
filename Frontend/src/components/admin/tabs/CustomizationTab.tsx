@@ -12,8 +12,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import type { InsertSiteSettings } from "@shared/schema";
-import { insertSiteSettingsApiSchema } from "@shared/schema";
+import type { InsertSiteSettings } from "@portfolio/shared/schema";
+import { insertSiteSettingsApiSchema } from "@portfolio/shared/schema";
 
 // Sub-components
 import { CustomizationHeader } from "../customization/CustomizationHeader";

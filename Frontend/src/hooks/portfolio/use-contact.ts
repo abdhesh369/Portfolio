@@ -1,5 +1,5 @@
-import { api } from "@shared/routes";
-import type { InsertMessage } from "@shared/schema";
+import { api } from "@portfolio/shared/routes";
+import type { InsertMessage } from "@portfolio/shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api-helpers";

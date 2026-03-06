@@ -1,8 +1,8 @@
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
-import type { InsertGuestbookEntry, GuestbookEntry } from "@shared/schema";
+import type { InsertGuestbookEntry, GuestbookEntry } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useGuestbook() {

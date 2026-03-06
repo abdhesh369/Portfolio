@@ -44,7 +44,7 @@ function PageLoader() {
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ServerStatusBanner } from "./components/ServerStatusBanner";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import type { SiteSettings } from "@shared/schema";
+import type { SiteSettings } from "@portfolio/shared/schema";
 
 // SettingsApplicator: Applies dynamic CSS variables and custom CSS from site settings
 function SettingsApplicator() {

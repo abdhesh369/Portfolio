@@ -1,6 +1,6 @@
 import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMessageApiSchema, type InsertMessage } from "@shared/schema";
+import { insertMessageApiSchema, type InsertMessage } from "@portfolio/shared/schema";
 import { useSendMessage } from "@/hooks/use-portfolio";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";

@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";
-import type { Project } from "@shared/schema";
+import type { Project } from "@portfolio/shared/schema";
 import {
     DndContext,
     closestCenter,

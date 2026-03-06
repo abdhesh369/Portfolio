@@ -1,8 +1,8 @@
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { apiFetch } from "@/lib/api-helpers";
-import type { EmailTemplate } from "@shared/schema";
+import type { EmailTemplate } from "@portfolio/shared/schema";
 
 export function useEmailTemplates() {
     const queryClient = useQueryClient();

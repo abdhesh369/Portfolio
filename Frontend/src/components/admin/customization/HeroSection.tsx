@@ -2,7 +2,7 @@ import React from "react";
 import { UseFormRegister, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InsertSiteSettings } from "@shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared/schema";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface HeroSectionProps {

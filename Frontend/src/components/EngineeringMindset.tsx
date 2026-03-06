@@ -2,7 +2,7 @@ import { m, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
 import { fadeUpLarge, hoverCardLift, expand, fadeDown, scaleXReveal, fadeIn, fadeUp, hoverScale } from "@/lib/animation";
 import { useMindset } from "@/hooks/use-portfolio";
-import type { Mindset } from "@shared/schema";
+import type { Mindset } from "@portfolio/shared/schema";
 import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {

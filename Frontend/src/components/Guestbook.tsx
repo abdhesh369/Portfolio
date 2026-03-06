@@ -3,7 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useGuestbook, useSubmitGuestbook } from "@/hooks/use-portfolio";
-import type { GuestbookEntry } from "@shared/schema";
+import type { GuestbookEntry } from "@portfolio/shared/schema";
 
 export const Guestbook = () => {
     const { data: entries = [], isLoading: loading } = useGuestbook();

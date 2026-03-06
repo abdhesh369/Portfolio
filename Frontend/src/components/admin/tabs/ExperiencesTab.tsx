@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
-import type { Experience } from "@shared/schema";
+import type { Experience } from "@portfolio/shared/schema";
 
 const emptyExperience = { role: "", organization: "", period: "", startDate: new Date(), endDate: null as Date | null, description: "", type: "Experience" };
 

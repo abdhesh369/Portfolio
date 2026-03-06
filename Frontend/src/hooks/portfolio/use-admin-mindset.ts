@@ -1,7 +1,7 @@
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-helpers";
-import type { InsertMindset, Mindset } from "@shared/schema";
+import type { InsertMindset, Mindset } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useCreateMindset() {

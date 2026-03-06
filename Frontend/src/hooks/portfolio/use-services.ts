@@ -1,4 +1,4 @@
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 

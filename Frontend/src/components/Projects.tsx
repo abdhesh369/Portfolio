@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
-import { type Project } from "@shared/schema";
+import { type Project } from "@portfolio/shared/schema";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu, Eye, Zap, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";

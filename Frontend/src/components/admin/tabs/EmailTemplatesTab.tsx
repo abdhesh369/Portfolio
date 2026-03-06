@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
-import type { EmailTemplate } from "@shared/schema";
+import type { EmailTemplate } from "@portfolio/shared/schema";
 import { useEmailTemplates } from "@/hooks/portfolio/use-email-templates";
 
 const emptyTemplate = { name: "", subject: "", body: "" };

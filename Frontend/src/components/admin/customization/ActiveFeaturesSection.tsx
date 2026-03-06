@@ -1,6 +1,6 @@
 import React from "react";
 import { UseFormRegister } from "react-hook-form";
-import { InsertSiteSettings } from "@shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared/schema";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface ActiveFeaturesSectionProps {

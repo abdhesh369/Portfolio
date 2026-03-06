@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
-import type { Article } from "@shared/schema";
+import type { Article } from "@portfolio/shared/schema";
 
 type ArticleWithTags = Article & { tags: string[] };
 

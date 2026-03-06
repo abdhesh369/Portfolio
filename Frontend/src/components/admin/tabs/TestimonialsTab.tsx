@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
-import type { Testimonial } from "@shared/schema";
+import type { Testimonial } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 const empty = {

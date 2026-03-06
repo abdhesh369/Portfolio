@@ -1,7 +1,7 @@
-import { api } from "@shared/routes";
+import { api } from "@portfolio/shared/routes";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import type { Article } from "@shared/schema";
+import type { Article } from "@portfolio/shared/schema";
 
 export function useArticles(status?: string) {
   return useQuery({
