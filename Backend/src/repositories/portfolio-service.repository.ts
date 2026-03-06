@@ -42,7 +42,7 @@ export class PortfolioServiceRepository {
 
     async update(id: number, data: Partial<InsertService>): Promise<Service> {
         const serviceData: Partial<DbInsertService> = {
-            ...(data as any),
+            ...data,
         };
 
         const [updated] = await db

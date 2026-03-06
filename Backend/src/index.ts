@@ -16,7 +16,7 @@ import { logger } from "./lib/logger.js";
 import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
 import { nonceMiddleware } from "./middleware/nonce.js";
 
-import rateLimit from "express-rate-limit";
+import { globalLimiter } from "./lib/rate-limit.js";
 
 import { randomUUID } from "crypto";
 
@@ -53,13 +53,6 @@ app.use(compression());
 app.use(cookieParser());
 app.use(nonceMiddleware);
 
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  message: { message: "Too many requests from this IP, please try again later" },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 app.use("/api/v1", globalLimiter);
 
 // Harden CORS

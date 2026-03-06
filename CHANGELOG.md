@@ -6,7 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [2.0.0] — 2025-01-15
+## [2.0.0] - 2026-03-07
+### Added
+- Admin Customization tab with full site branding control
+- Dynamic section ordering and visibility toggle
+- Feature toggles for blog, guestbook, testimonials, services
+- Extended siteSettings schema (migration 0008)
+### Fixed
+- Nonce-based CSP (removed unsafe-inline)
+- Request ID typing via express.d.ts
+- Cloudinary cloud name env guard
+
+## [1.1.0] — 2025-01-15
+
 
 ### Added
 

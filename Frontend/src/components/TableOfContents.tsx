@@ -7,7 +7,7 @@ interface Heading {
 }
 
 /**
- * TICKET-030: Table of Contents — auto-generated from h2/h3 in article content.
+ * Table of Contents — auto-generated from h2/h3 in article content.
  * Sticky on desktop, keyboard navigable.
  */
 export function TableOfContents({ contentSelector = "article" }: { contentSelector?: string }) {
@@ -82,13 +82,11 @@ export function TableOfContents({ contentSelector = "article" }: { contentSelect
           <li key={heading.id}>
             <button
               onClick={() => handleClick(heading.id)}
-              className={`block w-full text-left text-sm py-1.5 transition-colors border-l-2 -ml-px ${
-                heading.level === 3 ? "pl-6" : "pl-4"
-              } ${
-                activeId === heading.id
+              className={`block w-full text-left text-sm py-1.5 transition-colors border-l-2 -ml-px ${heading.level === 3 ? "pl-6" : "pl-4"
+                } ${activeId === heading.id
                   ? "text-primary border-primary"
                   : "text-white/40 border-transparent hover:text-white/70 hover:border-white/20"
-              }`}
+                }`}
             >
               {heading.text}
             </button>

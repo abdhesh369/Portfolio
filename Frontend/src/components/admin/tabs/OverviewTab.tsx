@@ -58,7 +58,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
-    const activities: any[] = (messages as any[]).slice(0, 5).map((msg: any, idx: number) => ({
+    const activities = (messages || []).slice(0, 5).map((msg, idx) => ({
         id: msg.id || idx,
         type: "message" as const,
         content: `New message from ${msg.name}`,
@@ -103,7 +103,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <StatCard
                     label="Total Projects"
-                    value={(projects as any[])?.length ?? 0}
+                    value={projects?.length ?? 0}
                     icon={Rocket}
                     color="blue"
                     trend={{ value: "12%", isUp: true, label: "this month" }}
@@ -111,22 +111,22 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                 />
                 <StatCard
                     label="Active Messages"
-                    value={(messages as any[]).length}
+                    value={messages.length}
                     icon={Mail}
                     color="green"
-                    trend={{ value: (messages as any[]).length > 0 ? "LIVE" : "NULL", isUp: true }}
+                    trend={{ value: messages.length > 0 ? "LIVE" : "NULL", isUp: true }}
                     delay="200ms"
                 />
                 <StatCard
                     label="Skill Modules"
-                    value={(skills as any[])?.length ?? 0}
+                    value={skills?.length ?? 0}
                     icon={Zap}
                     color="purple"
                     delay="300ms"
                 />
                 <StatCard
                     label="Experience Logs"
-                    value={(experiences as any[])?.length ?? 0}
+                    value={experiences?.length ?? 0}
                     icon={Briefcase}
                     color="orange"
                     delay="400ms"

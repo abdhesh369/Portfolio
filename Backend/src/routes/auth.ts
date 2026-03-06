@@ -6,21 +6,9 @@ import { env } from "../env.js";
 import { isAuthenticated, asyncHandler, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
-import rateLimit from "express-rate-limit";
+import { authLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
-
-/**
- * Login Rate Limiter: 5 attempts per 15 minutes
- */
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: { message: "Too many login attempts, please try again in 15 minutes" },
-    standardHeaders: true,
-    legacyHeaders: false,
-    skipSuccessfulRequests: true,
-});
 
 /**
  * Constant-time string comparison to prevent timing attacks.
@@ -37,7 +25,7 @@ function safeCompare(a: string, b: string): boolean {
  * POST /api/auth/login
  * Verifies credentials and returns a JWT
  */
-router.post("/login", loginLimiter, asyncHandler(async (req: Request, res: Response) => {
+router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response) => {
     const { password } = req.body;
 
     if (!password) {

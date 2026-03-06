@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useServerStatus, type ServerStatus } from "@/hooks/use-server-status";
 import { m, AnimatePresence } from "framer-motion";
 
@@ -18,8 +19,25 @@ const MESSAGES: Record<Exclude<ServerStatus, "online" | "checking">, { text: str
  */
 export function ServerStatusBanner() {
   const status = useServerStatus();
+  const [seconds, setSeconds] = useState(0);
+  const startTimeRef = useRef<number | null>(null);
 
   const visible = status === "waking" || status === "offline";
+
+  useEffect(() => {
+    if (visible) {
+      if (startTimeRef.current === null) {
+        startTimeRef.current = Date.now();
+      }
+      const interval = setInterval(() => {
+        setSeconds(Math.floor((Date.now() - (startTimeRef.current || 0)) / 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      startTimeRef.current = null;
+      setSeconds(0);
+    }
+  }, [visible]);
 
   return (
     <AnimatePresence>
@@ -35,7 +53,12 @@ export function ServerStatusBanner() {
           className={`server-status-banner ${status === "offline" ? "server-status-banner--offline" : "server-status-banner--waking"}`}
         >
           <span className="server-status-banner__icon">{MESSAGES[status].icon}</span>
-          <span className="server-status-banner__text">{MESSAGES[status].text}</span>
+          <span className="server-status-banner__text">
+            {MESSAGES[status].text}
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] tabular-nums">
+              {Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}
+            </span>
+          </span>
           <span className="server-status-banner__pulse" />
         </m.div>
       )}

@@ -42,7 +42,7 @@ export class MindsetRepository {
 
     async update(id: number, data: Partial<InsertMindset>): Promise<Mindset> {
         const mindsetData: Partial<DbInsertMindset> = {
-            ...(data as any),
+            ...data,
         };
 
         const [updated] = await db

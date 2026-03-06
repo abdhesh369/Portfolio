@@ -2,7 +2,7 @@ import { auditLogService } from "../services/audit-log.service.js";
 import type { AuditAction } from "../repositories/audit-log.repository.js";
 
 /**
- * TICKET-032: Convenience function to record audit events.
+ * Records an audit log entry for admin actions (create/update/delete).
  * Fire-and-forget to avoid blocking the main request.
  */
 export function recordAudit(

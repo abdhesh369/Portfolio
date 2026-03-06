@@ -148,19 +148,19 @@ export function CustomizationTab() {
     values: settings,
   });
 
-  const { fields: taglineFields, append: appendTagline, remove: removeTagline } = useFieldArray({
+  const { fields: taglineFields, append: appendTagline, remove: removeTagline } = useFieldArray<any>({
     control,
-    name: "heroTaglines" as any,
+    name: "heroTaglines",
   });
 
-  const { fields: navFields, append: appendNav, remove: removeNav, move: moveNav } = useFieldArray({
+  const { fields: navFields, append: appendNav, remove: removeNav, move: moveNav } = useFieldArray<InsertSiteSettings, "navbarLinks">({
     control,
-    name: "navbarLinks" as any,
+    name: "navbarLinks",
   });
 
-  const { fields: sectionOrderFields, move: moveSection } = useFieldArray({
+  const { fields: sectionOrderFields, move: moveSection } = useFieldArray<any>({
     control,
-    name: "sectionOrder" as any,
+    name: "sectionOrder",
   });
 
   const handleNavDragEnd = (event: DragEndEvent) => {
@@ -391,7 +391,7 @@ export function CustomizationTab() {
                 {taglineFields.map((field, index) => (
                   <div key={field.id} className="flex gap-2">
                     <input
-                      {...register(`heroTaglines.${index}` as any)}
+                      {...register(`heroTaglines.${index}`)}
                       className="admin-input"
                       placeholder="e.g. Building high-performance apps"
                     />
@@ -469,7 +469,7 @@ export function CustomizationTab() {
                 <div className="space-y-2">
                   {navFields.map((field, index) => (
                     <SortableItem key={field.id} id={field.id}>
-                      {({ attributes, listeners, isDragging }: any) => (
+                      {({ attributes, listeners, isDragging }: { attributes: any, listeners: any, isDragging: boolean }) => (
                         <div className={`flex flex-col md:flex-row gap-2 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5"}`}>
                           <div className="flex items-center gap-2 grow">
                             <div
@@ -481,17 +481,17 @@ export function CustomizationTab() {
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 grow">
                               <input
-                                {...register(`navbarLinks.${index}.label` as any)}
+                                {...register(`navbarLinks.${index}.label`)}
                                 className="admin-input h-9"
                                 placeholder="Label"
                               />
                               <input
-                                {...register(`navbarLinks.${index}.href` as any)}
+                                {...register(`navbarLinks.${index}.href`)}
                                 className="admin-input h-9"
                                 placeholder="Href (e.g. #projects)"
                               />
                               <input
-                                {...register(`navbarLinks.${index}.icon` as any)}
+                                {...register(`navbarLinks.${index}.icon`)}
                                 className="admin-input h-9 md:col-span-1 col-span-2"
                                 placeholder="Icon name (lucide)"
                               />
@@ -610,13 +610,13 @@ export function CustomizationTab() {
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-2">
-                  {sectionOrderFields.map((field: any, index) => {
-                    const sectionId = settings?.sectionOrder?.[index] || field.id;
+                  {sectionOrderFields.map((field, index) => {
+                    const sectionId = (settings?.sectionOrder?.[index] || field.id) as string;
                     const label = SECTION_LABELS[sectionId] || sectionId;
 
                     return (
                       <SortableItem key={field.id} id={field.id}>
-                        {({ attributes, listeners, isDragging }: any) => (
+                        {({ attributes, listeners, isDragging }: { attributes: any, listeners: any, isDragging: boolean }) => (
                           <div className={`flex items-center gap-3 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5 hover:border-purple-500/30"}`}>
                             <div
                               className="text-white/20 group-hover:text-white/40 cursor-grab px-1 active:cursor-grabbing"
@@ -633,7 +633,7 @@ export function CustomizationTab() {
                               <label className="flex items-center cursor-pointer">
                                 <input
                                   type="checkbox"
-                                  {...register(`sectionVisibility.${sectionId}` as any)}
+                                  {...register(`sectionVisibility.${sectionId}`)}
                                   className="sr-only peer"
                                 />
                                 <div className="relative w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white/40 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>

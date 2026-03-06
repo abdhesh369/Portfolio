@@ -276,7 +276,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                 )}
             </div>
 
-            {/* ─── Core Web Vitals (TICKET-028) ─── */}
+            {/* ─── Core Web Vitals ─── */}
             <VitalsPanel />
         </div>
     );

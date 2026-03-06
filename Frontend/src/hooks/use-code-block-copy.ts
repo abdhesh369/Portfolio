@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 /**
- * TICKET-030: Add copy-to-clipboard button to all <pre> code blocks in the article.
+ * Adds copy-to-clipboard button to all <pre> code blocks in the article.
  * Call this hook from BlogPost after content renders.
  */
 export function useCodeBlockCopy(containerRef: React.RefObject<HTMLElement | null>, trigger?: any) {

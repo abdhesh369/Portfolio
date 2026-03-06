@@ -9,7 +9,7 @@ export class ProjectRepository {
     private transformProject(project: DbProject): Project {
         return {
             ...project,
-            techStack: (project.techStack as string[]) || [],
+            techStack: project.techStack || [],
             githubUrl: project.githubUrl ?? null,
             liveUrl: project.liveUrl ?? null,
             problemStatement: project.problemStatement ?? null,

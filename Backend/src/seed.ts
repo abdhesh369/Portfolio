@@ -165,9 +165,9 @@ export async function seedDatabase() {
       { name: "JavaScript", category: "Frontend", icon: "Zap", status: "Core", x: 70, y: 45, description: "Web scripting", proof: "All web projects" },
       { name: "React", category: "Frontend", icon: "Code2", status: "Core", x: 70, y: 60, description: "Frontend library", proof: "Portfolio Website" },
       // Backend
-      { name: "Node.js", category: "Backend", icon: "Server", status: "Comfortable", x: 40, y: 70, description: "Server-side runtime", proof: "Portfolio Backend" },
-      { name: "Express", category: "Backend", icon: "Terminal", status: "Comfortable", x: 60, y: 70, description: "Web framework", proof: "Portfolio Backend" },
-      { name: "PostgreSQL", category: "Backend", icon: "Database", status: "Comfortable", x: 50, y: 85, description: "Relational database", proof: "Portfolio Backend" },
+      { name: "Node.js", category: "Backend", icon: "Server", status: "Advanced", x: 40, y: 70, description: "Server-side runtime", proof: "Portfolio Backend" },
+      { name: "Express", category: "Backend", icon: "Terminal", status: "Advanced", x: 60, y: 70, description: "Web framework", proof: "Portfolio Backend" },
+      { name: "PostgreSQL", category: "Backend", icon: "Database", status: "Advanced", x: 50, y: 85, description: "Relational database", proof: "Portfolio Backend" },
       // Tools
       { name: "Git", category: "Tools", icon: "GitBranch", status: "Core", x: 15, y: 60, description: "Version control", proof: "All projects" },
       { name: "GitHub", category: "Tools", icon: "GitBranch", status: "Core", x: 30, y: 70, description: "Code hosting", proof: "All projects" },
@@ -178,10 +178,10 @@ export async function seedDatabase() {
       try {
         const existing = existingSkills.find(s => s.name === skill.name);
         if (existing) {
-          await skillService.update(existing.id, skill as any);
+          await skillService.update(existing.id, skill as Parameters<typeof skillService.update>[1]);
           logSeed(`Updated skill: ${skill.name} `);
         } else {
-          await skillService.create(skill as any);
+          await skillService.create(skill as Parameters<typeof skillService.create>[0]);
           logSeed(`Seeded skill: ${skill.name} `);
         }
         successCount++;

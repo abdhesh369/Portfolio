@@ -1,5 +1,5 @@
 /**
- * TICKET-028: Core Web Vitals collection & reporting
+ * Core Web Vitals collection & reporting
  * Collects LCP, CLS, INP, FCP, TTFB and sends to backend.
  */
 import { onLCP, onCLS, onINP, onFCP, onTTFB, type Metric } from 'web-vitals';

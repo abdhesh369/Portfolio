@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
-import rateLimit from "express-rate-limit";
+import { contactLimiter } from "../lib/rate-limit.js";
 import { messageService } from "../services/message.service.js";
 import { insertMessageApiSchema } from "../../shared/schema.js";
 import { api } from "../../shared/routes.js";
@@ -11,6 +11,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { emailQueue } from "../lib/queue.js";
 import { logger } from "../lib/logger.js";
 import { recordAudit } from "../lib/audit.js";
+
 function escapeHtml(text: string): string {
     return text
         .replace(/&/g, "&amp;")
@@ -19,15 +20,6 @@ function escapeHtml(text: string): string {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-// Rate Limiter: max 5 requests per 15 minutes
-const contactFormLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: { message: "Too many messages sent from this IP, please try again after 15 minutes" },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
 
 import { validateBody } from "../middleware/validate.js";
 import { messageSSE } from "../lib/sse.js";
@@ -108,7 +100,7 @@ export function registerMessageRoutes(app: Router) {
     // POST /messages - Create message (contact form)
     app.post(
         "/messages",
-        contactFormLimiter,
+        contactLimiter,
         validateBody(insertMessageApiSchema),
         asyncHandler(async (req, res) => {
             try {

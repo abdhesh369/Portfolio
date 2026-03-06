@@ -2,18 +2,27 @@ import { db } from "../db.js";
 import { guestbookTable } from "../../shared/schema.js";
 import { eq, desc } from "drizzle-orm";
 import { logger } from "../lib/logger.js";
+import { CacheService } from "../lib/cache.js";
+
+const FEATURE = "guestbook";
+const LIST_NAMESPACE = "list";
+const CACHE_TTL = 3600;
 
 export class GuestbookService {
     async getMessages(onlyApproved = true) {
-        try {
-            const query = onlyApproved
-                ? db.select().from(guestbookTable).where(eq(guestbookTable.isApproved, true))
-                : db.select().from(guestbookTable);
-            return await query.orderBy(desc(guestbookTable.createdAt));
-        } catch (error) {
-            logger.error({ context: "guestbook-service", error }, "Error fetching guestbook messages");
-            throw error;
-        }
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE, onlyApproved ? "approved" : "all");
+
+        return CacheService.getOrSet(key, CACHE_TTL, async () => {
+            try {
+                const query = onlyApproved
+                    ? db.select().from(guestbookTable).where(eq(guestbookTable.isApproved, true))
+                    : db.select().from(guestbookTable);
+                return await query.orderBy(desc(guestbookTable.createdAt));
+            } catch (error) {
+                logger.error({ context: "guestbook-service", error }, "Error fetching guestbook messages");
+                throw error;
+            }
+        });
     }
 
     async addMessage(data: { name: string; content: string; email?: string }) {
@@ -27,6 +36,7 @@ export class GuestbookService {
                 })
                 .returning();
 
+            await this.invalidateCache();
             return newMessage;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error adding guestbook message");
@@ -40,6 +50,8 @@ export class GuestbookService {
                 .set({ isApproved: true })
                 .where(eq(guestbookTable.id, id))
                 .returning();
+
+            await this.invalidateCache();
             return approved;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error approving guestbook message");
@@ -50,11 +62,18 @@ export class GuestbookService {
     async deleteMessage(id: number) {
         try {
             await db.delete(guestbookTable).where(eq(guestbookTable.id, id));
+            await this.invalidateCache();
             return true;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error deleting guestbook message");
             throw error;
         }
+    }
+
+    private async invalidateCache() {
+        const keyApproved = CacheService.key(FEATURE, LIST_NAMESPACE, "approved");
+        const keyAll = CacheService.key(FEATURE, LIST_NAMESPACE, "all");
+        await CacheService.invalidate(keyApproved, keyAll);
     }
 }
 

@@ -1,10 +1,19 @@
-import { Router, type Express } from "express";
-import { upload } from "../lib/cloudinary.js";
+import { Router } from "express";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { recordAudit } from "../lib/audit.js";
 import multer from "multer";
 import { fileTypeFromBuffer } from 'file-type';
 import { cloudinary } from "../lib/cloudinary.js";
+
+const storage = multer.memoryStorage();
+const uploadMem = multer({
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+        files: 1
+    }
+}).single("file");
+
 
 export function registerUploadRoutes(app: Router) {
     // POST /upload - Upload file to Cloudinary
@@ -16,15 +25,8 @@ export function registerUploadRoutes(app: Router) {
             // or call it manually. The previous edit mixed them up.
             // Let's use it as a manual call to have full control over the buffer.
 
-            // Use memory storage for validation before streaming to Cloudinary
-            const storage = multer.memoryStorage();
-            const uploadMem = multer({
-                storage,
-                limits: {
-                    fileSize: 5 * 1024 * 1024, // 5MB limit (BUG-02)
-                    files: 1
-                }
-            }).single("file");
+            // Use the hoisted upload middleware
+
 
             uploadMem(req, res, async (err: any) => {
                 if (err) {

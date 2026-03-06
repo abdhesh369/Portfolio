@@ -1,8 +1,12 @@
 import { portfolioServiceRepository } from "../repositories/portfolio-service.repository.js";
 import { redis } from "../lib/redis.js";
 import type { Service, InsertService } from "../../shared/schema.js";
+import { CacheService } from "../lib/cache.js";
 
-const CACHE_KEY = "portfolio_services";
+const FEATURE = "portfolio_service";
+const LIST_NAMESPACE = "list";
+const ITEM_NAMESPACE = "item";
+const CACHE_TTL = 3600;
 
 export class PortfolioServiceService {
     /**
@@ -10,16 +14,8 @@ export class PortfolioServiceService {
      * @returns Array of service objects
      */
     async getAll(): Promise<Service[]> {
-        const cached = redis ? await redis.get(CACHE_KEY) : null;
-        if (cached) {
-            return JSON.parse(cached);
-        }
-
-        const services = await portfolioServiceRepository.findAll();
-        if (redis) {
-            await redis.setex(CACHE_KEY, 3600, JSON.stringify(services));
-        }
-        return services;
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => portfolioServiceRepository.findAll());
     }
 
     /**
@@ -28,17 +24,8 @@ export class PortfolioServiceService {
      * @returns The matching service or null if not found
      */
     async getById(id: number): Promise<Service | null> {
-        const cacheKey = `${CACHE_KEY}:${id}`;
-        const cached = redis ? await redis.get(cacheKey) : null;
-        if (cached) {
-            return JSON.parse(cached);
-        }
-
-        const service = await portfolioServiceRepository.findById(id);
-        if (service && redis) {
-            await redis.setex(cacheKey, 3600, JSON.stringify(service));
-        }
-        return service;
+        const key = CacheService.key(FEATURE, ITEM_NAMESPACE, id);
+        return CacheService.getOrSet(key, CACHE_TTL, () => portfolioServiceRepository.findById(id));
     }
 
     /**
@@ -74,11 +61,12 @@ export class PortfolioServiceService {
     }
 
     private async invalidateCache(id?: number) {
-        if (!redis) return;
-        await redis.del(CACHE_KEY);
+        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+        const keys = [listKey];
         if (id) {
-            await redis.del(`${CACHE_KEY}:${id}`);
+            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
+        await CacheService.invalidate(...keys);
     }
 }
 

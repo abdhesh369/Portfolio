@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { insertArticleApiSchema, updateArticleApiSchema } from "../../shared/schema.js";
+import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "../../shared/schema.js";
 import { isAuthenticated, asyncHandler, checkAuthStatus } from "../auth.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
@@ -15,7 +15,7 @@ articlesRouter.get(
     "/",
     asyncHandler(async (req, res) => {
         const isAdmin = await checkAuthStatus(req);
-        let status = req.query.status as string | undefined;
+        let status = req.query.status as Article["status"] | undefined;
 
         if (!isAdmin) {
             status = "published";

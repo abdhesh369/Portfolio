@@ -45,11 +45,12 @@ export class ExperienceRepository {
     }
 
     async update(id: number, data: Partial<InsertExperience>): Promise<Experience> {
+        const { startDate, endDate, period, ...rest } = data;
         const experienceData: Partial<DbInsertExperience> = {
-            ...(data as any), // Base copy
-            startDate: data.startDate ? new Date(data.startDate) : undefined,
-            endDate: data.endDate === null ? null : (data.endDate ? new Date(data.endDate) : undefined),
-            period: data.period ?? undefined,
+            ...rest,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate === null ? null : (endDate ? new Date(endDate) : undefined),
+            period: period ?? undefined,
         };
 
         const [updated] = await db

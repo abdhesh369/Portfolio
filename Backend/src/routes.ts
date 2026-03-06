@@ -64,7 +64,7 @@ export function registerRoutes(app: Express) {
   registerChatRoutes(v1Router);
   registerSettingsRoutes(v1Router);
 
-  // Admin audit log (TICKET-032)
+  // Admin audit log
   v1Router.use("/admin", auditLogRoutes);
 
   // Main API versioning

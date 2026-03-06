@@ -2,13 +2,19 @@ import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, seria
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// ================= CONSTANTS =================
+export const DEFAULT_SECTION_ORDER = [
+  "hero", "about", "skills", "whyhireme", "services", "mindset",
+  "projects", "practice", "experience", "testimonials", "guestbook", "contact"
+] as const;
+
 // ================= DATABASE TABLES =================
 
 export const projectsTable = pgTable("projects", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
-  techStack: jsonb("techStack").notNull(),
+  techStack: jsonb("techStack").$type<string[]>().notNull(),
   imageUrl: varchar("imageUrl", { length: 500 }).notNull(),
   githubUrl: varchar("githubUrl", { length: 500 }),
   liveUrl: varchar("liveUrl", { length: 500 }),
@@ -79,7 +85,7 @@ export const mindsetTable = pgTable("mindset", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   icon: varchar("icon", { length: 100 }).notNull().default("Brain"),
-  tags: jsonb("tags").notNull(),
+  tags: jsonb("tags").$type<string[]>().notNull(),
 });
 
 export const analyticsTable = pgTable("analytics", {
@@ -169,7 +175,7 @@ export const servicesTable = pgTable("services", {
   title: varchar("title", { length: 255 }).notNull(),
   summary: text("summary").notNull(),
   category: varchar("category", { length: 100 }).notNull(),
-  tags: jsonb("tags").notNull(),
+  tags: jsonb("tags").$type<string[]>().notNull(),
   displayOrder: integer("displayOrder").notNull().default(0),
   isFeatured: boolean("isFeatured").notNull().default(false),
 }, (table) => {
@@ -238,7 +244,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
   heroBadgeText: varchar("heroBadgeText", { length: 255 }).default("Available for work"),
-  heroTaglines: jsonb("heroTaglines").default(["Building amazing products", "Solving complex problems"]),
+  heroTaglines: jsonb("heroTaglines").$type<string[]>().default(["Building amazing products", "Solving complex problems"]),
 
   // Hero CTAs
   heroCtaPrimary: varchar("heroCtaPrimary", { length: 255 }).default("View My Work"),
@@ -260,15 +266,19 @@ export const siteSettingsTable = pgTable("site_settings", {
   customCss: text("customCss"),
 
   // Navbar Configuration
-  navbarLinks: jsonb("navbarLinks").default([]),
+  navbarLinks: jsonb("navbarLinks").$type<{ label: string; href: string; icon?: string }[]>().default([]),
 
   // Footer Configuration
   footerCopyright: varchar("footerCopyright", { length: 255 }).default("© 2024 Your Name. All rights reserved."),
   footerTagline: varchar("footerTagline", { length: 500 }).default("Building the future, one line of code at a time."),
 
   // Section Ordering & Visibility
-  sectionOrder: jsonb("sectionOrder").default(["hero", "about", "projects", "skills", "testimonials", "contact"]),
-  sectionVisibility: jsonb("sectionVisibility").default({ hero: true, about: true, projects: true, skills: true, testimonials: true, contact: true }),
+  sectionOrder: jsonb("sectionOrder").$type<string[]>().default([...DEFAULT_SECTION_ORDER]),
+  sectionVisibility: jsonb("sectionVisibility").$type<Record<string, boolean>>().default({
+    hero: true, about: true, projects: true, skills: true, whyhireme: true,
+    services: true, mindset: true, practice: true, experience: true,
+    testimonials: true, guestbook: true, contact: true
+  }),
 
   // Feature Toggles
   featureBlog: boolean("featureBlog").notNull().default(true),
@@ -630,145 +640,83 @@ export const insertSeoSettingsApiSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
 });
 
-export const siteSettingsSchema = z.object({
-  id: z.number(),
+// Common fields for Site Settings to avoid duplication
+const siteSettingsBaseSchema = z.object({
   isOpenToWork: z.boolean(),
+
+  // Personal Branding
+  personalName: z.string().max(255).optional(),
+  personalTitle: z.string().max(255).optional(),
+  personalBio: z.string().max(5000).optional(),
+  personalAvatar: z.string().url().max(500).nullable().optional(),
+
+  // Social Links (10 platforms)
+  socialGithub: z.string().url().max(500).nullable().optional(),
+  socialLinkedin: z.string().url().max(500).nullable().optional(),
+  socialTwitter: z.string().url().max(500).nullable().optional(),
+  socialInstagram: z.string().url().max(500).nullable().optional(),
+  socialFacebook: z.string().url().max(500).nullable().optional(),
+  socialYoutube: z.string().url().max(500).nullable().optional(),
+  socialDiscord: z.string().url().max(500).nullable().optional(),
+  socialStackoverflow: z.string().url().max(500).nullable().optional(),
+  socialDevto: z.string().url().max(500).nullable().optional(),
+  socialMedium: z.string().url().max(500).nullable().optional(),
+  socialEmail: z.string().email().max(255).nullable().optional(),
+
+  // Hero Section
+  heroGreeting: z.string().max(255).optional(),
+  heroBadgeText: z.string().max(255).optional(),
+  heroTaglines: z.array(z.string()).optional(),
+
+  // Hero CTAs
+  heroCtaPrimary: z.string().max(255).optional(),
+  heroCtaPrimaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
+  heroCtaSecondary: z.string().max(255).optional(),
+  heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
+
+  // Appearance & Typography
+  colorBackground: z.string().max(50).optional(),
+  colorSurface: z.string().max(50).optional(),
+  colorPrimary: z.string().max(50).optional(),
+  colorSecondary: z.string().max(50).optional(),
+  colorAccent: z.string().max(50).optional(),
+  colorBorder: z.string().max(50).optional(),
+  colorText: z.string().max(50).optional(),
+  colorMuted: z.string().max(50).optional(),
+  fontDisplay: z.string().max(255).optional(),
+  fontBody: z.string().max(255).optional(),
+  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
+
+  // Navbar Configuration
+  navbarLinks: z.array(z.object({
+    label: z.string(),
+    href: z.string(),
+    icon: z.string().optional(),
+  })).optional(),
+
+  // Footer Configuration
+  footerCopyright: z.string().max(255).optional(),
+  footerTagline: z.string().max(500).optional(),
+
+  // Section Ordering & Visibility
+  sectionOrder: z.array(z.string()).optional(),
+  sectionVisibility: z.record(z.boolean()).optional(),
+
+  // Feature Toggles
+  featureBlog: z.boolean().optional(),
+  featureGuestbook: z.boolean().optional(),
+  featureTestimonials: z.boolean().optional(),
+  featureServices: z.boolean().optional(),
+  featurePlayground: z.boolean().optional(),
+});
+
+export const siteSettingsSchema = siteSettingsBaseSchema.extend({
+  id: z.number(),
   updatedAt: z.coerce.date(),
-
-  // Personal Branding
-  personalName: z.string().max(255).optional(),
-  personalTitle: z.string().max(255).optional(),
-  personalBio: z.string().max(5000).optional(),
-  personalAvatar: z.string().url().max(500).nullable().optional(),
-
-  // Social Links (10 platforms)
-  socialGithub: z.string().url().max(500).nullable().optional(),
-  socialLinkedin: z.string().url().max(500).nullable().optional(),
-  socialTwitter: z.string().url().max(500).nullable().optional(),
-  socialInstagram: z.string().url().max(500).nullable().optional(),
-  socialFacebook: z.string().url().max(500).nullable().optional(),
-  socialYoutube: z.string().url().max(500).nullable().optional(),
-  socialDiscord: z.string().url().max(500).nullable().optional(),
-  socialStackoverflow: z.string().url().max(500).nullable().optional(),
-  socialDevto: z.string().url().max(500).nullable().optional(),
-  socialMedium: z.string().url().max(500).nullable().optional(),
-  socialEmail: z.string().email().max(255).nullable().optional(),
-
-  // Hero Section
-  heroGreeting: z.string().max(255).optional(),
-  heroBadgeText: z.string().max(255).optional(),
-  heroTaglines: z.array(z.string()).optional(),
-
-  // Hero CTAs
-  heroCtaPrimary: z.string().max(255).optional(),
-  heroCtaPrimaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
-  heroCtaSecondary: z.string().max(255).optional(),
-  heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
-
-  // Appearance & Typography
-  colorBackground: z.string().max(50).optional(),
-  colorSurface: z.string().max(50).optional(),
-  colorPrimary: z.string().max(50).optional(),
-  colorSecondary: z.string().max(50).optional(),
-  colorAccent: z.string().max(50).optional(),
-  colorBorder: z.string().max(50).optional(),
-  colorText: z.string().max(50).optional(),
-  colorMuted: z.string().max(50).optional(),
-  fontDisplay: z.string().max(255).optional(),
-  fontBody: z.string().max(255).optional(),
-  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
-
-  // Navbar Configuration
-  navbarLinks: z.array(z.object({
-    label: z.string(),
-    href: z.string(),
-    icon: z.string().optional(),
-  })).optional(),
-
-  // Footer Configuration
-  footerCopyright: z.string().max(255).optional(),
-  footerTagline: z.string().max(500).optional(),
-
-  // Section Ordering & Visibility
-  sectionOrder: z.array(z.string()).optional(),
-  sectionVisibility: z.record(z.boolean()).optional(),
-
-  // Feature Toggles
-  featureBlog: z.boolean().optional(),
-  featureGuestbook: z.boolean().optional(),
-  featureTestimonials: z.boolean().optional(),
-  featureServices: z.boolean().optional(),
-  featurePlayground: z.boolean().optional(),
 });
 
-export const insertSiteSettingsApiSchema = z.object({
-  isOpenToWork: z.boolean().optional(),
+export const insertSiteSettingsApiSchema = siteSettingsBaseSchema.partial();
 
-  // Personal Branding
-  personalName: z.string().max(255).optional(),
-  personalTitle: z.string().max(255).optional(),
-  personalBio: z.string().max(5000).optional(),
-  personalAvatar: z.string().url().max(500).nullable().optional(),
-
-  // Social Links (10 platforms)
-  socialGithub: z.string().url().max(500).nullable().optional(),
-  socialLinkedin: z.string().url().max(500).nullable().optional(),
-  socialTwitter: z.string().url().max(500).nullable().optional(),
-  socialInstagram: z.string().url().max(500).nullable().optional(),
-  socialFacebook: z.string().url().max(500).nullable().optional(),
-  socialYoutube: z.string().url().max(500).nullable().optional(),
-  socialDiscord: z.string().url().max(500).nullable().optional(),
-  socialStackoverflow: z.string().url().max(500).nullable().optional(),
-  socialDevto: z.string().url().max(500).nullable().optional(),
-  socialMedium: z.string().url().max(500).nullable().optional(),
-  socialEmail: z.string().email().max(255).nullable().optional(),
-
-  // Hero Section
-  heroGreeting: z.string().max(255).optional(),
-  heroBadgeText: z.string().max(255).optional(),
-  heroTaglines: z.array(z.string()).optional(),
-
-  // Hero CTAs
-  heroCtaPrimary: z.string().max(255).optional(),
-  heroCtaPrimaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
-  heroCtaSecondary: z.string().max(255).optional(),
-  heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
-
-  // Appearance & Typography
-  colorBackground: z.string().max(50).optional(),
-  colorSurface: z.string().max(50).optional(),
-  colorPrimary: z.string().max(50).optional(),
-  colorSecondary: z.string().max(50).optional(),
-  colorAccent: z.string().max(50).optional(),
-  colorBorder: z.string().max(50).optional(),
-  colorText: z.string().max(50).optional(),
-  colorMuted: z.string().max(50).optional(),
-  fontDisplay: z.string().max(255).optional(),
-  fontBody: z.string().max(255).optional(),
-  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
-
-  // Navbar Configuration
-  navbarLinks: z.array(z.object({
-    label: z.string(),
-    href: z.string(),
-    icon: z.string().optional(),
-  })).optional(),
-
-  // Footer Configuration
-  footerCopyright: z.string().max(255).optional(),
-  footerTagline: z.string().max(500).optional(),
-
-  // Section Ordering & Visibility
-  sectionOrder: z.array(z.string()).optional(),
-  sectionVisibility: z.record(z.boolean()).optional(),
-
-  // Feature Toggles
-  featureBlog: z.boolean().optional(),
-  featureGuestbook: z.boolean().optional(),
-  featureTestimonials: z.boolean().optional(),
-  featureServices: z.boolean().optional(),
-  featurePlayground: z.boolean().optional(),
-});
 
 export const articleSchema = z.object({
   id: z.number(),
@@ -781,6 +729,7 @@ export const articleSchema = z.object({
   publishedAt: z.coerce.date().nullable(),
   viewCount: z.number(),
   readTimeMinutes: z.number(),
+  readTimeMinutesText: z.string().optional(),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
@@ -814,29 +763,39 @@ export const updateArticleApiSchema = insertArticleApiSchema.partial();
 // ================= TYPESCRIPT TYPES =================
 
 export type Project = z.infer<typeof projectSchema>;
-export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type Skill = z.infer<typeof skillSchema>;
-export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type SkillConnection = z.infer<typeof skillConnectionSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
-export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
+export type Service = z.infer<typeof serviceSchema>;
 export type Message = z.infer<typeof messageSchema>;
-export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
+export type Mindset = z.infer<typeof mindsetSchema>;
+export type Analytics = z.infer<typeof analyticsSchema>;
+export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
+export type SeoSettings = z.infer<typeof seoSettingsSchema>;
+export type Article = z.infer<typeof articleSchema>;
+export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
+export type AuditLog = z.infer<typeof auditLogSchema>;
+export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
+
+export type InsertProject = z.infer<typeof insertProjectApiSchema>;
+export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
+export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
+export type InsertService = z.infer<typeof insertServiceApiSchema>;
+export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
+export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
+export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateApiSchema>;
+export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
+export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
+export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
-export type SeoSettings = z.infer<typeof seoSettingsSchema>;
-export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
-export type Article = z.infer<typeof articleSchema>;
-export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
-export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
-export type Mindset = z.infer<typeof mindsetSchema>;
-export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
-export type Analytics = z.infer<typeof analyticsSchema>;
-export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
-export type Service = z.infer<typeof serviceSchema>;
-export type InsertService = z.infer<typeof insertServiceApiSchema>;
-export type AuditLog = z.infer<typeof auditLogSchema>;
+
+// ================= TYPE GUARDS =================
+
+export function isProject(obj: unknown): obj is Project {
+  return projectSchema.safeParse(obj).success;
+}

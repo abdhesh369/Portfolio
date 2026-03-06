@@ -5,17 +5,17 @@ services:
     image: postgres:16-alpine
     container_name: portfolio-db
     environment:
-      POSTGRES_DB: portfolio
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - portfolio-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -u user -d portfolio" ]
+      test: [ "CMD-SHELL", "pg_isready -u ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-portfolio}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,7 +24,7 @@ services:
     image: redis:7-alpine
     container_name: portfolio-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -42,19 +42,19 @@ services:
     container_name: portfolio-api
     restart: always
     environment:
-      NODE_ENV: development
-      PORT: 5000
-      DATABASE_URL: postgresql://user:password@postgres:5432/portfolio
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${BACKEND_PORT:-5000}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-portfolio}
       REDIS_URL: redis://redis:6379
-      FRONTEND_URL: http://localhost:3000
-      JWT_SECRET: dev_secret_key_at_least_64_characters_long_for_proper_security_padding__
-      JWT_REFRESH_SECRET: dev_refresh_secret_at_least_64_characters_long_security_padding______
-      ADMIN_PASSWORD: admin  # ⚠️ CHANGE IN PRODUCTION — insecure default for local dev only
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      JWT_SECRET: ${JWT_SECRET:-dev_secret_key_at_least_64_characters_long_for_proper_security_padding__}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev_refresh_secret_at_least_64_characters_long_security_padding______}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin} 
       # Sentry configuration (optional, will use env vars if provided)
       SENTRY_DSN: ${SENTRY_DSN}
-      SENTRY_ENVIRONMENT: development
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-development}
     ports:
-      - "5000:5000"
+      - "${BACKEND_PORT:-5000}:5000"
     depends_on:
       postgres:
         condition: service_healthy

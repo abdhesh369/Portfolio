@@ -1,5 +1,9 @@
 import { analyticsRepository, type AnalyticsSummary, type VitalEntry, type VitalsSummary } from "../repositories/analytics.repository.js";
 import type { InsertAnalytics, Analytics } from "../../shared/schema.js";
+import { CacheService } from "../lib/cache.js";
+
+const FEATURE = "analytics";
+const SUMMARY_TTL = 3600; // 1 hour
 
 export class AnalyticsService {
     /**
@@ -12,11 +16,14 @@ export class AnalyticsService {
     }
 
     /**
-     * Retrieves an aggregated analytics summary.
+     * Retrieves an aggregated analytics summary, cached for 1 hour.
      * @returns The analytics summary data
      */
     async getSummary(): Promise<AnalyticsSummary> {
-        return analyticsRepository.getSummary();
+        const key = CacheService.key(FEATURE, "summary");
+        return CacheService.getOrSet(key, SUMMARY_TTL, () =>
+            analyticsRepository.getSummary()
+        );
     }
 
     /**
@@ -29,12 +36,15 @@ export class AnalyticsService {
     }
 
     /**
-     * Retrieves a summary of web vitals metrics.
+     * Retrieves a summary of web vitals metrics, cached for 1 hour.
      * @param days - Optional number of days to include in the summary
      * @returns The aggregated web vitals summary
      */
-    async getVitalsSummary(days?: number): Promise<VitalsSummary> {
-        return analyticsRepository.getVitalsSummary(days);
+    async getVitalsSummary(days: number = 7): Promise<VitalsSummary> {
+        const key = CacheService.key(FEATURE, `vitals:${days}`);
+        return CacheService.getOrSet(key, SUMMARY_TTL, () =>
+            analyticsRepository.getVitalsSummary(days)
+        );
     }
 }
 

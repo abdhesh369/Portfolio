@@ -3,18 +3,10 @@ import { guestbookService } from "../services/guestbook.service.js";
 import { asyncHandler, isAuthenticated } from "../auth.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
-import rateLimit from "express-rate-limit";
+import { guestbookLimiter } from "../lib/rate-limit.js";
 import { recordAudit } from "../lib/audit.js";
-
 import { cachePublic } from "../middleware/cache.js";
-
 import { insertGuestbookApiSchema } from "../../shared/schema.js";
-
-const guestbookLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 5, // Limit each IP to 5 guestbook entries per hour
-    message: { message: "Too many guestbook entries, please try again in an hour" }
-});
 
 const guestbookRoutes = Router();
 

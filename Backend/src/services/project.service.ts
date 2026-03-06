@@ -2,24 +2,20 @@ import { projectRepository } from "../repositories/project.repository.js";
 import { redis } from "../lib/redis.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Project, InsertProject } from "../../shared/schema.js";
+import { CacheService } from "../lib/cache.js";
+
+const FEATURE = "project";
+const LIST_NAMESPACE = "list";
+const CACHE_TTL = 3600;
 
 export class ProjectService {
-    private readonly CACHE_KEY_LIST = "projects:list";
-    private readonly CACHE_TTL = 3600;
-
     /**
      * Retrieves all projects, using Redis cache when available.
      * @returns Array of project objects
      */
     async getAll(): Promise<Project[]> {
-        const cached = await redis?.get(this.CACHE_KEY_LIST);
-        if (cached) return JSON.parse(cached);
-
-        const projects = await projectRepository.findAll();
-        if (redis) {
-            await redis.setex(this.CACHE_KEY_LIST, this.CACHE_TTL, JSON.stringify(projects));
-        }
-        return projects;
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAll());
     }
 
     /**
@@ -38,9 +34,7 @@ export class ProjectService {
      */
     async create(data: InsertProject): Promise<Project> {
         const project = await projectRepository.create(data);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
         return project;
     }
 
@@ -52,9 +46,7 @@ export class ProjectService {
      */
     async update(id: number, data: Partial<InsertProject>): Promise<Project> {
         const project = await projectRepository.update(id, data);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
         return project;
     }
 
@@ -64,9 +56,7 @@ export class ProjectService {
      */
     async delete(id: number): Promise<void> {
         await projectRepository.delete(id);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
     }
 
     /**
@@ -75,9 +65,7 @@ export class ProjectService {
      */
     async bulkDelete(ids: number[]): Promise<void> {
         await projectRepository.bulkDelete(ids);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
     }
 
     /**
@@ -85,11 +73,9 @@ export class ProjectService {
      * @param ids - Array of project IDs to update
      * @param status - The new status value to apply
      */
-    async bulkUpdateStatus(ids: number[], status: string): Promise<void> {
-        await projectRepository.bulkUpdateStatus(ids, status as any);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+    async bulkUpdateStatus(ids: number[], status: Project["status"]): Promise<void> {
+        await projectRepository.bulkUpdateStatus(ids, status);
+        await this.invalidateCache();
     }
 
     /**
@@ -98,9 +84,12 @@ export class ProjectService {
      */
     async updateReorder(ids: number[]): Promise<void> {
         await projectRepository.reorder(ids);
-        if (redis) {
-            await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
+    }
+
+    private async invalidateCache() {
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
+        await CacheService.invalidate(key, CHAT_CACHE_KEY);
     }
 
     /**

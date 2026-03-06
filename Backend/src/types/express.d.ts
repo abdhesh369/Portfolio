@@ -5,6 +5,10 @@ declare global {
         interface Request {
             id: string;
             rawBody?: Buffer;
+            user?: {
+                role: string;
+                [key: string]: any;
+            };
         }
     }
 }

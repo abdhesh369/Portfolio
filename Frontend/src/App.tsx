@@ -1,13 +1,13 @@
 import { Switch, Route, useRoute, useLocation } from "wouter";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy, Component, type ReactNode, useEffect, useState } from "react";
+import { QueryClientProvider, useIsFetching, useIsMutating } from "@tanstack/react-query";
+import { Suspense, lazy, Component, type ReactNode, useEffect, useState, useMemo } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
 import { ReloadPrompt } from "@/components/ReloadPrompt";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import { LazyMotion, m } from "framer-motion";
+import { LazyMotion, m, AnimatePresence } from "framer-motion";
 const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res.default);
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
@@ -342,6 +342,35 @@ function DeferredChatbot() {
 
 // framer-motion import moved to top of file
 
+// Global loading indicator for query cache
+function GlobalLoadingIndicator() {
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+  const active = isFetching > 0 || isMutating > 0;
+
+  return (
+    <AnimatePresence>
+      {active && (
+        <m.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed top-0 left-0 right-0 z-[10000] pointer-events-none"
+        >
+          <div className="h-1 w-full bg-primary/20 overflow-hidden">
+            <m.div
+              initial={{ x: "-100%" }}
+              animate={{ x: "100%" }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              className="h-full w-1/3 bg-primary shadow-[0_0_10px_var(--primary-glow)]"
+            />
+          </div>
+        </m.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // Main App component
 function App() {
   return (
@@ -353,6 +382,8 @@ function App() {
               {/* Apply dynamic settings early */}
               <SettingsApplicator />
               <SettingsFontLoader />
+
+              <GlobalLoadingIndicator />
 
               <a
                 href="#main-content"

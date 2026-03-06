@@ -29,7 +29,7 @@ const storage = new CloudinaryStorage({
         public_id: () => {
             return `project_${randomUUID()}`;
         },
-    } as any, // Explicitly cast to avoid type errors with recent versions
+    } as Record<string, unknown>, // Cast to known record type to satisfy multer-storage-cloudinary
 });
 
 export const upload = multer({
@@ -38,7 +38,7 @@ export const upload = multer({
         fileSize: 5 * 1024 * 1024, // 5MB limit
         files: 1, // Only 1 file at a time
     },
-    fileFilter: (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    fileFilter: (_req, file, cb) => {
         const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
         if (allowedMimes.includes(file.mimetype)) {
             cb(null, true);

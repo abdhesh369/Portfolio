@@ -1,8 +1,12 @@
 import { testimonialRepository } from "../repositories/testimonial.repository.js";
 import { redis } from "../lib/redis.js";
 import type { Testimonial, InsertTestimonial } from "../../shared/schema.js";
+import { CacheService } from "../lib/cache.js";
 
-const CACHE_KEY = "testimonials";
+const FEATURE = "testimonial";
+const LIST_NAMESPACE = "list";
+const ITEM_NAMESPACE = "item";
+const CACHE_TTL = 3600;
 
 export class TestimonialService {
     /**
@@ -10,16 +14,8 @@ export class TestimonialService {
      * @returns Array of testimonial objects
      */
     async getAll(): Promise<Testimonial[]> {
-        const cached = redis ? await redis.get(CACHE_KEY) : null;
-        if (cached) {
-            return JSON.parse(cached);
-        }
-
-        const testimonials = await testimonialRepository.findAll();
-        if (redis) {
-            await redis.setex(CACHE_KEY, 3600, JSON.stringify(testimonials));
-        }
-        return testimonials;
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => testimonialRepository.findAll());
     }
 
     /**
@@ -28,17 +24,8 @@ export class TestimonialService {
      * @returns The matching testimonial or null if not found
      */
     async getById(id: number): Promise<Testimonial | null> {
-        const cacheKey = `${CACHE_KEY}:${id}`;
-        const cached = redis ? await redis.get(cacheKey) : null;
-        if (cached) {
-            return JSON.parse(cached);
-        }
-
-        const testimonial = await testimonialRepository.findById(id);
-        if (testimonial && redis) {
-            await redis.setex(cacheKey, 3600, JSON.stringify(testimonial));
-        }
-        return testimonial;
+        const key = CacheService.key(FEATURE, ITEM_NAMESPACE, id);
+        return CacheService.getOrSet(key, CACHE_TTL, () => testimonialRepository.findById(id));
     }
 
     /**
@@ -74,11 +61,12 @@ export class TestimonialService {
     }
 
     private async invalidateCache(id?: number) {
-        if (!redis) return;
-        await redis.del(CACHE_KEY);
+        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+        const keys = [listKey];
         if (id) {
-            await redis.del(`${CACHE_KEY}:${id}`);
+            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
+        await CacheService.invalidate(...keys);
     }
 }
 

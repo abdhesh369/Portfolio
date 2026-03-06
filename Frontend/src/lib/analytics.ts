@@ -6,6 +6,12 @@ export type AnalyticsEvent = {
     [key: string]: any;
 };
 
+declare global {
+    interface Window {
+        gtag?: (command: string, action: string, params?: any) => void;
+    }
+}
+
 export async function trackEvent(event: AnalyticsEvent) {
     // Bot Filtering
     if (/bot|crawler|spider|preview|lighthouse|googlebot|bingbot|yandex|slurp|duckduckgo/i.test(navigator.userAgent)) {
@@ -29,8 +35,8 @@ export async function trackEvent(event: AnalyticsEvent) {
         });
 
         // Also log to Google Analytics if available
-        if ((window as any).gtag) {
-            (window as any).gtag("event", event.type, event);
+        if (window.gtag) {
+            window.gtag("event", event.type, event);
         }
     } catch (err) {
         console.warn("Analytics tracking failed:", err);

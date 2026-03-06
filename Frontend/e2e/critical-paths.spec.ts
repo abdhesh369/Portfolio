@@ -36,13 +36,10 @@ test.describe("Public User Journey", () => {
 
     // Look for any project card link
     const projectLink = page.locator('a[href^="/project/"]').first();
-
-    // If projects exist, click through
-    if (await projectLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await projectLink.click();
-      await page.waitForURL("**/project/**");
-      await expect(page).toHaveURL(/\/project\//);
-    }
+    await expect(projectLink).toBeVisible({ timeout: 5000 });
+    await projectLink.click();
+    await page.waitForURL("**/project/**");
+    await expect(page).toHaveURL(/\/project\//);
   });
 
   test("404 page renders for unknown routes", async ({ page }) => {
@@ -64,18 +61,17 @@ test.describe("Contact Form", () => {
       'input[name="name"], input[placeholder*="name" i], input[aria-label*="name" i]'
     ).first();
 
-    // If a contact form exists on the homepage
-    if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      // Try to submit empty form
-      const submitBtn = page
-        .getByRole("button", { name: /send|submit|contact/i })
-        .first();
-      await submitBtn.click();
+    await expect(nameInput).toBeVisible({ timeout: 5000 });
 
-      // Should show validation errors or the form should still be present
-      // (browser native validation or custom error messages)
-      await expect(nameInput).toBeVisible();
-    }
+    // Try to submit empty form
+    const submitBtn = page
+      .getByRole("button", { name: /send|submit|contact/i })
+      .first();
+    await submitBtn.click();
+
+    // Should show validation errors or the form should still be present
+    // (browser native validation or custom error messages)
+    await expect(nameInput).toBeVisible();
   });
 
   test("contact form accepts valid input", async ({ page }) => {
@@ -85,26 +81,23 @@ test.describe("Contact Form", () => {
       'input[name="name"], input[placeholder*="name" i], input[aria-label*="name" i]'
     ).first();
 
-    if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await nameInput.fill("Test User");
+    await expect(nameInput).toBeVisible({ timeout: 5000 });
+    await nameInput.fill("Test User");
 
-      const emailInput = page.locator(
-        'input[name="email"], input[type="email"], input[placeholder*="email" i]'
-      ).first();
-      if (await emailInput.isVisible()) {
-        await emailInput.fill("test@example.com");
-      }
+    const emailInput = page.locator(
+      'input[name="email"], input[type="email"], input[placeholder*="email" i]'
+    ).first();
+    await expect(emailInput).toBeVisible();
+    await emailInput.fill("test@example.com");
 
-      const messageInput = page.locator(
-        'textarea[name="message"], textarea[placeholder*="message" i], textarea'
-      ).first();
-      if (await messageInput.isVisible()) {
-        await messageInput.fill("This is a test message from Playwright.");
-      }
+    const messageInput = page.locator(
+      'textarea[name="message"], textarea[placeholder*="message" i], textarea'
+    ).first();
+    await expect(messageInput).toBeVisible();
+    await messageInput.fill("This is a test message from Playwright.");
 
-      // Verify the form is filled (don't submit to avoid side effects in E2E without a test backend)
-      await expect(nameInput).toHaveValue("Test User");
-    }
+    // Verify the form is filled (don't submit to avoid side effects in E2E without a test backend)
+    await expect(nameInput).toHaveValue("Test User");
   });
 });
 

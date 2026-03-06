@@ -1,9 +1,10 @@
 import { emailTemplateRepository } from "../repositories/email-template.repository.js";
 import type { InsertEmailTemplate, EmailTemplate } from "../../shared/schema.js";
-import { redis } from "../lib/redis.js";
-import { logger } from "../lib/logger.js";
+import { CacheService } from "../lib/cache.js";
 
-const CACHE_KEY = "email_templates";
+const FEATURE = "email";
+const NAMESPACE = "templates";
+const CACHE_TTL = 3600;
 
 export class EmailTemplateService {
     /**
@@ -11,12 +12,8 @@ export class EmailTemplateService {
      * @returns Array of email template objects
      */
     async getAll(): Promise<EmailTemplate[]> {
-        const cached = await redis?.get(CACHE_KEY);
-        if (cached) return JSON.parse(cached);
-
-        const templates = await emailTemplateRepository.getAll();
-        await redis?.set(CACHE_KEY, JSON.stringify(templates), "EX", 3600); // 1 hour
-        return templates;
+        const key = CacheService.key(FEATURE, NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => emailTemplateRepository.getAll());
     }
 
     /**
@@ -65,11 +62,8 @@ export class EmailTemplateService {
     }
 
     private async invalidateCache() {
-        try {
-            await redis?.del(CACHE_KEY);
-        } catch (error) {
-            logger.warn({ context: "cache", service: "email-template", error }, "Failed to invalidate email template cache");
-        }
+        const key = CacheService.key(FEATURE, NAMESPACE);
+        await CacheService.invalidate(key);
     }
 }
 

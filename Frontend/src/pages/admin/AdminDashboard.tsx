@@ -55,7 +55,7 @@ export default function AdminDashboard() {
         localStorage.setItem("admin:sidebarCollapsed", String(sidebarCollapsed));
     }, [sidebarCollapsed]);
 
-    // SSE real-time notifications (TICKET-031)
+    // SSE real-time notifications
     const { resetUnread } = useMessageStream(true);
 
     // Reset unread count when switching to messages tab

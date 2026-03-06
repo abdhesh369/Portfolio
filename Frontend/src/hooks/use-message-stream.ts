@@ -9,7 +9,7 @@ interface SSEMessage {
 }
 
 /**
- * TICKET-031: Hook for subscribing to SSE message notifications.
+ * Hook for subscribing to SSE message notifications.
  * Falls back to polling every 60s if SSE fails.
  */
 export function useMessageStream(enabled: boolean = true) {

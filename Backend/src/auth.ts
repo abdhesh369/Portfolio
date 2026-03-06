@@ -130,9 +130,9 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         }
 
         try {
-            const decoded = jwt.verify(token, env.JWT_SECRET);
-            // Attach decoded token to request if needed
-            (req as any).user = decoded;
+            const decoded = jwt.verify(token, env.JWT_SECRET) as { role: string };
+            // Attach decoded token to request
+            req.user = decoded;
             return next();
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {

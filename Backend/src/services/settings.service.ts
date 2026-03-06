@@ -1,12 +1,13 @@
 import { settingsRepository } from "../repositories/settings.repository.js";
-import { redis } from "../lib/redis.js";
 import { type SiteSettings, type InsertSiteSettings, siteSettingsSchema, insertSiteSettingsApiSchema } from "../../shared/schema.js";
 import { logger } from "../lib/logger.js";
+import { CacheService } from "../lib/cache.js";
+
+const FEATURE = "site";
+const NAMESPACE = "settings";
+const CACHE_TTL = 3600;
 
 export class SettingsService {
-    private readonly CACHE_KEY = "site:settings";
-    private readonly CACHE_TTL = 3600;
-
     private safeParseSettings(raw: unknown): SiteSettings {
         const result = siteSettingsSchema.safeParse(raw);
         if (result.success) {
@@ -20,47 +21,27 @@ export class SettingsService {
     }
 
     async getSettings(): Promise<SiteSettings> {
-        try {
-            const cached = await redis?.get(this.CACHE_KEY);
-            if (cached) {
-                try {
-                    const settings = JSON.parse(cached);
-                    return this.safeParseSettings(settings);
-                } catch { /* ignore corrupted JSON */ }
+        const key = CacheService.key(FEATURE, NAMESPACE);
+
+        const settings = await CacheService.getOrSet(key, CACHE_TTL, async () => {
+            let data = await settingsRepository.getSettings();
+            if (!data) {
+                // Initialize with defaults if not exists
+                data = await settingsRepository.updateSettings({ isOpenToWork: true });
             }
-        } catch (err) {
-            // Redis unavailable — fall through to DB
-        }
+            return data;
+        });
 
-        let settings = await settingsRepository.getSettings();
-
-        if (!settings) {
-            // Initialize with defaults if not exists
-            settings = await settingsRepository.updateSettings({ isOpenToWork: true } as any);
-        }
-
-        const sanitized = this.safeParseSettings(settings);
-
-        try {
-            if (redis) {
-                await redis.setex(this.CACHE_KEY, this.CACHE_TTL, JSON.stringify(sanitized));
-            }
-        } catch (err) {
-            // Ignore cache write error
-        }
-        return sanitized;
+        return this.safeParseSettings(settings);
     }
 
     async updateSettings(data: InsertSiteSettings): Promise<SiteSettings> {
         const sanitizedData = insertSiteSettingsApiSchema.parse(data);
-        const settings = await settingsRepository.updateSettings(sanitizedData as any);
-        try {
-            if (redis) {
-                await redis.del(this.CACHE_KEY);
-            }
-        } catch (err) {
-            // Ignore cache delete error
-        }
+        const settings = await settingsRepository.updateSettings(sanitizedData);
+
+        const key = CacheService.key(FEATURE, NAMESPACE);
+        await CacheService.invalidate(key);
+
         return this.safeParseSettings(settings);
     }
 }

@@ -7,6 +7,7 @@ import SectionDivider from "@/components/SectionDivider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { DEFAULT_SECTION_ORDER } from "shared/schema";
 import React from "react";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
@@ -111,10 +112,7 @@ export default function Home() {
     contact: <SafeSection><Contact /></SafeSection>,
   };
 
-  const sectionOrder = settings?.sectionOrder || [
-    "about", "skills", "whyhireme", "services", "mindset",
-    "projects", "practice", "experience", "testimonials", "guestbook", "contact"
-  ];
+  const sectionOrder = settings?.sectionOrder || [...DEFAULT_SECTION_ORDER];
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
 

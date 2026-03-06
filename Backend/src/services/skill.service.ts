@@ -1,34 +1,31 @@
 import { skillRepository } from "../repositories/skill.repository.js";
-import { redis } from "../lib/redis.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Skill, InsertSkill } from "../../shared/schema.js";
+import { CacheService } from "../lib/cache.js";
+
+const FEATURE = "skill";
+const LIST_NAMESPACE = "list";
+const ITEM_NAMESPACE = "item";
+const CACHE_TTL = 3600;
 
 export class SkillService {
-    private readonly CACHE_KEY = "skills:list";
-    private readonly CACHE_TTL = 3600;
-
     /**
      * Retrieves all skills, using Redis cache when available.
      * @returns Array of skill objects
      */
     async getAll(): Promise<Skill[]> {
-        const cached = await redis?.get(this.CACHE_KEY);
-        if (cached) return JSON.parse(cached);
-
-        const skills = await skillRepository.findAll();
-        if (redis) {
-            await redis.setex(this.CACHE_KEY, this.CACHE_TTL, JSON.stringify(skills));
-        }
-        return skills;
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => skillRepository.findAll());
     }
 
     /**
-     * Retrieves a single skill by its ID.
+     * Retrieves a single skill by its ID, using Redis cache when available.
      * @param id - The skill ID
      * @returns The matching skill or null if not found
      */
     async getById(id: number): Promise<Skill | null> {
-        return await skillRepository.findById(id);
+        const key = CacheService.key(FEATURE, ITEM_NAMESPACE, id);
+        return CacheService.getOrSet(key, CACHE_TTL, () => skillRepository.findById(id));
     }
 
     /**
@@ -38,9 +35,7 @@ export class SkillService {
      */
     async create(data: InsertSkill): Promise<Skill> {
         const skill = await skillRepository.create(data);
-        if (redis) {
-            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache();
         return skill;
     }
 
@@ -52,9 +47,7 @@ export class SkillService {
      */
     async update(id: number, data: Partial<InsertSkill>): Promise<Skill> {
         const skill = await skillRepository.update(id, data);
-        if (redis) {
-            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache(id);
         return skill;
     }
 
@@ -64,9 +57,7 @@ export class SkillService {
      */
     async delete(id: number): Promise<void> {
         await skillRepository.delete(id);
-        if (redis) {
-            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
-        }
+        await this.invalidateCache(id);
     }
 
     /**
@@ -75,9 +66,16 @@ export class SkillService {
      */
     async bulkDelete(ids: number[]): Promise<void> {
         await skillRepository.bulkDelete(ids);
-        if (redis) {
-            await redis.del(this.CACHE_KEY, CHAT_CACHE_KEY);
+        await this.invalidateCache();
+    }
+
+    private async invalidateCache(id?: number) {
+        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+        const keys = [listKey, CHAT_CACHE_KEY];
+        if (id) {
+            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
+        await CacheService.invalidate(...keys);
     }
 }
 

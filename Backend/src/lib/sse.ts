@@ -1,5 +1,5 @@
 /**
- * TICKET-031: Simple SSE (Server-Sent Events) emitter for real-time notifications.
+ * Simple SSE (Server-Sent Events) emitter for real-time notifications.
  * Maintains a set of connected clients and broadcasts events to all.
  */
 import type { Response } from "express";

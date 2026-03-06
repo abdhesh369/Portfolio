@@ -1,9 +1,10 @@
 import { seoSettingsRepository } from "../repositories/seo-settings.repository.js";
 import type { InsertSeoSettings, SeoSettings } from "../../shared/schema.js";
-import { redis } from "../lib/redis.js";
-import { logger } from "../lib/logger.js";
+import { CacheService } from "../lib/cache.js";
 
-const CACHE_KEY = "seo_settings";
+const FEATURE = "seo";
+const NAMESPACE = "settings";
+const CACHE_TTL = 3600;
 
 export class SeoSettingsService {
     /**
@@ -11,12 +12,8 @@ export class SeoSettingsService {
      * @returns Array of SEO settings objects
      */
     async getAll(): Promise<SeoSettings[]> {
-        const cached = await redis?.get(CACHE_KEY);
-        if (cached) return JSON.parse(cached);
-
-        const settings = await seoSettingsRepository.getAll();
-        await redis?.set(CACHE_KEY, JSON.stringify(settings), "EX", 3600); // 1 hour
-        return settings;
+        const key = CacheService.key(FEATURE, NAMESPACE);
+        return CacheService.getOrSet(key, CACHE_TTL, () => seoSettingsRepository.getAll());
     }
 
     /**
@@ -65,11 +62,8 @@ export class SeoSettingsService {
     }
 
     private async invalidateCache() {
-        try {
-            await redis?.del(CACHE_KEY);
-        } catch (error) {
-            logger.warn({ context: "cache", service: "seo-settings", error }, "Failed to invalidate SEO settings cache");
-        }
+        const key = CacheService.key(FEATURE, NAMESPACE);
+        await CacheService.invalidate(key);
     }
 }
 
