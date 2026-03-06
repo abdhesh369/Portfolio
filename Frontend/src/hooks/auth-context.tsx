@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useLocation } from "wouter";
-import { API_BASE_URL, setCsrfToken } from "@/lib/api-helpers";
+import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 
@@ -23,44 +23,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const checkAuth = useCallback(async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/auth/status`, {
-                credentials: 'include'
-            });
-            if (res.ok) {
-                const data = await res.json();
-                if (data.csrfToken) {
-                    setCsrfToken(data.csrfToken);
-                }
-                setUser(data.user || { username: 'Admin' });
-                setIsAuthenticated(true);
-            } else if (res.status === 401) {
-                // Access token expired — try silent refresh before giving up
-                const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                if (refreshRes.ok) {
-                    // Refresh succeeded — new access token cookie is set, verify status
-                    const data = await refreshRes.json();
-                    if (data.csrfToken) {
-                        setCsrfToken(data.csrfToken);
-                    }
-                    setUser(data.user || { username: 'Admin' });
-                    setIsAuthenticated(true);
-                } else {
-                    setIsAuthenticated(false);
-                }
-            } else {
-                setIsAuthenticated(false);
-                setUser(null);
+            const data = await apiFetch("/api/v1/auth/status");
+            if (data.csrfToken) {
+                setCsrfToken(data.csrfToken);
             }
+            setUser(data.user || { username: 'Admin' });
+            setIsAuthenticated(true);
         } catch (err) {
             setIsAuthenticated(false);
             setUser(null);
         } finally {
             setIsLoading(false);
         }
-    }, [queryClient]); // queryClient is stable from useQueryClient()
+    }, [queryClient]);
 
     const login = (userData?: any) => {
         localStorage.removeItem("auth_last_exit");
@@ -71,9 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = useCallback(async () => {
         try {
-            await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
-                method: "POST",
-                credentials: 'include'
+            await apiFetch("/api/v1/auth/logout", {
+                method: "POST"
             });
         } finally {
             setIsAuthenticated(false);
@@ -85,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         checkAuth();
-    }, []);
+    }, [checkAuth]);
 
     // Listen for session-expired events from apiFetch
     useEffect(() => {
@@ -95,7 +69,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [logout]);
 
     // Session Lock / Timeout Logic (5 minutes absence)
-    // Now simpler: just clears the session if user was gone too long
     useEffect(() => {
         if (!isAuthenticated) return;
 
@@ -117,7 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (document.visibilityState === 'hidden') {
                 localStorage.setItem("auth_last_exit", Date.now().toString());
             } else {
-                // Tab became visible — check timeout, then clear the marker
                 if (!checkTimeout()) {
                     localStorage.removeItem("auth_last_exit");
                 }
@@ -148,10 +120,6 @@ export function useAuth() {
     if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
     return ctx;
 }
-
-/* ---------------------------------- */
-/* Protected Route                     */
-/* ---------------------------------- */
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isAuthenticated, isLoading } = useAuth();

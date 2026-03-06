@@ -1,4 +1,6 @@
+/// <reference path="./types/express.d.ts" />
 import { Request, Response, NextFunction } from "express";
+import { z } from "zod";
 import { env } from "./env.js";
 import { logger } from "./lib/logger.js";
 import jwt from "jsonwebtoken";
@@ -113,15 +115,6 @@ interface JWTPayload {
     exp?: number;
 }
 
-declare global {
-    namespace Express {
-        interface Request {
-            user?: {
-                role: string;
-            };
-        }
-    }
-}
 
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined;
@@ -146,19 +139,29 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         }
 
         try {
-            const decoded = jwt.verify(token, env.JWT_SECRET) as any;
-            // Runtime validation of payload
-            if (!decoded || typeof decoded !== 'object' || !('role' in decoded) || typeof decoded.role !== 'string') {
+            const result = jwt.verify(token, env.JWT_SECRET);
+
+            // Standard JWT payload schema
+            const tokenSchema = z.object({
+                role: z.string(),
+                iat: z.number().optional(),
+                exp: z.number().optional()
+            }).passthrough();
+
+            const parsed = tokenSchema.safeParse(result);
+            if (!parsed.success) {
                 return res.status(401).json({ message: "Invalid token payload" });
             }
 
-            // Optional: check standard claims
-            if (typeof decoded.iat !== 'number' || typeof decoded.exp !== 'number') {
-                return res.status(401).json({ message: "Incomplete token claims" });
-            }
+            const decoded = parsed.data;
 
             // Attach decoded token to request with proper typing
-            req.user = { role: decoded.role }; req.user = { role: decoded.role }; return next();
+            req.user = {
+                role: decoded.role,
+                token: token,
+                via: authHeader ? "bearer" : "cookie"
+            };
+            return next();
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {
                 return res.status(401).json({ message: "Invalid or expired token" });

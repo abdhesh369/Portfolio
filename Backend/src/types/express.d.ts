@@ -7,6 +7,8 @@ declare global {
             rawBody?: Buffer;
             user?: {
                 role: string;
+                token?: string;
+                via?: "bearer" | "cookie";
                 [key: string]: any;
             };
         }

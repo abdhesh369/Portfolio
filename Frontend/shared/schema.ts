@@ -729,7 +729,6 @@ export const articleSchema = z.object({
   publishedAt: z.coerce.date().nullable(),
   viewCount: z.number(),
   readTimeMinutes: z.number(),
-  readTimeMinutesText: z.string().optional(),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
@@ -798,4 +797,31 @@ export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
 
 export function isProject(obj: unknown): obj is Project {
   return projectSchema.safeParse(obj).success;
+}
+export function isSkill(obj: unknown): obj is Skill {
+  return skillSchema.safeParse(obj).success;
+}
+export function isExperience(obj: unknown): obj is Experience {
+  return experienceSchema.safeParse(obj).success;
+}
+export function isMessage(obj: unknown): obj is Message {
+  return messageSchema.safeParse(obj).success;
+}
+export function isMindset(obj: unknown): obj is Mindset {
+  return mindsetSchema.safeParse(obj).success;
+}
+export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
+  return emailTemplateSchema.safeParse(obj).success;
+}
+export function isSeoSettings(obj: unknown): obj is SeoSettings {
+  return seoSettingsSchema.safeParse(obj).success;
+}
+export function isTestimonial(obj: unknown): obj is Testimonial {
+  return testimonialSchema.safeParse(obj).success;
+}
+export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
+  return guestbookSchema.safeParse(obj).success;
+}
+export function isAuditLog(obj: unknown): obj is AuditLog {
+  return auditLogSchema.safeParse(obj).success;
 }

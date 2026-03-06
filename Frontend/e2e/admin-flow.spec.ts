@@ -18,12 +18,11 @@ test.describe("Admin Authentication Flow", () => {
       .getByRole("button", { name: /login|sign in|submit/i })
       .first();
 
-    if (await submitBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await submitBtn.click();
+    await expect(submitBtn).toBeVisible({ timeout: 5000 });
+    await submitBtn.click();
 
-      // Should show an error or the form should remain (not navigate away)
-      await expect(page).toHaveURL(/\/admin\/login/);
-    }
+    // Should show an error or the form should remain (not navigate away)
+    await expect(page).toHaveURL(/\/admin\/login/);
   });
 
   test("admin login rejects invalid password", async ({ page }) => {
@@ -33,28 +32,27 @@ test.describe("Admin Authentication Flow", () => {
       'input[type="password"], input[name="password"]'
     ).first();
 
-    if (await passwordInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await passwordInput.fill("wrong-password-12345");
+    await expect(passwordInput).toBeVisible({ timeout: 5000 });
+    await passwordInput.fill("wrong-password-12345");
 
-      const submitBtn = page
-        .getByRole("button", { name: /login|sign in|submit/i })
-        .first();
-      await submitBtn.click();
+    const submitBtn = page
+      .getByRole("button", { name: /login|sign in|submit/i })
+      .first();
+    await submitBtn.click();
 
-      // Should stay on login page or show error
-      // Wait a bit for the response
-      await page.waitForTimeout(2000);
+    // Should stay on login page or show error
+    // Wait a bit for the response
+    await page.waitForTimeout(2000);
 
-      // Either we see an error message or we're still on login
-      const isStillOnLogin = page.url().includes("/admin/login");
-      const errorVisible = await page
-        .getByText(/invalid|incorrect|wrong|unauthorized|error/i)
-        .first()
-        .isVisible()
-        .catch(() => false);
+    // Either we see an error message or we're still on login
+    const isStillOnLogin = page.url().includes("/admin/login");
+    const errorVisible = await page
+      .getByText(/invalid|incorrect|wrong|unauthorized|error/i)
+      .first()
+      .isVisible()
+      .catch(() => false);
 
-      expect(isStillOnLogin || errorVisible).toBeTruthy();
-    }
+    expect(isStillOnLogin || errorVisible).toBeTruthy();
   });
 
   test("unauthenticated access to admin dashboard redirects to login", async ({
@@ -124,12 +122,11 @@ test.describe("Admin Dashboard (requires auth)", () => {
     const logoutBtn = page
       .getByRole("button", { name: /logout|sign out/i })
       .first();
-    if (await logoutBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await logoutBtn.click();
+    await expect(logoutBtn).toBeVisible({ timeout: 5000 });
+    await logoutBtn.click();
 
-      // Should redirect back to login
-      await page.waitForURL("**/admin/login", { timeout: 10000 });
-      await expect(page).toHaveURL(/\/admin\/login/);
-    }
+    // Should redirect back to login
+    await page.waitForURL("**/admin/login", { timeout: 10000 });
+    await expect(page).toHaveURL(/\/admin\/login/);
   });
 });

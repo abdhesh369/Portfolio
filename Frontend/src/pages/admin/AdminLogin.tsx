@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/auth-context";
 import { useToast } from "@/hooks/use-toast";
 
-import { API_BASE_URL, setCsrfToken } from "@/lib/api-helpers";
+import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
 
 export default function AdminLogin() {
     const [password, setPassword] = useState("");
@@ -26,19 +26,11 @@ export default function AdminLogin() {
 
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+            const data = await apiFetch("/api/v1/auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ password }),
-                credentials: 'include'
             });
 
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({ message: "Login failed" }));
-                throw new Error(err.message || "Invalid credentials");
-            }
-
-            const data = await res.json();
             if (data.csrfToken) {
                 setCsrfToken(data.csrfToken);
             }

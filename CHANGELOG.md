@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Dynamic section ordering and visibility toggle
 - Feature toggles for blog, guestbook, testimonials, services
 - Extended siteSettings schema (migration 0008)
+### Security & Type Safety
+- Eliminating `as any` casts in backend services and repositories
+- Runtime JWT payload validation using Zod schemas
+- Standardized frontend fetching via `apiFetch` with centralized CSRF and error handling
 ### Fixed
 - Nonce-based CSP (removed unsafe-inline)
 - Request ID typing via express.d.ts

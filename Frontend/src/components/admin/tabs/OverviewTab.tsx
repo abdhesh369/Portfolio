@@ -1,6 +1,6 @@
 import { useProjects, useSkills, useExperiences, useMessages } from "@/hooks/use-portfolio";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { apiFetch } from "@/lib/api-helpers";
 import {
     Rocket, Mail, Zap, Briefcase, Plus
 } from "lucide-react";
@@ -35,9 +35,8 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         setHealthLoading(true);
         try {
             const start = performance.now();
-            const res = await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
+            const data = await apiFetch("/health", { signal: controller.signal });
             const elapsed = Math.round(performance.now() - start);
-            const data = await res.json();
             setHealthData({ ...data, responseTimeMs: elapsed });
         } catch (err) {
             if (err instanceof DOMException && err.name === "AbortError") return;
@@ -58,7 +57,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
-    const activities = (messages || []).slice(0, 5).map((msg, idx) => ({
+    const activities: any[] = (messages || []).slice(0, 5).map((msg, idx) => ({
         id: msg.id || idx,
         type: "message" as const,
         content: `New message from ${msg.name}`,
@@ -70,7 +69,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     if (activities.length === 0) {
         activities.push({
             id: "system-1",
-            type: "system",
+            type: "system" as const,
             content: "System initialized",
             timestamp: "Today",
             metadata: "All modules loaded successfully"
