@@ -6,7 +6,7 @@ import { useScrollStore } from "@/hooks/use-scroll-store";
 
 export default function BackToTop() {
     const { scrollY, progress } = useScrollStore();
-    const isVisible = scrollY > 500;
+    const isVisible = scrollY > 300;
 
     const scrollToTop = () => {
         window.scrollTo({
