@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSkeleton } from "@/components/admin/AdminShared";
 import { ChevronDown, Download, Upload, RotateCcw, Save, AlertCircle } from "lucide-react";
 import type { InsertSiteSettings } from "@shared/schema";
+import { insertSiteSettingsApiSchema } from "@shared/schema";
 
 // --- Types & Constants ---
 
@@ -77,7 +78,7 @@ export function CustomizationTab() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // useForm with 'values' ensures the form updates when async data arrives
-  const { register, handleSubmit, reset, formState: { isDirty } } = useForm<InsertSiteSettings>({
+  const { register, handleSubmit, reset, formState: { isDirty, errors } } = useForm<InsertSiteSettings>({
     defaultValues: settings || DEFAULT_SETTINGS,
     values: settings,
   });
@@ -123,14 +124,18 @@ export function CustomizationTab() {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const imported = JSON.parse(event.target?.result as string);
+        const result = event.target?.result as string;
+        const imported = JSON.parse(result);
 
-        // Basic Validation: Ensure it's a settings object
-        if (typeof imported !== 'object' || !imported.personalName) {
-          throw new Error("Invalid format: Missing required fields.");
+        // Validation using shared Zod schema
+        const parseResult = insertSiteSettingsApiSchema.safeParse(imported);
+
+        if (!parseResult.success) {
+          const errorMsg = parseResult.error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(", ");
+          throw new Error(`Invalid format: ${errorMsg}`);
         }
 
-        reset(imported);
+        reset(parseResult.data);
         toast({ title: "Import Successful", description: "Settings loaded into form. Don't forget to save!" });
       } catch (err: any) {
         toast({
@@ -168,6 +173,7 @@ export function CustomizationTab() {
 
           <input
             type="file"
+            id="import-settings"
             ref={fileInputRef}
             accept=".json"
             onChange={handleImport}
@@ -198,16 +204,16 @@ export function CustomizationTab() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Full Name</label>
-              <input {...register("personalName")} className="admin-input" placeholder="John Doe" />
+              <label htmlFor="personalName" className="text-xs font-medium text-white/50 uppercase">Full Name</label>
+              <input id="personalName" {...register("personalName")} className="admin-input" placeholder="John Doe" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Professional Title</label>
-              <input {...register("personalTitle")} className="admin-input" placeholder="Software Engineer" />
+              <label htmlFor="personalTitle" className="text-xs font-medium text-white/50 uppercase">Professional Title</label>
+              <input id="personalTitle" {...register("personalTitle")} className="admin-input" placeholder="Software Engineer" />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Bio</label>
-              <textarea {...register("personalBio")} rows={3} className="admin-input resize-none" />
+              <label htmlFor="personalBio" className="text-xs font-medium text-white/50 uppercase">Bio</label>
+              <textarea id="personalBio" {...register("personalBio")} rows={3} className="admin-input resize-none" />
             </div>
           </div>
         </CollapsibleSection>
@@ -225,8 +231,8 @@ export function CustomizationTab() {
               { id: "socialTwitter", label: "Twitter / X" },
             ] as const).map((social) => (
               <div key={social.id} className="space-y-2">
-                <label className="text-xs font-medium text-white/50 uppercase">{social.label}</label>
-                <input {...register(social.id)} type="url" className="admin-input" placeholder="https://..." />
+                <label htmlFor={social.id} className="text-xs font-medium text-white/50 uppercase">{social.label}</label>
+                <input id={social.id} {...register(social.id)} type="url" className="admin-input" placeholder="https://..." />
               </div>
             ))}
           </div>
@@ -240,16 +246,16 @@ export function CustomizationTab() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Background (HSL)</label>
-              <input {...register("colorBackground")} className="admin-input font-mono" />
+              <label htmlFor="colorBackground" className="text-xs font-medium text-white/50 uppercase">Background (HSL)</label>
+              <input id="colorBackground" {...register("colorBackground")} className="admin-input font-mono" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Surface (HSL)</label>
-              <input {...register("colorSurface")} className="admin-input font-mono" />
+              <label htmlFor="colorSurface" className="text-xs font-medium text-white/50 uppercase">Surface (HSL)</label>
+              <input id="colorSurface" {...register("colorSurface")} className="admin-input font-mono" />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <label className="text-xs font-medium text-white/50 uppercase">Custom CSS Injector</label>
-              <textarea {...register("customCss")} rows={4} className="admin-input font-mono text-xs" placeholder=".my-class { color: red; }" />
+              <label htmlFor="customCss" className="text-xs font-medium text-white/50 uppercase">Custom CSS Injector</label>
+              <textarea id="customCss" {...register("customCss")} rows={4} className="admin-input font-mono text-xs" placeholder=".my-class { color: red; }" />
             </div>
           </div>
         </CollapsibleSection>
@@ -267,8 +273,8 @@ export function CustomizationTab() {
               { id: "featureServices", label: "Enable Services" },
               { id: "featurePlayground", label: "Enable Lab/Playground" },
             ] as const).map((feature) => (
-              <label key={feature.id} className="flex items-center p-3 rounded-lg bg-white/5 border border-white/5 hover:border-purple-500/30 cursor-pointer transition-colors">
-                <input {...register(feature.id)} type="checkbox" className="w-4 h-4 rounded border-white/20 bg-transparent text-purple-600 focus:ring-purple-500" />
+              <label key={feature.id} htmlFor={feature.id} className="flex items-center p-3 rounded-lg bg-white/5 border border-white/5 hover:border-purple-500/30 cursor-pointer transition-colors">
+                <input id={feature.id} {...register(feature.id)} type="checkbox" className="w-4 h-4 rounded border-white/20 bg-transparent text-purple-600 focus:ring-purple-500" />
                 <span className="ml-3 text-sm text-white/80">{feature.label}</span>
               </label>
             ))}
@@ -294,13 +300,6 @@ export function CustomizationTab() {
           )}
         </div>
       </form>
-
-      {/* Tailwind Utility for shared styles (you can move this to your globals.css) */}
-      <style>{`
-        .admin-input {
-          @apply w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all placeholder:text-white/20;
-        }
-      `}</style>
     </div>
   );
 }

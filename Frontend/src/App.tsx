@@ -99,6 +99,15 @@ function SettingsFontLoader() {
       .join("&family=");
     const fontUrl = `https://fonts.googleapis.com/css2?family=${fontList}&display=swap`;
 
+    // Apply font variables to root unconditionally
+    const root = document.documentElement;
+    if (settings.fontDisplay) {
+      root.style.setProperty("--font-display", `"${settings.fontDisplay}", sans-serif`);
+    }
+    if (settings.fontBody) {
+      root.style.setProperty("--font-body", `"${settings.fontBody}", sans-serif`);
+    }
+
     // Check if link already exists
     const existingLink = document.querySelector(`link[href="${fontUrl}"]`);
     if (existingLink) return;
@@ -113,15 +122,6 @@ function SettingsFontLoader() {
     link.href = fontUrl;
     link.setAttribute("data-custom-font", "true");
     document.head.appendChild(link);
-
-    // Apply font variables to root
-    const root = document.documentElement;
-    if (settings.fontDisplay) {
-      root.style.setProperty("--font-display", `"${settings.fontDisplay}", sans-serif`);
-    }
-    if (settings.fontBody) {
-      root.style.setProperty("--font-body", `"${settings.fontBody}", sans-serif`);
-    }
   }, [settings]);
 
   return null;
@@ -248,7 +248,7 @@ function App() {
               {/* Apply dynamic settings early */}
               <SettingsApplicator />
               <SettingsFontLoader />
-              
+
               <a
                 href="#main-content"
                 className="skip-to-content sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"

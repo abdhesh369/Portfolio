@@ -26,7 +26,7 @@ export function registerUploadRoutes(app: Router) {
                 }
             }).single("file");
 
-            uploadMem(req, res, async (err) => {
+            uploadMem(req, res, async (err: any) => {
                 if (err) {
                     // Multer errors (including fileSize limit)
                     if (err.code === "LIMIT_FILE_SIZE") {
@@ -57,7 +57,7 @@ export function registerUploadRoutes(app: Router) {
                         allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif', 'avif'],
                         public_id: `project_${Date.now()}_${file.originalname.split('.')[0].replace(/[^\w-]/g, '')}`
                     },
-                    (error, result) => {
+                    (error: any, result: any) => {
                         if (error || !result) {
                             return res.status(500).json({
                                 success: false,

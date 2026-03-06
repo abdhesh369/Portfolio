@@ -494,8 +494,8 @@ export default function ProjectDetail() {
                 <InteractivePlayground
                   projectId={project.id}
                   projectTitle={project.title}
-                  githubUrl={project.githubUrl}
-                  liveUrl={project.liveUrl}
+                  githubUrl={project.githubUrl ?? undefined}
+                  liveUrl={project.liveUrl ?? undefined}
                   techStack={project.techStack}
                   description={project.description}
                 />

@@ -25,16 +25,22 @@ export function InteractivePlayground({
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleCopyCode = () => {
+  const handleCopyCode = async () => {
     if (!liveUrl) {
       toast({ title: "Error", description: "No live URL available", variant: "destructive" });
       return;
     }
     const embedCode = `<iframe src="${liveUrl}" width="100%" height="600" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    navigator.clipboard.writeText(embedCode);
-    setCopied(true);
-    toast({ title: "Embed code copied to clipboard" });
-    setTimeout(() => setCopied(false), 2000);
+
+    try {
+      await navigator.clipboard.writeText(embedCode);
+      setCopied(true);
+      toast({ title: "Embed code copied to clipboard" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      toast({ title: "Error", description: "Failed to copy to clipboard", variant: "destructive" });
+    }
   };
 
   const hasLiveDemo = !!liveUrl;
@@ -112,9 +118,8 @@ export function InteractivePlayground({
 
       {/* Playground Container */}
       <div
-        className={`relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 transition-all duration-300 ${
-          isExpanded ? "fixed inset-4 z-50" : ""
-        }`}
+        className={`relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 transition-all duration-300 ${isExpanded ? "fixed inset-4 z-50" : ""
+          }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
