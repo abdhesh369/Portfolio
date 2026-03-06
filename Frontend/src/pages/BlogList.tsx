@@ -162,7 +162,7 @@ export default function BlogList() {
                         transition={{ delay: 0.1 }}
                         className="text-white/60 text-base md:text-lg"
                     >
-                        {settings?.personalBio ? `Insights and articles by ${settings.personalName}.` : "Deep dives into full-stack development, software architecture, and the engineering mindset."}
+                        {settings?.personalBio && settings?.personalName ? `Insights and articles by ${settings.personalName}.` : "Deep dives into full-stack development, software architecture, and the engineering mindset."}
                     </m.p>
                 </header>
 

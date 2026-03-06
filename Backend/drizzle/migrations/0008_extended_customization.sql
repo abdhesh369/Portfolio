@@ -15,7 +15,7 @@ ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialDiscord VARCHAR(500);
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialStackoverflow VARCHAR(500);
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialDevto VARCHAR(500);
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialMedium VARCHAR(500);
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialEmail VARCHAR(255) DEFAULT 'abdheshshah111@gmail.com';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS socialEmail VARCHAR(255);
 
 -- Hero Section
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS heroGreeting VARCHAR(255) DEFAULT 'Hey, I am';

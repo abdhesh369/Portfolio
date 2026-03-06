@@ -18,7 +18,7 @@ export function registerProjectRoutes(app: Router) {
   app.get(
     "/projects",
     cachePublic(600), // Cache for 10 minutes
-    asyncHandler(async (_req, res) => {
+    asyncHandler(async (_req: Request, res: Response) => {
       const projects = await projectService.getAll();
       res.json(projects);
     })
@@ -133,7 +133,7 @@ export function registerProjectRoutes(app: Router) {
     "/projects/:id",
     isAuthenticated,
     validateBody(insertProjectApiSchema.partial()),
-    asyncHandler(async (req, res) => {
+    asyncHandler(async (req: Request, res: Response) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
         res.status(400).json({ success: false, message: "Invalid project ID" });
@@ -153,7 +153,7 @@ export function registerProjectRoutes(app: Router) {
   app.delete(
     "/projects/:id",
     isAuthenticated,
-    asyncHandler(async (req, res) => {
+    asyncHandler(async (req: Request, res: Response) => {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) {
         res.status(400).json({ success: false, message: "Invalid project ID" });

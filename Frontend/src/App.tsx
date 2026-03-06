@@ -55,37 +55,96 @@ function SettingsApplicator() {
 
     const root = document.documentElement;
 
-    // Helper to convert hex to rgb for CSS variable usage
+    // Helper to normalize and convert colors
+    const normalizeHex = (hex: string) => {
+      if (!/^#?([a-f\d]{3}|[a-f\d]{6})$/i.test(hex)) return hex;
+      let normalized = hex.replace("#", "");
+      if (normalized.length === 3) {
+        normalized = normalized.split('').map(c => c + c).join('');
+      }
+      return `#${normalized}`;
+    };
+
     const hexToRgb = (hex: string) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      const fullHex = normalizeHex(hex);
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
       return result ?
         `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` :
         null;
     };
 
-    // Apply base colors from dynamic settings
-    if (settings.colorBackground) root.style.setProperty("--background", settings.colorBackground);
-    if (settings.colorSurface) root.style.setProperty("--card", settings.colorSurface);
+    const hexToHslComponents = (hex: string) => {
+      const fullHex = normalizeHex(hex);
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+      if (!result) return null;
+
+      let r = parseInt(result[1], 16) / 255;
+      let g = parseInt(result[2], 16) / 255;
+      let b = parseInt(result[3], 16) / 255;
+
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+          default: h = 0;
+        }
+        h /= 6;
+      }
+
+      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+    };
+
+    const applyColor = (varName: string, hex?: string | null) => {
+      if (!hex) return;
+      const normalized = normalizeHex(hex);
+      const hsl = hexToHslComponents(normalized);
+      if (hsl) {
+        root.style.setProperty(`--${varName}`, hsl);
+        root.style.setProperty(`--${varName}-hex`, normalized);
+      } else {
+        root.style.setProperty(`--${varName}`, hex);
+      }
+    };
+
+    // Apply theme colors from dynamic settings
+    applyColor("background", settings.colorBackground);
+    applyColor("card", settings.colorSurface);
+    applyColor("secondary", settings.colorSecondary);
+    applyColor("accent", settings.colorAccent);
+    applyColor("border", settings.colorBorder);
+    applyColor("foreground", settings.colorText);
+    applyColor("muted-foreground", settings.colorMuted);
+
     if (settings.colorPrimary) {
-      root.style.setProperty("--primary", settings.colorPrimary);
-      const rgb = hexToRgb(settings.colorPrimary);
+      const normalized = normalizeHex(settings.colorPrimary);
+      const hsl = hexToHslComponents(normalized);
+      const rgb = hexToRgb(normalized);
+
+      if (hsl) {
+        root.style.setProperty("--primary", hsl);
+        root.style.setProperty("--primary-hsl", hsl);
+        root.style.setProperty("--primary-hex", normalized);
+
+        // Derived versions using HSL for transparency support
+        root.style.setProperty("--primary-muted", `hsl(${hsl} / 0.1)`);
+        root.style.setProperty("--primary-faint", `hsl(${hsl} / 0.05)`);
+      }
+
       if (rgb) {
         root.style.setProperty("--primary-rgb", rgb);
         root.style.setProperty("--primary-rgb-20", `rgba(${rgb}, 0.2)`);
         root.style.setProperty("--primary-glow", `rgba(${rgb}, 0.3)`);
       }
-    }
-    if (settings.colorSecondary) root.style.setProperty("--secondary", settings.colorSecondary);
-    if (settings.colorAccent) root.style.setProperty("--accent", settings.colorAccent);
-    if (settings.colorBorder) root.style.setProperty("--border", settings.colorBorder);
-    if (settings.colorText) root.style.setProperty("--foreground", settings.colorText);
-    if (settings.colorMuted) root.style.setProperty("--muted-foreground", settings.colorMuted);
-
-    // Set derived versions of primary for backgrounds
-    if (settings.colorPrimary) {
-      root.style.setProperty("--primary-muted", `${settings.colorPrimary}1a`); // 0.1 opacity for Hex
-      root.style.setProperty("--primary-faint", `${settings.colorPrimary}0d`); // 0.05 opacity for Hex
     } else {
+      // Fallbacks if no primary color is set
       root.style.setProperty("--primary-muted", "hsl(var(--primary) / 0.1)");
       root.style.setProperty("--primary-faint", "hsl(var(--primary) / 0.05)");
     }

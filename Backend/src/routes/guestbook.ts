@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { guestbookService } from "../services/guestbook.service.js";
 import { asyncHandler, isAuthenticated } from "../auth.js";
 import { z } from "zod";
@@ -19,7 +19,7 @@ const guestbookLimiter = rateLimit({
 const guestbookRoutes = Router();
 
 // GET /guestbook - Fetch approved entries
-guestbookRoutes.get("/", cachePublic(60), asyncHandler(async (_req, res) => {
+guestbookRoutes.get("/", cachePublic(60), asyncHandler(async (_req: Request, res: Response) => {
     const entries = await guestbookService.getMessages(true);
     res.json(entries);
 }));
@@ -37,7 +37,7 @@ guestbookRoutes.post("/", guestbookLimiter, validateBody(insertGuestbookApiSchem
 // --- Admin Routes ---
 
 // GET /guestbook/admin - Fetch all entries (unfiltered)
-guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req, res) => {
+guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req: Request, res: Response) => {
     const entries = await guestbookService.getMessages(false);
     res.json(entries);
 }));

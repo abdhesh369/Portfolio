@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
@@ -42,6 +43,12 @@ export default function Sidebar({
     setMobileOpen
 }: SidebarProps) {
     const { data: settings } = useSiteSettings();
+    const [avatarError, setAvatarError] = useState(false);
+
+    useEffect(() => {
+        setAvatarError(false);
+    }, [settings?.personalAvatar]);
+
     const brandName = settings?.personalName || "OS_ADMIN";
     const brandInitial = brandName.charAt(0).toUpperCase();
 
@@ -61,8 +68,13 @@ export default function Sidebar({
                         collapsed && "p-1"
                     )}>
                         <div className="w-8 h-8 rounded-lg bg-[var(--nm-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-[var(--nm-accent)]/30 overflow-hidden">
-                            {settings?.personalAvatar ? (
-                                <img src={settings.personalAvatar} alt="Logo" className="w-full h-full object-cover" />
+                            {(settings?.personalAvatar && !avatarError) ? (
+                                <img
+                                    src={settings.personalAvatar}
+                                    alt="Logo"
+                                    className="w-full h-full object-cover"
+                                    onError={() => setAvatarError(true)}
+                                />
                             ) : (
                                 <span className="text-white font-bold text-lg">{brandInitial}</span>
                             )}

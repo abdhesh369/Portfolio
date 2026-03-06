@@ -105,7 +105,7 @@ const chatLimiter = rateLimit({
 });
 
 export const registerChatRoutes = (router: Router) => {
-    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
+    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req: any, res: any) => {
         try {
             let openrouter: OpenRouter;
             try {

@@ -44,7 +44,7 @@ export function registerRoutes(app: Express) {
   v1Router.post(
     "/csp-report",
     express.json({ type: "application/csp-report" }),
-    (req, res) => {
+    (req: express.Request, res: express.Response) => {
       logger.warn({ report: req.body }, "CSP Violation");
       res.status(204).end();
     }

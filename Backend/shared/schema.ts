@@ -233,7 +233,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialStackoverflow: varchar("socialStackoverflow", { length: 500 }),
   socialDevto: varchar("socialDevto", { length: 500 }),
   socialMedium: varchar("socialMedium", { length: 500 }),
-  socialEmail: varchar("socialEmail", { length: 255 }).default("abdheshshah111@gmail.com"),
+  socialEmail: varchar("socialEmail", { length: 255 }),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -253,7 +253,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   colorSecondary: varchar("colorSecondary", { length: 50 }).default("hsl(215.4, 16.3%, 46.9%)"),
   colorAccent: varchar("colorAccent", { length: 50 }).default("hsl(263.4, 70%, 50.4%)"),
   colorBorder: varchar("colorBorder", { length: 50 }).default("hsl(214.3, 31.8%, 91.4%)"),
-  colorText: varchar("colorText", { length: 50 }).default("hsl(222.2, 84%, 4.9%)"),
+  colorText: varchar("colorText", { length: 50 }).default("hsl(222.2, 84%, 95%)"),
   colorMuted: varchar("colorMuted", { length: 50 }).default("hsl(215.4, 16.3%, 46.9%)"),
   fontDisplay: varchar("fontDisplay", { length: 255 }).default("Inter"),
   fontBody: varchar("fontBody", { length: 255 }).default("Inter"),

@@ -273,7 +273,7 @@ const OpenToWorkBanner = () => {
       <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-secondary/50 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
 
       {/* Banner Body */}
-      <div className="relative flex items-center gap-3 px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.3)]">
+      <div className="relative flex items-center gap-3 px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)] group-hover:shadow-[0_0_25px_rgba(var(--primary-rgb),0.3)]">
         <span className="flex items-center gap-2">
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>

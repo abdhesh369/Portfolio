@@ -57,10 +57,15 @@ export default function BlogPost() {
     // Dynamic OG image generation
     const ogImage = article ? getDynamicOgImage(article.title, article.featuredImage || undefined) : undefined;
 
-    function copyLink() {
-        navigator.clipboard.writeText(window.location.href);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    async function copyLink() {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy link:", err);
+            // Fallback: alert or toast would go here if available
+        }
     }
 
     if (isLoading) {

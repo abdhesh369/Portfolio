@@ -40,7 +40,7 @@ export function registerMessageRoutes(app: Router) {
     app.get(
         "/messages/stream",
         isAuthenticated,
-        (req, res) => {
+        (req: Request, res: Response) => {
             res.writeHead(200, {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",

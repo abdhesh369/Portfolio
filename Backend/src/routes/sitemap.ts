@@ -7,7 +7,7 @@ import { logger } from "../lib/logger.js";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: any, res: any) => {
   try {
     const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
     if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {

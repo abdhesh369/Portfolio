@@ -6,7 +6,7 @@ import { logger } from "../lib/logger.js";
 
 const feedRoutes = Router();
 
-feedRoutes.get("/feed.xml", async (req, res) => {
+feedRoutes.get("/feed.xml", async (req: any, res: any) => {
   try {
     const articles = await articleService.getAll("published");
     const siteUrl = process.env.FRONTEND_URL || "https://abdheshsah.com.np";

@@ -109,7 +109,7 @@ export default function SystemStatus({
                             <p className="text-xs font-black text-[var(--admin-text-primary)] tracking-widest uppercase">SSL_ENCRYPTED</p>
                         </div>
                     </div>
-                    <div className="w-2 h-2 rounded-full bg-[var(--nm-accent)] shadow-[0_0_10px_var(--nm-accent)]/50" />
+                    <div className="w-2 h-2 rounded-full bg-[var(--nm-accent)] shadow-[0_0_10px_rgba(var(--nm-accent-rgb),0.5)]" />
                 </div>
             </div>
 

@@ -9,7 +9,7 @@ const router = Router();
  * Admin only, paginated, filterable by entity and days.
  * Append-only — no DELETE endpoint.
  */
-router.get("/audit-log", isAuthenticated, async (req, res, next) => {
+router.get("/audit-log", isAuthenticated, async (req: any, res: any, next: any) => {
   try {
     const limit = Math.min(Number(req.query.limit) || 50, 100);
     const offset = Math.max(Number(req.query.offset) || 0, 0);
