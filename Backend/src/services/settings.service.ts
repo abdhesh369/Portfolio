@@ -1,10 +1,23 @@
 import { settingsRepository } from "../repositories/settings.repository.js";
 import { redis } from "../lib/redis.js";
 import { type SiteSettings, type InsertSiteSettings, siteSettingsSchema, insertSiteSettingsApiSchema } from "../../shared/schema.js";
+import { logger } from "../lib/logger.js";
 
 export class SettingsService {
     private readonly CACHE_KEY = "site:settings";
     private readonly CACHE_TTL = 3600;
+
+    private safeParseSettings(raw: unknown): SiteSettings {
+        const result = siteSettingsSchema.safeParse(raw);
+        if (result.success) {
+            return result.data;
+        }
+        // Log validation errors but don't crash — return the raw data cast so
+        // the API still responds. This handles legacy DB values that pre-date
+        // a stricter schema without taking down the whole service.
+        logger.warn({ issues: result.error.issues }, "siteSettingsSchema validation issues — returning raw data");
+        return raw as SiteSettings;
+    }
 
     async getSettings(): Promise<SiteSettings> {
         try {
@@ -12,24 +25,21 @@ export class SettingsService {
             if (cached) {
                 try {
                     const settings = JSON.parse(cached);
-                    // Standard parsing also applies sanitization
-                    return siteSettingsSchema.parse(settings);
+                    return this.safeParseSettings(settings);
                 } catch { /* ignore corrupted JSON */ }
             }
         } catch (err) {
-            // Error logged by redis internally usually
+            // Redis unavailable — fall through to DB
         }
 
         let settings = await settingsRepository.getSettings();
 
         if (!settings) {
             // Initialize with defaults if not exists
-            // Using type assertion here because repository might have different internal requirements
             settings = await settingsRepository.updateSettings({ isOpenToWork: true } as any);
         }
 
-        // Always sanitize via schema before returning
-        const sanitized = siteSettingsSchema.parse(settings);
+        const sanitized = this.safeParseSettings(settings);
 
         try {
             if (redis) {
@@ -42,10 +52,7 @@ export class SettingsService {
     }
 
     async updateSettings(data: InsertSiteSettings): Promise<SiteSettings> {
-        // Data is already sanitized if it came through the API route (validateBody),
-        // but we parse it again here for robustness and type safety.
         const sanitizedData = insertSiteSettingsApiSchema.parse(data);
-
         const settings = await settingsRepository.updateSettings(sanitizedData as any);
         try {
             if (redis) {
@@ -54,7 +61,7 @@ export class SettingsService {
         } catch (err) {
             // Ignore cache delete error
         }
-        return siteSettingsSchema.parse(settings);
+        return this.safeParseSettings(settings);
     }
 }
 
