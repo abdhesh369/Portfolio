@@ -20,10 +20,14 @@
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "declaration": false,
-    "declarationMap": false,
+    "types": [
+      "node"
+    ],
     "typeRoots": [
-      "./node_modules/@types"
-    ]
+      "./node_modules/@types",
+      "../node_modules/@types"
+    ],
+    "declarationMap": false
   },
   "include": [
     "src",
