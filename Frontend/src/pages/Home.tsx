@@ -6,6 +6,8 @@ import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useScrollStore } from "@/hooks/use-scroll-store";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+import React from "react";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
 const About = lazy(() => import("@/components/About"));
@@ -89,10 +91,32 @@ function useHashScroll() {
     return () => window.removeEventListener("hashchange", handleHashScroll);
   }, []);
 }
-
 export default function Home() {
-  useHashScroll();
+  const { data: settings } = useSiteSettings();
   const { progress } = useScrollStore();
+  useHashScroll();
+
+  // section mapping to components
+  const SECTION_MAP: Record<string, React.ReactNode> = {
+    about: <SafeSection><About /></SafeSection>,
+    skills: <SafeSection><Skills /></SafeSection>,
+    whyhireme: <SafeSection><WhyHireMe /></SafeSection>,
+    services: <SafeSection><Services /></SafeSection>,
+    mindset: <SafeSection><EngineeringMindset /></SafeSection>,
+    projects: <SafeSection><Projects /></SafeSection>,
+    practice: <SafeSection><CodeAndPractice /></SafeSection>,
+    experience: <SafeSection><Experience /></SafeSection>,
+    testimonials: <SafeSection><Testimonials /></SafeSection>,
+    guestbook: <SafeSection><Guestbook /></SafeSection>,
+    contact: <SafeSection><Contact /></SafeSection>,
+  };
+
+  const sectionOrder = settings?.sectionOrder || [
+    "about", "skills", "whyhireme", "services", "mindset",
+    "projects", "practice", "experience", "testimonials", "guestbook", "contact"
+  ];
+
+  const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
 
   return (
     <div className="min-h-screen selection:bg-primary/20">
@@ -106,20 +130,20 @@ export default function Home() {
 
       <SEO
         slug="home"
-        title="Abdhesh Sah - Full-Stack Engineer Portfolio"
-        description="Portfolio of Abdhesh Sah, a Full Stack Developer specializing in modern web technologies."
+        title={settings?.personalName ? `${settings.personalName} - Portfolio` : "Abdhesh Sah - Full-Stack Engineer Portfolio"}
+        description={settings?.personalBio || "Portfolio of Abdhesh Sah, a Full Stack Developer specializing in modern web technologies."}
         structuredData={[
           {
             "@context": "https://schema.org",
             "@type": "Person",
-            name: "Abdhesh Sah",
+            name: settings?.personalName || "Abdhesh Sah",
             url: "https://abdheshsah.com.np",
             sameAs: [
               "https://github.com/abdhesh369",
               "https://www.linkedin.com/in/abdhesh369",
               "https://x.com/abdhesh369",
             ],
-            jobTitle: "Full-Stack Engineer",
+            jobTitle: settings?.personalTitle || "Full-Stack Engineer",
             worksFor: {
               "@type": "Organization",
               name: "Freelance",
@@ -128,7 +152,7 @@ export default function Home() {
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "Abdhesh Sah Portfolio",
+            name: `${settings?.personalName || "Abdhesh Sah"} Portfolio`,
             url: "https://abdheshsah.com.np",
             potentialAction: {
               "@type": "SearchAction",
@@ -146,28 +170,20 @@ export default function Home() {
 
       <main id="main-content">
         <Hero />
-        <SectionDivider />
-        <SectionReveal><SafeSection><About /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Skills /></SafeSection></SectionReveal>
-        <SectionReveal><SafeSection><WhyHireMe /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Services /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><EngineeringMindset /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Projects /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><CodeAndPractice /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Experience /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Testimonials /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Guestbook /></SafeSection></SectionReveal>
-        <SectionDivider />
-        <SectionReveal><SafeSection><Contact /></SafeSection></SectionReveal>
 
+        {sectionOrder.map((sectionId, index) => {
+          const isVisible = sectionVisibility[sectionId] ?? true;
+          const component = SECTION_MAP[sectionId];
+
+          if (!isVisible || !component) return null;
+
+          return (
+            <React.Fragment key={sectionId}>
+              <SectionDivider />
+              <SectionReveal>{component}</SectionReveal>
+            </React.Fragment>
+          );
+        })}
       </main>
 
       <ErrorBoundary>

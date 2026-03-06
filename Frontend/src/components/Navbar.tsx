@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { PerformanceToggle } from "@/components/PerformanceToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
-const navItems = [
+const DEFAULT_NAV_ITEMS = [
   { name: "Home", href: "/" },
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
@@ -19,9 +20,17 @@ const navItems = [
 const SECTION_IDS = ["hero", "about", "skills", "projects", "experience", "contact"];
 
 export default function Navbar() {
+  const { data: settings } = useSiteSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [location, setLocation] = useLocation();
-  const activeSection = useScrollSpy(SECTION_IDS, 80);
+
+  // Use links from settings if available, otherwise fallback
+  const navItems = settings?.navbarLinks?.length
+    ? settings.navbarLinks.map(l => ({ name: l.label, href: l.href }))
+    : DEFAULT_NAV_ITEMS;
+
+  const dynamicSectionIds = settings?.sectionOrder || SECTION_IDS;
+  const activeSection = useScrollSpy(dynamicSectionIds, 80);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { scrollY, scrollDirection } = useScrollStore();
 
@@ -107,7 +116,7 @@ export default function Navbar() {
           <button
             className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl transition-all group"
             onClick={() => handleNavClick("/")}
-            aria-label="Abdhesh Sah Portfolio - Home"
+            aria-label={`${settings?.personalName || "Abdhesh Sah"} Portfolio - Home`}
           >
             <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl border border-cyan-500/30 overflow-hidden">
               <Code2 className="w-6 h-6 text-cyan-400 relative z-10 group-hover:scale-110 transition-transform" />
@@ -116,7 +125,7 @@ export default function Navbar() {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
             </div>
             <span className="font-display font-bold text-xl tracking-tight text-white">
-              Abdhesh<span className="text-cyan-400">.</span>Dev
+              {settings?.personalName?.split(' ')[0] || "Abdhesh"}<span className="text-cyan-400">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
             </span>
           </button>
 

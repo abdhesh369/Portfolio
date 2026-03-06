@@ -30,12 +30,16 @@ export default function Footer() {
 
   // Build social links from settings
   const socialLinks = [
-    settings?.socialGithub && { href: settings.socialGithub, icon: Github, label: "GitHub", color: "var(--brand-github)" },
-    settings?.socialLinkedin && { href: settings.socialLinkedin, icon: Linkedin, label: "LinkedIn", color: "var(--brand-linkedin)" },
-    settings?.socialTwitter && { href: settings.socialTwitter, icon: Twitter, label: "Twitter", color: "var(--brand-twitter)" },
-    settings?.socialInstagram && { href: settings.socialInstagram, icon: Instagram, label: "Instagram", color: "var(--brand-instagram)" },
-    settings?.socialFacebook && { href: settings.socialFacebook, icon: Facebook, label: "Facebook", color: "var(--brand-facebook)" },
-    settings?.socialYoutube && { href: settings.socialYoutube, icon: Youtube, label: "YouTube", color: "var(--brand-youtube)" },
+    settings?.socialGithub && { href: settings.socialGithub, icon: Github, label: "GitHub", color: "#333" },
+    settings?.socialLinkedin && { href: settings.socialLinkedin, icon: Linkedin, label: "LinkedIn", color: "#0077b5" },
+    settings?.socialTwitter && { href: settings.socialTwitter, icon: Twitter, label: "Twitter", color: "#1da1f2" },
+    settings?.socialInstagram && { href: settings.socialInstagram, icon: Instagram, label: "Instagram", color: "#e1306c" },
+    settings?.socialFacebook && { href: settings.socialFacebook, icon: Facebook, label: "Facebook", color: "#1877f2" },
+    settings?.socialYoutube && { href: settings.socialYoutube, icon: Youtube, label: "YouTube", color: "#ff0000" },
+    settings?.socialDiscord && { href: settings.socialDiscord, icon: MessageCircle, label: "Discord", color: "#5865F2" },
+    settings?.socialStackoverflow && { href: settings.socialStackoverflow, icon: Globe, label: "Stack Overflow", color: "#F48024" },
+    settings?.socialDevto && { href: settings.socialDevto, icon: Code2, label: "Dev.to", color: "#0A0A0A" },
+    settings?.socialMedium && { href: settings.socialMedium, icon: Globe, label: "Medium", color: "#000000" },
   ].filter(Boolean) as Array<{ href: string; icon: React.ElementType; label: string; color: string }>;
 
 
@@ -92,12 +96,12 @@ export default function Footer() {
                 <div className="absolute -inset-1 bg-cyan-500/20 blur-lg rounded-full opacity-50" />
               </div>
               <h3 className="text-2xl font-bold font-display tracking-tight text-white">
-                Abdhesh<span className="text-cyan-400">.</span>Dev
+                {settings?.personalName?.split(' ')[0] || "Abdhesh"}<span className="text-cyan-400">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
               </h3>
             </m.div>
 
             <p className="text-base text-gray-400 leading-relaxed max-w-sm">
-              Crafting robust digital systems with a focus on performance, scalability, and intuitive user experiences.
+              {settings?.footerTagline || "Crafting robust digital systems with a focus on performance, scalability, and intuitive user experiences."}
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -143,10 +147,10 @@ export default function Footer() {
                 <span className="text-sm font-medium">Get in touch</span>
               </div>
               <a
-                href="mailto:abdheshshah111@gmail.com?subject=Contact%20from%20Portfolio"
-                className="text-lg font-bold text-white hover:text-cyan-400 transition-colors"
+                href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Contact%20from%20Portfolio`}
+                className="text-lg font-bold text-white hover:text-cyan-400 transition-colors truncate block"
               >
-                abdheshshah111@gmail.com
+                {settings?.socialEmail || "abdheshshah111@gmail.com"}
               </a>
             </div>
           </div>
@@ -155,9 +159,9 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-gray-500 space-y-1 text-center md:text-left">
-            <p>© 2025–{currentYear} Abdhesh Sah. All rights reserved.</p>
+            <p>{settings?.footerCopyright || `© 2025–${currentYear} Abdhesh Sah. All rights reserved.`}</p>
             <p className="text-[10px] font-mono opacity-50 uppercase tracking-tighter">
-              System last updated: Mar 05, 2026 • Build: v3.2.0-stable
+              System last updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"} • Build: v3.2.0-stable
             </p>
           </div>
 

@@ -233,6 +233,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialStackoverflow: varchar("socialStackoverflow", { length: 500 }),
   socialDevto: varchar("socialDevto", { length: 500 }),
   socialMedium: varchar("socialMedium", { length: 500 }),
+  socialEmail: varchar("socialEmail", { length: 255 }).default("abdheshshah111@gmail.com"),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -645,6 +646,7 @@ export const siteSettingsSchema = z.object({
   socialStackoverflow: z.string().url().max(500).nullable().optional(),
   socialDevto: z.string().url().max(500).nullable().optional(),
   socialMedium: z.string().url().max(500).nullable().optional(),
+  socialEmail: z.string().email().max(255).nullable().optional(),
 
   // Hero Section
   heroGreeting: z.string().max(255).optional(),
@@ -707,6 +709,7 @@ export const insertSiteSettingsApiSchema = z.object({
   socialStackoverflow: z.string().url().max(500).nullable().optional(),
   socialDevto: z.string().url().max(500).nullable().optional(),
   socialMedium: z.string().url().max(500).nullable().optional(),
+  socialEmail: z.string().email().max(255).nullable().optional(),
 
   // Hero Section
   heroGreeting: z.string().max(255).optional(),

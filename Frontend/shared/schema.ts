@@ -233,6 +233,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialStackoverflow: varchar("socialStackoverflow", { length: 500 }),
   socialDevto: varchar("socialDevto", { length: 500 }),
   socialMedium: varchar("socialMedium", { length: 500 }),
+  socialEmail: varchar("socialEmail", { length: 255 }).default("abdheshshah111@gmail.com"),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -345,6 +346,25 @@ function isValidUrl(url: string | null | undefined): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Sanitizes CSS by neutralizing dangerous constructs like url(), @import, and expressions.
+ * This is used for custom CSS injection to prevent XSS and data exfiltration.
+ */
+function sanitizeCss(css: string | null | undefined): string | null {
+  if (!css) return null;
+
+  return css
+    .replace(/url\b\s*\(/gi, '/* url-stripped */')
+    .replace(/@import\b/gi, '/* import-stripped */')
+    .replace(/expression\b\s*\(/gi, '/* expression-stripped */')
+    .replace(/javascript\s*:/gi, '/* js-stripped */')
+    .replace(/vbscript\s*:/gi, '/* vbs-stripped */')
+    .replace(/-moz-binding\b/gi, '/* binding-stripped */')
+    .replace(/@font-face\b/gi, '/* font-face-stripped */')
+    .replace(/@charset\b/gi, '/* charset-stripped */')
+    .replace(/@namespace\b/gi, '/* namespace-stripped */');
 }
 
 export const projectSchema = z.object({
@@ -626,6 +646,7 @@ export const siteSettingsSchema = z.object({
   socialStackoverflow: z.string().url().max(500).nullable().optional(),
   socialDevto: z.string().url().max(500).nullable().optional(),
   socialMedium: z.string().url().max(500).nullable().optional(),
+  socialEmail: z.string().email().max(255).nullable().optional(),
 
   // Hero Section
   heroGreeting: z.string().max(255).optional(),
@@ -643,7 +664,7 @@ export const siteSettingsSchema = z.object({
   colorSurface: z.string().max(50).optional(),
   fontDisplay: z.string().max(255).optional(),
   fontBody: z.string().max(255).optional(),
-  customCss: z.string().max(50000).nullable().optional(),
+  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
 
   // Navbar Configuration
   navbarLinks: z.array(z.object({
@@ -688,6 +709,7 @@ export const insertSiteSettingsApiSchema = z.object({
   socialStackoverflow: z.string().url().max(500).nullable().optional(),
   socialDevto: z.string().url().max(500).nullable().optional(),
   socialMedium: z.string().url().max(500).nullable().optional(),
+  socialEmail: z.string().email().max(255).nullable().optional(),
 
   // Hero Section
   heroGreeting: z.string().max(255).optional(),
@@ -705,7 +727,7 @@ export const insertSiteSettingsApiSchema = z.object({
   colorSurface: z.string().max(50).optional(),
   fontDisplay: z.string().max(255).optional(),
   fontBody: z.string().max(255).optional(),
-  customCss: z.string().max(50000).nullable().optional(),
+  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
 
   // Navbar Configuration
   navbarLinks: z.array(z.object({
@@ -774,66 +796,29 @@ export const updateArticleApiSchema = insertArticleApiSchema.partial();
 // ================= TYPESCRIPT TYPES =================
 
 export type Project = z.infer<typeof projectSchema>;
+export type InsertProject = z.infer<typeof insertProjectApiSchema>;
 export type Skill = z.infer<typeof skillSchema>;
+export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type SkillConnection = z.infer<typeof skillConnectionSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
-export type Service = z.infer<typeof serviceSchema>;
-export type Message = z.infer<typeof messageSchema>;
-export type Mindset = z.infer<typeof mindsetSchema>;
-export type Analytics = z.infer<typeof analyticsSchema>;
-export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
-export type SeoSettings = z.infer<typeof seoSettingsSchema>;
-export type Article = z.infer<typeof articleSchema>;
-export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
-export type Testimonial = z.infer<typeof testimonialSchema>;
-export type AuditLog = z.infer<typeof auditLogSchema>;
-export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
-
-export type InsertProject = z.infer<typeof insertProjectApiSchema>;
-export type InsertSkill = z.infer<typeof insertSkillApiSchema>;
 export type InsertExperience = z.infer<typeof insertExperienceApiSchema>;
-export type InsertService = z.infer<typeof insertServiceApiSchema>;
+export type Message = z.infer<typeof messageSchema>;
 export type InsertMessage = z.infer<typeof insertMessageApiSchema>;
-export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
-export type InsertEmailTemplate = z.infer<typeof insertEmailTemplateApiSchema>;
-export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
-export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
-export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
+export type Testimonial = z.infer<typeof testimonialSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialApiSchema>;
 export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
+export type SeoSettings = z.infer<typeof seoSettingsSchema>;
+export type InsertSeoSettings = z.infer<typeof insertSeoSettingsApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
-
-// ================= TYPE GUARDS =================
-
-export function isProject(obj: unknown): obj is Project {
-  return projectSchema.safeParse(obj).success;
-}
-export function isSkill(obj: unknown): obj is Skill {
-  return skillSchema.safeParse(obj).success;
-}
-export function isExperience(obj: unknown): obj is Experience {
-  return experienceSchema.safeParse(obj).success;
-}
-export function isMessage(obj: unknown): obj is Message {
-  return messageSchema.safeParse(obj).success;
-}
-export function isMindset(obj: unknown): obj is Mindset {
-  return mindsetSchema.safeParse(obj).success;
-}
-export function isEmailTemplate(obj: unknown): obj is EmailTemplate {
-  return emailTemplateSchema.safeParse(obj).success;
-}
-export function isSeoSettings(obj: unknown): obj is SeoSettings {
-  return seoSettingsSchema.safeParse(obj).success;
-}
-export function isTestimonial(obj: unknown): obj is Testimonial {
-  return testimonialSchema.safeParse(obj).success;
-}
-export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
-  return guestbookSchema.safeParse(obj).success;
-}
-export function isAuditLog(obj: unknown): obj is AuditLog {
-  return auditLogSchema.safeParse(obj).success;
-}
+export type Article = z.infer<typeof articleSchema>;
+export type InsertArticle = z.infer<typeof insertArticleApiSchema>;
+export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
+export type Mindset = z.infer<typeof mindsetSchema>;
+export type InsertMindset = z.infer<typeof insertMindsetApiSchema>;
+export type Analytics = z.infer<typeof analyticsSchema>;
+export type EmailTemplate = z.infer<typeof emailTemplateSchema>;
+export type Service = z.infer<typeof serviceSchema>;
+export type InsertService = z.infer<typeof insertServiceApiSchema>;
+export type AuditLog = z.infer<typeof auditLogSchema>;

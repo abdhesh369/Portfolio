@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "tsc --noEmit",
     "build": "tsc && vite build && cp dist/index.html dist/200.html && cp dist/index.html dist/404.html",
     "preview": "vite preview",
     "convert-images": "node scripts/convert-images.js",

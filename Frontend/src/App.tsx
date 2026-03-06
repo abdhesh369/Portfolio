@@ -11,6 +11,7 @@ import { LazyMotion, m } from "framer-motion";
 const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res.default);
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
+import { sanitizeCss } from "@/lib/utils";
 
 // Lazy load heavy components
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
@@ -69,7 +70,7 @@ function SettingsApplicator() {
         styleEl.id = "custom-portfolio-styles";
         document.head.appendChild(styleEl);
       }
-      styleEl.textContent = settings.customCss;
+      styleEl.textContent = sanitizeCss(settings.customCss);
     }
   }, [settings]);
 

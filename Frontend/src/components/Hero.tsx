@@ -1,7 +1,7 @@
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2 } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2, Twitter, Instagram, Youtube, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
@@ -99,7 +99,7 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
 };
 
 // Profile Image with Sci-Fi Hologram Effect
-const ProfileCard = () => {
+const ProfileCard = ({ settings }: { settings: any }) => {
   const { reducedMotion } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -154,8 +154,8 @@ const ProfileCard = () => {
       <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
         {/* Profile Image */}
         <OptimizedImage
-          src="/images/Myphoto.webp"
-          alt="Portrait of Abdhesh Sah - Senior Full Stack Engineer & System Designer"
+          src={settings?.personalAvatar || "/images/Myphoto.webp"}
+          alt={`Portrait of ${settings?.personalName || "Abdhesh Sah"} - ${settings?.personalTitle || "Senior Full Stack Engineer & System Designer"}`}
           width={800}
           height={800}
           loading="eager"
@@ -340,8 +340,8 @@ export default function Hero() {
               <div className="relative">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-60 blur-md animate-pulse" />
                 <OptimizedImage
-                  src="/images/Myphoto-500.webp"
-                  alt="Abdhesh Sah Avatar"
+                  src={settings?.personalAvatar || "/images/Myphoto-500.webp"}
+                  alt={`${settings?.personalName || "Abdhesh Sah"} Avatar`}
                   width={120}
                   height={120}
                   loading="eager"
@@ -392,7 +392,7 @@ export default function Hero() {
               >
                 <span className="text-cyan-400 mr-2">{">"}</span>
                 <RotatingText
-                  strings={settings?.heroTaglines || [
+                  strings={settings?.heroTaglines?.length ? settings.heroTaglines : [
                     "Engineering scalable systems.",
                     "Crafting intuitive interfaces.",
                     "Bridging hardware & software.",
@@ -418,9 +418,12 @@ export default function Hero() {
                 onClick={() => {
                   const url = settings?.heroCtaPrimaryUrl || "#projects";
                   if (url.startsWith("#")) {
-                    document.getElementById(url.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                    const target = document.getElementById(url.slice(1));
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth' });
+                    }
                   } else {
-                    window.location.href = url;
+                    window.open(url, '_blank', 'noopener,noreferrer');
                   }
                 }}
                 size="lg"
@@ -432,9 +435,12 @@ export default function Hero() {
                 onClick={() => {
                   const url = settings?.heroCtaSecondaryUrl || "#contact";
                   if (url.startsWith("#")) {
-                    document.getElementById(url.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                    const target = document.getElementById(url.slice(1));
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth' });
+                    }
                   } else {
-                    window.location.href = url;
+                    window.open(url, '_blank', 'noopener,noreferrer');
                   }
                 }}
                 variant="outline"
@@ -450,12 +456,19 @@ export default function Hero() {
               initial={fadeIn.initial}
               animate={fadeIn.animate}
               transition={{ delay: 1 }}
-              className="flex items-center gap-6 justify-center lg:justify-start pt-4"
+              className="flex items-center gap-5 justify-center lg:justify-start pt-4 flex-wrap"
             >
-              <SocialLink href="https://github.com/abdhesh369" icon={Github} label="GitHub" />
-              <SocialLink href="https://www.linkedin.com/in/abdhesh369" icon={Linkedin} label="LinkedIn" />
-              <div className="h-4 w-[1px] bg-white/10" />
               <div className="flex items-center gap-4">
+                {settings?.socialGithub && <SocialLink href={settings.socialGithub} icon={Github} label="GitHub" />}
+                {settings?.socialLinkedin && <SocialLink href={settings.socialLinkedin} icon={Linkedin} label="LinkedIn" />}
+                {settings?.socialTwitter && <SocialLink href={settings.socialTwitter} icon={Twitter} label="Twitter" />}
+                {settings?.socialInstagram && <SocialLink href={settings.socialInstagram} icon={Instagram} label="Instagram" />}
+                {settings?.socialYoutube && <SocialLink href={settings.socialYoutube} icon={Youtube} label="YouTube" />}
+                {settings?.socialDevto && <SocialLink href={settings.socialDevto} icon={Code2} label="Dev.to" />}
+                {settings?.socialMedium && <SocialLink href={settings.socialMedium} icon={Globe} label="Medium" />}
+              </div>
+              <div className="h-4 w-[1px] bg-white/10 hidden sm:block" />
+              <div className="flex items-center gap-4 py-2">
                 <div className="text-center">
                   <span className="text-sm font-bold text-white">{(projects?.length ?? 0)}+</span>
                   <p className="text-[10px] text-gray-500">Projects</p>
@@ -476,7 +489,7 @@ export default function Hero() {
           </m.div>
 
           {/* Hero Visual */}
-          <ProfileCard />
+          <ProfileCard settings={settings} />
         </div>
 
         {/* Scroll Indicator */}

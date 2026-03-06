@@ -7,6 +7,7 @@
     "env:validate": "node scripts/validate-env.js",
     "predev": "npm run env:validate",
     "dev": "tsx --watch src/index.ts",
+    "lint": "tsc --noEmit",
     "build": "tsc --project tsconfig.json",
     "prestart": "npm run env:validate",
     "start": "node --import ./dist/src/instrument.js ./dist/src/index.js",
