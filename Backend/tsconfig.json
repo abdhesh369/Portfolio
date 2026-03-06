@@ -21,7 +21,13 @@
     "baseUrl": ".",
     "declaration": false,
     "types": [
-      "node"
+      "node",
+      "express",
+      "jsonwebtoken",
+      "multer",
+      "cors",
+      "compression",
+      "cookie-parser"
     ],
     "typeRoots": [
       "./node_modules/@types",
