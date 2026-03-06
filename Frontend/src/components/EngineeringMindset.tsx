@@ -39,15 +39,7 @@ const PrincipleCard = ({
       onClick={onClick}
       className="relative cursor-pointer"
     >
-      {/* Connection line to next card */}
-      {index < 3 && (
-        <m.div
-          initial={{ width: 0 }}
-          animate={isInView ? { width: "100%" } : {}}
-          transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-          className="absolute hidden lg:block top-1/2 -right-6 h-0.5 w-12 bg-gradient-to-r from-primary/50 to-transparent z-10"
-        />
-      )}
+      {/* Connection line removed to fix 'line bug' and support 4-column layout better */}
 
       <m.div
         whileHover={hoverCardLift.whileHover}
@@ -134,31 +126,31 @@ const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon:
 const principles = [
   {
     id: 1,
-    title: "Fundamentals over Frameworks",
-    description: "Prioritizing strong core understanding of languages and systems before adopting high-level abstractions. Frameworks come and go, but fundamentals remain constant.",
-    icon: Code2,
-    tags: ["Data Structures", "Algorithms", "Design Patterns", "System Design"]
+    title: "Occam's Razor",
+    description: "The simplest explanation is usually the best. Applied to code: avoid over-engineering and keep solutions as simple as possible.",
+    icon: Brain,
+    tags: ["Architecture", "Simplicity", "Fundamentals"]
   },
   {
     id: 2,
-    title: "Simplicity over Complexity",
-    description: "Designing straightforward solutions that solve the problem efficiently without over-engineering. The best code is code you don't have to write.",
-    icon: Layers,
-    tags: ["Clean Code", "KISS Principle", "Minimal Dependencies", "Pragmatic"]
+    title: "The DRY Principle",
+    description: "Don't Repeat Yourself. Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.",
+    icon: Zap,
+    tags: ["Refactoring", "Efficiency", "Logic"]
   },
   {
     id: 3,
-    title: "Logic before Optimization",
-    description: "Focusing on correctness and clear business logic before premature performance tuning. Get it working, then get it fast.",
-    icon: Zap,
-    tags: ["Test-Driven", "Iterative", "Profiling", "Benchmarking"]
+    title: "The KISS Principle",
+    description: "Keep It Simple, Stupid. Complexity is a cost. I strive to write code that is easy to read, easy to test, and easy for the next developer to maintain.",
+    icon: Layers,
+    tags: ["Clean Code", "Maintainability", "Pragmatic"]
   },
   {
     id: 4,
-    title: "Readable Code",
-    description: "Writing maintainable, well-documented code that is intuitive for other engineers to understand and extend.",
-    icon: Users,
-    tags: ["Documentation", "Naming Conventions", "Code Reviews", "Collaboration"]
+    title: "Growth Mindset",
+    description: "Viewing challenges as opportunities to learn rather than obstacles. Documentation and failures are just data points for improvement.",
+    icon: Sparkles,
+    tags: ["Learning", "Resilience", "Collaboration"]
   },
 ];
 

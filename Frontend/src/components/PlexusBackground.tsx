@@ -170,7 +170,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     sciFiTheme = true,
     static: isStatic = false
 }) => {
-    const { reducedMotion, theme } = useTheme();
+    const { reducedMotion, theme, performanceMode } = useTheme();
     const containerRef = useRef<HTMLDivElement>(null);
     const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
@@ -192,6 +192,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     // Build configuration with props, responsive adjustments, and accessibility
     const config = useMemo((): PlexusConfig => {
         const isMobile = isMobileDevice();
+        const isLowPower = performanceMode === "low" || reducedMotion;
 
         // Resolve theme for color selection
         const resolvedTheme = theme === "system"
@@ -204,26 +205,30 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
             ? { particle: particleColor ?? scheme.particleColor, line: lineColor ?? scheme.lineColor }
             : { particle: particleColor ?? DEFAULT_CONFIG.particleColor, line: lineColor ?? DEFAULT_CONFIG.lineColor };
 
-        // Calculate particle count (reduce on mobile)
-        const baseCount = particleCount ?? DEFAULT_CONFIG.particleCount;
-        const adjustedCount = isMobile ? Math.floor(baseCount * 0.5) : baseCount;
+        // Calculate particle count (reduce on mobile or low power)
+        let baseCount = particleCount ?? DEFAULT_CONFIG.particleCount;
+        if (performanceMode === "high") baseCount = Math.floor(baseCount * 1.5);
+
+        let adjustedCount = baseCount;
+        if (isMobile) adjustedCount = Math.floor(adjustedCount * 0.5);
+        if (performanceMode === "low") adjustedCount = Math.floor(adjustedCount * 0.3);
 
         return {
             ...DEFAULT_CONFIG,
             particleCount: adjustedCount,
             particleColor: colors.particle,
             lineColor: colors.line,
-            // Disable animations if reduced motion preferred or static prop
-            rotationSpeed: (reducedMotion || isStatic)
+            // Disable animations if reduced motion preferred, low power mode, or static prop
+            rotationSpeed: (isLowPower || isStatic)
                 ? { x: 0, y: 0 }
                 : DEFAULT_CONFIG.rotationSpeed,
-            parallaxIntensity: (reducedMotion || isStatic)
+            parallaxIntensity: (isLowPower || isStatic)
                 ? 0
                 : DEFAULT_CONFIG.parallaxIntensity,
-            // Reduce connection distance on mobile for performance
-            connectionDistance: isMobile ? 100 : DEFAULT_CONFIG.connectionDistance
+            // Reduce connection distance or disable lines in low power mode
+            connectionDistance: performanceMode === "low" ? 0 : (isMobile ? 100 : DEFAULT_CONFIG.connectionDistance)
         };
-    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic, reducedMotion, theme]);
+    }, [particleCount, particleColor, lineColor, sciFiTheme, isStatic, reducedMotion, theme, performanceMode]);
 
     // Create particle cloud with BufferGeometry
     const createParticleCloud = useCallback((): THREE.Points => {

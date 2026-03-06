@@ -244,6 +244,12 @@ export async function seedDatabase() {
         description: "Viewing challenges as opportunities to learn rather than obstacles. Documentation and failures are just data points for improvement.",
         icon: "Cpu",
         tags: ["Learning", "Resilience"]
+      },
+      {
+        title: "The KISS Principle",
+        description: "Keep It Simple, Stupid. Complexity is a cost. I strive to write code that is easy to read, easy to test, and easy for the next developer to maintain.",
+        icon: "Zap",
+        tags: ["Maintainability", "Clean Code", "Design"]
       }
     ];
 

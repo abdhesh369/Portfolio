@@ -3,6 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { fadeIn } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
+import { useTheme } from './theme-provider';
 
 import { SkillStatus, SkillCategory, SkillNode } from './skills/SkillTypes';
 import { DEFAULT_SKILL_NODES, DEFAULT_CONNECTIONS, ICON_MAP } from './skills/SkillData';
@@ -13,9 +14,10 @@ import { StatPanel, ProficiencyChart, CategorySummary } from './skills/StatPanel
 import { SkillsListView } from './skills/SkillsListView';
 
 export default function SkillsTree() {
+  const { performanceMode, setPerformanceMode, treePerformanceMode, setTreePerformanceMode } = useTheme();
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [lowPowerMode, setLowPowerMode] = useState(false);
+  const isLowPower = performanceMode === 'low';
 
   const { data: apiSkills } = useSkills();
   const { data: apiConnections } = useSkillConnections();
@@ -141,7 +143,7 @@ export default function SkillsTree() {
               backgroundSize: '200% 200%',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              animation: lowPowerMode ? 'none' : 'gradient-x 8s ease infinite'
+              animation: isLowPower ? 'none' : 'gradient-x 8s ease infinite'
             }}
           >
             Skill Tree
@@ -151,12 +153,16 @@ export default function SkillsTree() {
               A verified map of my technical abilities
             </p>
             <button
-              onClick={() => setLowPowerMode(!lowPowerMode)}
-              className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${lowPowerMode ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-primary/10 text-primary-foreground/60 border border-primary/20 hover:bg-primary/20'
+              onClick={() => setTreePerformanceMode(treePerformanceMode === 'power' ? 'normal' : 'power')}
+              className={`group flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${treePerformanceMode === 'power'
+                ? 'bg-cyan-500 text-white border-none shadow-[0_0_20px_rgba(6,182,212,0.5)] scale-105'
+                : 'bg-primary/10 text-primary-foreground/60 border border-primary/20 hover:bg-primary/20'
                 }`}
             >
-              <Cpu className={`w-3 h-3 ${lowPowerMode ? 'animate-pulse' : ''}`} />
-              {lowPowerMode ? 'High Performance Mode Off' : 'Low Power Mode'}
+              <Cpu className={`w-3.5 h-3.5 ${treePerformanceMode === 'power' ? 'animate-spin-slow' : 'group-hover:rotate-12 transition-transform'}`} />
+              <span className={treePerformanceMode === 'power' ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''}>
+                {treePerformanceMode === 'power' ? 'Power Mode: MAXIMUM' : 'Power Mode: NORMAL'}
+              </span>
             </button>
           </div>
         </m.div>

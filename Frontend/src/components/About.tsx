@@ -299,16 +299,16 @@ export default function About() {
               {/* Decorative Corner */}
               <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-cyan-500/30 rounded-tl-lg" />
 
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2 mb-2">
                 <Terminal className="w-6 h-6 text-cyan-400" />
                 <span className="font-mono text-lg text-cyan-500">./bio_init</span>
               </h3>
 
-              <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed font-light">
-                <p>
+              <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed font-light space-y-4">
+                <p className="leading-relaxed text-[1.05rem]">
                   I'm currently pursuing my <Highlight>Bachelor's in Electronics & Communication Engineering</Highlight> at Tribhuvan University. My journey began with a fascination for how hardware meets software, which inevitably led me down the rabbit hole of Full-Stack Development.
                 </p>
-                <p>
+                <p className="leading-relaxed text-[1.05rem]">
                   Today, I focus on building <Highlight color="purple">scalable web systems</Highlight> and analyzing complex algorithms. I don't just write code; I design systems that resolve real-world inefficiencies. My approach is rooted in engineering fundamentals—understanding <Highlight>memory, complexity, and architecture</Highlight> before typing a single line of syntax.
                 </p>
               </div>

@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Code2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { PerformanceToggle } from "@/components/PerformanceToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 
@@ -147,7 +147,7 @@ export default function Navbar() {
             })}
 
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
-              <ThemeToggle />
+              <PerformanceToggle />
               <Button
                 onClick={() => handleNavClick("#contact")}
                 className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-full px-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all"
