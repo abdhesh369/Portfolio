@@ -54,13 +54,13 @@ export class CacheService {
      */
     static async get<T>(key: string): Promise<T | null> {
         if (!redis) return null;
-        const cached = await redis.get(key);
-        if (!cached) return null;
-
         try {
+            const cached = await redis.get(key);
+            if (!cached) return null;
+
             return JSON.parse(cached) as T;
         } catch (err) {
-            logger.warn({ context: "cache", key, error: err }, "Invalid JSON in cache");
+            logger.warn({ context: "cache", key, error: err }, "Cache read or parse failed");
             return null;
         }
     }
@@ -98,6 +98,8 @@ export class CacheService {
             const keys = await redis.smembers(setKey);
             if (keys.length > 0) {
                 await redis.del(...keys, setKey);
+            } else {
+                await redis.del(setKey);
             }
         } catch (err) {
             logger.error({ context: "cache", setKey, error: err }, "Tracked key invalidation failed");

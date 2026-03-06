@@ -35,7 +35,11 @@ export class SkillService {
      */
     async create(data: InsertSkill): Promise<Skill> {
         const skill = await skillRepository.create(data);
-        await this.invalidateCache();
+        try {
+            await this.invalidateCache();
+        } catch (err) {
+            console.error("Failed to invalidate skill cache after create:", err);
+        }
         return skill;
     }
 
@@ -47,7 +51,11 @@ export class SkillService {
      */
     async update(id: number, data: Partial<InsertSkill>): Promise<Skill> {
         const skill = await skillRepository.update(id, data);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate skill cache after update:", err);
+        }
         return skill;
     }
 
@@ -57,7 +65,11 @@ export class SkillService {
      */
     async delete(id: number): Promise<void> {
         await skillRepository.delete(id);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate skill cache after delete:", err);
+        }
     }
 
     /**
@@ -66,18 +78,21 @@ export class SkillService {
      */
     async bulkDelete(ids: number[]): Promise<void> {
         await skillRepository.bulkDelete(ids);
-        await this.invalidateCache();
-
-        // Invalidate individual item caches
-        for (const id of ids) {
-            await CacheService.invalidate(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        try {
+            await this.invalidateCache();
+            // Invalidate individual item caches
+            for (const id of ids) {
+                await CacheService.invalidate(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            }
+        } catch (err) {
+            console.error("Failed to invalidate skill cache after bulk delete:", err);
         }
     }
 
     private async invalidateCache(id?: number) {
         const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
         const keys = [listKey, CHAT_CACHE_KEY];
-        if (id) {
+        if (id !== undefined) {
             keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
         await CacheService.invalidate(...keys);

@@ -35,7 +35,11 @@ export class PortfolioServiceService {
      */
     async create(data: InsertService): Promise<Service> {
         const service = await portfolioServiceRepository.create(data);
-        await this.invalidateCache();
+        try {
+            await this.invalidateCache();
+        } catch (err) {
+            console.error("Failed to invalidate portfolio service cache after create:", err);
+        }
         return service;
     }
 
@@ -47,7 +51,11 @@ export class PortfolioServiceService {
      */
     async update(id: number, data: Partial<InsertService>): Promise<Service> {
         const service = await portfolioServiceRepository.update(id, data);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate portfolio service cache after update:", err);
+        }
         return service;
     }
 
@@ -57,7 +65,11 @@ export class PortfolioServiceService {
      */
     async delete(id: number): Promise<void> {
         await portfolioServiceRepository.delete(id);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate portfolio service cache after delete:", err);
+        }
     }
 
     private async invalidateCache(id?: number) {

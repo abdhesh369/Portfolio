@@ -147,20 +147,18 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
 
         try {
             const decoded = jwt.verify(token, env.JWT_SECRET) as any;
-
             // Runtime validation of payload
-            if (!decoded || typeof decoded !== 'object' || !('role' in decoded)) {
+            if (!decoded || typeof decoded !== 'object' || !('role' in decoded) || typeof decoded.role !== 'string') {
                 return res.status(401).json({ message: "Invalid token payload" });
             }
 
             // Optional: check standard claims
-            if (!decoded.iat || !decoded.exp) {
+            if (typeof decoded.iat !== 'number' || typeof decoded.exp !== 'number') {
                 return res.status(401).json({ message: "Incomplete token claims" });
             }
 
             // Attach decoded token to request with proper typing
-            req.user = { role: decoded.role as string };
-            return next();
+            req.user = { role: decoded.role }; req.user = { role: decoded.role }; return next();
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {
                 return res.status(401).json({ message: "Invalid or expired token" });

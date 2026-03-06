@@ -50,7 +50,7 @@ export class ExperienceRepository {
             ...rest,
             startDate: startDate ? new Date(startDate) : undefined,
             endDate: endDate === null ? null : (endDate ? new Date(endDate) : undefined),
-            period: period ?? null,
+            period: period !== undefined ? (period ?? null) : undefined,
         };
 
         const [updated] = await db

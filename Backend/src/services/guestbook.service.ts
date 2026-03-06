@@ -55,7 +55,11 @@ export class GuestbookService {
                 .where(eq(guestbookTable.id, id))
                 .returning();
 
-            await this.invalidateCache();
+            try {
+                await this.invalidateCache();
+            } catch (err) {
+                logger.error({ err, id }, "Failed to invalidate guestbook cache after approval");
+            }
             return approved;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error approving guestbook message");
@@ -66,7 +70,11 @@ export class GuestbookService {
     async deleteMessage(id: number) {
         try {
             await db.delete(guestbookTable).where(eq(guestbookTable.id, id));
-            await this.invalidateCache();
+            try {
+                await this.invalidateCache();
+            } catch (err) {
+                logger.error({ err, id }, "Failed to invalidate guestbook cache after deletion");
+            }
             return true;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error deleting guestbook message");

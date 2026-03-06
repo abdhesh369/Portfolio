@@ -8,6 +8,8 @@ const NAMESPACE = "settings";
 const CACHE_TTL = 3600;
 
 export class SettingsService {
+    private initPromise: Promise<SiteSettings> | null = null;
+
     private safeParseSettings(raw: unknown): SiteSettings {
         const result = siteSettingsSchema.safeParse(raw);
         if (result.success) {
@@ -21,18 +23,28 @@ export class SettingsService {
     }
 
     async getSettings(): Promise<SiteSettings> {
+        if (this.initPromise) return this.initPromise;
+
         const key = CacheService.key(FEATURE, NAMESPACE);
 
-        const settings = await CacheService.getOrSet(key, CACHE_TTL, async () => {
-            let data = await settingsRepository.getSettings();
-            if (!data) {
-                // Initialize with defaults if not exists
-                data = await settingsRepository.updateSettings({ isOpenToWork: true });
-            }
-            return data;
-        });
+        this.initPromise = (async () => {
+            try {
+                const settings = await CacheService.getOrSet(key, CACHE_TTL, async () => {
+                    let data = await settingsRepository.getSettings();
+                    if (!data) {
+                        // Initialize with defaults if not exists
+                        data = await settingsRepository.updateSettings({ isOpenToWork: true });
+                    }
+                    return data;
+                });
 
-        return this.safeParseSettings(settings);
+                return this.safeParseSettings(settings);
+            } finally {
+                this.initPromise = null;
+            }
+        })();
+
+        return this.initPromise;
     }
 
     async updateSettings(data: InsertSiteSettings): Promise<SiteSettings> {

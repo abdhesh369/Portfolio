@@ -37,7 +37,7 @@ if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
 const canUseRedis = !isProd || (hasRedisUrl && !isProdLocalRedis);
 
 export const emailQueue = canUseRedis ? new Queue("email", {
-    connection: getRedisConnection()
+    connection: getRedisConnection() as any
 }) : null;
 
 export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) => {
@@ -99,7 +99,7 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
         throw new Error(`Unknown job type: ${type}`);
     }
 }, {
-    connection: getRedisConnection()
+    connection: getRedisConnection() as any
 }) : null;
 
 if (emailWorker) {

@@ -61,12 +61,10 @@ export class ArticleService {
             return await articleRepository.findBySlug(slug);
         });
 
-        if (article) {
-            try {
-                await CacheService.track(TRACKED_KEYS, cacheKey);
-            } catch (err) {
-                logger.error({ err, cacheKey }, "Failed to track article hit/miss");
-            }
+        try {
+            await CacheService.track(TRACKED_KEYS, cacheKey);
+        } catch (err) {
+            logger.error({ err, cacheKey }, "Failed to track article hit/miss");
         }
 
         return article;
@@ -133,7 +131,11 @@ export class ArticleService {
             await this.invalidateCache(current.slug); // Invalidate old slug
         }
         if (article.slug !== current.slug) {
-            await CacheService.invalidate(CacheService.key(FEATURE, SLUG_NAMESPACE, article.slug)); // Ensure new slug is also clear
+            try {
+                await CacheService.invalidate(CacheService.key(FEATURE, SLUG_NAMESPACE, article.slug)); // Ensure new slug is also clear
+            } catch (err) {
+                logger.warn({ id, slug: article.slug, error: err }, "Failed to invalidate new article slug");
+            }
         }
         return article;
     }

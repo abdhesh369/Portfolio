@@ -346,6 +346,7 @@ function DeferredChatbot() {
 function GlobalLoadingIndicator() {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
+  const { reducedMotion } = useTheme();
   const active = isFetching > 0 || isMutating > 0;
 
   return (
@@ -358,18 +359,23 @@ function GlobalLoadingIndicator() {
           className="fixed top-0 left-0 right-0 z-[10000] pointer-events-none"
         >
           <div className="h-1 w-full bg-primary/20 overflow-hidden">
-            <m.div
-              initial={{ x: "-100%" }}
-              animate={{ x: "100%" }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              className="h-full w-1/3 bg-primary shadow-[0_0_10px_var(--primary-glow)]"
-            />
+            {reducedMotion ? (
+              <div className="h-full w-full bg-primary/50" />
+            ) : (
+              <m.div
+                initial={{ x: "-100%" }}
+                animate={{ x: "100%" }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                className="h-full w-1/3 bg-primary shadow-[0_0_10px_var(--primary-glow)]"
+              />
+            )}
           </div>
         </m.div>
       )}
     </AnimatePresence>
   );
 }
+
 
 // Main App component
 function App() {

@@ -44,7 +44,12 @@ export class ExperienceService {
      */
     async create(data: InsertExperience): Promise<Experience> {
         const experience = await experienceRepository.create(data);
-        await this.invalidateCache();
+        try {
+            await this.invalidateCache();
+        } catch (err) {
+            // Log but don't fail the request
+            console.error("Failed to invalidate experience cache after create:", err);
+        }
         return experience;
     }
 
@@ -56,7 +61,11 @@ export class ExperienceService {
      */
     async update(id: number, data: Partial<InsertExperience>): Promise<Experience> {
         const experience = await experienceRepository.update(id, data);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate experience cache after update:", err);
+        }
         return experience;
     }
 
@@ -66,13 +75,17 @@ export class ExperienceService {
      */
     async delete(id: number): Promise<void> {
         await experienceRepository.delete(id);
-        await this.invalidateCache(id);
+        try {
+            await this.invalidateCache(id);
+        } catch (err) {
+            console.error("Failed to invalidate experience cache after delete:", err);
+        }
     }
 
     private async invalidateCache(id?: number) {
         const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
         const keys = [listKey, CHAT_CACHE_KEY];
-        if (id) {
+        if (id !== undefined) {
             keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
         await CacheService.invalidate(...keys);

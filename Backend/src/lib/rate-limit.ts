@@ -5,7 +5,7 @@ import { logger } from "./logger.js";
 
 /**
  * Creates a standardized rate limiter with Redis backend if available.
- * Falls back to memory store if Redis is disconnected.
+ * Falls back to memory if Redis is unavailable at startup — store selection is static at module initialization.
  */
 const createLimiter = (options: {
     windowMs: number;
