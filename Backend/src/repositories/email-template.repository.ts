@@ -11,8 +11,8 @@ function transformEmailTemplate(dbTemplate: DbEmailTemplate): EmailTemplate {
         name: dbTemplate.name,
         subject: dbTemplate.subject,
         body: dbTemplate.body,
-        createdAt: dbTemplate.createdAt ? dbTemplate.createdAt.toISOString() : null,
-    } as EmailTemplate;
+        createdAt: dbTemplate.createdAt,
+    };
 }
 
 export class EmailTemplateRepository {

@@ -40,7 +40,7 @@ export class ArticleService {
             logger.error({ context: "article", error: err }, "Redis read failed, falling back to DB");
         }
 
-        const articles = await articleRepository.findAll(status);
+        const articles = await articleRepository.findAll(status as any);
 
         try {
             if (redis) {

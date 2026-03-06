@@ -21,5 +21,10 @@
         "type-check:frontend": "npm run type-check -w Frontend",
         "type-check:all": "npm run type-check --workspaces",
         "schema:sync-check": "diff Backend/shared/schema.ts Frontend/shared/schema.ts"
+    },
+    "overrides": {
+        "multer-storage-cloudinary": {
+            "cloudinary": "^2.0.0"
+        }
     }
 }

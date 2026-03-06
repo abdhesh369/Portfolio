@@ -18,8 +18,8 @@ function transformSeoSettings(dbSettings: DbSeoSettings): SeoSettings {
         canonicalUrl: dbSettings.canonicalUrl,
         noindex: dbSettings.noindex,
         twitterCard: dbSettings.twitterCard,
-        createdAt: dbSettings.createdAt ? dbSettings.createdAt.toISOString() : null,
-        updatedAt: dbSettings.updatedAt ? dbSettings.updatedAt.toISOString() : null,
+        createdAt: dbSettings.createdAt,
+        updatedAt: dbSettings.updatedAt,
     } as SeoSettings;
 }
 

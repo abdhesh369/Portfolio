@@ -60,6 +60,11 @@ jobs:
       - name: Run Tests
         run: npm run test
         working-directory: Frontend
+        env:
+          VITE_API_URL: http://localhost:5000
+          VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
+          VITE_SENTRY_DSN: ""
+          VITE_SENTRY_ENVIRONMENT: test
 
   schema-sync:
     name: Schema Sync Check
@@ -67,4 +72,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Verify shared schemas are identical
-        run: diff Backend/shared/schema.ts Frontend/shared/schema.ts
+        run: |
+          if ! diff Backend/shared/schema.ts Frontend/shared/schema.ts; then
+            echo "::error::Schema files have drifted. Run: cp Backend/shared/schema.ts Frontend/shared/schema.ts"
+            exit 1
+          fi
+          echo "✓ Schema files are in sync."

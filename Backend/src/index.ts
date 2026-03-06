@@ -21,7 +21,10 @@ import rateLimit from "express-rate-limit";
 import { randomUUID } from "crypto";
 
 const app = express();
-app.set("trust proxy", 1); // For production environments behind proxies (Render, Heroku, etc.)
+// NOTE: "trust proxy 1" assumes exactly ONE proxy tier (Render's load balancer).
+// If topology changes (e.g. Cloudflare + Render = 2 proxies), this must be updated
+// to the correct number, otherwise rate-limiting will use the proxy IP instead of the client IP.
+app.set("trust proxy", 1);
 const httpServer = createServer(app);
 
 // Request Tracing and Types are handled via src/types/express.d.ts
@@ -272,7 +275,6 @@ function setupGracefulShutdown() {
         if (emailWorker) await emailWorker.close();
 
         // Disconnect main Redis client
-        // Disconnect main Redis client
         if (redis) {
           await redis.quit();
         }
@@ -384,7 +386,7 @@ async function startServer() {
         const message = status === 500 ? "Internal Server Error" : err.message;
 
         logger.error({
-          requestId: (req as any).id,
+          requestId: req.id,
           status,
           error: err.message,
           stack: process.env.NODE_ENV === "development" ? err.stack : undefined,

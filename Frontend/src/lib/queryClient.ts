@@ -1,6 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { hydrateFromCache, subscribeToQueryCache } from "./query-cache-persister";
-import { apiFetch } from "./api-helpers";
+import { apiFetch, ApiError } from "./api-helpers";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -14,21 +14,28 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  // Delegate to apiFetch for automatic 401 refresh handling.
-  // apiFetch returns parsed JSON, so we wrap it to return a Response-like result
-  // for backward compatibility with callers that may call .json() on the result.
-  const result = await apiFetch(url, {
-    method,
-    body: data ? JSON.stringify(data) : undefined,
-  });
-
-  // Return a synthetic Response so callers that do `await apiRequest(...)`
-  // without calling `.json()` still work. Those that call `.json()`
-  // on the return value will get the already-parsed data.
-  return new Response(JSON.stringify(result), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  // Delegate to apiFetch for automatic 401 refresh + CSRF handling.
+  // Wraps result in a synthetic Response for backward compatibility with
+  // callers that invoke .json() or check .ok / .status on the return value.
+  try {
+    const result = await apiFetch(url, {
+      method,
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    if (err instanceof ApiError) {
+      // Propagate the real HTTP status so callers that check response.ok
+      // or response.status receive accurate information.
+      return new Response(JSON.stringify({ message: err.message, ...err.data }),
+        { status: err.status, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    throw err;
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

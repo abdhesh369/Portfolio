@@ -1,4 +1,10 @@
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dc2wtllnz";
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+if (!CLOUD_NAME) {
+    throw new Error(
+        "[cloudinary.ts] VITE_CLOUDINARY_CLOUD_NAME is not set. " +
+        "Add it to your .env file or Netlify/Cloudflare environment variables."
+    );
+}
 
 /**
  * Generates a Cloudinary dynamic OpenGraph image URL.

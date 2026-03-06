@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -14,9 +14,23 @@ function GoodComponent() {
 }
 
 describe("ErrorBoundary", () => {
-  // Suppress console.error from React error boundary logs during tests
+  let originalLocation: Location;
+
   beforeEach(() => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    originalLocation = window.location;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { reload: vi.fn(), href: '' },
+    });
+    vi.spyOn(console, "error").mockImplementation(() => { });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: originalLocation,
+    });
+    vi.restoreAllMocks();
   });
 
   it("renders children when no error is thrown", () => {
@@ -29,143 +43,50 @@ describe("ErrorBoundary", () => {
     expect(screen.getByText("All good")).toBeInTheDocument();
   });
 
-  it("renders terminal fallback UI when child component throws", () => {
+  it("renders default fallback UI when child component throws", () => {
     render(
       <ErrorBoundary>
         <ThrowingComponent error={new Error("Test crash")} />
       </ErrorBoundary>
     );
-    // Should show the recovery terminal header
-    expect(screen.getByText(/PORTFOLIO\s+RECOVERY\s+TERMINAL/)).toBeInTheDocument();
-    // Should show crash message
-    expect(screen.getByText(/CRASH/)).toBeInTheDocument();
-    // Should have a terminal input
-    expect(screen.getByLabelText("Terminal input")).toBeInTheDocument();
+    expect(screen.getByText(/Critical System Error/i)).toBeInTheDocument();
+    expect(screen.getByText(/Return to Base/i)).toBeInTheDocument();
+    expect(screen.getByText(/Reload System/i)).toBeInTheDocument();
   });
 
-  it("executes 'help' command in the terminal", () => {
+  it("renders custom fallback if provided", () => {
+    render(
+      <ErrorBoundary fallback={<div data-testid="custom-fallback">Custom Error</div>}>
+        <ThrowingComponent error={new Error("Test crash")} />
+      </ErrorBoundary>
+    );
+    expect(screen.getByTestId("custom-fallback")).toBeInTheDocument();
+    expect(screen.getByText("Custom Error")).toBeInTheDocument();
+  });
+
+  it("calls window.location.reload when Reload System is clicked", () => {
     render(
       <ErrorBoundary>
-        <ThrowingComponent error={new Error("Help test")} />
+        <ThrowingComponent error={new Error("Test crash")} />
       </ErrorBoundary>
     );
 
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "help" } });
-    fireEvent.keyDown(input, { key: "Enter" });
+    const reloadButton = screen.getByText(/Reload System/i);
+    fireEvent.click(reloadButton);
 
-    expect(screen.getByText(/Available commands/)).toBeInTheDocument();
-    expect(screen.getByText(/Show this help message/)).toBeInTheDocument();
+    expect(window.location.reload).toHaveBeenCalled();
   });
 
-  it("executes 'error' command showing error details", () => {
-    const testError = new Error("Specific error message");
-    testError.name = "TestError";
-
+  it("updates window.location.href when Return to Base is clicked", () => {
     render(
       <ErrorBoundary>
-        <ThrowingComponent error={testError} />
+        <ThrowingComponent error={new Error("Test crash")} />
       </ErrorBoundary>
     );
 
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "error" } });
-    fireEvent.keyDown(input, { key: "Enter" });
+    const homeButton = screen.getByText(/Return to Base/i);
+    fireEvent.click(homeButton);
 
-    expect(screen.getByText(/Error Details/)).toBeInTheDocument();
-    expect(screen.getByText(/Specific error message/)).toBeInTheDocument();
-  });
-
-  it("shows 'command not found' for unknown commands", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent error={new Error("Unknown cmd test")} />
-      </ErrorBoundary>
-    );
-
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "foobar" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    expect(screen.getByText(/Command not found: foobar/)).toBeInTheDocument();
-  });
-
-  it("clears terminal output with 'clear' command", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent error={new Error("Clear test")} />
-      </ErrorBoundary>
-    );
-
-    // Verify boot lines are present
-    expect(screen.getByText(/CRASH/)).toBeInTheDocument();
-
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "clear" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    // Boot lines should be cleared
-    expect(screen.queryByText(/CRASH/)).not.toBeInTheDocument();
-  });
-
-  it("supports command history with ArrowUp/ArrowDown", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent error={new Error("History test")} />
-      </ErrorBoundary>
-    );
-
-    const input = screen.getByLabelText("Terminal input") as HTMLInputElement;
-
-    // Type and execute two commands
-    fireEvent.change(input, { target: { value: "help" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-    fireEvent.change(input, { target: { value: "status" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    // ArrowUp should recall last command
-    fireEvent.keyDown(input, { key: "ArrowUp" });
-    expect(input.value).toBe("status");
-
-    // ArrowUp again should recall first command
-    fireEvent.keyDown(input, { key: "ArrowUp" });
-    expect(input.value).toBe("help");
-
-    // ArrowDown should cycle forward
-    fireEvent.keyDown(input, { key: "ArrowDown" });
-    expect(input.value).toBe("status");
-
-    // ArrowDown past end should clear input
-    fireEvent.keyDown(input, { key: "ArrowDown" });
-    expect(input.value).toBe("");
-  });
-
-  it("executes 'contact' command showing recovery options", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent error={new Error("Contact test")} />
-      </ErrorBoundary>
-    );
-
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "contact" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    expect(screen.getByText(/Recovery Options/)).toBeInTheDocument();
-  });
-
-  it("executes 'status' command showing system info", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent error={new Error("Status test")} />
-      </ErrorBoundary>
-    );
-
-    const input = screen.getByLabelText("Terminal input");
-    fireEvent.change(input, { target: { value: "status" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    expect(screen.getByText(/System Status/)).toBeInTheDocument();
-    expect(screen.getByText(/Viewport/)).toBeInTheDocument();
+    expect(window.location.href).toBe("/");
   });
 });

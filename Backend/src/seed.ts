@@ -421,7 +421,7 @@ const isMainModule = process.argv[1]?.replace(/\\/g, '/').includes('seed');
 if (isMainModule) {
   seedDatabase()
     .then(() => {
-      console.log("Seeding complete. Exiting...");
+      logger.info({ context: "seed" }, "Seeding complete. Exiting...");
       process.exit(0);
     })
     .catch((err) => {

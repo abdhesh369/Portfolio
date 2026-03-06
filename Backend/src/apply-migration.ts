@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import { logger } from './lib/logger.js';
 
 dotenv.config();
 
@@ -10,10 +11,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function applyMigration() {
-    console.log('Starting manual migration...');
+    logger.info('Starting manual migration...');
 
     if (!process.env.DATABASE_URL) {
-        console.error('DATABASE_URL environment variable is required');
+        logger.error('DATABASE_URL environment variable is required');
         process.exit(1);
     }
 
@@ -29,7 +30,7 @@ async function applyMigration() {
 
         for (const file of files) {
             const migrationPath = path.join(migrationsDir, file);
-            console.log(`Reading migration: ${file}`);
+            logger.info({ file }, `Reading migration: ${file}`);
             const sql = fs.readFileSync(migrationPath, 'utf8');
 
             const statements = sql.split('--> statement-breakpoint');
@@ -38,23 +39,23 @@ async function applyMigration() {
                 statement = statement.trim();
                 if (!statement) continue;
 
-                console.log(`Executing statement: ${statement.substring(0, 50)}...`);
+                logger.info({ statement: statement.substring(0, 50) }, `Executing statement`);
                 try {
                     await client.query(statement);
                 } catch (err: any) {
                     if (err.code === '42P07' || err.code === '42701') {
                         // 42P07 = table already exists, 42701 = duplicate column
-                        console.log(`  Already exists, skipping...`);
+                        logger.info(`  Already exists, skipping...`);
                     } else {
-                        console.error(`  Error executing statement: ${err.message}`);
+                        logger.error({ err }, `  Error executing statement: ${err.message}`);
                     }
                 }
             }
         }
 
-        console.log('Migration completed successfully!');
+        logger.info('Migration completed successfully!');
     } catch (error) {
-        console.error('Migration failed:', error);
+        logger.error({ err: error }, 'Migration failed');
     } finally {
         await client.end();
     }

@@ -86,7 +86,7 @@ export class ProjectService {
      * @param status - The new status value to apply
      */
     async bulkUpdateStatus(ids: number[], status: string): Promise<void> {
-        await projectRepository.bulkUpdateStatus(ids, status);
+        await projectRepository.bulkUpdateStatus(ids, status as any);
         if (redis) {
             await redis.del(this.CACHE_KEY_LIST, CHAT_CACHE_KEY);
         }
