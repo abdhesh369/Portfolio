@@ -70,7 +70,8 @@ app.use(
     // Allow non-browser requests (health checks, monitoring, cURL) — they have no Origin
     if (!origin) {
       const secFetch = req.header("sec-fetch-site");
-      if (secFetch && secFetch !== 'none') {
+      // Allow if it's not a browser request or if it's a same-origin request (proxy)
+      if (secFetch && secFetch !== 'none' && secFetch !== 'same-origin') {
         return callback(new Error("Origin required for browser requests"));
       }
       return callback(null, { origin: true, credentials: true });

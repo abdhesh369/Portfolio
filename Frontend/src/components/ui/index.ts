@@ -5,3 +5,5 @@ export * from "./dropdown-menu";
 export * from "./skeleton";
 export * from "./toast";
 export * from "./toaster";
+export * from "./label";
+export * from "./switch";

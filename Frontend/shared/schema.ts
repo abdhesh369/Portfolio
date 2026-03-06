@@ -14,7 +14,7 @@ export const projectsTable = pgTable("projects", {
   liveUrl: varchar("liveUrl", { length: 500 }),
   category: varchar("category", { length: 100 }).notNull(),
   displayOrder: integer("displayOrder").notNull().default(0),
-  status: varchar("status", { length: 50 }).notNull().default("Completed"),
+  status: varchar("status", { length: 50 }).$type<"In Progress" | "Completed" | "Archived">().notNull().default("Completed"),
   problemStatement: text("problemStatement"),
   motivation: text("motivation"),
   systemDesign: text("systemDesign"),
@@ -37,7 +37,7 @@ export const skillsTable = pgTable("skills", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   category: varchar("category", { length: 100 }).notNull(),
-  status: varchar("status", { length: 100 }).notNull().default("Core"),
+  status: varchar("status", { length: 100 }).$type<"Core" | "Advanced" | "Learning">().notNull().default("Core"),
   icon: varchar("icon", { length: 100 }).notNull().default("Code"),
   description: text("description").notNull().default(""),
   proof: text("proof").notNull().default(""),
@@ -84,7 +84,7 @@ export const mindsetTable = pgTable("mindset", {
 
 export const analyticsTable = pgTable("analytics", {
   id: serial("id").primaryKey(),
-  type: varchar("type", { length: 50 }).notNull(), // page_view, project_view, contact_form
+  type: varchar("type", { length: 50 }).$type<"page_view" | "project_view" | "contact_form" | "resume_download" | "vital">().notNull(), // page_view, project_view, contact_form
   targetId: integer("targetId").references(() => projectsTable.id, { onDelete: "set null" }), // ID of project for project_view
   path: varchar("path", { length: 500 }).notNull(),
   browser: varchar("browser", { length: 100 }),
@@ -141,7 +141,7 @@ export const articlesTable = pgTable("articles", {
   content: text("content").notNull(),
   excerpt: text("excerpt"),
   featuredImage: varchar("featuredImage", { length: 500 }),
-  status: varchar("status", { length: 50 }).notNull().default("draft"),
+  status: varchar("status", { length: 50 }).$type<"draft" | "published" | "archived">().notNull().default("draft"),
   publishedAt: timestamp("publishedAt"),
   viewCount: integer("viewCount").notNull().default(0),
   readTimeMinutes: integer("readTimeMinutes").notNull().default(0),
@@ -185,7 +185,7 @@ export const testimonialsTable = pgTable("testimonials", {
   role: varchar("role", { length: 255 }).notNull(),
   company: varchar("company", { length: 255 }).notNull().default(""),
   quote: text("quote").notNull(),
-  relationship: varchar("relationship", { length: 100 }).notNull().default("Colleague"),
+  relationship: varchar("relationship", { length: 100 }).$type<"Colleague" | "Client" | "Manager">().notNull().default("Colleague"),
   avatarUrl: varchar("avatarUrl", { length: 500 }),
   linkedinUrl: varchar("linkedinUrl", { length: 500 }),
   displayOrder: integer("displayOrder").notNull().default(0),
@@ -196,10 +196,9 @@ export const testimonialsTable = pgTable("testimonials", {
   };
 });
 
-// TICKET-032: Append-only audit log
 export const auditLogTable = pgTable("audit_log", {
   id: serial("id").primaryKey(),
-  action: varchar("action", { length: 20 }).notNull(),
+  action: varchar("action", { length: 20 }).$type<"CREATE" | "UPDATE" | "DELETE">().notNull(),
   entity: varchar("entity", { length: 50 }).notNull(),
   entityId: integer("entity_id"),
   oldValues: jsonb("old_values"),
@@ -234,6 +233,16 @@ export const insertExperienceSchema = createInsertSchema(experiencesTable);
 
 export const selectMessageSchema = createSelectSchema(messagesTable);
 export const insertMessageSchema = createInsertSchema(messagesTable);
+
+export const auditLogSchema = z.object({
+  id: z.number(),
+  action: z.enum(["CREATE", "UPDATE", "DELETE"]),
+  entity: z.string().min(1).max(50),
+  entityId: z.number().nullable().optional(),
+  oldValues: z.record(z.unknown()).nullable().optional(),
+  newValues: z.record(z.unknown()).nullable().optional(),
+  createdAt: z.coerce.date(),
+});
 
 export const selectMindsetSchema = createSelectSchema(mindsetTable);
 export const insertMindsetSchema = createInsertSchema(mindsetTable);
@@ -283,21 +292,21 @@ export const projectSchema = z.object({
   description: z.string().min(1).max(5000),
   techStack: z.array(z.string().max(100)).default([]),
   imageUrl: z.string().url().max(500),
-  githubUrl: z.string().max(500).nullish().default(null),
-  liveUrl: z.string().max(500).nullish().default(null),
+  githubUrl: z.string().max(500).nullable().default(null),
+  liveUrl: z.string().max(500).nullable().default(null),
   category: z.string().min(1).max(100),
   displayOrder: z.number().default(0),
-  status: z.string().default("Completed"),
-  problemStatement: z.string().max(5000).nullish(),
-  motivation: z.string().max(5000).nullish(),
-  systemDesign: z.string().max(5000).nullish(),
-  challenges: z.string().max(5000).nullish(),
-  learnings: z.string().max(5000).nullish(),
+  status: z.enum(["In Progress", "Completed", "Archived"]).default("Completed"),
+  problemStatement: z.string().max(5000).nullable().default(null),
+  motivation: z.string().max(5000).nullable().default(null),
+  systemDesign: z.string().max(5000).nullable().default(null),
+  challenges: z.string().max(5000).nullable().default(null),
+  learnings: z.string().max(5000).nullable().default(null),
   isFlagship: z.boolean().default(false),
   isHidden: z.boolean().default(false),
-  impact: z.string().max(5000).nullish(),
-  role: z.string().max(5000).nullish(),
-  imageAlt: z.string().max(500).nullish(),
+  impact: z.string().max(5000).nullable().default(null),
+  role: z.string().max(5000).nullable().default(null),
+  imageAlt: z.string().max(500).nullable().default(null),
   viewCount: z.number().default(0),
 });
 
@@ -326,7 +335,7 @@ export const skillSchema = z.object({
   id: z.number(),
   name: z.string().min(1).max(100),
   category: z.string().min(1).max(100),
-  status: z.string().max(100),
+  status: z.enum(["Core", "Advanced", "Learning"]),
   icon: z.string().max(100),
   description: z.string().max(1000),
   proof: z.string().max(1000),
@@ -337,7 +346,7 @@ export const skillSchema = z.object({
 export const insertSkillApiSchema = z.object({
   name: z.string().min(1).max(100),
   category: z.string().min(1).max(100),
-  status: z.string().max(100).default("Core"),
+  status: z.enum(["Core", "Advanced", "Learning"]).default("Core"),
   icon: z.string().max(100).default("Code"),
   description: z.string().max(1000).default(""),
   proof: z.string().max(1000).default(""),
@@ -391,7 +400,7 @@ export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
   organization: z.string().min(1).max(200),
   period: z.string().max(100).nullable().optional(),
-  startDate: z.string().or(z.date()).optional(),
+  startDate: z.string().or(z.date()),
   endDate: z.string().or(z.date()).nullable().optional(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100).default("Experience"),
@@ -412,7 +421,7 @@ export const testimonialSchema = z.object({
   role: z.string().min(1).max(255),
   company: z.string().max(255),
   quote: z.string().min(1).max(5000),
-  relationship: z.string().max(100),
+  relationship: z.enum(["Colleague", "Client", "Manager"]),
   avatarUrl: z.string().max(500).nullable().optional(),
   linkedinUrl: z.string().url().max(500).nullable().optional(),
   displayOrder: z.number().default(0),
@@ -424,10 +433,10 @@ export const insertTestimonialApiSchema = z.object({
   role: z.string().min(1).max(255),
   company: z.string().max(255).default(""),
   quote: z.string().min(1).max(5000),
-  relationship: z.string().max(100).default("Colleague"),
-  avatarUrl: z.string().max(500).nullable().optional(),
-  linkedinUrl: z.string().url().max(500).nullable().optional(),
-  displayOrder: z.number().default(0),
+  relationship: z.enum(["Colleague", "Client", "Manager"]).default("Colleague"),
+  avatarUrl: z.string().max(500).optional().nullable().transform(v => v === "" ? null : v),
+  linkedinUrl: z.string().url().max(500).optional().nullable()
+    .or(z.literal("").transform(() => null)), displayOrder: z.number().default(0),
 });
 
 export const messageSchema = z.object({
@@ -465,7 +474,7 @@ export const insertGuestbookApiSchema = z.object({
   email: z.string().email().max(255).nullish(),
 });
 
-export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form", "resume_download"] as const;
+export const ANALYTICS_EVENT_TYPES = ["page_view", "project_view", "contact_form", "resume_download", "vital"] as const;
 
 export const analyticsSchema = z.object({
   id: z.number(),
@@ -600,6 +609,7 @@ export type SeoSettings = z.infer<typeof seoSettingsSchema>;
 export type Article = z.infer<typeof articleSchema>;
 export type ArticleWithRelated = z.infer<typeof articleWithRelatedSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
+export type AuditLog = z.infer<typeof auditLogSchema>;
 export type InsertSkillConnection = { id?: number; fromSkillId: number; toSkillId: number; };
 
 export type InsertProject = z.infer<typeof insertProjectApiSchema>;
@@ -646,4 +656,7 @@ export function isTestimonial(obj: unknown): obj is Testimonial {
 }
 export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
   return guestbookSchema.safeParse(obj).success;
+}
+export function isAuditLog(obj: unknown): obj is AuditLog {
+  return auditLogSchema.safeParse(obj).success;
 }

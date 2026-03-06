@@ -27,6 +27,8 @@ import {
     insertEmailTemplateApiSchema,
     guestbookSchema,
     insertGuestbookApiSchema,
+    siteSettingsSchema,
+    insertSiteSettingsApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -847,6 +849,31 @@ export const api = {
                     entries: z.array(auditLogSchema),
                     total: z.number(),
                 }),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+    // ---------- SETTINGS ----------
+    settings: {
+        get: {
+            method: "GET" as const,
+            path: "/api/v1/settings",
+            description: "Get site settings (public)",
+            responses: {
+                200: siteSettingsSchema,
+                500: errorSchemas.internal,
+            },
+        },
+        update: {
+            method: "PATCH" as const,
+            path: "/api/v1/settings",
+            description: "Update site settings (admin only)",
+            requiresAuth: true,
+            input: insertSiteSettingsApiSchema,
+            responses: {
+                200: createSuccessResponse(siteSettingsSchema),
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
                 500: errorSchemas.internal,

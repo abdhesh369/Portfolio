@@ -1,7 +1,7 @@
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    ChevronLeft, ChevronRight, X
+    Brain, Sliders, ChevronLeft, ChevronRight, X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +28,8 @@ const NAV_ITEMS = [
     { key: "testimonials", label: "Testimonials", icon: Star },
     { key: "guestbook", label: "Guestbook", icon: FileText },
     { key: "audit", label: "Audit Log", icon: Shield },
+    { key: "mindset", label: "Mindset", icon: Brain },
+    { key: "settings", label: "Site Settings", icon: Sliders },
 ];
 
 export default function Sidebar({
