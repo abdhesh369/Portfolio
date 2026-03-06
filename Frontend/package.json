@@ -76,7 +76,7 @@
     "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
-    "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-pwa": "^0.19.8",
     "vitest": "^4.0.18"
   }
 }

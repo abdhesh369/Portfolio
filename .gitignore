@@ -53,4 +53,6 @@ tsc_output*.txt
 # Test artifacts
 test-results/
 playwright-report/
-stats.html
+stats.
+
+.qodo/
