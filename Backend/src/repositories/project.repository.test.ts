@@ -60,7 +60,9 @@ describe("ProjectRepository", () => {
             const { db } = await import("../db.js");
             (db.select as any).mockReturnValueOnce({
                 from: vi.fn().mockReturnValue({
-                    orderBy: vi.fn().mockResolvedValue(mockProjects),
+                    where: vi.fn().mockReturnValue({
+                        orderBy: vi.fn().mockResolvedValue(mockProjects),
+                    }),
                 }),
             });
 

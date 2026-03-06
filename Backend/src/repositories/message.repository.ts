@@ -7,10 +7,14 @@ type DbInsertMessage = InferInsertModel<typeof messagesTable>;
 
 export class MessageRepository {
     private transformMessage(message: DbMessage): Message {
+        const raw = message.createdAt;
+        const createdAt = raw instanceof Date ? raw.toISOString()
+            : typeof raw === "string" ? raw
+                : null;
         return {
             ...message,
-            createdAt: message.createdAt ? message.createdAt.toISOString() : null,
-        } as Message;
+            createdAt,
+        } as unknown as Message;
     }
 
     async findAll(): Promise<Message[]> {

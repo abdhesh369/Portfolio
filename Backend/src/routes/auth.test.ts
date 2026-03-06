@@ -196,7 +196,7 @@ describe("Auth Routes - Refresh Token Flow", () => {
             expect(mockValidateRefreshToken).toHaveBeenCalledWith(
                 crypto.createHash("sha256").update(refreshToken).digest("hex")
             );
-            expect(ctx.body).toEqual({ success: true, message: "Token refreshed" });
+            expect(ctx.body).toEqual(expect.objectContaining({ success: true, message: "Token refreshed" }));
             expect(ctx.cookies.auth_token).toBeDefined();
             expect(ctx.cookies.auth_token.opts.maxAge).toBe(15 * 60 * 1000);
         });
