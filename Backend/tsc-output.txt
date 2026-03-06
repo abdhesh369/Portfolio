@@ -1,0 +1,23 @@
+npm warn config ignoring workspace config at D:\Portfolio\Backend/.npmrc
+src/lib/queue.ts(40,5): error TS2322: Type 'Redis' is not assignable to type 'ConnectionOptions'.
+  Type 'Redis' is not assignable to type 'ClusterOptions | Redis | Cluster'.
+    Type 'import("D:/Portfolio/node_modules/ioredis/built/Redis").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/Redis").default'.
+      Types of property 'options' are incompatible.
+        Type 'import("D:/Portfolio/node_modules/ioredis/built/redis/RedisOptions").RedisOptions' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/redis/RedisOptions").RedisOptions'.
+          Type 'RedisOptions' is not assignable to type 'CommonRedisOptions'.
+            Types of property 'Connector' are incompatible.
+              Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/ConnectorConstructor").default | undefined' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/ConnectorConstructor").default | undefined'.
+                Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/ConnectorConstructor").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/ConnectorConstructor").default'.
+                  Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/AbstractConnector").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/AbstractConnector").default'.
+                    Property 'connecting' is protected but type 'AbstractConnector' is not a class derived from 'AbstractConnector'.
+src/lib/queue.ts(102,5): error TS2322: Type 'Redis' is not assignable to type 'ConnectionOptions'.
+  Type 'Redis' is not assignable to type 'ClusterOptions | Redis | Cluster'.
+    Type 'import("D:/Portfolio/node_modules/ioredis/built/Redis").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/Redis").default'.
+      Types of property 'options' are incompatible.
+        Type 'import("D:/Portfolio/node_modules/ioredis/built/redis/RedisOptions").RedisOptions' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/redis/RedisOptions").RedisOptions'.
+          Type 'RedisOptions' is not assignable to type 'CommonRedisOptions'.
+            Types of property 'Connector' are incompatible.
+              Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/ConnectorConstructor").default | undefined' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/ConnectorConstructor").default | undefined'.
+                Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/ConnectorConstructor").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/ConnectorConstructor").default'.
+                  Type 'import("D:/Portfolio/node_modules/ioredis/built/connectors/AbstractConnector").default' is not assignable to type 'import("D:/Portfolio/node_modules/bullmq/node_modules/ioredis/built/connectors/AbstractConnector").default'.
+                    Property 'connecting' is protected but type 'AbstractConnector' is not a class derived from 'AbstractConnector'.

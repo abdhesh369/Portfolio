@@ -54,8 +54,8 @@ vi.mock("../env.js", () => ({
 }));
 
 vi.mock("../auth.js", () => ({
-    isAuthenticated: vi.fn((_req: any, _res: any, next: any) => next()),
-    asyncHandler: (fn: any) => fn,
+    isAuthenticated: vi.fn((_req: unknown, _res: unknown, next: unknown) => (next as Function)()),
+    asyncHandler: (fn: unknown) => fn,
     storeRefreshToken: mockStoreRefreshToken,
     validateRefreshToken: mockValidateRefreshToken,
     revokeRefreshToken: mockRevokeRefreshToken,
@@ -64,11 +64,11 @@ vi.mock("../auth.js", () => ({
 
 vi.mock("../middleware/csrf.js", () => ({
     generateCsrfToken: mockGenerateCsrfToken,
-    csrfProtection: vi.fn((_req: any, _res: any, next: any) => next()),
+    csrfProtection: vi.fn((_req: unknown, _res: unknown, next: unknown) => (next as Function)()),
 }));
 
 vi.mock("express-rate-limit", () => ({
-    default: () => (_req: any, _res: any, next: any) => next(),
+    default: () => (_req: unknown, _res: unknown, next: unknown) => (next as Function)(),
 }));
 
 // Mock Express Router
@@ -78,7 +78,7 @@ const { Router } = await import("express");
 const { authRoutes: router } = await import("./auth.js");
 
 // Helper to create mock req/res
-function mockReq(overrides: Partial<any> = {}): any {
+function mockReq(overrides: Partial<unknown> = {}): unknown {
     return {
         body: {},
         cookies: {},
@@ -87,16 +87,16 @@ function mockReq(overrides: Partial<any> = {}): any {
     };
 }
 
-function mockRes(): any {
-    const ctx = { statusCode: 0, body: null as any, cookies: {} as Record<string, any>, clearedCookies: [] as string[] };
+function mockRes(): { res: unknown; ctx: unknown } {
+    const ctx = { statusCode: 0, body: null as unknown, cookies: {} as Record<string, unknown>, clearedCookies: [] as string[] };
     const res = {
         status(code: number) { ctx.statusCode = code; return res; },
-        json(data: any) { ctx.body = data; return res; },
-        cookie(name: string, value: any, opts: any) {
+        json(data: unknown) { ctx.body = data; return res; },
+        cookie(name: string, value: unknown, opts: unknown) {
             ctx.cookies[name] = { value, opts };
             return res;
         },
-        clearCookie(name: string, opts: any) {
+        clearCookie(name: string, opts?: unknown) {
             ctx.clearedCookies.push(name);
             return res;
         },
@@ -106,14 +106,14 @@ function mockRes(): any {
 
 // Extract route handlers from the router
 function getRouteHandler(method: string, path: string): Function | undefined {
-    const stack = (router as any).stack;
+    const stack = (router as unknown as { stack: { route: { path: string; methods: Record<string, boolean>; stack: { handle: Function }[] } }[] }).stack;
     for (const layer of stack) {
         if (layer.route) {
             const routePath = layer.route.path;
             const routeMethod = Object.keys(layer.route.methods)[0];
             if (routePath === path && routeMethod === method) {
                 // Return the last handler (asyncHandler wraps the actual handler)
-                const handlers = layer.route.stack.map((s: any) => s.handle);
+                const handlers = layer.route.stack.map((s) => s.handle);
                 return handlers[handlers.length - 1];
             }
         }

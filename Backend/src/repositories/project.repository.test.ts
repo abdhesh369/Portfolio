@@ -58,7 +58,7 @@ describe("ProjectRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as any).mockReturnValueOnce({
+            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 from: vi.fn().mockReturnValue({
                     where: vi.fn().mockReturnValue({
                         orderBy: vi.fn().mockResolvedValue(mockProjects),
@@ -80,7 +80,7 @@ describe("ProjectRepository", () => {
 
         it("calls delete for given ids", async () => {
             const { db } = await import("../db.js");
-            (db.delete as any).mockReturnValueOnce({
+            (db.delete as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 where: vi.fn().mockResolvedValue(undefined),
             });
 

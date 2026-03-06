@@ -73,7 +73,7 @@ describe("SettingsService", () => {
             const updated = { id: 1, ...data };
             mockUpdateSettings.mockResolvedValue(updated);
 
-            const result = await service.updateSettings(data as any);
+            const result = await service.updateSettings(data as unknown as Parameters<typeof service.updateSettings>[0]);
 
             expect(result).toEqual(updated);
             expect(mockUpdateSettings).toHaveBeenCalledWith(data);

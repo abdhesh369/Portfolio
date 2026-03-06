@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ---
 
 ## [2.0.0] - 2026-03-07
+### Changed
+- Post-Intern Review Fixes
 ### Added
 - Admin Customization tab with full site branding control
 - Dynamic section ordering and visibility toggle

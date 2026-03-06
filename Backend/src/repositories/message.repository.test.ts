@@ -56,7 +56,7 @@ describe("MessageRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as any).mockReturnValueOnce({
+            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 from: vi.fn().mockReturnValue({
                     orderBy: vi.fn().mockResolvedValue(mockResults),
                 }),
@@ -74,7 +74,7 @@ describe("MessageRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as any).mockReturnValueOnce({
+            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 from: vi.fn().mockReturnValue({
                     orderBy: vi.fn().mockResolvedValue(mockResults),
                 }),
@@ -94,7 +94,7 @@ describe("MessageRepository", () => {
             ]);
 
             const { db } = await import("../db.js");
-            (db.insert as any).mockReturnValueOnce({
+            (db.insert as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 values: vi.fn().mockReturnValue({ returning: mockReturning }),
             });
 
@@ -116,7 +116,7 @@ describe("MessageRepository", () => {
             const mockDeleteWhereFn = vi.fn().mockReturnValue({ returning: mockDeleteReturning });
 
             const { db } = await import("../db.js");
-            (db.delete as any).mockReturnValueOnce({ where: mockDeleteWhereFn });
+            (db.delete as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({ where: mockDeleteWhereFn });
 
             const result = await repo.delete(1);
             expect(result).toBe(true);
@@ -127,7 +127,7 @@ describe("MessageRepository", () => {
             const mockDeleteWhereFn = vi.fn().mockReturnValue({ returning: mockDeleteReturning });
 
             const { db } = await import("../db.js");
-            (db.delete as any).mockReturnValueOnce({ where: mockDeleteWhereFn });
+            (db.delete as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({ where: mockDeleteWhereFn });
 
             const result = await repo.delete(999);
             expect(result).toBe(false);
@@ -144,7 +144,7 @@ describe("MessageRepository", () => {
         it("deletes records for given ids", async () => {
             const mockBulkWhere = vi.fn().mockResolvedValue(undefined);
             const { db } = await import("../db.js");
-            (db.delete as any).mockReturnValueOnce({ where: mockBulkWhere });
+            (db.delete as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({ where: mockBulkWhere });
 
             await repo.bulkDelete([1, 2, 3]);
             expect(db.delete).toHaveBeenCalled();

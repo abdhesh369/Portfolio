@@ -1,4 +1,4 @@
-import { Queue, Worker, Job } from "bullmq";
+import { Queue, Worker, Job, ConnectionOptions } from "bullmq";
 import { Redis } from "ioredis";
 import { Resend } from "resend";
 import { env } from "../env.js";
@@ -37,7 +37,7 @@ if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
 const canUseRedis = !isProd || (hasRedisUrl && !isProdLocalRedis);
 
 export const emailQueue = canUseRedis ? new Queue("email", {
-    connection: getRedisConnection()
+    connection: getRedisConnection() as unknown as ConnectionOptions
 }) : null;
 
 export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) => {
@@ -99,7 +99,7 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
         throw new Error(`Unknown job type: ${type}`);
     }
 }, {
-    connection: getRedisConnection()
+    connection: getRedisConnection() as unknown as ConnectionOptions
 }) : null;
 
 if (emailWorker) {
