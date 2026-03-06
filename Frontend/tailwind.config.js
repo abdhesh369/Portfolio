@@ -144,7 +144,16 @@ module.exports = {
         "slide-in-from-left": "slide-in-from-left 0.3s ease-out",
         "slide-in-from-right": "slide-in-from-right 0.3s ease-out",
         "blink": "blink 1s step-end infinite",
+        "nm-in": "nm-stagger-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "slide-bounce": "slide-bounce-left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "reveal": "reveal-line 0.3s ease-out forwards",
+        "float": "float-icon 3s ease-in-out infinite",
       },
+      boxShadow: {
+        'nm-flat': '6px 6px 12px var(--nm-dark), -6px -6px 12px var(--nm-light)',
+        'nm-inset': 'inset 4px 4px 8px var(--nm-dark), inset -4px -4px 8px var(--nm-light)',
+        'nm-button': '6px 6px 12px var(--nm-dark), -6px -6px 12px var(--nm-light)',
+      }
     },
   },
   plugins: [

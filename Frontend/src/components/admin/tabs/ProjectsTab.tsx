@@ -31,7 +31,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 const emptyProject = {
     title: "", description: "", techStack: [] as string[], imageUrl: "",
-    githubUrl: "", liveUrl: "", category: "", status: "Completed",
+    githubUrl: "", liveUrl: "", category: "", status: "Completed" as "In Progress" | "Completed" | "Archived",
     problemStatement: "", motivation: "", systemDesign: "", challenges: "", learnings: "",
     isFlagship: false, isHidden: false, impact: "", role: "",
 };
@@ -293,7 +293,7 @@ export function ProjectsTab({ }: AdminTabProps) {
                                 <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">Status</label>
                                 <select
                                     value={editing.status || "Completed"}
-                                    onChange={(e) => setEditing({ ...editing, status: e.target.value })}
+                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "In Progress" | "Completed" | "Archived" })}
                                     className="w-full px-3 py-2.5 rounded-lg text-white text-sm bg-[hsl(224_71%_4%_/_0.5)] border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 transition-all outline-none"
                                 >
                                     <option value="In Progress">In Progress</option>

@@ -21,7 +21,7 @@ export default function AdminLayout({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-sans selection:bg-blue-100 selection:text-blue-700">
+        <div className="min-h-screen bg-[var(--nm-bg)] text-[var(--admin-text-primary)] font-sans selection:bg-blue-100 selection:text-blue-700">
             {/* Sidebar Overlay (Mobile) */}
             {mobileMenuOpen && (
                 <div
@@ -44,7 +44,7 @@ export default function AdminLayout({
             <div
                 className={cn(
                     "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
-                    sidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[260px]"
+                    sidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[288px]"
                 )}
             >
                 <TopBar
@@ -59,8 +59,8 @@ export default function AdminLayout({
                     </div>
                 </main>
 
-                <footer className="py-6 px-4 lg:px-8 border-t border-slate-200 text-center text-slate-400 text-xs tracking-wider">
-                    &copy; {new Date().getFullYear()} ABDHESH | ADMIN_SYSTEM_v2.0
+                <footer className="py-6 px-4 lg:px-8 text-center text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.2em]">
+                    &copy; {new Date().getFullYear()} ABDHESH | NEUMORPHIC_OS_v3.0
                 </footer>
             </div>
         </div>

@@ -30,40 +30,52 @@ const COLOR_MAP: Record<string, string> = {
 
 export default function ActivityFeed({ activities, loading }: ActivityFeedProps) {
     return (
-        <div className="glass-card flex flex-col h-full">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="font-heading font-bold text-slate-900 text-lg uppercase tracking-tight">Recent Activity</h2>
-                <button className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest">View All</button>
+        <div className="nm-flat rounded-[2rem] flex flex-col h-full overflow-hidden">
+            <div className="p-7 flex items-center justify-between">
+                <h2 className="text-xl font-black text-[var(--admin-text-primary)] uppercase tracking-tighter">
+                    ACTIVITY_LOG
+                </h2>
+                <button className="text-[10px] font-black text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-colors uppercase tracking-[0.2em] nm-button px-4 py-2 rounded-full">
+                    FETCH_ALL
+                </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
                 {loading ? (
-                    <div className="flex items-center justify-center h-48 text-slate-400">
-                        <span className="animate-pulse">Loading activities...</span>
+                    <div className="flex items-center justify-center h-48 text-[var(--admin-text-secondary)]">
+                        <span className="animate-pulse font-bold tracking-widest text-xs">SYNCHRONIZING...</span>
                     </div>
                 ) : activities.length === 0 ? (
-                    <div className="flex items-center justify-center h-48 text-slate-400 text-sm italic">
-                        No activity found.
+                    <div className="flex items-center justify-center h-48 text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-widest">
+                        EMPTY_BUFFER
                     </div>
                 ) : (
-                    <div className="space-y-1">
-                        {activities.map((item) => {
+                    <div className="space-y-4">
+                        {activities.map((item, idx) => {
                             const Icon = ICON_MAP[item.type] || Clock;
                             return (
-                                <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-all group">
-                                    <div className={cn("p-2 rounded-lg border mt-0.5", COLOR_MAP[item.type])}>
-                                        <Icon size={16} />
+                                <div
+                                    key={item.id}
+                                    className="flex items-start gap-5 p-5 rounded-2xl transition-all duration-300 group hover:nm-inset cursor-default animate-nm-in"
+                                    style={{ animationDelay: `${idx * 150}ms` }}
+                                >
+                                    <div className="w-10 h-10 rounded-xl nm-inset flex items-center justify-center shrink-0 text-[var(--admin-text-secondary)] group-hover:text-indigo-500 transition-colors">
+                                        <Icon size={18} strokeWidth={2.5} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                                        <p className="text-[13px] text-[var(--admin-text-primary)] font-bold leading-relaxed">
                                             {item.content}
                                         </p>
-                                        <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.timestamp}</span>
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <span className="text-[9px] font-black text-indigo-500/60 uppercase tracking-[0.2em]">
+                                                {item.timestamp}
+                                            </span>
                                             {item.metadata && (
                                                 <>
-                                                    <span className="w-1 h-1 rounded-full bg-slate-300" />
-                                                    <span className="text-[10px] font-medium text-slate-500 italic truncate">{item.metadata}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-[var(--nm-dark)]" />
+                                                    <span className="text-[10px] font-bold text-[var(--admin-text-secondary)] italic truncate">
+                                                        {item.metadata}
+                                                    </span>
                                                 </>
                                             )}
                                         </div>

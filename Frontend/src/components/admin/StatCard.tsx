@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface StatCardProps {
     label: string;
@@ -11,38 +12,91 @@ interface StatCardProps {
         label?: string;
     };
     color?: "blue" | "green" | "purple" | "orange";
+    delay?: string;
 }
 
-export default function StatCard({ label, value, icon: Icon, trend, color = "blue" }: StatCardProps) {
-    const colorMap = {
-        blue: "text-blue-600 bg-blue-50 border-blue-100",
-        green: "text-emerald-600 bg-emerald-50 border-emerald-100",
-        purple: "text-purple-600 bg-purple-50 border-purple-100",
-        orange: "text-orange-600 bg-orange-50 border-orange-100",
-    };
+export default function StatCard({ label, value, icon: Icon, trend, color = "blue", delay = "0ms" }: StatCardProps) {
+    const [displayValue, setDisplayValue] = useState<string | number>(0);
+    const [isPulsing, setIsPulsing] = useState(false);
+
+    useEffect(() => {
+        let isNumber = typeof value === 'number' || !isNaN(Number(value));
+        if (!isNumber) {
+            setDisplayValue(value);
+            return;
+        }
+
+        const targetValue = Number(value);
+        let startValue = 0;
+        const duration = 1800; // 1.8 seconds
+        const frameRate = 1000 / 60;
+        const totalFrames = Math.round(duration / frameRate);
+        let frame = 0;
+
+        const easeOutExpo = (t: number): number => {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        };
+
+        const counter = setInterval(() => {
+            frame++;
+            const progress = easeOutExpo(frame / totalFrames);
+            const current = Math.round(startValue + (targetValue - startValue) * progress);
+
+            setDisplayValue(current);
+
+            if (frame >= totalFrames) {
+                clearInterval(counter);
+                setDisplayValue(targetValue);
+                setIsPulsing(true);
+                setTimeout(() => setIsPulsing(false), 400); // 0.4s pulse duration
+            }
+        }, frameRate);
+
+        return () => clearInterval(counter);
+    }, [value]);
 
     return (
-        <div className="glass-card p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className={cn("p-2.5 rounded-xl border", colorMap[color])}>
-                    <Icon size={20} />
+        <div
+            className="nm-flat rounded-3xl p-6 flex flex-col gap-5 group hover:nm-flat-hover transition-all duration-400 animate-nm-in"
+            style={{ animationDelay: delay }}
+        >
+            <div className="flex items-start justify-between">
+                <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-[var(--admin-text-secondary)] group-hover:text-indigo-500 transition-colors animate-floating">
+                    <Icon size={24} strokeWidth={2.5} />
                 </div>
+
                 {trend && (
                     <div className={cn(
-                        "flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
-                        trend.isUp ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                        "nm-inset px-3 py-1.5 rounded-full flex items-center gap-1.5",
+                        trend.isUp ? "text-emerald-500" : "text-rose-500"
                     )}>
-                        <span>{trend.isUp ? "↑" : "↓"}</span>
-                        <span>{trend.value}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                            {trend.isUp ? "+" : "-"}{trend.value}
+                        </span>
                     </div>
                 )}
             </div>
-            <div>
-                <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">{label}</p>
-                <h3 className="text-3xl font-bold font-heading mt-1 text-slate-900">{value}</h3>
-                {trend?.label && (
-                    <p className="text-xs text-slate-400 mt-1 capitalize">{trend.label}</p>
-                )}
+
+            <div className="space-y-1">
+                <h3 className={cn(
+                    "text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter tabular-nums transition-transform duration-300",
+                    isPulsing ? "scale-110 text-indigo-500" : "scale-100"
+                )}>
+                    {displayValue}
+                </h3>
+                <div className="flex items-center gap-2">
+                    <p className="text-[11px] font-bold text-[var(--admin-text-secondary)] uppercase tracking-[0.2em]">
+                        {label}
+                    </p>
+                    {trend?.label && (
+                        <span className="w-1 h-1 rounded-full bg-[var(--nm-dark)]" />
+                    )}
+                    {trend?.label && (
+                        <p className="text-[10px] font-bold text-[var(--admin-text-secondary)] uppercase tracking-wider opacity-60">
+                            {trend.label}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

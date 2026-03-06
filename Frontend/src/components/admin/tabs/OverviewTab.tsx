@@ -7,6 +7,7 @@ import {
 import StatCard from "../StatCard";
 import ActivityFeed from "../ActivityFeed";
 import SystemStatus from "../SystemStatus";
+import TerminalConsole from "../TerminalConsole";
 import type { AdminTabProps } from "./types";
 
 interface HealthData {
@@ -57,7 +58,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
-    const activities: any[] = messages.slice(0, 5).map((msg, idx) => ({
+    const activities: any[] = (messages as any[]).slice(0, 5).map((msg: any, idx: number) => ({
         id: msg.id || idx,
         type: "message" as const,
         content: `New message from ${msg.name}`,
@@ -79,47 +80,56 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     return (
         <div className="space-y-8 animate-in">
             {/* Welcome Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold font-heading text-slate-900 tracking-tight">System Overview</h1>
-                    <p className="text-slate-500 text-sm mt-1 font-medium italic">Monitoring your portfolio ecosystem in real-time.</p>
+                    <h1 className="text-3xl font-black text-[#2d3748] tracking-tight uppercase">
+                        Unified_Dashboard
+                    </h1>
+                    <p className="text-[#a3b1c6] text-xs mt-2 font-bold uppercase tracking-[0.3em] flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        System_Status: Operational
+                    </p>
                 </div>
                 <button
                     onClick={() => onNavigate?.("projects")}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+                    className="h-12 px-8 rounded-2xl nm-button text-[11px] font-black uppercase tracking-[0.2em] text-[#2d3748] hover:text-indigo-600 transition-all flex items-center gap-3"
                 >
-                    <Plus size={18} />
-                    Create Project
+                    <Plus size={18} strokeWidth={3} />
+                    Deploy_Module
                 </button>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <StatCard
                     label="Total Projects"
-                    value={projects?.length ?? 0}
+                    value={(projects as any[])?.length ?? 0}
                     icon={Rocket}
                     color="blue"
                     trend={{ value: "12%", isUp: true, label: "this month" }}
+                    delay="100ms"
                 />
                 <StatCard
-                    label="Contact Messages"
-                    value={messages.length}
+                    label="Active Messages"
+                    value={(messages as any[]).length}
                     icon={Mail}
                     color="green"
-                    trend={{ value: messages.length > 0 ? "Active" : "Stable", isUp: true }}
+                    trend={{ value: (messages as any[]).length > 0 ? "LIVE" : "NULL", isUp: true }}
+                    delay="200ms"
                 />
                 <StatCard
-                    label="Skills Tracks"
-                    value={skills?.length ?? 0}
+                    label="Skill Modules"
+                    value={(skills as any[])?.length ?? 0}
                     icon={Zap}
                     color="purple"
+                    delay="300ms"
                 />
                 <StatCard
-                    label="Experiences"
-                    value={experiences?.length ?? 0}
+                    label="Experience Logs"
+                    value={(experiences as any[])?.length ?? 0}
                     icon={Briefcase}
                     color="orange"
+                    delay="400ms"
                 />
             </div>
 
@@ -140,6 +150,11 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                         onRefresh={fetchHealth}
                     />
                 </div>
+            </div>
+
+            {/* System Console */}
+            <div className="animate-nm-in" style={{ animationDelay: '500ms' }}>
+                <TerminalConsole />
             </div>
         </div>
     );

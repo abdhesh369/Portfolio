@@ -43,21 +43,24 @@ export default function Sidebar({
     return (
         <aside
             className={cn(
-                "fixed inset-y-0 left-0 z-[60] bg-white border-r border-slate-200 transition-all duration-300 ease-in-out lg:translate-x-0",
-                collapsed ? "w-[80px]" : "w-[260px]",
+                "fixed inset-y-0 left-0 z-[60] bg-[var(--nm-bg)] transition-all duration-300 ease-in-out lg:translate-x-0",
+                collapsed ? "w-[80px]" : "w-[288px]",
                 mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
             )}
         >
             <div className="flex flex-col h-full">
                 {/* Brand */}
-                <div className="h-16 flex items-center px-6 border-b border-slate-100">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
+                <div className="h-[72px] flex items-center px-6">
+                    <div className={cn(
+                        "flex items-center gap-3 overflow-hidden p-2 rounded-xl nm-flat",
+                        collapsed && "p-1"
+                    )}>
+                        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-600/30">
                             <span className="text-white font-bold text-lg">A</span>
                         </div>
                         {!collapsed && (
-                            <span className="font-heading font-semibold text-lg tracking-tight whitespace-nowrap">
-                                Portfolio Admin
+                            <span className="font-heading font-bold text-base tracking-tight whitespace-nowrap text-[var(--admin-text-primary)]">
+                                OS_ADMIN_v3
                             </span>
                         )}
                     </div>
@@ -65,14 +68,14 @@ export default function Sidebar({
                     {/* Mobile Close */}
                     <button
                         onClick={() => setMobileOpen(false)}
-                        className="ml-auto lg:hidden p-2 text-slate-400 hover:text-slate-600 transition-colors"
+                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-1 custom-scrollbar">
+                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2 mt-4 custom-scrollbar">
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
                         const active = activeTab === item.key;
@@ -85,21 +88,16 @@ export default function Sidebar({
                                     setMobileOpen(false);
                                 }}
                                 className={cn(
-                                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                    active
-                                        ? "bg-blue-50 text-blue-600 shadow-sm shadow-blue-500/5"
-                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                    "sidebar-link group relative",
+                                    active && "active"
                                 )}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon size={20} className={cn("shrink-0", active ? "text-blue-600" : "group-hover:scale-110 transition-transform")} />
+                                <Icon size={20} className={cn("shrink-0 transition-all", active ? "text-indigo-500" : "group-hover:scale-110")} />
                                 {!collapsed && (
-                                    <span className="text-sm font-medium leading-none truncate">
+                                    <span className="text-[13px] font-bold uppercase tracking-wider truncate">
                                         {item.label}
                                     </span>
-                                )}
-                                {active && (
-                                    <div className="absolute left-0 top-2 bottom-2 w-1 bg-blue-600 rounded-r-full" />
                                 )}
                             </button>
                         );
@@ -107,15 +105,15 @@ export default function Sidebar({
                 </nav>
 
                 {/* Footer Toggle */}
-                <div className="p-4 border-t border-slate-100">
+                <div className="p-4">
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:flex w-full items-center justify-center p-2 rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors"
+                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all"
                     >
                         {collapsed ? <ChevronRight size={20} /> : (
                             <div className="flex items-center gap-2">
                                 <ChevronLeft size={20} />
-                                <span className="text-xs font-medium uppercase tracking-wider">Collapse Sidebar</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Dock System</span>
                             </div>
                         )}
                     </button>

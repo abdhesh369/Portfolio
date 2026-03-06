@@ -18,102 +18,103 @@ export default function SystemStatus({
     lastChecked,
     onRefresh
 }: SystemStatusProps) {
-    const getStatusColor = (status: string) => {
-        if (status === "healthy" || status === "connected") return "status-healthy";
-        if (status === "loading" || status === "checking") return "status-warning animate-pulse";
-        return "status-error";
-    };
-
     const getIndicatorColor = (status: string) => {
-        if (status === "healthy" || status === "connected") return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]";
-        if (status === "loading" || status === "checking") return "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]";
-        return "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]";
+        if (status === "healthy" || status === "connected") return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
+        if (status === "loading" || status === "checking") return "bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]";
+        return "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]";
     };
 
     return (
-        <div className="glass-card flex flex-col h-full">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="font-heading font-bold text-slate-900 text-lg uppercase tracking-tight">System Status</h2>
+        <div className="nm-flat rounded-[2rem] flex flex-col h-full overflow-hidden">
+            <div className="p-7 flex items-center justify-between">
+                <h2 className="text-xl font-black text-[var(--admin-text-primary)] uppercase tracking-tighter">
+                    HEARTBEAT
+                </h2>
                 <button
                     onClick={onRefresh}
-                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                    className="w-10 h-10 nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all flex items-center justify-center p-0"
                     title="Refresh Heartbeat"
                 >
-                    <RefreshCw size={16} className={cn(apiHealth === "loading" && "animate-spin")} />
+                    <RefreshCw size={16} strokeWidth={3} className={cn(apiHealth === "loading" && "animate-spin")} />
                 </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-7 pt-0 space-y-8 flex-1">
                 {/* API Health */}
-                <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
-                        <div className="flex items-center gap-2">
-                            <Activity size={14} className="text-blue-500" />
-                            <span>Core API</span>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.2em] text-[var(--admin-text-secondary)]">
+                        <div className="flex items-center gap-2.5">
+                            <Activity size={14} strokeWidth={3} className="text-indigo-500" />
+                            <span>CORE_API</span>
                         </div>
-                        <span className={cn("status-pill", getStatusColor(apiHealth))}>
-                            {apiHealth === "healthy" ? "All Green" : apiHealth.toUpperCase()}
+                        <span className={cn(
+                            "px-3 py-1 rounded-full nm-inset",
+                            apiHealth === "healthy" ? "text-emerald-500" : "text-rose-500"
+                        )}>
+                            {apiHealth === "healthy" ? "NOMINAL" : apiHealth.toUpperCase()}
                         </span>
                     </div>
-                    <div className="admin-progress">
+                    <div className="progress-track h-2.5 rounded-full overflow-hidden">
                         <div
-                            className="admin-progress-fill bg-emerald-500"
-                            style={{ width: apiHealth === "healthy" ? "100%" : (apiHealth === "loading" ? "40%" : "10%") }}
+                            className="progress-fill h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: apiHealth === "healthy" ? "100%" : (apiHealth === "loading" ? "40%" : "15%") }}
                         />
                     </div>
                     {responseTime !== undefined && responseTime > 0 && (
-                        <p className="text-[10px] text-slate-400 font-medium">Latency: <span className="text-slate-600 font-bold">{responseTime}ms</span></p>
+                        <div className="flex items-center gap-2">
+                            <Clock size={10} className="text-[var(--admin-text-secondary)]" />
+                            <p className="text-[10px] text-[var(--admin-text-secondary)] font-bold uppercase tracking-widest">
+                                LATENCY: <span className="text-indigo-600">{responseTime}ms</span>
+                            </p>
+                        </div>
                     )}
                 </div>
 
                 {/* Database & Redis */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-3">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            <Database size={12} className="text-purple-500" />
-                            <span>Database</span>
+                <div className="grid grid-cols-2 gap-5">
+                    <div className="p-5 rounded-2xl nm-inset space-y-4">
+                        <div className="flex items-center gap-2.5 text-[9px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em]">
+                            <Database size={12} strokeWidth={3} className="text-purple-500" />
+                            <span>STORAGE</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className={cn("w-2 h-2 rounded-full", getIndicatorColor(database))} />
-                            <span className="text-xs font-bold text-slate-700 capitalize">{database}</span>
+                        <div className="flex items-center gap-3">
+                            <div className={cn("w-2.5 h-2.5 rounded-full", getIndicatorColor(database))} />
+                            <span className="text-[11px] font-black text-[var(--admin-text-primary)] uppercase tracking-wider">{database}</span>
                         </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-3">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            <Server size={12} className="text-orange-500" />
-                            <span>Redis Cache</span>
+                    <div className="p-5 rounded-2xl nm-inset space-y-4">
+                        <div className="flex items-center gap-2.5 text-[9px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em]">
+                            <Server size={12} strokeWidth={3} className="text-orange-500" />
+                            <span>CACHE</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className={cn("w-2 h-2 rounded-full", getIndicatorColor(redis))} />
-                            <span className="text-xs font-bold text-slate-700 capitalize">{redis}</span>
+                        <div className="flex items-center gap-3">
+                            <div className={cn("w-2.5 h-2.5 rounded-full", getIndicatorColor(redis))} />
+                            <span className="text-[11px] font-black text-[var(--admin-text-primary)] uppercase tracking-wider">{redis}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Security / SSL Placeholder */}
-                <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/30 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-white border border-blue-100 text-blue-600">
-                            <Shield size={16} />
+                {/* Security Placeholder */}
+                <div className="p-5 rounded-2xl nm-inset flex items-center justify-between border-l-2 border-indigo-500/30">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl nm-flat flex items-center justify-center text-indigo-600">
+                            <Shield size={18} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Environment</p>
-                            <p className="text-xs font-bold text-blue-700 uppercase">Production SSL</p>
+                            <p className="text-[9px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em]">NETWORK_DEFENSE</p>
+                            <p className="text-xs font-black text-[var(--admin-text-primary)] tracking-widest uppercase">SSL_ENCRYPTED</p>
                         </div>
                     </div>
-                    <div className="text-blue-600">
-                        <div className="w-2 h-2 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
-                    </div>
+                    <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
                 </div>
-
-                {lastChecked && (
-                    <div className="pt-2 flex items-center gap-2 text-[10px] text-slate-400 font-medium italic border-t border-slate-50">
-                        <Clock size={10} />
-                        <span>Last checked: {lastChecked}</span>
-                    </div>
-                )}
             </div>
+
+            {lastChecked && (
+                <div className="p-5 border-t border-[var(--nm-dark)]/20 flex items-center justify-center gap-2">
+                    <span className="text-[9px] font-bold text-[var(--admin-text-secondary)] uppercase tracking-[0.3em]">SYNCHRONIZED_AT: {lastChecked}</span>
+                </div>
+            )}
         </div>
     );
 }

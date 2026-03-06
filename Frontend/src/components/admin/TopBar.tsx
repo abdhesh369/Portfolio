@@ -4,6 +4,7 @@ import {
 import { useAuth } from "@/hooks/auth-context";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useRipple } from "@/hooks/use-ripple";
 
 interface TopBarProps {
     activeTab: string;
@@ -27,77 +28,89 @@ export default function TopBar({ activeTab, setMobileMenuOpen }: TopBarProps) {
     }, []);
 
     return (
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
-            <div className="h-16 flex items-center justify-between px-4 lg:px-8 max-w-7xl mx-auto w-full">
+        <header className="sticky top-0 z-40 h-[72px] nm-flat transition-all">
+            <div className="h-full flex items-center justify-between px-4 lg:px-8 max-w-7xl mx-auto w-full">
                 {/* Left Side: Mobile Menu + Breadcrumbs */}
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setMobileMenuOpen(true)}
-                        className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg lg:hidden"
+                        className="w-10 h-10 nm-button lg:hidden"
                     >
-                        <Menu size={20} />
+                        <Menu size={18} />
                     </button>
 
-                    <div className={cn("hidden sm:flex items-center gap-2 text-slate-400 text-sm")}>
-                        <span className="font-medium hover:text-slate-600 transition-colors cursor-pointer">Admin</span>
-                        <ChevronRight size={14} className="mt-0.5" />
-                        <span className="text-slate-900 font-semibold uppercase tracking-wider text-xs">
-                            {activeTab.replace("-", " ")}
+                    <div className={cn("hidden sm:flex items-center gap-3 text-[var(--admin-text-secondary)] text-[11px] font-bold uppercase tracking-widest")}>
+                        <span className="hover:text-indigo-500 transition-colors cursor-pointer">System</span>
+                        <ChevronRight size={12} className="opacity-50" />
+                        <span className="text-[var(--admin-text-primary)] tracking-[0.15em]">
+                            {activeTab.replace("-", "_")}
                         </span>
                     </div>
                 </div>
 
-                {/* Right Side: Tools + User */}
-                <div className="flex items-center gap-1 lg:gap-3">
-                    <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors relative">
-                        <Search size={20} />
-                    </button>
+                {/* Right Side: Search + Tools + User */}
+                <div className="flex items-center gap-4 flex-1 justify-end">
+                    {/* Search Bar */}
+                    <div className="hidden md:flex items-center relative w-72">
+                        <Search size={16} className="absolute left-4 text-[var(--admin-text-secondary)]" />
+                        <input
+                            type="text"
+                            placeholder="SEARCH_COMMAND..."
+                            className="w-full h-10 pl-12 pr-4 nm-inset rounded-full text-xs font-bold tracking-widest text-[var(--admin-text-primary)] placeholder:text-[var(--admin-text-secondary)] focus:outline-none transition-all"
+                        />
+                    </div>
 
-                    <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors relative">
-                        <Bell size={20} />
-                        <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-                    </button>
-
-                    <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block" />
-
-                    {/* Profile Dropdown */}
-                    <div className="relative" ref={profileRef}>
-                        <button
-                            onClick={() => setProfileOpen(!profileOpen)}
-                            className="flex items-center gap-2 p-1 pl-1 lg:pl-2 rounded-full hover:bg-slate-100 transition-colors group"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 border border-slate-200 group-hover:border-blue-300 transition-colors">
-                                <User size={16} />
-                            </div>
-                            <span className="text-sm font-medium text-slate-700 hidden lg:block pr-1">
-                                {user?.username || "Admin"}
-                            </span>
+                    <div className="flex items-center gap-3">
+                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all relative group">
+                            <Bell size={18} />
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
                         </button>
 
-                        {profileOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-200/50 py-1 flex flex-col animate-in">
-                                <div className="px-4 py-2 border-b border-slate-50">
-                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-0.5">Account</p>
-                                    <p className="text-sm font-medium text-slate-900 truncate">{user?.username}</p>
+                        <button onClick={ripple} className="w-10 h-10 rounded-full nm-button text-[var(--admin-text-secondary)] hover:text-indigo-500 transition-all hidden sm:flex">
+                            <Settings size={18} />
+                        </button>
+
+                        <div className="w-1 h-6 nm-inset mx-2 hidden sm:block rounded-full" />
+
+                        {/* Profile Dropdown */}
+                        <div className="relative" ref={profileRef}>
+                            <button
+                                onClick={() => setProfileOpen(!profileOpen)}
+                                className="flex items-center gap-3 p-1.5 rounded-full nm-button hover:nm-flat transition-all group"
+                            >
+                                <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
+                                    <User size={14} />
                                 </div>
-                                <button className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
-                                    <User size={16} />
-                                    My Profile
-                                </button>
-                                <button className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
-                                    <Settings size={16} />
-                                    Settings
-                                </button>
-                                <div className="h-px bg-slate-100 my-1" />
-                                <button
-                                    onClick={() => logout()}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                                >
-                                    <LogOut size={16} />
-                                    Logout
-                                </button>
-                            </div>
-                        )}
+                                <span className="text-[11px] font-bold text-[var(--admin-text-primary)] hidden lg:block pr-2 tracking-widest uppercase">
+                                    {user?.username || "ROOT"}
+                                </span>
+                            </button>
+
+                            {profileOpen && (
+                                <div className="absolute right-0 mt-4 w-56 nm-flat rounded-2xl py-2 flex flex-col animate-in overflow-hidden z-50">
+                                    <div className="px-5 py-3 border-b border-white/20">
+                                        <p className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] mb-1">Access Protocol</p>
+                                        <p className="text-xs font-black text-[var(--admin-text-primary)] truncate">{user?.username}</p>
+                                    </div>
+                                    <button className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] hover:bg-white/10 hover:text-indigo-500 transition-all">
+                                        <User size={14} />
+                                        User Profile
+                                    </button>
+                                    <button className="flex items-center gap-3 px-5 py-3 text-xs font-bold text-[var(--admin-text-secondary)] hover:bg-white/10 hover:text-indigo-500 transition-all">
+                                        <Settings size={14} />
+                                        Kernel Config
+                                    </button>
+                                    <div className="h-px bg-white/20 mx-4 my-1" />
+                                    <button
+                                        onClick={() => logout()}
+                                        className="flex items-center gap-3 px-5 py-3 text-xs font-black text-rose-500 hover:bg-rose-500/10 transition-all"
+                                    >
+                                        <LogOut size={14} />
+                                        TERMINATE_SESSION
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

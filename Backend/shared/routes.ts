@@ -874,12 +874,14 @@ export const api = {
             input: insertSiteSettingsApiSchema,
             responses: {
                 200: createSuccessResponse(siteSettingsSchema),
+                400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
                 500: errorSchemas.internal,
             },
-        },
+        }
     },
+},
 };
 
 export type Api = typeof api;

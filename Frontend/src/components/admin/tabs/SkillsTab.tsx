@@ -8,7 +8,7 @@ import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Skill } from "@shared/schema";
 
-const emptySkill = { name: "", category: "", status: "Core", icon: "Code", description: "", proof: "", x: 50, y: 50 };
+const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50 };
 
 import type { AdminTabProps } from "./types";
 
@@ -79,7 +79,7 @@ export function SkillsTab({ }: AdminTabProps) {
                 <form onSubmit={save} className="space-y-4 max-w-2xl">
                     <FormField label="Name *" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v })} required />
                     <FormField label="Category *" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} placeholder="e.g. Frontend, Backend, Tools" required />
-                    <FormField label="Status" value={editing.status} onChange={(v) => setEditing({ ...editing, status: v })} placeholder="Core, Learning, etc." />
+                    <FormField label="Status" value={editing.status} onChange={(v) => setEditing({ ...editing, status: v as "Core" | "Advanced" | "Learning" })} placeholder="Core, Learning, etc." />
                     <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
                     <FormTextarea label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} />
                     <FormTextarea label="Proof" value={editing.proof} onChange={(v) => setEditing({ ...editing, proof: v })} />

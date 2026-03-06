@@ -6,15 +6,22 @@ import { Label } from "@/components/ui/label";
 import { Briefcase } from "lucide-react";
 
 export function SettingsTab() {
-    const { data: settings, isLoading } = useSiteSettings();
+    const { data: settings, isLoading, isError } = useSiteSettings();
     const updateMutation = useUpdateSiteSettings();
 
     if (isLoading) return <LoadingSkeleton />;
+    if (isError) return <div className="text-red-400">Failed to load settings.</div>;
 
     const handleToggleOpenToWork = (checked: boolean) => {
-        updateMutation.mutate({ isOpenToWork: checked });
+        updateMutation.mutate(
+            { isOpenToWork: checked },
+            {
+                onError: () => {
+                    // Show toast or error feedback to user
+                },
+            }
+        );
     };
-
     return (
         <div className="animate-fade-in space-y-6">
             <div className="flex items-center justify-between mb-6">
