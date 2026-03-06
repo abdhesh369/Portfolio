@@ -18,7 +18,10 @@ export class CacheService {
 
     /**
      * Get or Set pattern
-     * Atomically tries to get from cache, then runs fallback if miss and sets cache.
+     * Note: This implementation has a TOCTOU (Time-of-Check to Time-of-Use) race condition 
+     * between the get and set operations. In high-concurrency environments, this may 
+     * lead to "cache stampede" where multiple requests fetch from DB simultaneously.
+     * 
      * @param key - The Redis key
      * @param ttl - Time to live in seconds
      * @param fallback - Async function to fetch data if cache miss
@@ -29,31 +32,53 @@ export class CacheService {
         }
 
         try {
-            const cached = await redis.get(key);
-            if (cached) {
-                try {
-                    return JSON.parse(cached) as T;
-                } catch (parseErr) {
-                    logger.warn({ context: "cache", key, error: parseErr }, "Value in Redis is not valid JSON, overwriting...");
-                }
-            }
+            const cached = await this.get<T>(key);
+            if (cached !== null) return cached;
         } catch (err) {
-            logger.error({ context: "cache", key, error: err }, "Redis read failed");
+            // Silently fail and continue to fallback
         }
 
         const data = await fallback();
 
         try {
-            await redis.setex(key, ttl, JSON.stringify(data));
+            await this.set(key, data, ttl);
         } catch (err) {
-            logger.error({ context: "cache", key, error: err }, "Redis write failed");
+            // Silently fail
         }
 
         return data;
     }
 
     /**
-     * Invalidate one or more keys
+     * Gets a value from cache
+     */
+    static async get<T>(key: string): Promise<T | null> {
+        if (!redis) return null;
+        const cached = await redis.get(key);
+        if (!cached) return null;
+
+        try {
+            return JSON.parse(cached) as T;
+        } catch (err) {
+            logger.warn({ context: "cache", key, error: err }, "Invalid JSON in cache");
+            return null;
+        }
+    }
+
+    /**
+     * Sets a value in cache
+     */
+    static async set(key: string, data: any, ttl: number): Promise<void> {
+        if (!redis) return;
+        try {
+            await redis.setex(key, ttl, JSON.stringify(data));
+        } catch (err) {
+            logger.error({ context: "cache", key, error: err }, "Redis write failed");
+        }
+    }
+
+    /**
+     * Invalidate one or more keys (alias for del)
      */
     static async invalidate(...keys: string[]): Promise<void> {
         if (!redis || keys.length === 0) return;

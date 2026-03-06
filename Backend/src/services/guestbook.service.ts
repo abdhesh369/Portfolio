@@ -36,7 +36,11 @@ export class GuestbookService {
                 })
                 .returning();
 
-            await this.invalidateCache();
+            try {
+                await this.invalidateCache();
+            } catch (err) {
+                logger.error({ err }, "Failed to invalidate guestbook cache");
+            }
             return newMessage;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error adding guestbook message");

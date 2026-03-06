@@ -3,7 +3,7 @@
 **Date:** March 2026
 **Project:** Full-Stack TypeScript Portfolio (Backend + Frontend Monorepo)
 **Issues Found:** 19 total — 2 Critical, 6 High, 6 Medium, 5 Low
-**Overall Score:** 5.5 / 10 *(regressed from 6/10 in v2)*
+**Overall Score:** 5.5 / 10 *(regressed from 6/10 in v1)*
 
 ---
 
@@ -254,12 +254,12 @@ const getQueryFn: <T>(options) => QueryFunction<T> =
 ### I-07 — `RUNBOOK.md` Contains Live Production URL
 **Severity:** 🟠 HIGH | **Area:** Security
 
-`RUNBOOK.md` contains `https://backend-1gk6.onrender.com` in **4 places**. This is a public repository. Exposing the production service URL invites targeted probing, DoS attempts, and rate-limit abuse.
+`RUNBOOK.md` contains `https://backend-your-app.onrender.com` in **4 places**. This is a public repository. Exposing the production service URL invites targeted probing, DoS attempts, and rate-limit abuse.
 
 ```markdown
 # RUNBOOK.md lines 24, 34, 51, 172
-curl https://backend-1gk6.onrender.com/ping   # EXPOSED
-curl https://backend-1gk6.onrender.com/health # EXPOSED
+curl https://backend-your-app.onrender.com/ping   # REDACTED
+curl https://backend-your-app.onrender.com/health # REDACTED
 ```
 
 **Fix:**
@@ -376,9 +376,9 @@ await submitBtn.click();
 **Severity:** 🟡 MEDIUM | **Area:** Security
 
 ```yaml
-POSTGRES_PASSWORD: password
-ADMIN_PASSWORD: admin
-JWT_SECRET: dev_secret_key_at_least_64_characters_long_for_proper_security_padding__
+POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+JWT_SECRET: ${JWT_SECRET}
 ```
 
 **Fix:** Switch to env var references:

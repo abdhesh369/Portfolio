@@ -25,7 +25,16 @@ export class ExperienceService {
      */
     async getById(id: number): Promise<Experience | null> {
         const key = CacheService.key(FEATURE, ITEM_NAMESPACE, id);
-        return CacheService.getOrSet(key, CACHE_TTL, () => experienceRepository.findById(id));
+
+        const cached = await CacheService.get<Experience>(key);
+        if (cached) return cached;
+
+        const experience = await experienceRepository.findById(id);
+        if (experience) {
+            await CacheService.set(key, experience, CACHE_TTL);
+        }
+
+        return experience;
     }
 
     /**

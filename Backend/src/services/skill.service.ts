@@ -67,6 +67,11 @@ export class SkillService {
     async bulkDelete(ids: number[]): Promise<void> {
         await skillRepository.bulkDelete(ids);
         await this.invalidateCache();
+
+        // Invalidate individual item caches
+        for (const id of ids) {
+            await CacheService.invalidate(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        }
     }
 
     private async invalidateCache(id?: number) {

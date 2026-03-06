@@ -63,7 +63,7 @@ export class PortfolioServiceService {
     private async invalidateCache(id?: number) {
         const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
         const keys = [listKey];
-        if (id) {
+        if (id !== undefined && id !== null) {
             keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
         }
         await CacheService.invalidate(...keys);

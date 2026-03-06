@@ -36,11 +36,17 @@ export class ArticleService {
     async getAll(status?: Article["status"]): Promise<Article[]> {
         const cacheKey = CacheService.key(FEATURE, LIST_NAMESPACE, status);
 
-        return CacheService.getOrSet(cacheKey, CACHE_TTL, async () => {
-            const articles = await articleRepository.findAll(status);
-            await CacheService.track(TRACKED_KEYS, cacheKey);
-            return articles;
+        const articles = await CacheService.getOrSet(cacheKey, CACHE_TTL, async () => {
+            return await articleRepository.findAll(status);
         });
+
+        try {
+            await CacheService.track(TRACKED_KEYS, cacheKey);
+        } catch (err) {
+            logger.error({ err, cacheKey }, "Failed to track article list hit/miss");
+        }
+
+        return articles;
     }
 
     /**
@@ -51,13 +57,19 @@ export class ArticleService {
     async getBySlug(slug: string): Promise<Article | null> {
         const cacheKey = CacheService.key(FEATURE, SLUG_NAMESPACE, slug);
 
-        return CacheService.getOrSet(cacheKey, CACHE_TTL, async () => {
-            const article = await articleRepository.findBySlug(slug);
-            if (article) {
-                await CacheService.track(TRACKED_KEYS, cacheKey);
-            }
-            return article;
+        const article = await CacheService.getOrSet(cacheKey, CACHE_TTL, async () => {
+            return await articleRepository.findBySlug(slug);
         });
+
+        if (article) {
+            try {
+                await CacheService.track(TRACKED_KEYS, cacheKey);
+            } catch (err) {
+                logger.error({ err, cacheKey }, "Failed to track article hit/miss");
+            }
+        }
+
+        return article;
     }
 
     /**

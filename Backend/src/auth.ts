@@ -107,6 +107,22 @@ export async function checkAuthStatus(req: Request): Promise<boolean> {
 /**
  * Middleware to check for admin authentication via JWT or API Key
  */
+interface JWTPayload {
+    role: string;
+    iat?: number;
+    exp?: number;
+}
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: {
+                role: string;
+            };
+        }
+    }
+}
+
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined;
 
@@ -130,9 +146,20 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         }
 
         try {
-            const decoded = jwt.verify(token, env.JWT_SECRET) as { role: string };
-            // Attach decoded token to request
-            req.user = decoded;
+            const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+
+            // Runtime validation of payload
+            if (!decoded || typeof decoded !== 'object' || !('role' in decoded)) {
+                return res.status(401).json({ message: "Invalid token payload" });
+            }
+
+            // Optional: check standard claims
+            if (!decoded.iat || !decoded.exp) {
+                return res.status(401).json({ message: "Incomplete token claims" });
+            }
+
+            // Attach decoded token to request with proper typing
+            req.user = { role: decoded.role as string };
             return next();
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {
