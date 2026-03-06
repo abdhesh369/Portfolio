@@ -11,5 +11,6 @@ export function useExperiences() {
         api.experiences.list.responses[200],
         "Failed to fetch experiences"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

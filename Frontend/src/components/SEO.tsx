@@ -32,6 +32,7 @@ export function SEO({
             return apiFetch(`/api/v1/seo/${slug}`);
         },
         enabled: !!slug,
+        staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
     const title = seoSettings?.metaTitle || propTitle || "Abdhesh Sah | Portfolio";

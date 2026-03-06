@@ -11,5 +11,6 @@ export function useProjects() {
         api.projects.list.responses[200],
         "Failed to fetch projects"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

@@ -7,7 +7,7 @@ import SectionDivider from "@/components/SectionDivider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import { DEFAULT_SECTION_ORDER } from "shared/schema";
+import { DEFAULT_SECTION_ORDER } from "@portfolio/shared/schema";
 import React from "react";
 
 // Lazy-load below-the-fold sections to reduce initial bundle

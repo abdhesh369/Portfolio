@@ -7,6 +7,7 @@ export function useAnalyticsSummary() {
     queryFn: async () => {
       return await apiFetch("/api/v1/analytics/summary");
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -16,6 +17,7 @@ export function useVitalsSummary(days: number = 7) {
     queryFn: async () => {
       return await apiFetch(`/api/v1/analytics/vitals?days=${days}`);
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 

@@ -12,6 +12,7 @@ export function useArticles(status?: string) {
         api.articles.list.responses[200],
         "Failed to fetch articles"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -25,6 +26,7 @@ export function useArticle(slug: string) {
         "Failed to fetch article"
       ),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -37,6 +39,7 @@ export function useArticleSearch(query: string) {
     },
     enabled: query.trim().length >= 2,
     placeholderData: (prev) => prev,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 

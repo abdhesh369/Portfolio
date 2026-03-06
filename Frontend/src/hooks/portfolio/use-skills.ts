@@ -11,6 +11,7 @@ export function useSkills() {
         api.skills.list.responses[200],
         "Failed to fetch skills"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -23,6 +24,7 @@ export function useSkillConnections() {
         api.skills.connections.responses[200],
         "Failed to fetch skill connections"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -35,5 +37,6 @@ export function useMindset() {
         api.mindset.list.responses[200],
         "Failed to fetch mindset principles"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

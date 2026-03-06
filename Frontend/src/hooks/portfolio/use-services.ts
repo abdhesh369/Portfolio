@@ -11,5 +11,6 @@ export function useServices() {
         api.services.list.responses[200],
         "Failed to fetch services"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

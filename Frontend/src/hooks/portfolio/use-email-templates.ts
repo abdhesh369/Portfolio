@@ -16,6 +16,7 @@ export function useEmailTemplates() {
                 api.emailTemplates.list.responses[200],
                 "Failed to fetch email templates"
             ),
+        staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
     const createMutation = useMutation({

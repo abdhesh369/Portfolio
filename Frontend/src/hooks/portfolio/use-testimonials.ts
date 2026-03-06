@@ -11,5 +11,6 @@ export function useTestimonials() {
         api.testimonials.list.responses[200],
         "Failed to fetch testimonials"
       ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

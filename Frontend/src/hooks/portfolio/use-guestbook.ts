@@ -14,6 +14,7 @@ export function useGuestbook() {
                 api.guestbook.list.responses[200],
                 "Failed to fetch guestbook entries"
             ),
+        staleTime: 1000 * 60 * 5, // 5 minutes
     });
 }
 
@@ -57,6 +58,7 @@ export function useAdminGuestbook() {
                 api.guestbook.adminList.responses[200],
                 "Failed to fetch admin guestbook entries"
             ),
+        staleTime: 1000 * 60 * 5, // 5 minutes
     });
 }
 
