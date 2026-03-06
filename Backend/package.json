@@ -8,6 +8,7 @@
     "predev": "npm run env:validate",
     "dev": "tsx --watch src/index.ts",
     "lint": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "build": "tsc --project tsconfig.json",
     "prestart": "npm run env:validate",
     "start": "node --import ./dist/src/instrument.js ./dist/src/index.js",

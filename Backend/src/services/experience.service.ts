@@ -2,6 +2,7 @@ import { experienceRepository } from "../repositories/experience.repository.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Experience, InsertExperience } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
+import { logger } from "../lib/logger.js";
 
 const FEATURE = "experience";
 const LIST_NAMESPACE = "list";
@@ -48,7 +49,7 @@ export class ExperienceService {
             await this.invalidateCache();
         } catch (err) {
             // Log but don't fail the request
-            console.error("Failed to invalidate experience cache after create:", err);
+            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
         }
         return experience;
     }
@@ -64,7 +65,7 @@ export class ExperienceService {
         try {
             await this.invalidateCache(id);
         } catch (err) {
-            console.error("Failed to invalidate experience cache after update:", err);
+            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
         }
         return experience;
     }
@@ -78,7 +79,7 @@ export class ExperienceService {
         try {
             await this.invalidateCache(id);
         } catch (err) {
-            console.error("Failed to invalidate experience cache after delete:", err);
+            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
         }
     }
 

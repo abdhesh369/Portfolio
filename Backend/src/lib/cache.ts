@@ -68,7 +68,7 @@ export class CacheService {
     /**
      * Sets a value in cache
      */
-    static async set(key: string, data: any, ttl: number): Promise<void> {
+    static async set<T = unknown>(key: string, data: T, ttl: number): Promise<void> {
         if (!redis) return;
         try {
             await redis.setex(key, ttl, JSON.stringify(data));

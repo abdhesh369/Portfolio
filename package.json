@@ -32,6 +32,7 @@
         "schema:sync-check": "diff Backend/shared/schema.ts Frontend/shared/schema.ts"
     },
     "overrides": {
+        "ioredis": "5.10.0",
         "multer-storage-cloudinary": {
             "cloudinary": "^2.0.0"
         }

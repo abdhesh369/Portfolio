@@ -27,22 +27,17 @@ export class SettingsService {
 
         const key = CacheService.key(FEATURE, NAMESPACE);
 
-        this.initPromise = (async () => {
-            try {
-                const settings = await CacheService.getOrSet(key, CACHE_TTL, async () => {
-                    let data = await settingsRepository.getSettings();
-                    if (!data) {
-                        // Initialize with defaults if not exists
-                        data = await settingsRepository.updateSettings({ isOpenToWork: true });
-                    }
-                    return data;
-                });
-
-                return this.safeParseSettings(settings);
-            } finally {
-                this.initPromise = null;
+        this.initPromise = CacheService.getOrSet(key, CACHE_TTL, async () => {
+            let data = await settingsRepository.getSettings();
+            if (!data) {
+                data = await settingsRepository.updateSettings({ isOpenToWork: true });
             }
-        })();
+            return data;
+        })
+            .then((data) => this.safeParseSettings(data))
+            .finally(() => {
+                this.initPromise = null;
+            });
 
         return this.initPromise;
     }

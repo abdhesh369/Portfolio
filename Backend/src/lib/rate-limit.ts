@@ -22,8 +22,8 @@ const createLimiter = (options: {
         legacyHeaders: false,
         skipSuccessfulRequests: options.skipSuccessfulRequests || false,
         store: redis ? new RedisStore({
-            // @ts-ignore - ioredis compatibility
-            sendCommand: (...args: string[]) => redis!.call(...args),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis version mismatch; pinned in root overrides
+            sendCommand: (...args: string[]) => (redis as any).call(...args),
             prefix: `rl:${options.keyPrefix}:`,
         }) : undefined,
         handler: (req, res, next, options) => {

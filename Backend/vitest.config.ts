@@ -12,6 +12,10 @@ export default defineConfig({
             include: [
                 "src/services/article.service.ts",
                 "src/services/message.service.ts",
+                "src/services/settings.service.ts",
+                "src/services/project.service.ts",
+                "src/services/guestbook.service.ts",
+                "src/services/experience.service.ts",
                 "src/repositories/article.repository.ts",
                 "src/repositories/message.repository.ts",
                 "src/repositories/project.repository.ts",
@@ -20,7 +24,6 @@ export default defineConfig({
                 "src/auth.ts",
             ],
             thresholds: {
-                // Unit test thresholds — integration tests (TICKET-009) will bring overall coverage above 90%
                 lines: 60,
                 functions: 60,
             },

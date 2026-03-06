@@ -1,10 +1,9 @@
-import { Queue, Worker, Job, ConnectionOptions } from "bullmq";
+import { Queue, Worker, Job } from "bullmq";
 import { Redis } from "ioredis";
 import { Resend } from "resend";
 import { env } from "../env.js";
 import { logger } from "./logger.js";
 import { isLocalRedisUrl, formatRedisUrlForLog } from "./redis.js";
-
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
@@ -16,6 +15,12 @@ function getRedisConnection() {
             return Math.min(times * 50, 2000);
         }
     });
+}
+
+// bullmq bundles its own ioredis — cast via the ConnectionOptions shape it actually expects
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis version mismatch; pinned in root overrides
+function toBullMQConnection(r: ReturnType<typeof getRedisConnection>) {
+    return r as unknown as import("bullmq").ConnectionOptions;
 }
 
 // Ensure BullMQ is only active if REDIS validation passes or running locally
@@ -37,7 +42,7 @@ if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
 const canUseRedis = !isProd || (hasRedisUrl && !isProdLocalRedis);
 
 export const emailQueue = canUseRedis ? new Queue("email", {
-    connection: getRedisConnection() as unknown as ConnectionOptions
+    connection: toBullMQConnection(getRedisConnection())
 }) : null;
 
 export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) => {
@@ -99,7 +104,7 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
         throw new Error(`Unknown job type: ${type}`);
     }
 }, {
-    connection: getRedisConnection() as unknown as ConnectionOptions
+    connection: toBullMQConnection(getRedisConnection())
 }) : null;
 
 if (emailWorker) {
