@@ -14,4 +14,4 @@ export { useEmailTemplates } from "./use-email-templates";
 export { useLogin } from "./use-auth";
 export { useGuestbook, useSubmitGuestbook, useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "./use-guestbook";
 export { useCreateMindset, useUpdateMindset, useDeleteMindset } from "./use-admin-mindset";
-export { useSiteSettings, useUpdateSiteSettings } from "./use-settings";
+export { useSiteSettings, useUpdateSiteSettings } from "../use-site-settings";
