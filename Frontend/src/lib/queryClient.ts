@@ -30,9 +30,8 @@ export async function apiRequest(
     if (err instanceof ApiError) {
       // Propagate the real HTTP status so callers that check response.ok
       // or response.status receive accurate information.
-      return new Response(JSON.stringify({ message: err.message, ...err.data }),
-        { status: err.status, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ...err.data, message: err.message }),
+        { status: err.status, headers: { "Content-Type": "application/json" } });
     }
     throw err;
   }
