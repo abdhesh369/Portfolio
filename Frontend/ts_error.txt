@@ -1,0 +1,6 @@
+src/components/SuspenseErrorBoundary.tsx(22,1): error TS1068: Unexpected token. A constructor, method, accessor, or property was expected.
+src/components/SuspenseErrorBoundary.tsx(24,24): error TS1005: ',' expected.
+src/components/SuspenseErrorBoundary.tsx(24,42): error TS1005: ',' expected.
+src/components/SuspenseErrorBoundary.tsx(24,61): error TS1005: ';' expected.
+src/components/SuspenseErrorBoundary.tsx(31,10): error TS1005: ';' expected.
+src/components/SuspenseErrorBoundary.tsx(55,1): error TS1128: Declaration or statement expected.

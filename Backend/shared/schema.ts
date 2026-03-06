@@ -434,8 +434,8 @@ export const insertTestimonialApiSchema = z.object({
   company: z.string().max(255).default(""),
   quote: z.string().min(1).max(5000),
   relationship: z.string().max(100).default("Colleague"),
-  avatarUrl: z.string().max(500).nullable().optional(),
-  linkedinUrl: z.string().url().max(500).nullable().optional(),
+  avatarUrl: z.string().max(500).optional().nullable().or(z.literal("")),
+  linkedinUrl: z.string().max(500).optional().nullable().or(z.literal("")),
   displayOrder: z.number().default(0),
 });
 

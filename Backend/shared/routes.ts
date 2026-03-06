@@ -776,7 +776,7 @@ export const api = {
         },
         adminList: {
             method: "GET" as const,
-            path: "/api/v1/admin/guestbook",
+            path: "/api/v1/guestbook/admin",
             description: "List all guestbook entries (admin only)",
             requiresAuth: true,
             responses: {
