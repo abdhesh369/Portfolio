@@ -4,11 +4,16 @@ import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 
+interface AuthUser {
+    username: string;
+    [key: string]: unknown;
+}
+
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    user: unknown;
-    login: (userData?: unknown) => void;
+    user: AuthUser | null;
+    login: (userData?: AuthUser) => void;
     logout: () => void;
     checkAuth: () => Promise<void>;
 }
@@ -18,7 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<unknown>(null);
+    const [user, setUser] = useState<AuthUser | null>(null);
     const queryClient = useQueryClient();
 
     const checkAuth = useCallback(async () => {
@@ -38,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [queryClient]);
 
-    const login = (userData?: unknown) => {
+    const login = (userData?: AuthUser) => {
         localStorage.removeItem("auth_last_exit");
         if (userData) setUser(userData);
         setIsAuthenticated(true);

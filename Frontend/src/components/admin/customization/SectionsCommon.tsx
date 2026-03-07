@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableAttributes } from "@dnd-kit/core";
-import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+type SyntheticListenerMap = ReturnType<typeof useSortable>['listeners'];
 
 export interface CollapsibleSectionProps {
     title: string;

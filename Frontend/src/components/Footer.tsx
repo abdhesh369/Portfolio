@@ -134,7 +134,7 @@ export default function Footer() {
                 <span className="text-sm font-medium">Get in touch</span>
               </div>
               <a
-                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact from Portfolio`}
+                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact%20from%20Portfolio`}
                 className="text-lg font-bold text-white hover:text-primary transition-colors truncate block"
               >
                 {settings?.socialEmail || "contact@example.com"}
