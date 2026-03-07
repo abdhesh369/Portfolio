@@ -74,6 +74,20 @@ function SettingsApplicator() {
     };
 
     const hexToHslComponents = (hex: string) => {
+      // If already HSL, normalize it to components (H S L)
+      if (typeof hex === 'string' && hex.startsWith('hsl')) {
+        const hslMatch = hex.match(/hsl\(\s*([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\s*\)/i);
+        if (hslMatch) {
+          return `${hslMatch[1]} ${hslMatch[2]}% ${hslMatch[3]}%`;
+        }
+        // Fallback for modern HSL format without commas
+        const hslMatchAlt = hex.match(/hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*\)/i);
+        if (hslMatchAlt) {
+          return `${hslMatchAlt[1]} ${hslMatchAlt[2]}% ${hslMatchAlt[3]}%`;
+        }
+        return null;
+      }
+
       const fullHex = normalizeHex(hex);
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
       if (!result) return null;

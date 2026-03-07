@@ -28,10 +28,18 @@ export function useMessageStream(enabled: boolean = true) {
 
     function connect() {
       try {
-        const es = new EventSource("/api/v1/messages/stream", { withCredentials: true });
-        eventSourceRef.current = es;
+        // Use absolute URL if possible to avoid issues in cross-origin environments
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const streamUrl = backendUrl
+          ? `${backendUrl.replace(/\/$/, '')}/api/v1/messages/stream`
+          : '/api/v1/messages/stream';
 
-        es.addEventListener("new-message", (event) => {
+        const eventSource = new EventSource(streamUrl, {
+          withCredentials: true,
+        });
+        eventSourceRef.current = eventSource;
+
+        eventSource.addEventListener("new-message", (event) => {
           const data: SSEMessage = JSON.parse(event.data);
           setUnreadCount((c) => c + 1);
           setLastMessage(data);
@@ -45,12 +53,12 @@ export function useMessageStream(enabled: boolean = true) {
           }
         });
 
-        es.addEventListener("connected", () => {
+        eventSource.addEventListener("connected", () => {
           retryCount = 0; // Reset on successful connection
         });
 
-        es.onerror = () => {
-          es.close();
+        eventSource.onerror = () => {
+          eventSource.close();
           eventSourceRef.current = null;
 
           if (retryCount < maxRetries) {
