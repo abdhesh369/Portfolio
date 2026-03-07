@@ -120,7 +120,12 @@ export default function Home() {
     contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   };
 
-  const sectionOrder = settings?.sectionOrder || [...DEFAULT_SECTION_ORDER];
+  // Combine settings order with defaults to ensure no section is missing
+  const sectionOrder = Array.from(new Set([
+    ...(settings?.sectionOrder || []),
+    ...DEFAULT_SECTION_ORDER
+  ]));
+
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
 

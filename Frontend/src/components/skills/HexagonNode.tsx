@@ -14,12 +14,25 @@ const statusColors: Record<string, NodeColors> = {
         border: '#a855f7',
         bg: 'rgba(168, 85, 247, 0.12)'
     },
+    Advanced: {
+        glow: '#f59e0b',
+        glowRgb: '245, 158, 11',
+        border: '#f59e0b',
+        bg: 'rgba(245, 158, 11, 0.12)'
+    },
     Learning: {
         glow: '#ec4899',
         glowRgb: '236, 72, 153',
         border: '#ec4899',
         bg: 'rgba(236, 72, 153, 0.12)'
     }
+};
+
+const DEFAULT_STATUS_COLOR: NodeColors = {
+    glow: '#888888',
+    glowRgb: '136, 136, 136',
+    border: '#888888',
+    bg: 'rgba(136, 136, 136, 0.12)'
 };
 
 interface HexagonNodeProps {
@@ -39,7 +52,7 @@ export const HexagonNode = ({
     onLeave,
     'data-skill-idx': skillIdx
 }: HexagonNodeProps) => {
-    const colors = statusColors[node.status];
+    const colors = statusColors[node.status] || DEFAULT_STATUS_COLOR;
     const hexSize = 'clamp(44px, 7vw, 64px)';
 
     return (

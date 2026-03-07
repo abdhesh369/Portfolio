@@ -8,36 +8,44 @@ interface SkillsListViewProps {
   skillNodes: SkillNode[];
 }
 
-const STATUS_COLORS: Record<SkillStatus, { badge: string; dot: string }> = {
+const STATUS_COLORS: Record<string, { badge: string; dot: string }> = {
   Core: { badge: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30', dot: 'bg-cyan-400' },
   Comfortable: { badge: 'bg-purple-500/15 text-purple-400 border-purple-500/30', dot: 'bg-purple-400' },
+  Advanced: { badge: 'bg-amber-500/15 text-amber-500 border-amber-500/30', dot: 'bg-amber-500' },
   Learning: { badge: 'bg-pink-500/15 text-pink-400 border-pink-500/30', dot: 'bg-pink-400' },
 };
 
-const CATEGORY_ORDER: SkillCategory[] = ['Foundations', 'Frontend', 'Backend', 'Tools'];
+const DEFAULT_STATUS_COLOR = { badge: 'bg-gray-500/15 text-gray-400 border-gray-500/30', dot: 'bg-gray-400' };
 
-const CATEGORY_COLORS: Record<SkillCategory, string> = {
+const CATEGORY_COLORS: Record<string, string> = {
   Foundations: 'border-cyan-500/20 bg-cyan-500/5',
   Frontend: 'border-purple-500/20 bg-purple-500/5',
   Backend: 'border-pink-500/20 bg-pink-500/5',
   Tools: 'border-amber-500/20 bg-amber-500/5',
+  Languages: 'border-emerald-500/20 bg-emerald-500/5',
+  Architecture: 'border-blue-500/20 bg-blue-500/5',
 };
 
+const DEFAULT_CATEGORY_COLOR = 'border-white/10 bg-white/5';
+
 export function SkillsListView({ skillNodes }: SkillsListViewProps) {
-  const [expandedCategories, setExpandedCategories] = useState<Set<SkillCategory>>(
-    new Set(CATEGORY_ORDER)
+  // Dynamically derive categories from the actual skills
+  const dynamicCategories = Array.from(new Set(skillNodes.map(n => n.category)));
+
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set(dynamicCategories)
   );
   const [expandedSkill, setExpandedSkill] = useState<string | null>(null);
 
-  const grouped = CATEGORY_ORDER.reduce<Record<SkillCategory, SkillNode[]>>(
+  const grouped = dynamicCategories.reduce<Record<string, SkillNode[]>>(
     (acc, cat) => {
       acc[cat] = skillNodes.filter((n) => n.category === cat);
       return acc;
     },
-    {} as Record<SkillCategory, SkillNode[]>
+    {} as Record<string, SkillNode[]>
   );
 
-  const toggleCategory = (cat: SkillCategory) => {
+  const toggleCategory = (cat: string) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(cat)) next.delete(cat);
@@ -52,7 +60,7 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
 
   return (
     <div className="space-y-3" role="list" aria-label="Skills by category">
-      {CATEGORY_ORDER.map((category, catIdx) => {
+      {dynamicCategories.map((category, catIdx) => {
         const skills = grouped[category];
         if (!skills || skills.length === 0) return null;
         const isExpanded = expandedCategories.has(category);
@@ -64,7 +72,7 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
             whileInView={fadeUp.animate}
             viewport={{ once: true }}
             transition={{ duration: DURATION.fast, delay: catIdx * STAGGER.normal }}
-            className={`rounded-xl border ${CATEGORY_COLORS[category]} overflow-hidden`}
+            className={`rounded-xl border ${CATEGORY_COLORS[category] || DEFAULT_CATEGORY_COLOR} overflow-hidden`}
             role="listitem"
           >
             {/* Category Header */}
@@ -104,7 +112,7 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
                   <div className="px-3 pb-3 space-y-1">
                     {skills.map((skill) => {
                       const Icon = skill.icon || Code2;
-                      const statusStyle = STATUS_COLORS[skill.status];
+                      const statusStyle = STATUS_COLORS[skill.status] || DEFAULT_STATUS_COLOR;
                       const isSkillExpanded = expandedSkill === skill.id;
 
                       return (
