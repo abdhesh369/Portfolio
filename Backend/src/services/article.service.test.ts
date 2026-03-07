@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// ---- Mock dependencies (vi.hoisted ensures availability during vi.mock hoisting) ----
+// ---- Mock dependencies ----
 const {
     mockFindAll, mockFindBySlug, mockFindById, mockFindByIds,
     mockCreate, mockUpdate, mockDelete, mockBulkDelete,
@@ -33,28 +33,53 @@ vi.mock("../repositories/article.repository.js", () => ({
     },
 }));
 
-// Mock Redis
-const {
-    mockRedisGet, mockRedisSetex, mockRedisDel, mockRedisSadd, mockRedisSmembers,
-} = vi.hoisted(() => ({
-    mockRedisGet: vi.fn(),
-    mockRedisSetex: vi.fn(),
-    mockRedisDel: vi.fn(),
-    mockRedisSadd: vi.fn(),
-    mockRedisSmembers: vi.fn(),
+const { mockCacheGetOrSet, mockCacheInvalidate, mockCacheKey, mockCacheTrack, mockCacheInvalidateTracked } = vi.hoisted(() => ({
+    mockCacheGetOrSet: vi.fn(),
+    mockCacheInvalidate: vi.fn(),
+    mockCacheKey: vi.fn().mockImplementation((f: string, n: string, id?: string | number) =>
+        id !== undefined ? `${f}:${n}:${id}` : `${f}:${n}`
+    ),
+    mockCacheTrack: vi.fn(),
+    mockCacheInvalidateTracked: vi.fn(),
 }));
 
-vi.mock("../lib/redis.js", () => ({
-    redis: {
-        get: mockRedisGet,
-        setex: mockRedisSetex,
-        del: mockRedisDel,
-        sadd: mockRedisSadd,
-        smembers: mockRedisSmembers,
+vi.mock("../lib/cache.js", () => ({
+    CacheService: {
+        getOrSet: mockCacheGetOrSet,
+        invalidate: mockCacheInvalidate,
+        key: mockCacheKey,
+        track: mockCacheTrack,
+        invalidateTracked: mockCacheInvalidateTracked,
     },
 }));
 
-import { ArticleService } from "../services/article.service.js";
+vi.mock("../lib/logger.js", () => ({
+    logger: {
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+    },
+}));
+
+vi.mock("../routes/chat.js", () => ({ CHAT_CACHE_KEY: "chat:context" }));
+
+import { ArticleService } from "./article.service.js";
+import type { Article } from "@portfolio/shared";
+
+const MOCK_ARTICLE: Article = {
+    id: 1,
+    title: "Test Article",
+    slug: "test-article",
+    content: "Content",
+    excerpt: "Summary",
+    status: "published",
+    publishedAt: null,
+    readTimeMinutes: 5,
+    authorId: 1,
+    viewCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+};
 
 describe("ArticleService", () => {
     let service: ArticleService;
@@ -65,120 +90,94 @@ describe("ArticleService", () => {
     });
 
     describe("getAll", () => {
-        it("returns cached articles on cache hit", async () => {
-            const cachedArticles = [{ id: 1, title: "Cached" }];
-            mockRedisGet.mockResolvedValue(JSON.stringify(cachedArticles));
+        it("returns articles from cache and tracks hit", async () => {
+            mockCacheGetOrSet.mockResolvedValue([MOCK_ARTICLE]);
 
             const result = await service.getAll("published");
 
-            expect(result).toEqual(cachedArticles);
-            expect(mockFindAll).not.toHaveBeenCalled();
-            expect(mockRedisGet).toHaveBeenCalledWith("articles:status:published");
+            expect(result).toEqual([MOCK_ARTICLE]);
+            expect(mockCacheGetOrSet).toHaveBeenCalled();
+            expect(mockCacheTrack).toHaveBeenCalled();
         });
 
-        it("fetches from DB and caches on cache miss", async () => {
-            const dbArticles = [{ id: 1, title: "From DB" }];
-            mockRedisGet.mockResolvedValue(null);
-            mockFindAll.mockResolvedValue(dbArticles);
-            mockRedisSetex.mockResolvedValue("OK");
-            mockRedisSadd.mockResolvedValue(1);
+        it("calls repository when cache misses", async () => {
+            mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
+            mockFindAll.mockResolvedValue([MOCK_ARTICLE]);
 
             const result = await service.getAll("published");
 
-            expect(result).toEqual(dbArticles);
             expect(mockFindAll).toHaveBeenCalledWith("published");
-            expect(mockRedisSetex).toHaveBeenCalledWith(
-                "articles:status:published",
-                3600,
-                JSON.stringify(dbArticles)
-            );
-        });
-
-        it("uses correct cache key when no status provided", async () => {
-            mockRedisGet.mockResolvedValue(null);
-            mockFindAll.mockResolvedValue([]);
-            mockRedisSetex.mockResolvedValue("OK");
-            mockRedisSadd.mockResolvedValue(1);
-
-            await service.getAll();
-
-            expect(mockRedisGet).toHaveBeenCalledWith("articles");
-            expect(mockFindAll).toHaveBeenCalledWith(undefined);
+            expect(result).toEqual([MOCK_ARTICLE]);
         });
     });
 
     describe("getBySlug", () => {
-        it("returns cached article on cache hit", async () => {
-            const cached = { id: 1, title: "Cached", slug: "test" };
-            mockRedisGet.mockResolvedValue(JSON.stringify(cached));
+        it("returns article from cache and tracks hit", async () => {
+            mockCacheGetOrSet.mockResolvedValue(MOCK_ARTICLE);
 
-            const result = await service.getBySlug("test");
+            const result = await service.getBySlug("test-article");
 
-            expect(result).toEqual(cached);
-            expect(mockFindBySlug).not.toHaveBeenCalled();
+            expect(result).toEqual(MOCK_ARTICLE);
+            expect(mockCacheGetOrSet).toHaveBeenCalled();
+            expect(mockCacheTrack).toHaveBeenCalled();
         });
 
-        it("fetches from DB on cache miss", async () => {
-            const article = { id: 1, title: "From DB", slug: "test" };
-            mockRedisGet.mockResolvedValue(null);
-            mockFindBySlug.mockResolvedValue(article);
-            mockRedisSetex.mockResolvedValue("OK");
-            mockRedisSadd.mockResolvedValue(1);
+        it("calls repository on cache miss", async () => {
+            mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
+            mockFindBySlug.mockResolvedValue(MOCK_ARTICLE);
 
-            const result = await service.getBySlug("test");
+            const result = await service.getBySlug("test-article");
 
-            expect(result).toEqual(article);
-            expect(mockFindBySlug).toHaveBeenCalledWith("test");
+            expect(mockFindBySlug).toHaveBeenCalledWith("test-article");
+            expect(result).toEqual(MOCK_ARTICLE);
         });
 
-        it("returns null and does not cache when article not found", async () => {
-            mockRedisGet.mockResolvedValue(null);
+        it("returns null when article not found", async () => {
+            mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
             mockFindBySlug.mockResolvedValue(null);
 
             const result = await service.getBySlug("nonexistent");
 
             expect(result).toBeNull();
-            expect(mockRedisSetex).not.toHaveBeenCalled();
         });
     });
 
     describe("create", () => {
-        it("creates article and invalidates cache", async () => {
-            const created = { id: 1, title: "New", slug: "new", content: "Some content here" };
-            mockCreate.mockResolvedValue(created);
-            mockRedisSmembers.mockResolvedValue(["articles", "articles:status:published"]);
-            mockRedisDel.mockResolvedValue(2);
+        it("creates an article and invalidates cache", async () => {
+            mockCreate.mockResolvedValue(MOCK_ARTICLE);
 
-            const result = await service.create({
-                title: "New",
-                content: "Some content here",
-                status: "draft" as const,
-                readTimeMinutes: 1,
-                tags: ["tag1"],
-            });
+            const data = {
+                title: MOCK_ARTICLE.title,
+                content: MOCK_ARTICLE.content,
+                excerpt: MOCK_ARTICLE.excerpt,
+                status: MOCK_ARTICLE.status,
+                publishedAt: null as string | null,
+                readTimeMinutes: MOCK_ARTICLE.readTimeMinutes,
+                authorId: MOCK_ARTICLE.authorId,
+                tags: []
+            };
+            const result = await service.create(data as any);
 
-            expect(result).toEqual(created);
             expect(mockCreate).toHaveBeenCalled();
-            expect(mockRedisDel).toHaveBeenCalled(); // Cache invalidated
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(result).toEqual(MOCK_ARTICLE);
         });
     });
 
     describe("update", () => {
-        it("updates article and invalidates cache", async () => {
-            const existing = { id: 1, title: "Old", slug: "old", status: "draft" };
-            const updated = { id: 1, title: "Updated", slug: "old", status: "draft" };
-            mockFindById.mockResolvedValue(existing);
+        it("updates matching article and invalidates cache", async () => {
+            const updated = { ...MOCK_ARTICLE, title: "Updated" };
+            mockFindById.mockResolvedValue(MOCK_ARTICLE);
             mockUpdate.mockResolvedValue(updated);
-            mockRedisSmembers.mockResolvedValue([]);
-            mockRedisDel.mockResolvedValue(1);
 
             const result = await service.update(1, { title: "Updated" });
 
-            expect(result).toEqual(updated);
             expect(mockUpdate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(result.title).toBe("Updated");
         });
 
-        it("throws when article not found", async () => {
+        it("throws when article does not exist", async () => {
             mockFindById.mockResolvedValue(null);
 
             await expect(service.update(999, { title: "X" })).rejects.toThrow(
@@ -189,26 +188,38 @@ describe("ArticleService", () => {
 
     describe("delete", () => {
         it("deletes article and invalidates cache", async () => {
-            const article = { id: 1, slug: "to-delete" };
-            mockFindById.mockResolvedValue(article);
+            mockFindById.mockResolvedValue(MOCK_ARTICLE);
             mockDelete.mockResolvedValue(undefined);
-            mockRedisSmembers.mockResolvedValue([]);
-            mockRedisDel.mockResolvedValue(1);
 
             await service.delete(1);
 
             expect(mockDelete).toHaveBeenCalledWith(1);
-            expect(mockRedisDel).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith(expect.stringContaining("test-article"));
+        });
+    });
+
+    describe("bulkDelete", () => {
+        it("bulk deletes articles and invalidates cache", async () => {
+            mockFindByIds.mockResolvedValue([MOCK_ARTICLE]);
+            mockBulkDelete.mockResolvedValue(undefined);
+
+            await service.bulkDelete([1]);
+
+            expect(mockBulkDelete).toHaveBeenCalledWith([1]);
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalled();
         });
     });
 
     describe("incrementViewCount", () => {
-        it("delegates to repository", async () => {
+        it("delegates to repository without touching cache", async () => {
             mockIncrementViewCount.mockResolvedValue(undefined);
 
             await service.incrementViewCount(1);
 
             expect(mockIncrementViewCount).toHaveBeenCalledWith(1);
+            expect(mockCacheInvalidate).not.toHaveBeenCalled();
         });
     });
 });

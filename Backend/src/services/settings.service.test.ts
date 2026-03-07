@@ -43,12 +43,12 @@ describe("SettingsService", () => {
 
     describe("getSettings", () => {
         it("returns settings from cache", async () => {
-            const mockSettings = { id: 1, isOpenToWork: true };
+            const mockSettings = { id: 1, isOpenToWork: true, updatedAt: new Date() };
             mockCacheGetOrSet.mockResolvedValue(mockSettings);
 
             const result = await service.getSettings();
 
-            expect(result).toEqual(mockSettings);
+            expect(result).toEqual({ ...mockSettings, customCss: null });
             expect(mockCacheGetOrSet).toHaveBeenCalled();
         });
 
@@ -57,25 +57,25 @@ describe("SettingsService", () => {
                 return await fetcher();
             });
             mockGetSettings.mockResolvedValue(null);
-            mockUpdateSettings.mockResolvedValue({ id: 1, isOpenToWork: true });
+            mockUpdateSettings.mockResolvedValue({ id: 1, isOpenToWork: true, updatedAt: new Date() });
 
             const result = await service.getSettings();
 
             expect(mockGetSettings).toHaveBeenCalled();
             expect(mockUpdateSettings).toHaveBeenCalledWith({ isOpenToWork: true });
-            expect(result).toEqual({ id: 1, isOpenToWork: true });
+            expect(result).toEqual({ id: 1, isOpenToWork: true, updatedAt: expect.any(Date), customCss: null });
         });
     });
 
     describe("updateSettings", () => {
         it("updates settings and invalidates cache", async () => {
             const data = { isOpenToWork: false };
-            const updated = { id: 1, ...data };
+            const updated = { id: 1, ...data, updatedAt: new Date() };
             mockUpdateSettings.mockResolvedValue(updated);
 
             const result = await service.updateSettings(data as unknown as Parameters<typeof service.updateSettings>[0]);
 
-            expect(result).toEqual(updated);
+            expect(result).toEqual({ ...updated, updatedAt: expect.any(Date), customCss: null });
             expect(mockUpdateSettings).toHaveBeenCalledWith(data);
             expect(mockCacheInvalidate).toHaveBeenCalledWith("site:settings");
         });

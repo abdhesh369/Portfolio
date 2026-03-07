@@ -68,7 +68,7 @@ vi.mock("../middleware/csrf.js", () => ({
 }));
 
 vi.mock("express-rate-limit", () => ({
-    default: () => (_req: unknown, _res: unknown, next: unknown) => (next as Function)(),
+    rateLimit: () => (_req: unknown, _res: unknown, next: unknown) => (next as Function)(),
 }));
 
 // Mock Express Router
@@ -87,16 +87,28 @@ function mockReq(overrides: Partial<unknown> = {}): unknown {
     };
 }
 
-function mockRes(): { res: unknown; ctx: unknown } {
-    const ctx = { statusCode: 0, body: null as unknown, cookies: {} as Record<string, unknown>, clearedCookies: [] as string[] };
+interface MockResponseCtx {
+    statusCode: number;
+    body: any;
+    cookies: Record<string, { value: any; opts: any }>;
+    clearedCookies: string[];
+}
+
+function mockRes(): { res: any; ctx: MockResponseCtx } {
+    const ctx: MockResponseCtx = {
+        statusCode: 0,
+        body: null as any,
+        cookies: {} as Record<string, any>,
+        clearedCookies: [] as string[]
+    };
     const res = {
         status(code: number) { ctx.statusCode = code; return res; },
-        json(data: unknown) { ctx.body = data; return res; },
-        cookie(name: string, value: unknown, opts: unknown) {
+        json(data: any) { ctx.body = data; return res; },
+        cookie(name: string, value: any, opts: any) {
             ctx.cookies[name] = { value, opts };
             return res;
         },
-        clearCookie(name: string, opts?: unknown) {
+        clearCookie(name: string, opts?: any) {
             ctx.clearedCookies.push(name);
             return res;
         },
