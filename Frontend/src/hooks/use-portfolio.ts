@@ -21,7 +21,9 @@ export {
   useEmailTemplates,
   useGuestbook,
   useSubmitGuestbook,
-  useCreateMindset,
-  useUpdateMindset,
-  useDeleteMindset,
+  useAdminMindset,
+  useAdminExperiences,
+  useAdminServices,
+  useAdminSkills,
+  useAdminProjects,
 } from "./portfolio";

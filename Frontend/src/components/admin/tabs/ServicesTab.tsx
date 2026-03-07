@@ -1,10 +1,8 @@
 import React, { useState, type FormEvent } from "react";
-import { useServices } from "@/hooks/use-portfolio";
+import { useServices, useAdminServices } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api-helpers";
-import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Service } from "@portfolio/shared/schema";
 
@@ -20,10 +18,9 @@ const emptyService = {
 import type { AdminTabProps } from "./types";
 
 export function ServicesTab(_props: AdminTabProps) {
-  const { data: services, refetch } = useServices();
-  const { toast } = useToast();
+  const { data: services } = useServices();
+  const { create, update, remove, isPending } = useAdminServices();
   const [editing, setEditing] = useState<(Partial<Service> & typeof emptyService) | null>(null);
-  const [saving, setSaving] = useState(false);
 
   const openNew = () => {
     setEditing({ ...emptyService });
@@ -39,7 +36,6 @@ export function ServicesTab(_props: AdminTabProps) {
   const save = async (e: FormEvent) => {
     e.preventDefault();
     if (!editing) return;
-    setSaving(true);
 
     const tags = (editing.tagsInput || "")
       .split(",")
@@ -55,48 +51,17 @@ export function ServicesTab(_props: AdminTabProps) {
       tags,
     };
 
-    try {
-      if (editing.id) {
-        await apiFetch(`/api/v1/services/${editing.id}`, {
-          method: "PATCH",
-          body: JSON.stringify(body),
-        });
-        toast({ title: "Service updated" });
-      } else {
-        await apiFetch("/api/v1/services", {
-          method: "POST",
-          body: JSON.stringify(body),
-        });
-        toast({ title: "Service created" });
-      }
-      setEditing(null);
-      clearQueryCache();
-      refetch();
-    } catch (err: unknown) {
-      toast({
-        title: "Save failed",
-        description: err instanceof Error ? err.message : String(err),
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+    if (editing.id) {
+      await update({ id: editing.id, data: body });
+    } else {
+      await create(body);
     }
+    setEditing(null);
   };
 
   const deleteService = async (id: number) => {
     if (!confirm("Delete this service?")) return;
-    try {
-      await apiFetch(`/api/v1/services/${id}`, { method: "DELETE" });
-      toast({ title: "Service deleted" });
-      clearQueryCache();
-      refetch();
-    } catch (err: unknown) {
-      toast({
-        title: "Delete failed",
-        description: err instanceof Error ? err.message : String(err),
-        variant: "destructive",
-      });
-    }
+    await remove(id);
   };
 
   if (editing) {
@@ -157,8 +122,8 @@ export function ServicesTab(_props: AdminTabProps) {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving..." : editing.id ? "Update" : "Create"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Saving..." : editing.id ? "Update" : "Create"}
             </Button>
             <Button
               type="button"

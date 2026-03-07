@@ -139,6 +139,48 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
+        reorder: {
+            method: "PUT" as const,
+            path: "/api/v1/projects/reorder",
+            description: "Reorder projects (admin only)",
+            requiresAuth: true,
+            input: z.object({ orderedIds: z.array(z.number()) }),
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        bulkDelete: {
+            method: "POST" as const,
+            path: "/api/v1/projects/bulk-delete",
+            description: "Bulk delete projects (admin only)",
+            requiresAuth: true,
+            input: z.object({ ids: z.array(z.number()) }),
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+        bulkStatus: {
+            method: "POST" as const,
+            path: "/api/v1/projects/bulk-status",
+            description: "Bulk update project status (admin only)",
+            requiresAuth: true,
+            input: z.object({
+                ids: z.array(z.number()),
+                status: z.enum(["In Progress", "Completed", "Archived"]),
+            }),
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
     },
 
     // ---------- SKILLS ----------
@@ -212,6 +254,19 @@ export const api = {
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
                 404: errorSchemas.notFound,
+                500: errorSchemas.internal,
+            },
+        },
+        bulkDelete: {
+            method: "POST" as const,
+            path: "/api/v1/skills/bulk-delete",
+            description: "Bulk delete skills (admin only)",
+            requiresAuth: true,
+            input: z.object({ ids: z.array(z.number()) }),
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
                 500: errorSchemas.internal,
             },
         },

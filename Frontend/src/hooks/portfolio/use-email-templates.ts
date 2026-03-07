@@ -1,11 +1,11 @@
 import { api } from "@portfolio/shared";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { apiFetch } from "@/lib/api-helpers";
 import type { EmailTemplate } from "@portfolio/shared/schema";
+import { useAdminMutation } from "../admin/use-admin-mutation";
 
 export function useEmailTemplates() {
-    const queryClient = useQueryClient();
     const queryKey = ["email-templates"];
 
     const query = useQuery({
@@ -19,47 +19,48 @@ export function useEmailTemplates() {
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
-    const createMutation = useMutation({
+    const createMutation = useAdminMutation({
+        mutationKey: ["create-email-template"],
+        queryKeyToInvalidate: queryKey,
+        successTitle: "Template created",
+        successDescription: "The email template has been created successfully.",
         mutationFn: async (data: Omit<EmailTemplate, "id" | "createdAt" | "updatedAt">) => {
             return apiFetch(api.emailTemplates.list.path, {
                 method: "POST",
                 body: JSON.stringify(data),
             });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey });
-        },
     });
 
-
-    const updateMutationFixed = useMutation({
+    const updateMutation = useAdminMutation({
+        mutationKey: ["update-email-template"],
+        queryKeyToInvalidate: queryKey,
+        successTitle: "Template updated",
+        successDescription: "The email template has been updated successfully.",
         mutationFn: async ({ id, data }: { id: number; data: Partial<EmailTemplate> }) => {
             return apiFetch(`${api.emailTemplates.list.path}/${id}`, {
                 method: "PUT",
                 body: JSON.stringify(data),
             });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey });
-        },
     });
 
-
-    const deleteMutation = useMutation({
+    const deleteMutation = useAdminMutation({
+        mutationKey: ["delete-email-template"],
+        queryKeyToInvalidate: queryKey,
+        successTitle: "Template deleted",
+        successDescription: "The email template has been removed.",
         mutationFn: async (id: number) => {
             return apiFetch(`${api.emailTemplates.list.path}/${id}`, {
                 method: "DELETE",
             });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey });
         },
     });
 
     return {
         ...query,
         createMutation,
-        updateMutation: updateMutationFixed,
+        updateMutation,
         deleteMutation,
     };
 }

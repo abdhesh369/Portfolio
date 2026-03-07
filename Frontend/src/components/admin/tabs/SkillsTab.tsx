@@ -1,10 +1,7 @@
 import React, { useState, type FormEvent } from "react";
-import { useSkills } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
+import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api-helpers";
-import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Skill } from "@portfolio/shared/schema";
 
@@ -13,10 +10,10 @@ const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advance
 import type { AdminTabProps } from "./types";
 
 export function SkillsTab(_props: AdminTabProps) {
-    const { data: skills, refetch } = useSkills();
-    const { toast } = useToast();
+    const { data: skills } = useSkills();
+    const { create, update, remove, bulkDelete, isPending } = useAdminSkills();
+
     const [editing, setEditing] = useState<(Partial<Skill> & typeof emptySkill) | null>(null);
-    const [saving, setSaving] = useState(false);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
     const toggleSelect = (id: number) => {
@@ -25,49 +22,25 @@ export function SkillsTab(_props: AdminTabProps) {
 
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} skills?`)) return;
-        try {
-            await apiFetch("/api/v1/skills/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
-            toast({ title: "Skills deleted" });
-            setSelectedIds([]);
-            clearQueryCache();
-            refetch();
-        } catch (err: unknown) {
-            toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        }
+        await bulkDelete(selectedIds);
+        setSelectedIds([]);
     };
 
     const save = async (e: FormEvent) => {
         e.preventDefault();
         if (!editing) return;
-        setSaving(true);
-        try {
-            if (editing.id) {
-                await apiFetch(`/api/v1/skills/${editing.id}`, { method: "PUT", body: JSON.stringify(editing) });
-                toast({ title: "Skill updated" });
-            } else {
-                await apiFetch("/api/v1/skills", { method: "POST", body: JSON.stringify(editing) });
-                toast({ title: "Skill created" });
-            }
-            setEditing(null);
-            clearQueryCache();
-            refetch();
-        } catch (err: unknown) {
-            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        } finally {
-            setSaving(false);
+
+        if (editing.id) {
+            await update({ id: editing.id, data: editing });
+        } else {
+            await create(editing);
         }
+        setEditing(null);
     };
 
     const deleteSkill = async (id: number) => {
         if (!confirm("Delete this skill?")) return;
-        try {
-            await apiFetch(`/api/v1/skills/${id}`, { method: "DELETE" });
-            toast({ title: "Skill deleted" });
-            clearQueryCache();
-            refetch();
-        } catch (err: unknown) {
-            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        }
+        await remove(id);
     };
 
     if (editing) {
@@ -90,12 +63,13 @@ export function SkillsTab(_props: AdminTabProps) {
                             <option value="Advanced">Advanced</option>
                             <option value="Learning">Learning</option>
                         </select>
-                    </div>                    <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
+                    </div>
+                    <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
                     <FormTextarea label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} />
                     <FormTextarea label="Proof" value={editing.proof} onChange={(v) => setEditing({ ...editing, proof: v })} />
 
                     <div className="flex gap-3 pt-2">
-                        <Button type="submit" disabled={saving}>{saving ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
+                        <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
                         <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
                     </div>
                 </form>

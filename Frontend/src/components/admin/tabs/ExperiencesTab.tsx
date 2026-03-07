@@ -1,10 +1,8 @@
 import React, { useState, type FormEvent } from "react";
-import { useExperiences } from "@/hooks/use-portfolio";
+import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api-helpers";
-import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@portfolio/shared/schema";
 
@@ -13,49 +11,31 @@ const emptyExperience = { role: "", organization: "", period: "", startDate: new
 import type { AdminTabProps } from "./types";
 
 export function ExperiencesTab(_props: AdminTabProps) {
-    const { data: experiences, refetch } = useExperiences();
-    const { toast } = useToast();
+    const { data: experiences } = useExperiences();
+    const { create, update, remove, isPending } = useAdminExperiences();
     const [editing, setEditing] = useState<(Partial<Experience> & typeof emptyExperience) | null>(null);
-    const [saving, setSaving] = useState(false);
 
     const save = async (e: FormEvent) => {
         e.preventDefault();
         if (!editing) return;
-        setSaving(true);
-        try {
-            const payload = {
-                ...editing,
-                startDate: editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString() : editing.startDate) : null,
-                endDate: editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString() : editing.endDate) : null,
-            };
 
-            if (editing.id) {
-                await apiFetch(`/api/v1/experiences/${editing.id}`, { method: "PUT", body: JSON.stringify(payload) });
-                toast({ title: "Experience updated" });
-            } else {
-                await apiFetch("/api/v1/experiences", { method: "POST", body: JSON.stringify(payload) });
-                toast({ title: "Experience created" });
-            }
-            setEditing(null);
-            clearQueryCache();
-            refetch();
-        } catch (err: unknown) {
-            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        } finally {
-            setSaving(false);
+        const payload = {
+            ...editing,
+            startDate: editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString() : editing.startDate) : null,
+            endDate: editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString() : editing.endDate) : null,
+        };
+
+        if (editing.id) {
+            await update({ id: editing.id, data: payload });
+        } else {
+            await create(payload);
         }
+        setEditing(null);
     };
 
     const deleteExp = async (id: number) => {
         if (!confirm("Delete this experience?")) return;
-        try {
-            await apiFetch(`/api/v1/experiences/${id}`, { method: "DELETE" });
-            toast({ title: "Experience deleted" });
-            clearQueryCache();
-            refetch();
-        } catch (err: unknown) {
-            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        }
+        await remove(id);
     };
 
     if (editing) {
@@ -87,7 +67,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     <FormField label="Type" value={editing.type} onChange={(v) => setEditing({ ...editing, type: v })} placeholder="Experience, Education, etc." />
 
                     <div className="flex gap-3 pt-2">
-                        <Button type="submit" disabled={saving}>{saving ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
+                        <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
                         <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
                     </div>
                 </form>

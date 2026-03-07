@@ -1,14 +1,11 @@
 import React, { useState, useEffect, type FormEvent } from "react";
 import { useProjects } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { apiFetch } from "@/lib/api-helpers";
-import { queryClient } from "@/lib/queryClient";
-import { clearQueryCache } from "@/lib/query-cache-persister";
+import { useAdminProjects } from "@/hooks/admin/use-admin-projects";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";
 import type { Project } from "@portfolio/shared/schema";
 import {
@@ -125,10 +122,19 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
 import type { AdminTabProps } from "./types";
 
 export function ProjectsTab(_props: AdminTabProps) {
-    const { data: projects, refetch } = useProjects();
-    const { toast } = useToast();
+    const { data: projects } = useProjects();
+    const {
+        create,
+        update,
+        remove,
+        reorder: reorderApi,
+        bulkDelete: bulkDeleteApi,
+        bulkStatus: bulkStatusApi,
+        isPending: saving,
+        refetch
+    } = useAdminProjects();
+
     const [editing, setEditing] = useState<(Partial<Project> & typeof emptyProject) | null>(null);
-    const [saving, setSaving] = useState(false);
     const [techInput, setTechInput] = useState("");
     const [orderedProjects, setOrderedProjects] = useState<Project[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -141,25 +147,19 @@ export function ProjectsTab(_props: AdminTabProps) {
     const handleBulkDelete = async () => {
         if (!confirm(`Delete ${selectedIds.length} projects?`)) return;
         try {
-            await apiFetch("/api/v1/projects/bulk-delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
-            toast({ title: "Projects deleted" });
+            await bulkDeleteApi(selectedIds);
             setSelectedIds([]);
-            clearQueryCache();
-            refetch();
         } catch (err) {
-            toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            // Error handled by hook toast
         }
     };
 
     const handleBulkStatus = async (status: string) => {
         try {
-            await apiFetch("/api/v1/projects/bulk-status", { method: "POST", body: JSON.stringify({ ids: selectedIds, status }) });
-            toast({ title: "Projects updated" });
+            await bulkStatusApi({ ids: selectedIds, status });
             setSelectedIds([]);
-            clearQueryCache();
-            refetch();
         } catch (err) {
-            toast({ title: "Bulk update failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            // Error handled by hook toast
         }
     };
 
@@ -184,10 +184,7 @@ export function ProjectsTab(_props: AdminTabProps) {
 
                 // Save order to backend
                 const orderedIds = newItems.map(p => p.id);
-                apiFetch('/api/v1/projects/reorder', {
-                    method: 'PUT',
-                    body: JSON.stringify({ orderedIds })
-                }).catch(_err => toast({ title: "Failed to save order", variant: "destructive" }));
+                reorderApi(orderedIds);
 
                 return newItems;
             });
@@ -217,7 +214,7 @@ export function ProjectsTab(_props: AdminTabProps) {
     const save = async (e: FormEvent) => {
         e.preventDefault();
         if (!editing) return;
-        setSaving(true);
+
         const body = {
             ...editing,
             techStack: techInput.split(",").map((s) => s.trim()).filter(Boolean),
@@ -226,52 +223,24 @@ export function ProjectsTab(_props: AdminTabProps) {
             isHidden: editing.isHidden,
         };
 
-        // Optimistic UI update
-        const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
-
         try {
             if (editing.id) {
-                // Optimistic Update
-                queryClient.setQueryData<Project[]>(["projects"], old =>
-                    old ? old.map(p => p.id === editing.id ? { ...p, ...body } as Project : p) : []
-                );
-                await apiFetch(`/api/v1/projects/${editing.id}`, { method: "PUT", body: JSON.stringify(body) });
-                toast({ title: "Project updated" });
+                await update({ id: editing.id, data: body });
             } else {
-                // For creates, we don't have an ID yet, so we just wait for the refetch
-                await apiFetch("/api/v1/projects", { method: "POST", body: JSON.stringify(body) });
-                toast({ title: "Project created" });
+                await create(body);
             }
             setEditing(null);
-            clearQueryCache();
-            refetch();
         } catch (err) {
-            // Revert on error
-            if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
-            toast({ title: "Save failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
-        } finally {
-            setSaving(false);
+            // Error handled by hook toast
         }
     };
 
     const deleteProject = async (id: number) => {
         if (!confirm("Delete this project?")) return;
-
-        // Optimistic UI update
-        const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
-        queryClient.setQueryData<Project[]>(["projects"], old =>
-            old ? old.filter(p => p.id !== id) : []
-        );
-
         try {
-            await apiFetch(`/api/v1/projects/${id}`, { method: "DELETE" });
-            toast({ title: "Project deleted" });
-            clearQueryCache();
-            refetch();
+            await remove(id);
         } catch (err) {
-            // Revert on error
-            if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
-            toast({ title: "Delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            // Error handled by hook toast
         }
     };
 

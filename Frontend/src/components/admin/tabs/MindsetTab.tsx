@@ -1,8 +1,8 @@
 import React, { useState, type FormEvent } from "react";
-import { useMindset, useCreateMindset, useUpdateMindset, useDeleteMindset } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
+import { useMindset } from "@/hooks/use-portfolio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAdminMindset } from "@/hooks/admin/use-admin-mindset";
 import { FormField, FormTextarea, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Mindset } from "@portfolio/shared/schema";
 import { Loader2, Plus, Pencil, Trash2, Brain, Lightbulb, Zap, Anchor, Target, Compass } from "lucide-react";
@@ -25,10 +25,7 @@ const emptyMindset = {
 
 export default function MindsetTab() {
     const { data: mindset, isLoading } = useMindset();
-    const createMutation = useCreateMindset();
-    const updateMutation = useUpdateMindset();
-    const deleteMutation = useDeleteMindset();
-    const { toast } = useToast();
+    const { create, update, remove, isPending: saving } = useAdminMindset();
 
     const [editing, setEditing] = useState<(Partial<Mindset> & typeof emptyMindset) | null>(null);
     const [tagInput, setTagInput] = useState("");
@@ -45,12 +42,7 @@ export default function MindsetTab() {
 
     const handleDelete = async (id: number) => {
         if (!confirm("Delete this mindset entry?")) return;
-        try {
-            await deleteMutation.mutateAsync(id);
-            toast({ title: "Mindset entry deleted" });
-        } catch (err: unknown) {
-            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
-        }
+        await remove(id);
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -62,18 +54,12 @@ export default function MindsetTab() {
             tags: tagInput.split(",").map(s => s.trim()).filter(Boolean),
         };
 
-        try {
-            if (editing.id) {
-                await updateMutation.mutateAsync({ id: editing.id, data: body });
-                toast({ title: "Mindset entry updated" });
-            } else {
-                await createMutation.mutateAsync(body);
-                toast({ title: "Mindset entry created" });
-            }
-            setEditing(null);
-        } catch (err: unknown) {
-            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
+        if (editing.id) {
+            await update({ id: editing.id, data: body });
+        } else {
+            await create(body);
         }
+        setEditing(null);
     };
 
     if (isLoading) return <LoadingSkeleton />;
@@ -137,8 +123,8 @@ export default function MindsetTab() {
                     />
 
                     <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="bg-purple-600 hover:bg-purple-500 text-white px-8">
-                            {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <Button type="submit" disabled={saving} className="bg-purple-600 hover:bg-purple-500 text-white px-8">
+                            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             {editing.id ? "Update" : "Create"}
                         </Button>
                         <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50 hover:text-white hover:bg-white/5">
