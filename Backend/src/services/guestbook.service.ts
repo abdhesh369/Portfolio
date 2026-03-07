@@ -1,6 +1,6 @@
 import { db } from "../db.js";
 import { guestbookTable } from "@portfolio/shared";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { logger } from "../lib/logger.js";
 import { CacheService } from "../lib/cache.js";
 
@@ -63,6 +63,32 @@ export class GuestbookService {
             return approved;
         } catch (error) {
             logger.error({ context: "guestbook-service", error }, "Error approving guestbook message");
+            throw error;
+        }
+    }
+
+    async addReaction(id: number, emoji: string) {
+        try {
+            // Using SQL for atomic increment of a nested JSONB field
+            const [updated] = await db.update(guestbookTable)
+                .set({
+                    reactions: sql`jsonb_set(
+                        reactions, 
+                        ARRAY[${emoji}], 
+                        (coalesce(reactions->>${emoji}, '0')::int + 1)::text::jsonb
+                    )`
+                })
+                .where(eq(guestbookTable.id, id))
+                .returning();
+
+            try {
+                await this.invalidateCache();
+            } catch (err) {
+                logger.error({ err, id }, "Failed to invalidate guestbook cache after reaction");
+            }
+            return updated;
+        } catch (error) {
+            logger.error({ context: "guestbook-service", error, id, emoji }, "Error adding reaction to guestbook message");
             throw error;
         }
     }

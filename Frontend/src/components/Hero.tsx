@@ -299,6 +299,8 @@ const OpenToWorkBanner = () => {
   );
 };
 
+import { LiveVisitorCount } from "./LiveVisitorCount";
+
 export default function Hero() {
   const status = useServerStatus();
   const { data: projects } = useProjects();
@@ -341,7 +343,10 @@ export default function Hero() {
               </div>
             </m.div>
 
-            {showBanner && <OpenToWorkBanner />}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
+              {showBanner && <OpenToWorkBanner />}
+              <LiveVisitorCount />
+            </div>
 
             {/* Status Pill */}
             <m.div

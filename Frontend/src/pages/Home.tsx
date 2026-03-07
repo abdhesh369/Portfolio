@@ -119,29 +119,26 @@ export default function Home() {
     guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
     contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   };
-
-  // 1. Get all unique section IDs from settings and defaults
-  const allSections = Array.from(new Set([
-    ...(settings?.sectionOrder || []),
-    ...DEFAULT_SECTION_ORDER
-  ]));
-
-  // 2. Define the exact top-of-page sequence we want
-  const coreTopSequence = ["hero", "about", "skills"];
-
+  // Build section order: admin-saved order takes priority, fall back to defaults
+  // Always ensures any new sections from DEFAULT_SECTION_ORDER are included
   const sectionOrder = useMemo(() => {
-    // Start with core top sequence
-    const finalOrder = [...coreTopSequence];
+    const adminOrder = settings?.sectionOrder as string[] | undefined;
 
-    // Add all other enabled sections that aren't in core sequence
-    allSections.forEach(id => {
-      if (!coreTopSequence.includes(id)) {
-        finalOrder.push(id);
+    // Use admin-saved order if available, otherwise use defaults
+    const baseOrder = adminOrder?.length ? [...adminOrder] : [...DEFAULT_SECTION_ORDER];
+
+    // Append any sections from defaults that aren't already in the base order
+    // (handles newly added sections that the admin hasn't configured yet)
+    DEFAULT_SECTION_ORDER.forEach((id: string) => {
+      if (!baseOrder.includes(id)) {
+        baseOrder.push(id);
       }
     });
 
-    return finalOrder;
-  }, [allSections, coreTopSequence]);
+    // Always ensure hero is first
+    const withoutHero = baseOrder.filter((id: string) => id !== "hero");
+    return ["hero", ...withoutHero];
+  }, [settings?.sectionOrder]);
 
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};

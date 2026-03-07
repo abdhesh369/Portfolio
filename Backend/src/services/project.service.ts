@@ -12,11 +12,12 @@ const CACHE_TTL = 3600;
 export class ProjectService {
     /**
      * Retrieves all projects, using Redis cache when available.
+     * @param sortBy - How to sort the results ('views' | 'default')
      * @returns Array of project objects
      */
-    async getAll(): Promise<Project[]> {
-        const key = CacheService.key(FEATURE, LIST_NAMESPACE);
-        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAll());
+    async getAll(sortBy: 'views' | 'default' = 'default'): Promise<Project[]> {
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE, sortBy);
+        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAll(sortBy));
     }
 
     /**

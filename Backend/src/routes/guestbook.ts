@@ -53,6 +53,31 @@ guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, 
     });
 }));
 
+// POST /guestbook/:id/react - Add a reaction to an entry
+guestbookRoutes.post("/:id/react", asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const { emoji } = req.body;
+
+    if (isNaN(id)) {
+        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
+        return;
+    }
+
+    if (!emoji || typeof emoji !== "string") {
+        res.status(400).json({ success: false, message: "Emoji is required" });
+        return;
+    }
+
+    // Optional: Validate emoji against a whitelist if needed
+    const entry = await guestbookService.addReaction(id, emoji);
+
+    res.json({
+        success: true,
+        message: "Reaction added",
+        data: entry
+    });
+}));
+
 // DELETE /guestbook/:id - Delete an entry
 guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);

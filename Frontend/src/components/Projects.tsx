@@ -641,7 +641,8 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
 };
 
 export default function Projects() {
-  const { data: projects, isLoading, error } = useProjects();
+  const [sortBy, setSortBy] = useState("default");
+  const { data: projects, isLoading, error } = useProjects(sortBy);
   const [filter, setFilter] = useState("All");
   const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
@@ -707,23 +708,57 @@ export default function Projects() {
           >
             A collection of projects demonstrating my journey through software engineering and system design.
           </m.p>
-          <m.div
-            className="flex flex-nowrap md:flex-wrap items-center justify-start md:justify-center gap-3 mb-12 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            {categories.map((category) => (
-              <FilterButton
-                key={category}
-                label={category}
-                isActive={filter === category}
-                onClick={() => setFilter(category)}
-                count={getCategoryCount(category)}
-              />
-            ))}
-          </m.div>
+
+          {/* Controls: Filter & Sort */}
+          <div className="mt-12 flex flex-col items-center gap-6">
+            <m.div
+              className="flex flex-nowrap md:flex-wrap items-center justify-start md:justify-center gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {categories.map((category) => (
+                <FilterButton
+                  key={category}
+                  label={category}
+                  isActive={filter === category}
+                  onClick={() => setFilter(category)}
+                  count={getCategoryCount(category)}
+                />
+              ))}
+            </m.div>
+
+            {/* Sort Controls */}
+            <m.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center gap-1.5 p-1 rounded-xl bg-gray-900/50 border border-white/5 backdrop-blur-sm shadow-xl"
+            >
+              <button
+                onClick={() => setSortBy("default")}
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "default"
+                    ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                    : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                Featured
+              </button>
+              <div className="w-[1px] h-4 bg-white/10" />
+              <button
+                onClick={() => setSortBy("views")}
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "views"
+                    ? "bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                    : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  }`}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                Most Viewed
+              </button>
+            </m.div>
+          </div>
 
           {/* Projects Grid - Bento Style */}
           {isLoading ? (

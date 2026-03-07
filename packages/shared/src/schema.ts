@@ -112,6 +112,7 @@ export const guestbookTable = pgTable("guestbook", {
   content: text("content").notNull(),
   email: varchar("email", { length: 255 }), // Optional
   isApproved: boolean("isApproved").notNull().default(false),
+  reactions: jsonb("reactions").$type<Record<string, number>>().default({}),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -562,6 +563,7 @@ export const guestbookSchema = z.object({
   content: z.string().min(1).max(5000),
   email: z.string().email().max(255).nullish(),
   isApproved: z.boolean(),
+  reactions: z.record(z.string(), z.number()).default({}),
   createdAt: z.coerce.date(),
 });
 

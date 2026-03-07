@@ -1,4 +1,4 @@
-import { eq, asc, inArray, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq, asc, desc, inArray, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { projectsTable, type Project, type InsertProject } from "@portfolio/shared";
 
@@ -24,10 +24,17 @@ export class ProjectRepository {
     }
 
     /** Public: returns only visible (non-hidden) projects */
-    async findAll(): Promise<Project[]> {
-        const results = await db.select().from(projectsTable)
-            .where(eq(projectsTable.isHidden, false))
-            .orderBy(asc(projectsTable.displayOrder));
+    async findAll(sortBy: 'views' | 'default' = 'default'): Promise<Project[]> {
+        const query = db.select().from(projectsTable)
+            .where(eq(projectsTable.isHidden, false));
+
+        if (sortBy === 'views') {
+            query.orderBy(desc(projectsTable.viewCount));
+        } else {
+            query.orderBy(asc(projectsTable.displayOrder));
+        }
+
+        const results = await query;
         return results.map(p => this.transformProject(p));
     }
 

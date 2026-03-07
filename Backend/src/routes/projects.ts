@@ -18,8 +18,10 @@ export function registerProjectRoutes(app: Router) {
   app.get(
     "/projects",
     cachePublic(600), // Cache for 10 minutes
-    asyncHandler(async (_req: Request, res: Response) => {
-      const projects = await projectService.getAll();
+    asyncHandler(async (req: Request, res: Response) => {
+      const sortSchema = z.enum(["views", "default"]).optional().default("default");
+      const sortBy = sortSchema.parse(req.query.sort);
+      const projects = await projectService.getAll(sortBy);
       res.json(projects);
     })
   );
