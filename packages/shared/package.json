@@ -20,6 +20,11 @@
             "types": "./src/routes.ts",
             "import": "./dist/routes.js",
             "default": "./dist/routes.js"
+        },
+        "./utils": {
+            "types": "./src/utils.ts",
+            "import": "./dist/utils.js",
+            "default": "./dist/utils.js"
         }
     },
     "files": [

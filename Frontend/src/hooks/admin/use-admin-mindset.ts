@@ -1,10 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
-import { api } from "@portfolio/shared/routes";
-import { interpolatePath } from "@portfolio/shared/utils";
+import { api, interpolatePath, type Mindset } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useMindset } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Mindset } from "@portfolio/shared/schema";
 
 export function useAdminMindset() {
     const { refetch } = useMindset();

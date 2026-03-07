@@ -1,10 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
-import { api } from "@portfolio/shared/routes";
-import { interpolatePath } from "@portfolio/shared/utils";
+import { api, interpolatePath, type Service } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useServices } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Service } from "@portfolio/shared/schema";
 
 export function useAdminServices() {
     const { refetch } = useServices();

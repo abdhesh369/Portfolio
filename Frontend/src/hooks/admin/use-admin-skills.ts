@@ -1,10 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
-import { api } from "@portfolio/shared/routes";
-import { interpolatePath } from "@portfolio/shared/utils";
+import { api, interpolatePath, type Skill } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useSkills } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Skill } from "@portfolio/shared/schema";
 
 export function useAdminSkills() {
     const queryClient = useQueryClient();

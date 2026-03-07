@@ -1,10 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
-import { api } from "@portfolio/shared/routes";
-import { interpolatePath } from "@portfolio/shared/utils";
+import { api, interpolatePath, type Project } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useProjects } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Project } from "@portfolio/shared/schema";
 
 export function useAdminProjects() {
     const { refetch } = useProjects();
