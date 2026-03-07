@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Code2 } from 'lucide-react';
 import { fadeUp, expand, DURATION, EASE, STAGGER } from '@/lib/animation';
 import type { SkillNode, SkillCategory, SkillStatus } from './SkillTypes';
 
@@ -103,7 +103,7 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
                 >
                   <div className="px-3 pb-3 space-y-1">
                     {skills.map((skill) => {
-                      const Icon = skill.icon;
+                      const Icon = skill.icon || Code2;
                       const statusStyle = STATUS_COLORS[skill.status];
                       const isSkillExpanded = expandedSkill === skill.id;
 

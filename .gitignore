@@ -60,3 +60,8 @@ stats.
 # Shared package build artifacts
 packages/shared/dist/
 packages/shared/src/*.js
+test_browser/layout_test.js
+test_browser/layout_test.png
+test_browser/package-lock.json
+test_browser/package.json
+test_browser/test.js

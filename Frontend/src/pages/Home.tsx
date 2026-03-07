@@ -56,13 +56,22 @@ function SectionFallback() {
 }
 
 
-function SafeSection({ children }: { children: React.ReactNode }) {
+import { SuspenseErrorBoundary } from "@/components/SuspenseErrorBoundary";
+
+function SafeSection({ children, name }: { children: React.ReactNode, name: string }) {
   return (
-    <ErrorBoundary>
+    <SuspenseErrorBoundary fallback={
+      <div className="section-container py-16 flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md mx-auto p-8 rounded-2xl bg-destructive/10 border border-destructive/20">
+          <h3 className="text-xl font-bold text-destructive">Failed to load the {name} module</h3>
+          <p className="text-sm text-foreground/60">An internal error occurred. Our team has been notified. We apologize for the inconvenience.</p>
+        </div>
+      </div>
+    }>
       <Suspense fallback={<SectionFallback />}>
         {children}
       </Suspense>
-    </ErrorBoundary>
+    </SuspenseErrorBoundary>
   );
 }
 
@@ -98,17 +107,17 @@ export default function Home() {
 
   // section mapping to components
   const SECTION_MAP: Record<string, React.ReactNode> = {
-    about: <SafeSection><About /></SafeSection>,
-    skills: <SafeSection><Skills /></SafeSection>,
-    whyhireme: <SafeSection><WhyHireMe /></SafeSection>,
-    services: <SafeSection><Services /></SafeSection>,
-    mindset: <SafeSection><EngineeringMindset /></SafeSection>,
-    projects: <SafeSection><Projects /></SafeSection>,
-    practice: <SafeSection><CodeAndPractice /></SafeSection>,
-    experience: <SafeSection><Experience /></SafeSection>,
-    testimonials: <SafeSection><Testimonials /></SafeSection>,
-    guestbook: <SafeSection><Guestbook /></SafeSection>,
-    contact: <SafeSection><Contact /></SafeSection>,
+    about: <SafeSection name="About"><About /></SafeSection>,
+    skills: <SafeSection name="Skills"><Skills /></SafeSection>,
+    whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
+    services: <SafeSection name="Services"><Services /></SafeSection>,
+    mindset: <SafeSection name="Engineering Mindset"><EngineeringMindset /></SafeSection>,
+    projects: <SafeSection name="Projects"><Projects /></SafeSection>,
+    practice: <SafeSection name="Code and Practice"><CodeAndPractice /></SafeSection>,
+    experience: <SafeSection name="Experience"><Experience /></SafeSection>,
+    testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
+    guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
+    contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   };
 
   const sectionOrder = settings?.sectionOrder || [...DEFAULT_SECTION_ORDER];

@@ -13,7 +13,8 @@ export const API_BASE_URL = (() => {
         return window.location.origin;
     }
 
-    return prodUrl;
+    // Strip any trailing slashes to prevent //api/v1 double-slash 404s
+    return prodUrl.replace(/\/+$/, "");
 })();
 
 export class ApiError extends Error {

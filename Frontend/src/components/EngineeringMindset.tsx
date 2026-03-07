@@ -3,7 +3,7 @@ import { useRef, useState, useMemo } from "react";
 import { fadeUpLarge, hoverCardLift, expand, fadeDown, scaleXReveal, fadeIn, fadeUp, hoverScale } from "@/lib/animation";
 import { useMindset } from "@/hooks/use-portfolio";
 import type { Mindset } from "@portfolio/shared/schema";
-import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight } from "lucide-react";
+import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight, Cpu } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Brain,
@@ -12,7 +12,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Users,
   Code2,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Cpu
 };
 
 // Principle Card with Connection
@@ -64,7 +65,7 @@ const PrincipleCard = ({
             }`}
         >
           {(() => {
-            const Icon = principle.icon;
+            const Icon = principle.icon || Brain;
             return <Icon className="w-7 h-7" />;
           })()}
         </m.div>
@@ -101,7 +102,7 @@ const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon:
       <div className="flex items-start gap-6">
         <div className="p-4 bg-primary/20 rounded-2xl">
           {(() => {
-            const Icon = principle.icon;
+            const Icon = principle.icon || Brain;
             return <Icon className="w-10 h-10 text-primary" />;
           })()}
         </div>
