@@ -120,15 +120,33 @@ export default function Home() {
     contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   };
 
-  // Combine settings order with defaults to ensure no section is missing
-  const sectionOrder = Array.from(new Set([
+  // 1. Get all unique section IDs from settings and defaults
+  const allSections = Array.from(new Set([
     ...(settings?.sectionOrder || []),
     ...DEFAULT_SECTION_ORDER
   ]));
 
+  // 2. Define the exact top-of-page sequence we want
+  const coreTopSequence = ["hero", "about", "skills"];
+
+  const sectionOrder = useMemo(() => {
+    // Start with core top sequence
+    const finalOrder = [...coreTopSequence];
+
+    // Add all other enabled sections that aren't in core sequence
+    allSections.forEach(id => {
+      if (!coreTopSequence.includes(id)) {
+        finalOrder.push(id);
+      }
+    });
+
+    return finalOrder;
+  }, [allSections, coreTopSequence]);
+
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
 
+  // DEBUG OVERLAY
   return (
     <div className="min-h-screen selection:bg-primary/20">
       {/* Top Reading Progress Bar */}
