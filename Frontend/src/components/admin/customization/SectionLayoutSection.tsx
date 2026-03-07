@@ -1,20 +1,21 @@
 import React from "react";
-import { UseFormRegister, UseFieldArrayMove } from "react-hook-form";
+import { UseFormRegister, UseFieldArrayMove, Path } from "react-hook-form";
 import { GripVertical, ChevronDown } from "lucide-react";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, closestCenter, DragEndEvent, SensorDescriptor, SensorOptions, DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
-import { InsertSiteSettings } from "@portfolio/shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
 
 interface SectionLayoutSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
-    sectionOrderFields: Record<string, any>[];
+    sectionOrderFields: { id: string }[];
     moveSection: UseFieldArrayMove;
-    sensors: any;
+    sensors: SensorDescriptor<SensorOptions>[];
     handleSectionDragEnd: (event: DragEndEvent) => void;
     sectionLabels: Record<string, string>;
-    settings: any;
+    settings: InsertSiteSettings | null | undefined;
     isOpen: boolean;
     onToggle: () => void;
 }
@@ -57,7 +58,7 @@ export function SectionLayoutSection({
 
                                 return (
                                     <SortableItem key={field.id} id={field.id}>
-                                        {({ attributes, listeners, isDragging }: { attributes: any, listeners: any, isDragging: boolean }) => (
+                                        {({ attributes, listeners, isDragging }: { attributes: DraggableAttributes; listeners: SyntheticListenerMap | undefined; isDragging: boolean }) => (
                                             <div className={`flex items-center gap-3 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5 hover:border-purple-500/30"}`}>
                                                 <div
                                                     className="text-white/20 group-hover:text-white/40 cursor-grab px-1 active:cursor-grabbing"
@@ -73,7 +74,7 @@ export function SectionLayoutSection({
                                                     <label className="flex items-center cursor-pointer">
                                                         <input
                                                             type="checkbox"
-                                                            {...register(`sectionVisibility.${sectionId}` as any)}
+                                                            {...register(`sectionVisibility.${sectionId}` as Path<InsertSiteSettings>)}
                                                             className="sr-only peer"
                                                         />
                                                         <div className="relative w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white/40 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>

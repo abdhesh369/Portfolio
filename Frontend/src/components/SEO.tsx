@@ -11,7 +11,7 @@ interface SeoProps {
     keywords?: string;
     type?: string;
     noindex?: boolean;
-    structuredData?: Record<string, any>;
+    structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 export function SEO({
@@ -46,7 +46,7 @@ export function SEO({
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
     const canonicalUrl = seoSettings?.canonicalUrl || `https://abdheshsah.com.np${location}`;
 
-    const safeJsonLd = (data: any) => {
+    const safeJsonLd = (data: Record<string, unknown>) => {
         return JSON.stringify(data)
             .replace(/</g, '\\u003c')
             .replace(/>/g, '\\u003e')
@@ -83,7 +83,7 @@ export function SEO({
             {structuredData && (
                 Array.isArray(structuredData) ? (
                     structuredData.map((data, i) => (
-                        <script key={data['@type'] || i} type="application/ld+json">
+                        <script key={(data as Record<string, unknown>)['@type'] as string || i} type="application/ld+json">
                             {safeJsonLd(data)}
                         </script>
                     ))

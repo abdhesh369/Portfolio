@@ -19,7 +19,7 @@ const emptyService = {
 
 import type { AdminTabProps } from "./types";
 
-export function ServicesTab({ }: AdminTabProps) {
+export function ServicesTab(_props: AdminTabProps) {
   const { data: services, refetch } = useServices();
   const { toast } = useToast();
   const [editing, setEditing] = useState<(Partial<Service> & typeof emptyService) | null>(null);
@@ -72,10 +72,10 @@ export function ServicesTab({ }: AdminTabProps) {
       setEditing(null);
       clearQueryCache();
       refetch();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Save failed",
-        description: err.message,
+        description: err instanceof Error ? err.message : String(err),
         variant: "destructive",
       });
     } finally {
@@ -90,10 +90,10 @@ export function ServicesTab({ }: AdminTabProps) {
       toast({ title: "Service deleted" });
       clearQueryCache();
       refetch();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Delete failed",
-        description: err.message,
+        description: err instanceof Error ? err.message : String(err),
         variant: "destructive",
       });
     }

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";

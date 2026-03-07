@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { X, Send, User, Minimize2 } from "lucide-react";
+import { Send, Minimize2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/api-helpers";
@@ -118,10 +118,11 @@ export function Chatbot() {
             });
 
             setMessages([...newMessages, { id: crypto.randomUUID(), role: "model", parts: [{ text: data.message }], timestamp: Date.now() }]);
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form.";
             setMessages([
                 ...newMessages,
-                { id: crypto.randomUUID(), role: "model", parts: [{ text: error.message || "Sorry, I am currently offline or experiencing issues. Please try again later or use the contact form." }], timestamp: Date.now() }
+                { id: crypto.randomUUID(), role: "model", parts: [{ text: errorMessage }], timestamp: Date.now() }
             ]);
         } finally {
             setIsLoading(false);
@@ -256,7 +257,7 @@ export function Chatbot() {
                                                 {msg.role === 'model' ? (
                                                     <ReactMarkdown
                                                         components={{
-                                                            a: ({ node, ...props }) => (
+                                                            a: ({ ...props }) => (
                                                                 <a {...props} target="_blank" rel="noopener noreferrer" />
                                                             )
                                                         }}

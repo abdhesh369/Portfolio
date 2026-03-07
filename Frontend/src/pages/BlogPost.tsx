@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -254,6 +254,7 @@ export default function BlogPost() {
                                         Related Articles
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         {relatedArticles.map((related: any) => (
                                             <Link key={related.id} href={`/blog/${related.slug}`}>
                                                 <m.div

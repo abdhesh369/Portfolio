@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { m } from "framer-motion";
+import { motion } from "framer-motion";
 import { Code2, Copy, Check, ExternalLink, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,12 +14,10 @@ interface InteractivePlaygroundProps {
 }
 
 export function InteractivePlayground({
-  projectId,
   projectTitle,
   githubUrl,
   liveUrl,
   techStack = [],
-  description = "",
 }: InteractivePlaygroundProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -69,7 +67,7 @@ export function InteractivePlayground({
   }
 
   return (
-    <m.div
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -177,7 +175,7 @@ export function InteractivePlayground({
           💡 <strong>Tip:</strong> Click the "Embed" button to copy the embed code and use this playground on your own website.
         </p>
       </div>
-    </m.div>
+    </motion.div>
   );
 }
 

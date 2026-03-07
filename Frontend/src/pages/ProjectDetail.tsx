@@ -75,6 +75,7 @@ const SectionCard = ({
   children,
   accentColor = '#00d4ff',
   variant = 'default',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   className
 }: {
   title: string;

@@ -12,7 +12,7 @@ const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advance
 
 import type { AdminTabProps } from "./types";
 
-export function SkillsTab({ }: AdminTabProps) {
+export function SkillsTab(_props: AdminTabProps) {
     const { data: skills, refetch } = useSkills();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Skill> & typeof emptySkill) | null>(null);
@@ -31,8 +31,8 @@ export function SkillsTab({ }: AdminTabProps) {
             setSelectedIds([]);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -51,8 +51,8 @@ export function SkillsTab({ }: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -65,8 +65,8 @@ export function SkillsTab({ }: AdminTabProps) {
             toast({ title: "Skill deleted" });
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 

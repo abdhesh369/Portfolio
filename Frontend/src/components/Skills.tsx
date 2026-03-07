@@ -5,7 +5,7 @@ import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
 import { useTheme } from './theme-provider';
 
-import { SkillStatus, SkillCategory, SkillNode } from './skills/SkillTypes';
+import { SkillStatus, SkillCategory } from './skills/SkillTypes';
 import { DEFAULT_SKILL_NODES, DEFAULT_CONNECTIONS, ICON_MAP } from './skills/SkillData';
 import { HexagonNode } from './skills/HexagonNode';
 import { SkillTooltip } from './skills/SkillTooltip';
@@ -14,7 +14,7 @@ import { StatPanel, ProficiencyChart, CategorySummary } from './skills/StatPanel
 import { SkillsListView } from './skills/SkillsListView';
 
 export default function SkillsTree() {
-  const { performanceMode, setPerformanceMode, treePerformanceMode, setTreePerformanceMode } = useTheme();
+  const { performanceMode, treePerformanceMode, setTreePerformanceMode } = useTheme();
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const isLowPower = performanceMode === 'low';

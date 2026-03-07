@@ -12,7 +12,7 @@ const emptyExperience = { role: "", organization: "", period: "", startDate: new
 
 import type { AdminTabProps } from "./types";
 
-export function ExperiencesTab({ }: AdminTabProps) {
+export function ExperiencesTab(_props: AdminTabProps) {
     const { data: experiences, refetch } = useExperiences();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Experience> & typeof emptyExperience) | null>(null);
@@ -39,8 +39,8 @@ export function ExperiencesTab({ }: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -53,8 +53,8 @@ export function ExperiencesTab({ }: AdminTabProps) {
             toast({ title: "Experience deleted" });
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 

@@ -1,5 +1,4 @@
 import { Mail, Zap, Rocket, Clock, LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ActivityItem {
     id: string | number;
@@ -22,12 +21,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
     system: Clock,
 };
 
-const COLOR_MAP: Record<string, string> = {
-    message: "bg-blue-50 text-blue-600 border-blue-100",
-    project: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    skill: "bg-purple-50 text-purple-600 border-purple-100",
-    system: "bg-slate-50 text-slate-600 border-slate-100",
-};
+// COLOR_MAP was unused and removed
 
 export default function ActivityFeed({ activities, loading, onFetchAll }: ActivityFeedProps) {
     return (

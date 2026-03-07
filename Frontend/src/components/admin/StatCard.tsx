@@ -15,19 +15,19 @@ interface StatCardProps {
     delay?: string;
 }
 
-export default function StatCard({ label, value, icon: Icon, trend, color = "blue", delay = "0ms" }: StatCardProps) {
+export default function StatCard({ label, value, icon: Icon, trend, delay = "0ms" }: StatCardProps) {
     const [displayValue, setDisplayValue] = useState<string | number>(0);
     const [isPulsing, setIsPulsing] = useState(false);
 
     useEffect(() => {
-        let isNumber = value !== '' && (typeof value === 'number' || !isNaN(Number(value)));
+        const isNumber = value !== '' && (typeof value === 'number' || !isNaN(Number(value)));
         if (!isNumber) {
             setDisplayValue(value);
             return;
         }
 
         const targetValue = Number(value);
-        let startValue = 0;
+        const startValue = 0;
         const duration = 1800; // 1.8 seconds
         const frameRate = 1000 / 60;
         const totalFrames = Math.round(duration / frameRate);

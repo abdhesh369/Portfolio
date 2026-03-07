@@ -2,12 +2,6 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { hydrateFromCache, subscribeToQueryCache } from "./query-cache-persister";
 import { apiFetch, ApiError } from "./api-helpers";
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
-  }
-}
 
 export async function apiRequest(
   method: string,
@@ -30,7 +24,7 @@ export async function apiRequest(
     if (err instanceof ApiError) {
       // Propagate the real HTTP status so callers that check response.ok
       // or response.status receive accurate information.
-      return new Response(JSON.stringify({ ...err.data, message: err.message }),
+      return new Response(JSON.stringify({ ...(err.data as object), message: err.message }),
         { status: err.status, headers: { "Content-Type": "application/json" } });
     }
     throw err;
@@ -63,6 +57,7 @@ export const queryClient = new QueryClient({
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       retry: (failureCount, error: any) => {
         // Don't retry 401 errors
         if (error?.message?.includes('401')) {
@@ -78,6 +73,7 @@ export const queryClient = new QueryClient({
       },
     },
     mutations: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       retry: (failureCount, error: any) => {
         if (error?.message?.includes('401')) {
           return false;

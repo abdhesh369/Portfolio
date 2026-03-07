@@ -3,12 +3,12 @@ import { API_BASE_URL } from "./api-helpers";
 export type AnalyticsEvent = {
     type: string;
     path?: string;
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 declare global {
     interface Window {
-        gtag?: (command: string, action: string, params?: any) => void;
+        gtag?: (command: string, action: string, params?: unknown) => void;
     }
 }
 

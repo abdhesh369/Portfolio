@@ -9,7 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 
-import type { AdminTabProps } from "./types";
+
 
 export function MessagesTab() {
     const { data: messagesData, isLoading } = useMessages();
@@ -32,8 +32,8 @@ export function MessagesTab() {
             toast({ title: "Messages deleted" });
             setSelectedIds([]);
             queryClient.invalidateQueries({ queryKey: ["messages"] });
-        } catch (err: any) {
-            toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -43,8 +43,8 @@ export function MessagesTab() {
             await apiFetch(`/api/v1/messages/${id}`, { method: "DELETE" });
             queryClient.invalidateQueries({ queryKey: ["messages"] });
             toast({ title: "Message deleted" });
-        } catch (err: any) {
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -160,8 +160,8 @@ function ReplyDialog({ message }: { message: Message }) {
             });
             toast({ title: "Reply sent successfully" });
             setOpen(false);
-        } catch (err: any) {
-            toast({ title: "Failed to send reply", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Failed to send reply", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         } finally {
             setSending(false);
         }

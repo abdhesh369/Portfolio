@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
-import { Button } from "@/components/ui/button";
-import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Upload, X } from 'lucide-react';
 import { apiFetch } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -44,9 +43,10 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
             });
 
             onChange(data.url);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Upload error:', error);
-            toast({ title: "Upload failed", description: error.message || "Failed to upload image.", variant: "destructive" });
+            const message = error instanceof Error ? error.message : "Failed to upload image.";
+            toast({ title: "Upload failed", description: message, variant: "destructive" });
         } finally {
             setUploading(false);
             // Reset input

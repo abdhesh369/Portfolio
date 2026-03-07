@@ -20,7 +20,7 @@ const emptyArticle = {
     content: "",
     excerpt: null as string | null,
     featuredImage: null as string | null,
-    status: "draft" as const,
+    status: "draft" as "draft" | "published" | "archived",
     tags: [] as string[],
     metaTitle: null as string | null,
     metaDescription: null as string | null,
@@ -76,10 +76,10 @@ function ArticleItem({ article, onEdit, onDelete }: {
 
 import type { AdminTabProps } from "./types";
 
-export function ArticlesTab({ }: AdminTabProps) {
+export function ArticlesTab(_props: AdminTabProps) {
     const { data: articles, refetch, isLoading } = useArticles();
     const { toast } = useToast();
-    const [editing, setEditing] = useState<(Partial<Article> & typeof emptyArticle) | null>(null);
+    const [editing, setEditing] = useState<(Partial<ArticleWithTags> & typeof emptyArticle) | null>(null);
     const [saving, setSaving] = useState(false);
     const [tagInput, setTagInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
@@ -90,16 +90,16 @@ export function ArticlesTab({ }: AdminTabProps) {
     };
 
     const openEdit = (a: Article) => {
-        const articleTags = (a as ArticleWithTags).tags || [];
+        const articleTags = a.tags || [];
         setEditing({
             ...a,
-            status: a.status as any,
+            status: a.status as "draft" | "published" | "archived",
             excerpt: a.excerpt ?? null,
             featuredImage: a.featuredImage ?? null,
             metaTitle: a.metaTitle ?? null,
             metaDescription: a.metaDescription ?? null,
             tags: articleTags,
-        } as any);
+        });
         setTagInput(articleTags.join(", "));
     };
 
@@ -108,7 +108,8 @@ export function ArticlesTab({ }: AdminTabProps) {
         if (!editing) return;
         setSaving(true);
 
-        const { id, tags: _oldTags, ...articleData } = editing;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, ...articleData } = editing;
         const body = {
             ...articleData,
             tags: tagInput.split(",").map((s) => s.trim()).filter(Boolean),
@@ -136,10 +137,10 @@ export function ArticlesTab({ }: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
+        } catch (err) {
             // Revert on error
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -159,10 +160,10 @@ export function ArticlesTab({ }: AdminTabProps) {
             toast({ title: "Article deleted" });
             clearQueryCache();
             refetch();
-        } catch (err: any) {
+        } catch (err) {
             // Revert on error
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         }
     };
 
@@ -195,7 +196,7 @@ export function ArticlesTab({ }: AdminTabProps) {
                                 <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">Status</label>
                                 <select
                                     value={editing.status}
-                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
+                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "draft" | "published" | "archived" })}
                                     className="w-full px-3 py-2 rounded-lg text-white text-sm bg-white/5 border border-white/10 focus:border-purple-500 outline-none transition-all"
                                 >
                                     <option value="draft">Draft</option>

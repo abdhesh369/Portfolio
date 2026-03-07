@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertSeoSettingsApiSchema, type SeoSettings, type InsertSeoSettings } from "@portfolio/shared/schema";
+import type { SeoSettings, InsertSeoSettings } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Pencil, Trash2, Save, X } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { apiFetch } from "@/lib/api-helpers";
 
 import type { AdminTabProps } from "./types";
 
-export function SeoTab({ }: AdminTabProps) {
+export function SeoTab(_props: AdminTabProps) {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);

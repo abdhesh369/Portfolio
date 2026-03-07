@@ -9,7 +9,7 @@ import DOMPurify from 'dompurify';
 import { Button } from "@/components/ui/button";
 import {
     Bold, Italic, Strikethrough, Code, List, ListOrdered,
-    Quote, Heading1, Heading2, Link as LinkIcon, Undo, Redo,
+    Quote, Heading1, Heading2, Undo, Redo,
     Image as ImageIcon, Terminal, Eye, Edit3
 } from "lucide-react";
 
@@ -38,7 +38,7 @@ type DividerItem = {
 
 type MenuItem = ButtonItem | DividerItem;
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
     if (!editor) {
         return null;
     }
@@ -53,7 +53,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 } else {
                     alert('Invalid image URL protocol. Only http and https are allowed.');
                 }
-            } catch (e) {
+            } catch {
                 alert('Invalid image URL format.');
             }
         }

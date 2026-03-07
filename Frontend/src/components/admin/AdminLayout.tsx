@@ -7,7 +7,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 interface AdminLayoutProps {
     children: ReactNode;
     activeTab: string;
-    onNavigate: (tab: any) => void;
+    onNavigate: (tab: string) => void;
     sidebarCollapsed: boolean;
     setSidebarCollapsed: (collapsed: boolean) => void;
 }

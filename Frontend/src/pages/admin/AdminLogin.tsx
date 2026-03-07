@@ -41,10 +41,10 @@ export default function AdminLogin() {
             });
             // Navigating here is redundant as the useEffect handles the redirect
             // once isAuthenticated becomes true.
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast({
                 title: "Login Failed",
-                description: err.message || "Something went wrong",
+                description: err instanceof Error ? err.message : "Something went wrong",
                 variant: "destructive",
             });
         } finally {

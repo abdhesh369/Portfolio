@@ -1,4 +1,4 @@
-import { api } from "@portfolio/shared/routes";
+import { api } from "@portfolio/shared";
 import type { InsertMessage } from "@portfolio/shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";

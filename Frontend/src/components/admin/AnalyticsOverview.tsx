@@ -50,12 +50,10 @@ interface AnalyticsSummary {
     topCountries?: TopCountry[];
     // Legacy fields
     events?: number;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
-interface AnalyticsOverviewProps {
-    // Token no longer needed — credentials are sent via cookies
-}
+type AnalyticsOverviewProps = Record<string, never>;
 
 const COLORS = {
     cyan: "var(--color-cyan)",

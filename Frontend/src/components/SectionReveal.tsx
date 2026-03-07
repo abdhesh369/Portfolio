@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, ReactNode } from "react";
+import { useRef, ReactNode } from "react";
 import { m, useInView } from "framer-motion";
 
 interface SectionRevealProps {

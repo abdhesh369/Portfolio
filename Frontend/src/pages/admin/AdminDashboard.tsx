@@ -1,5 +1,4 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { useAuth } from "@/hooks/auth-context";
 import { useMessageStream } from "@/hooks/use-message-stream";
 import "@/styles/admin.css";
 import { TabErrorBoundary } from "@/components/admin/TabErrorBoundary";
@@ -66,7 +65,7 @@ export default function AdminDashboard() {
     return (
         <AdminLayout
             activeTab={tab}
-            onNavigate={(newTab) => setTab(newTab)}
+            onNavigate={(newTab) => setTab(newTab as Tab)}
             sidebarCollapsed={sidebarCollapsed}
             setSidebarCollapsed={setSidebarCollapsed}
         >

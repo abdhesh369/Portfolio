@@ -11,7 +11,7 @@ const emptyTemplate = { name: "", subject: "", body: "" };
 
 import type { AdminTabProps } from "./types";
 
-export function EmailTemplatesTab({ }: AdminTabProps) {
+export function EmailTemplatesTab(_props: AdminTabProps) {
     const {
         data: templates = [],
         isLoading: loading,
@@ -49,8 +49,8 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
                 toast({ title: "Template created" });
             }
             setEditing(null);
-        } catch (err: any) {
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -59,8 +59,8 @@ export function EmailTemplatesTab({ }: AdminTabProps) {
         try {
             await deleteMutation.mutateAsync(id);
             toast({ title: "Template deleted" });
-        } catch (err: any) {
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 

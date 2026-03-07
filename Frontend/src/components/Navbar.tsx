@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { Menu, X, Code2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { PerformanceToggle } from "@/components/PerformanceToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import { DEFAULT_SECTION_ORDER } from "@portfolio/shared/schema";
+import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
 
 const DEFAULT_NAV_ITEMS = [
   { name: "Home", href: "/" },

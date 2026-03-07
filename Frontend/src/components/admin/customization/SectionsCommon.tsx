@@ -2,6 +2,8 @@ import React from "react";
 import { ChevronDown } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 export interface CollapsibleSectionProps {
     title: string;
@@ -12,7 +14,11 @@ export interface CollapsibleSectionProps {
 
 export interface SortableItemProps {
     id: string;
-    children: (props: any) => React.ReactNode;
+    children: (props: {
+        attributes: DraggableAttributes;
+        listeners: SyntheticListenerMap | undefined;
+        isDragging: boolean;
+    }) => React.ReactNode;
 }
 
 export function SortableItem({ id, children }: SortableItemProps) {

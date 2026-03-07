@@ -57,6 +57,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const activities: any[] = (messages || []).slice(0, 5).map((msg, idx) => ({
         id: msg.id || idx,
         type: "message" as const,

@@ -1,13 +1,14 @@
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Eye, Zap, Settings2, Twitter, Instagram, Youtube, Code2 } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Twitter, Instagram, Youtube, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useTheme } from "./theme-provider";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import type { SiteSettings } from "@portfolio/shared";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {
@@ -18,9 +19,6 @@ const MouseGradient = () => {
   const springConfig = { damping: 30, stiffness: 200 };
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isVisible = true; // For now, we will assume it's visible if the component is mounted in Hero
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -99,7 +97,7 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
 };
 
 // Profile Image with Sci-Fi Hologram Effect
-const ProfileCard = ({ settings }: { settings: any }) => {
+const ProfileCard = ({ settings }: { settings: SiteSettings | undefined | null }) => {
   const { reducedMotion } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -258,8 +256,8 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
       <Icon className="w-5 h-5 pointer-events-none" />
       <span className="text-xs font-bold pointer-events-none">{label}</span>
     </m.div>
-  )
-}
+  );
+};
 
 const OpenToWorkBanner = () => {
   return (
@@ -307,13 +305,6 @@ export default function Hero() {
   const { data: skills } = useSkills();
   const { data: experiences } = useExperiences();
   const { data: settings } = useSiteSettings();
-
-  const scrollToProjects = () => {
-    document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' });
-  };
-  const scrollToContact = () => {
-    document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const showBanner = settings?.isOpenToWork ?? true; // Default to true if loading or error
 

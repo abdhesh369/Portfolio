@@ -124,7 +124,7 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
 
 import type { AdminTabProps } from "./types";
 
-export function ProjectsTab({ }: AdminTabProps) {
+export function ProjectsTab(_props: AdminTabProps) {
     const { data: projects, refetch } = useProjects();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(Partial<Project> & typeof emptyProject) | null>(null);
@@ -146,8 +146,8 @@ export function ProjectsTab({ }: AdminTabProps) {
             setSelectedIds([]);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Bulk delete failed", description: err.message, variant: "destructive" });
+        } catch (err) {
+            toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         }
     };
 
@@ -158,8 +158,8 @@ export function ProjectsTab({ }: AdminTabProps) {
             setSelectedIds([]);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: "Bulk update failed", description: err.message, variant: "destructive" });
+        } catch (err) {
+            toast({ title: "Bulk update failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         }
     };
 
@@ -187,7 +187,7 @@ export function ProjectsTab({ }: AdminTabProps) {
                 apiFetch('/api/v1/projects/reorder', {
                     method: 'PUT',
                     body: JSON.stringify({ orderedIds })
-                }).catch(err => toast({ title: "Failed to save order", variant: "destructive" }));
+                }).catch(_err => toast({ title: "Failed to save order", variant: "destructive" }));
 
                 return newItems;
             });
@@ -245,10 +245,10 @@ export function ProjectsTab({ }: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
+        } catch (err) {
             // Revert on error
             if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -268,10 +268,10 @@ export function ProjectsTab({ }: AdminTabProps) {
             toast({ title: "Project deleted" });
             clearQueryCache();
             refetch();
-        } catch (err: any) {
+        } catch (err) {
             // Revert on error
             if (previousProjects) queryClient.setQueryData(["projects"], previousProjects);
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         }
     };
 

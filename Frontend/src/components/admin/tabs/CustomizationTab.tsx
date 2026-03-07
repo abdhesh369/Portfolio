@@ -12,8 +12,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import type { InsertSiteSettings } from "@portfolio/shared/schema";
-import { insertSiteSettingsApiSchema } from "@portfolio/shared/schema";
+import type { InsertSiteSettings } from "@portfolio/shared";
+import { insertSiteSettingsApiSchema } from "@portfolio/shared";
 
 // Sub-components
 import { CustomizationHeader } from "../customization/CustomizationHeader";
@@ -98,9 +98,10 @@ export function CustomizationTab() {
     values: settings,
   });
 
-  const { fields: taglineFields, append: appendTagline, remove: removeTagline } = useFieldArray<any>({
+  const { fields: taglineFields, append: appendTagline, remove: removeTagline } = useFieldArray({
     control,
-    name: "heroTaglines",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "heroTaglines" as any,
   });
 
   const { fields: navFields, append: appendNav, remove: removeNav, move: moveNav } = useFieldArray<InsertSiteSettings, "navbarLinks">({
@@ -108,9 +109,10 @@ export function CustomizationTab() {
     name: "navbarLinks",
   });
 
-  const { fields: sectionOrderFields, move: moveSection } = useFieldArray<any>({
+  const { fields: sectionOrderFields, move: moveSection } = useFieldArray({
     control,
-    name: "sectionOrder",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "sectionOrder" as any,
   });
 
   const handleNavDragEnd = (event: DragEndEvent) => {
@@ -142,10 +144,10 @@ export function CustomizationTab() {
       await updateMutation.mutateAsync(data);
       toast({ title: "Success", description: "Settings updated successfully" });
       reset(data);
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: "Update Failed",
-        description: err.message || "An error occurred",
+        description: err instanceof Error ? err.message : "An error occurred",
         variant: "destructive"
       });
     }
@@ -182,10 +184,10 @@ export function CustomizationTab() {
 
         reset(parseResult.data);
         toast({ title: "Import Successful", description: "Settings loaded into form. Don't forget to save!" });
-      } catch (err: any) {
+      } catch (err) {
         toast({
           title: "Import Failed",
-          description: err.message || "Invalid JSON file",
+          description: err instanceof Error ? err.message : "Invalid JSON file",
           variant: "destructive"
         });
       }

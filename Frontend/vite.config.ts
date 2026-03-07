@@ -104,6 +104,7 @@ export default defineConfig(({ mode }) => ({
       '@': path.resolve(__dirname, './src'),
       '@assets': path.resolve(__dirname, './Resources'),
       '@shared': path.resolve(__dirname, './shared'),
+      '@portfolio/shared': path.resolve(__dirname, '../packages/shared/src/index.ts'),
     },
   },
   server: {
@@ -129,7 +130,7 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     cssCodeSplit: true,
     // Only preload chunks needed on every page — skip admin-only heavy chunks
-modulePreload: {
+    modulePreload: {
       resolveDependencies: (_filename: string, deps: string[]) => {
         return deps.filter(dep =>
           !dep.includes('vendor-editor') &&

@@ -1,9 +1,9 @@
 ﻿{
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": [
-      "ES2021",
+      "ES2022",
       "DOM",
       "DOM.Iterable"
     ],
@@ -26,11 +26,22 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@portfolio/shared": [
+        "../packages/shared/src/index.ts"
+      ],
+      "@portfolio/shared/*": [
+        "../packages/shared/src/*"
       ]
     }
   },
   "include": [
-    "src"
+    "src",
+    "shared",
+    "../packages/shared/src"
   ],
   "references": [
     {

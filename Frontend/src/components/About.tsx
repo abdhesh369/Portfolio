@@ -1,7 +1,7 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle, hoverScale } from "@/lib/animation";
-import { User, GraduationCap, MapPin, Mail, Code, Calendar, Zap, Heart, Target, BookOpen, Layers, Monitor, Terminal, Cpu, Sparkles } from "lucide-react";
+import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle } from "@/lib/animation";
+import { GraduationCap, MapPin, Mail, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { OptimizedImage } from "@/components/OptimizedImage";
 // ...existing code... (profile image moved to public/images/hero.svg)
@@ -182,7 +182,6 @@ export default function About() {
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
   const { data: experiences } = useExperiences();
-  const scrollRef = useRef(null);
   return (
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-16 md:py-24 relative">
       <div className="text-center mb-20 relative z-10">

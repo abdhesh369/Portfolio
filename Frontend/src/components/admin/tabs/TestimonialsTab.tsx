@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTestimonials } from "@/hooks/use-portfolio";
 import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
@@ -18,7 +18,7 @@ const empty = {
 
 import type { AdminTabProps } from "./types";
 
-export function TestimonialsTab({ }: AdminTabProps) {
+export function TestimonialsTab(_props: AdminTabProps) {
     const { data: testimonials, refetch } = useTestimonials();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(typeof empty & { id?: number }) | null>(null);
@@ -72,8 +72,8 @@ export function TestimonialsTab({ }: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: err.message || "Failed to save testimonial", variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: err instanceof Error ? err.message : "Failed to save testimonial", variant: "destructive" });
         }
     }
 
@@ -84,8 +84,8 @@ export function TestimonialsTab({ }: AdminTabProps) {
             toast({ title: "Testimonial deleted" });
             clearQueryCache();
             refetch();
-        } catch (err: any) {
-            toast({ title: err.message || "Failed to delete", variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: err instanceof Error ? err.message : "Failed to delete", variant: "destructive" });
         }
     }
 

@@ -127,6 +127,7 @@ export const DEFAULT_CONNECTIONS: Connection[] = [
     { from: 'c', to: 'git' }
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ICON_MAP: Record<string, any> = {
     Code: Code2,
     Code2,

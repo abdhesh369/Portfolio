@@ -48,8 +48,8 @@ export default function MindsetTab() {
         try {
             await deleteMutation.mutateAsync(id);
             toast({ title: "Mindset entry deleted" });
-        } catch (err: any) {
-            toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -71,8 +71,8 @@ export default function MindsetTab() {
                 toast({ title: "Mindset entry created" });
             }
             setEditing(null);
-        } catch (err: any) {
-            toast({ title: "Save failed", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Save failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
     };
 
@@ -109,8 +109,8 @@ export default function MindsetTab() {
                                             type="button"
                                             onClick={() => setEditing({ ...editing, icon: opt.value })}
                                             className={`p-2 rounded-lg border transition-all ${editing.icon === opt.value
-                                                    ? "bg-purple-500/20 border-purple-500 text-purple-400 scale-110 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-                                                    : "bg-white/5 border-white/10 text-white/40 hover:border-white/30"
+                                                ? "bg-purple-500/20 border-purple-500 text-purple-400 scale-110 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+                                                : "bg-white/5 border-white/10 text-white/40 hover:border-white/30"
                                                 }`}
                                             title={opt.label}
                                         >

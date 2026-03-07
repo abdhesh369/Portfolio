@@ -4,6 +4,7 @@ import { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 import { apiFetch } from "@/lib/api-helpers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import type { InsertSiteSettings } from "@portfolio/shared";
 
 // Mock apiFetch
 vi.mock("@/lib/api-helpers", () => ({
@@ -42,14 +43,14 @@ describe("useSiteSettings hook", () => {
     });
 
     it("updates site settings correctly", async () => {
-        const mockSettings = { isOpenToWork: false };
+        const mockSettings: InsertSiteSettings = { isOpenToWork: false };
         vi.mocked(apiFetch).mockResolvedValueOnce(mockSettings);
 
         const { result } = renderHook(() => useUpdateSiteSettings(), {
             wrapper: createWrapper(),
         });
 
-        await result.current.mutateAsync(mockSettings as any);
+        await result.current.mutateAsync(mockSettings);
 
         expect(apiFetch).toHaveBeenCalledWith("/api/v1/settings", {
             method: "PATCH",

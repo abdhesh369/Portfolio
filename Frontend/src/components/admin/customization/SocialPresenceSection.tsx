@@ -1,6 +1,6 @@
 import React from "react";
 import { UseFormRegister } from "react-hook-form";
-import { InsertSiteSettings } from "@portfolio/shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface SocialPresenceSectionProps {
@@ -34,7 +34,7 @@ export function SocialPresenceSection({ register, isOpen, onToggle }: SocialPres
                 {SOCIAL_FIELDS.map((social) => (
                     <div key={social.id} className="space-y-2">
                         <label htmlFor={social.id} className="text-xs font-medium text-white/50 uppercase">{social.label}</label>
-                        <input id={social.id} {...register(social.id as any)} type="url" className="admin-input" placeholder="https://..." />
+                        <input id={social.id} {...register(social.id as keyof InsertSiteSettings)} type="url" className="admin-input" placeholder="https://..." />
                     </div>
                 ))}
             </div>

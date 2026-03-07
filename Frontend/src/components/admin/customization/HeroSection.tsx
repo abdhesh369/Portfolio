@@ -1,15 +1,15 @@
-import React from "react";
-import { UseFormRegister, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InsertSiteSettings } from "@portfolio/shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface HeroSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
-    taglineFields: Record<string, any>[];
-    appendTagline: UseFieldArrayAppend<any, "heroTaglines">;
-    removeTagline: UseFieldArrayRemove;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    taglineFields: any[];
+    appendTagline: (value: string) => void;
+    removeTagline: (index: number) => void;
     isOpen: boolean;
     onToggle: () => void;
 }
@@ -41,7 +41,7 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
                         {taglineFields.map((field, index) => (
                             <div key={field.id} className="flex gap-2">
                                 <input
-                                    {...register(`heroTaglines.${index}` as any)}
+                                    {...register(`heroTaglines.${index}` as const)}
                                     className="admin-input"
                                     placeholder="e.g. Building high-performance apps"
                                 />

@@ -1,14 +1,10 @@
-import { useState, useMemo, useRef, useEffect } from "react";
-
+import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
 import { type Project } from "@portfolio/shared/schema";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { Github, ExternalLink, Folder, Code, Layers, X, ArrowRight, Sparkles, Cpu, Eye, Zap, Terminal } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ExternalLink, Github, ArrowRight, X, Eye, Folder, Code, Layers, Sparkles, Cpu, Zap, Terminal } from "lucide-react";
 import { Link } from "wouter";
-
-
 
 // Enhanced 3D Tilt Card with Sci-Fi styling
 const ProjectCard = ({ project, onPreview, index }: { project: Project; onPreview: (p: Project) => void; index: number }) => {

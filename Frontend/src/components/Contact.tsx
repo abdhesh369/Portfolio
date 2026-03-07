@@ -1,6 +1,6 @@
 import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMessageApiSchema, type InsertMessage } from "@portfolio/shared/schema";
+import { insertMessageApiSchema, type InsertMessage } from "@portfolio/shared";
 import { useSendMessage } from "@/hooks/use-portfolio";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";
@@ -40,7 +40,7 @@ const CyberInput = ({
       <div className={`absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
 
       <Component
-        {...register(id as any, {
+        {...register(id, {
           onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setHasValue(e.target.value.length > 0)
         })}
         type={type}

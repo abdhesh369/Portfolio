@@ -156,7 +156,7 @@ const principles = [
 
 export default function EngineeringMindset() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const { data: apiPrinciples, isLoading } = useMindset();
+  const { data: apiPrinciples } = useMindset();
 
   const principlesData = useMemo(() => {
     if (!apiPrinciples || apiPrinciples.length === 0) return principles;

@@ -50,7 +50,7 @@ jobs:
         run: npm ci
         working-directory: Frontend
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run type-check
         working-directory: Frontend
       - name: Lint
         run: npm run lint

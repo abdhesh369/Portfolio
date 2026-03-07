@@ -40,9 +40,9 @@ async function pingHealth(signal?: AbortSignal): Promise<{ ok: boolean; slow: bo
     });
     clearTimeout(slowTimer);
     return { ok: res.ok, slow: false }; // If it reached here, it wasn't a timeout
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(slowTimer);
-    if (err.name === 'AbortError' && slow) {
+    if (err instanceof Error && err.name === 'AbortError' && slow) {
       return { ok: false, slow: true };
     }
     return { ok: false, slow: false };

@@ -793,6 +793,15 @@ export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
 
+// Update schemas
+export const updateProjectSchema = insertProjectApiSchema.partial();
+export const updateSkillSchema = insertSkillApiSchema.partial();
+export const updateExperienceSchema = insertExperienceApiSchema.partial();
+export const updateTestimonialSchema = insertTestimonialApiSchema.partial();
+export const updateArticleSchema = insertArticleApiSchema.partial();
+export const updateMindsetSchema = insertMindsetApiSchema.partial();
+export const updateServiceSchema = insertServiceApiSchema.partial();
+
 // ================= TYPE GUARDS =================
 
 export function isProject(obj: unknown): obj is Project {

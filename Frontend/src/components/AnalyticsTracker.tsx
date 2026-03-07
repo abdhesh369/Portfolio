@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
 
@@ -43,8 +43,9 @@ export function AnalyticsTracker() {
         trackPageView();
 
         // 2. Log to Google Analytics if gtag is available
-        if ((window as any).gtag) {
-            (window as any).gtag("event", "page_view", {
+        const win = window as unknown as { gtag?: (event: string, action: string, params: Record<string, unknown>) => void };
+        if (win.gtag) {
+            win.gtag("event", "page_view", {
                 page_path: location,
             });
         }

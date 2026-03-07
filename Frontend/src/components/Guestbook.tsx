@@ -24,8 +24,8 @@ export const Guestbook = () => {
             setStatus({ type: 'success', text: "Message sent! It will appear once approved." });
             setMessage("");
             setName("");
-        } catch (err: any) {
-            setStatus({ type: 'error', text: err.message || "Something went wrong." });
+        } catch (err: unknown) {
+            setStatus({ type: 'error', text: err instanceof Error ? err.message : "Something went wrong." });
         }
     };
 

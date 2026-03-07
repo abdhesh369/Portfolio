@@ -1,5 +1,4 @@
-import { Github, Linkedin, Twitter, Facebook, Instagram, ArrowUp, Mail, Code2, Cpu, Globe, Youtube, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Github, Linkedin, Twitter, Facebook, Instagram, Mail, Code2, Cpu, Globe, Youtube, MessageCircle } from "lucide-react";
 import { m } from "framer-motion";
 import { useLocation } from "wouter";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -12,16 +11,6 @@ const defaultFooterNavItems = [
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "#contact" },
 ];
-
-const socialIconMap: Record<string, React.ElementType> = {
-  github: Github,
-  linkedin: Linkedin,
-  twitter: Twitter,
-  instagram: Instagram,
-  facebook: Facebook,
-  youtube: Youtube,
-  discord: MessageCircle,
-};
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -41,8 +30,6 @@ export default function Footer() {
     settings?.socialDevto && { href: settings.socialDevto, icon: Code2, label: "Dev.to", color: "#0A0A0A" },
     settings?.socialMedium && { href: settings.socialMedium, icon: Globe, label: "Medium", color: "#000000" },
   ].filter(Boolean) as Array<{ href: string; icon: React.ElementType; label: string; color: string }>;
-
-
 
   const handleNavClick = (href: string) => {
     if (href.startsWith("#")) {
@@ -147,7 +134,7 @@ export default function Footer() {
                 <span className="text-sm font-medium">Get in touch</span>
               </div>
               <a
-                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact%20from%20Portfolio`}
+                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact from Portfolio`}
                 className="text-lg font-bold text-white hover:text-primary transition-colors truncate block"
               >
                 {settings?.socialEmail || "contact@example.com"}
@@ -164,8 +151,6 @@ export default function Footer() {
               System last updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"} • Build: v3.2.0-stable
             </p>
           </div>
-
-
         </div>
       </div>
     </footer>

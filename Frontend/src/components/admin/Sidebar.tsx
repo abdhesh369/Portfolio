@@ -11,7 +11,7 @@ interface SidebarProps {
     collapsed: boolean;
     setCollapsed: (collapsed: boolean) => void;
     activeTab: string;
-    onNavigate: (tab: any) => void;
+    onNavigate: (tab: string) => void;
     mobileOpen: boolean;
     setMobileOpen: (open: boolean) => void;
 }

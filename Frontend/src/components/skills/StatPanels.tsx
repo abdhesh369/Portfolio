@@ -1,5 +1,4 @@
 import { m } from 'framer-motion';
-import { LucideIcon } from 'lucide-react';
 import { SkillNode } from './SkillTypes';
 
 interface StatPanelProps {

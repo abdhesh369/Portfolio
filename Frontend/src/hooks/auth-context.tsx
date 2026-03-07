@@ -7,8 +7,8 @@ import { AUTH_QUERY_KEY } from "@/lib/query-keys";
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    user: any;
-    login: (userData?: any) => void;
+    user: unknown;
+    login: (userData?: unknown) => void;
     logout: () => void;
     checkAuth: () => Promise<void>;
 }
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<unknown>(null);
     const queryClient = useQueryClient();
 
     const checkAuth = useCallback(async () => {
@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             setUser(data.user || { username: 'Admin' });
             setIsAuthenticated(true);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setIsAuthenticated(false);
             setUser(null);
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [queryClient]);
 
-    const login = (userData?: any) => {
+    const login = (userData?: unknown) => {
         localStorage.removeItem("auth_last_exit");
         if (userData) setUser(userData);
         setIsAuthenticated(true);

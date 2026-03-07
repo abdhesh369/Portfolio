@@ -16,7 +16,7 @@ describe("apiFetch", () => {
 
   it("makes a fetch call with credentials and JSON headers", async () => {
     const mockResponse = { ok: true, status: 200, json: vi.fn().mockResolvedValue({ data: "test" }) };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     const result = await apiFetch("/api/test");
 
@@ -32,7 +32,7 @@ describe("apiFetch", () => {
 
   it("merges custom headers with auth headers", async () => {
     const mockResponse = { ok: true, status: 200, json: vi.fn().mockResolvedValue({}) };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     await apiFetch("/api/test", { headers: { "X-Custom": "value" } });
 
@@ -54,7 +54,7 @@ describe("apiFetch", () => {
       statusText: "Unprocessable Entity",
       json: vi.fn().mockResolvedValue({ message: "Validation failed" }),
     };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     await expect(apiFetch("/api/test")).rejects.toThrow("Validation failed");
   });
@@ -66,14 +66,14 @@ describe("apiFetch", () => {
       statusText: "Internal Server Error",
       json: vi.fn().mockRejectedValue(new Error("parse error")),
     };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     await expect(apiFetch("/api/test")).rejects.toThrow("Internal Server Error");
   });
 
   it("returns null for 204 No Content responses", async () => {
     const mockResponse = { ok: true, status: 204, json: vi.fn() };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     const result = await apiFetch("/api/test", { method: "DELETE" });
 
@@ -83,7 +83,7 @@ describe("apiFetch", () => {
 
   it("passes through method and body options", async () => {
     const mockResponse = { ok: true, status: 200, json: vi.fn().mockResolvedValue({ id: 1 }) };
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as any);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse as unknown as Response);
 
     const body = JSON.stringify({ name: "test" });
     await apiFetch("/api/items", { method: "POST", body });

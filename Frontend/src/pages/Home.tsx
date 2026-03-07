@@ -1,13 +1,12 @@
-import { lazy, Suspense, useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import { useDocumentTitle } from "@/hooks/use-document-title";
 import { SEO } from "@/components/SEO";
 import SectionDivider from "@/components/SectionDivider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import { DEFAULT_SECTION_ORDER } from "@portfolio/shared/schema";
+import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
 import React from "react";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
@@ -169,7 +168,7 @@ export default function Home() {
       <main id="main-content">
         <Hero />
 
-        {sectionOrder.map((sectionId, index) => {
+        {sectionOrder.map((sectionId) => {
           const isVisible = sectionVisibility[sectionId] ?? true;
           const component = SECTION_MAP[sectionId];
 

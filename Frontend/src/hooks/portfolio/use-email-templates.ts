@@ -1,4 +1,4 @@
-import { api } from "@portfolio/shared/routes";
+import { api } from "@portfolio/shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { apiFetch } from "@/lib/api-helpers";
@@ -31,20 +31,7 @@ export function useEmailTemplates() {
         },
     });
 
-    const updateMutation = useMutation({
-        mutationFn: async ({ id, data }: { id: number; data: Partial<EmailTemplate> }) => {
-            return apiFetch(`${api.emailTemplates.list.path}/${id}`, {
-                method: "PATCH", // Using PATCH as per typical update, or PUT if the API requires that. Let's assume PATCH or PUT works since the original code used PUT
-                // wait, original used PUT:
-                // await apiFetch(`/api/v1/email-templates/${editing.id}`, { method: "PUT", body: JSON.stringify(editing) });
-            });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey });
-        },
-    });
 
-    // Redefining proper PUT
     const updateMutationFixed = useMutation({
         mutationFn: async ({ id, data }: { id: number; data: Partial<EmailTemplate> }) => {
             return apiFetch(`${api.emailTemplates.list.path}/${id}`, {

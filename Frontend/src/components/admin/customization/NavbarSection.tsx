@@ -1,19 +1,19 @@
 import React from "react";
 import { UseFormRegister, UseFieldArrayRemove, UseFieldArrayMove, UseFieldArrayAppend } from "react-hook-form";
-import { Plus, Trash2, GripVertical, ChevronDown } from "lucide-react";
+import { GripVertical, Plus, Trash2, ChevronDown } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
-import { InsertSiteSettings } from "@portfolio/shared/schema";
+import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
 
 interface NavbarSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
-    navFields: Record<string, any>[];
+    navFields: { id: string; label: string; href: string; icon?: string }[];
     appendNav: UseFieldArrayAppend<InsertSiteSettings, "navbarLinks">;
     removeNav: UseFieldArrayRemove;
     moveNav: UseFieldArrayMove;
-    sensors: any;
+    sensors: ReturnType<typeof import("@dnd-kit/core").useSensors>;
     handleNavDragEnd: (event: DragEndEvent) => void;
     isOpen: boolean;
     onToggle: () => void;
@@ -56,7 +56,8 @@ export function NavbarSection({
                         <div className="space-y-2">
                             {navFields.map((field, index) => (
                                 <SortableItem key={field.id} id={field.id}>
-                                    {({ attributes, listeners, isDragging }: { attributes: any, listeners: any, isDragging: boolean }) => (
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                    {({ attributes, listeners, isDragging }: { attributes: any; listeners: any; isDragging: boolean }) => (
                                         <div className={`flex flex-col md:flex-row gap-2 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5"}`}>
                                             <div className="flex items-center gap-2 grow">
                                                 <div
@@ -68,17 +69,17 @@ export function NavbarSection({
                                                 </div>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 grow">
                                                     <input
-                                                        {...register(`navbarLinks.${index}.label` as any)}
+                                                        {...register(`navbarLinks.${index}.label` as const)}
                                                         className="admin-input h-9"
                                                         placeholder="Label"
                                                     />
                                                     <input
-                                                        {...register(`navbarLinks.${index}.href` as any)}
+                                                        {...register(`navbarLinks.${index}.href` as const)}
                                                         className="admin-input h-9"
                                                         placeholder="Href (e.g. #projects)"
                                                     />
                                                     <input
-                                                        {...register(`navbarLinks.${index}.icon` as any)}
+                                                        {...register(`navbarLinks.${index}.icon` as const)}
                                                         className="admin-input h-9 md:col-span-1 col-span-2"
                                                         placeholder="Icon name (lucide)"
                                                     />

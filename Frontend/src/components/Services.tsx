@@ -1,6 +1,7 @@
 import { m, useReducedMotion } from "framer-motion";
 import { useServices } from "@/hooks/use-portfolio";
 import { Sparkles, ChevronRight, Layers } from "lucide-react";
+import type { Service } from "@portfolio/shared";
 
 function getFallbackServices() {
   return [
@@ -41,8 +42,8 @@ export default function Services() {
   const { data, isLoading, error } = useServices();
   const shouldReduceMotion = useReducedMotion();
 
-  const services = (data && data.length > 0 ? data : getFallbackServices()).slice().sort(
-    (a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+  const services = (data && data.length > 0 ? (data as Service[]) : (getFallbackServices() as unknown as Service[])).slice().sort(
+    (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
   );
 
   return (
@@ -91,7 +92,7 @@ export default function Services() {
         )}
 
         <div className="grid md:grid-cols-3 gap-6">
-          {(isLoading ? getFallbackServices() : services).map((svc: any, index: number) => (
+          {(isLoading ? (getFallbackServices() as unknown as Service[]) : services).map((svc, index) => (
             <m.div
               key={svc.id ?? index}
               initial={{ opacity: 0, y: 20 }}

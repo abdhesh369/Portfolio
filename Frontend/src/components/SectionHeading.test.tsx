@@ -1,15 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import React from "react";
+import type { LucideIcon } from "lucide-react";
 
 // Mock framer-motion to render plain HTML elements
 vi.mock("framer-motion", () => ({
   m: {
-    div: (props: any) => React.createElement("div", props),
-    h2: (props: any) => React.createElement("h2", props),
-    p: (props: any) => React.createElement("p", props),
+    div: (props: React.HTMLAttributes<HTMLDivElement>) => React.createElement("div", props),
+    h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => React.createElement("h2", props),
+    p: (props: React.HTMLAttributes<HTMLParagraphElement>) => React.createElement("p", props),
   },
-  AnimatePresence: ({ children }: any) => children,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 import SectionHeading from "./SectionHeading";
@@ -58,10 +59,10 @@ describe("SectionHeading", () => {
   });
 
   it("renders badge icon when provided", () => {
-    const MockIcon = (props: any) =>
+    const MockIcon = (props: React.SVGProps<SVGSVGElement>) =>
       React.createElement("svg", { ...props, "data-testid": "badge-icon" });
     render(
-      <SectionHeading badge="Badge" title="Title" badgeIcon={MockIcon as any} />
+      <SectionHeading badge="Badge" title="Title" badgeIcon={MockIcon as unknown as LucideIcon} />
     );
     expect(screen.getByTestId("badge-icon")).toBeInTheDocument();
   });

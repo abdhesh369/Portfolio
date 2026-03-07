@@ -1,6 +1,6 @@
 import { Switch, Route, useRoute, useLocation } from "wouter";
 import { QueryClientProvider, useIsFetching, useIsMutating } from "@tanstack/react-query";
-import { Suspense, lazy, Component, type ReactNode, useEffect, useState, useMemo } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -78,12 +78,13 @@ function SettingsApplicator() {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
       if (!result) return null;
 
-      let r = parseInt(result[1], 16) / 255;
-      let g = parseInt(result[2], 16) / 255;
-      let b = parseInt(result[3], 16) / 255;
+      const r = parseInt(result[1], 16) / 255;
+      const g = parseInt(result[2], 16) / 255;
+      const b = parseInt(result[3], 16) / 255;
 
       const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h, s, l = (max + min) / 2;
+      let h: number, s: number;
+      const l = (max + min) / 2;
 
       if (max === min) {
         h = s = 0;
