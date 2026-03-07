@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import { SEO } from "@/components/SEO";
@@ -146,7 +146,6 @@ export default function Home() {
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
 
-  // DEBUG OVERLAY
   return (
     <div className="min-h-screen selection:bg-primary/20">
       {/* Top Reading Progress Bar */}
@@ -200,7 +199,7 @@ export default function Home() {
       <main id="main-content">
         <Hero />
 
-        {sectionOrder.map((sectionId) => {
+        {sectionOrder.map((sectionId: string) => {
           const isVisible = sectionVisibility[sectionId] ?? true;
           const component = SECTION_MAP[sectionId];
 
