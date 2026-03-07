@@ -82,7 +82,13 @@ export function registerAnalyticsRoutes(app: Router) {
             // Broadcast update count when someone leaves
             visitorSSE.emit(\"count\", { count: visitorSSE.clientCount });
             });
-})
+    );
+    // GET /analytics/live-visitors/count - Lightweight endpoint for polling fallback
+    app.get(
+        "/analytics/live-visitors/count",
+        asyncHandler(async (_req, res) => {
+            res.json({ count: visitorSSE.clientCount });
+        })
     );
 
 // POST /analytics/track - Log an analytics event

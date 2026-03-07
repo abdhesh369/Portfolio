@@ -81,6 +81,16 @@ export function GuestbookTab() {
                                     )}
                                 </div>
                                 <p className="text-sm text-white/70 break-words">{entry.content}</p>
+                                {entry.reactions && Object.keys(entry.reactions).length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {Object.entries(entry.reactions).map(([emoji, count]) => (
+                                            <div key={emoji} className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
+                                                <span>{emoji}</span>
+                                                <span className="font-medium text-white/80">{count}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                                 <p className="text-xs text-white/30 mt-2">{new Date(entry.createdAt).toLocaleString()}</p>
                             </div>
                             <div className="flex gap-2 shrink-0 self-center md:self-start">

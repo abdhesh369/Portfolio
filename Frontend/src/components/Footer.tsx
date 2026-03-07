@@ -2,6 +2,7 @@ import { Github, Linkedin, Twitter, Facebook, Instagram, Mail, Code2, Cpu, Globe
 import { m } from "framer-motion";
 import { useLocation } from "wouter";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useVisitorCount } from "@/hooks/use-visitor-count";
 
 const defaultFooterNavItems = [
   { name: "Home", href: "/" },
@@ -16,6 +17,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [location, setLocation] = useLocation();
   const { data: settings } = useSiteSettings();
+  const visitorCount = useVisitorCount();
 
   // Build social links from settings
   const socialLinks = [
@@ -150,6 +152,22 @@ export default function Footer() {
             <p className="text-[10px] font-mono opacity-50 uppercase tracking-tighter">
               System last updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"} • Build: v3.2.0-stable
             </p>
+          </div>
+
+          {/* Live Visitor Count */}
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="relative flex items-center justify-center w-2 h-2">
+              <div className={`absolute inset-0 rounded-full blur-[2px] animate-pulse ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+              <div className={`relative w-1.5 h-1.5 rounded-full ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-white leading-none">
+                {visitorCount.count} Live Visitors
+              </span>
+              <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-0.5">
+                {visitorCount.isPolling ? `Polling Mode • ${visitorCount.lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "Real-time SSE Status"}
+              </span>
+            </div>
           </div>
         </div>
       </div>

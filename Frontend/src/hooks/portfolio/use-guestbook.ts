@@ -2,11 +2,11 @@ import { api } from "@portfolio/shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
-import type { InsertGuestbookEntry } from "@portfolio/shared/schema";
+import type { InsertGuestbookEntry, GuestbookEntry } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useGuestbook() {
-    return useQuery({
+    return useQuery<GuestbookEntry[]>({
         queryKey: ["guestbook"],
         queryFn: () =>
             fetchAndParse(
@@ -50,7 +50,7 @@ export function useSubmitGuestbook() {
     });
 }
 export function useAdminGuestbook() {
-    return useQuery({
+    return useQuery<GuestbookEntry[]>({
         queryKey: ["guestbook", "admin"],
         queryFn: () =>
             fetchAndParse(
@@ -115,6 +115,26 @@ export function useDeleteGuestbook() {
                 description: error.message,
                 variant: "destructive",
             });
+        },
+    });
+}
+
+
+export function useReactToGuestbook() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationKey: ["react-guestbook"],
+        mutationFn: async ({ id, emoji }: { id: number; emoji: string }) => {
+            const res = await apiFetch(api.guestbook.react.path.replace(":id", id.toString()), {
+                method: api.guestbook.react.method,
+                body: JSON.stringify({ emoji }),
+            });
+            return api.guestbook.react.responses[200].parse(res);
+        },
+        onSuccess: () => {
+            // Optimistic updates could be added here, but simple invalidation for now
+            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
         },
     });
 }

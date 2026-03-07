@@ -1,13 +1,21 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
+import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2, Heart, Star, ThumbsUp, Flame } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { useGuestbook, useSubmitGuestbook } from "@/hooks/use-portfolio";
+import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/portfolio/use-guestbook";
 import type { GuestbookEntry } from "@portfolio/shared/schema";
+
+const REACTION_EMOJIS = [
+    { emoji: "👍", icon: ThumbsUp, label: "Like" },
+    { emoji: "❤️", icon: Heart, label: "Love" },
+    { emoji: "🔥", icon: Flame, label: "Fire" },
+    { emoji: "⭐️", icon: Star, label: "Star" },
+];
 
 export const Guestbook = () => {
     const { data: entries = [], isLoading: loading } = useGuestbook();
     const submitMutation = useSubmitGuestbook();
+    const reactMutation = useReactToGuestbook();
 
     const [message, setMessage] = useState("");
     const [name, setName] = useState("");
@@ -26,6 +34,14 @@ export const Guestbook = () => {
             setName("");
         } catch (err: unknown) {
             setStatus({ type: 'error', text: err instanceof Error ? err.message : "Something went wrong." });
+        }
+    };
+
+    const handleReact = async (id: number, emoji: string) => {
+        try {
+            await reactMutation.mutateAsync({ id, emoji });
+        } catch (err) {
+            console.error("Failed to react:", err);
         }
     };
 
@@ -153,13 +169,34 @@ export const Guestbook = () => {
                                                     {formatDistanceToNow(new Date(entry.createdAt), { addSuffix: true })}
                                                 </div>
                                             </div>
-                                            <p className="text-muted-foreground text-sm leading-relaxed italic">
+                                            <p className="text-muted-foreground text-sm leading-relaxed italic mb-4">
                                                 "{entry.content}"
                                             </p>
+
+                                            <div className="flex flex-wrap gap-2">
+                                                {REACTION_EMOJIS.map(({ emoji, icon: Icon, label }) => {
+                                                    const count = (entry.reactions as Record<string, number>)?.[emoji] || 0;
+                                                    return (
+                                                        <button
+                                                            key={emoji}
+                                                            onClick={() => handleReact(entry.id, emoji)}
+                                                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border transition-all text-xs font-medium ${count > 0
+                                                                ? 'bg-primary/10 border-primary/30 text-primary'
+                                                                : 'bg-secondary/20 border-border/50 text-muted-foreground hover:border-primary/20 hover:bg-primary/5'
+                                                                }`}
+                                                            title={label}
+                                                        >
+                                                            <span className="text-sm">{emoji}</span>
+                                                            {count > 0 && <span>{count}</span>}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
                                         </m.div>
                                     ))}
                                 </AnimatePresence>
-                            )}
+                            )
+                            }
                         </div>
                     </div>
                 </div>

@@ -553,389 +553,159 @@ export const api = {
             },
         },
     },
+    liveVisitorCount: {
+        method: "GET" as const,
+        path: "/api/v1/analytics/live-visitors/count",
+        description: "Get live visitor count for polling fallback",
+        responses: {
+            200: z.object({ count: z.number() }),
+            500: errorSchemas.internal,
+        },
+    },
+},
 
     // ---------- TESTIMONIALS ----------
-    testimonials: {
-        list: {
-            method: "GET" as const,
-            path: "/api/v1/testimonials",
-            description: "List all testimonials (public, cached)",
-            responses: {
-                200: z.array(testimonialSchema),
-                500: errorSchemas.internal,
-            },
-        },
-        get: {
-            method: "GET" as const,
-            path: "/api/v1/testimonials/:id",
-            description: "Get single testimonial by ID (public)",
-            responses: {
-                200: testimonialSchema,
-                400: errorSchemas.badRequest,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        create: {
-            method: "POST" as const,
-            path: "/api/v1/testimonials",
-            description: "Create new testimonial (admin only)",
-            input: insertTestimonialApiSchema,
-            requiresAuth: true,
-            responses: {
-                201: createSuccessResponse(testimonialSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                500: errorSchemas.internal,
-            },
-        },
-        update: {
-            method: "PATCH" as const,
-            path: "/api/v1/testimonials/:id",
-            description: "Update testimonial by ID (admin only)",
-            input: insertTestimonialApiSchema.partial(),
-            requiresAuth: true,
-            responses: {
-                200: createSuccessResponse(testimonialSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        delete: {
-            method: "DELETE" as const,
-            path: "/api/v1/testimonials/:id",
-            description: "Delete testimonial by ID (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-    },
-    // ---------- ARTICLES ----------
-    articles: {
-        list: {
-            method: "GET" as const,
-            path: "/api/v1/articles",
-            description: "List all articles (public/admin)",
-            responses: {
-                200: z.array(articleSchema),
-                500: errorSchemas.internal,
-            },
-        },
-        get: {
-            method: "GET" as const,
-            path: "/api/v1/articles/:slug",
-            description: "Get single article by slug (public)",
-            responses: {
-                200: articleWithRelatedSchema,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        create: {
-            method: "POST" as const,
-            path: "/api/v1/articles",
-            description: "Create new article (admin only)",
-            input: insertArticleApiSchema,
-            requiresAuth: true,
-            responses: {
-                201: createSuccessResponse(articleSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                500: errorSchemas.internal,
-            },
-        },
-        update: {
-            method: "PATCH" as const,
-            path: "/api/v1/articles/:id",
-            description: "Update article by ID (admin only)",
-            input: insertArticleApiSchema.partial(),
-            requiresAuth: true,
-            responses: {
-                200: createSuccessResponse(articleSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        delete: {
-            method: "DELETE" as const,
-            path: "/api/v1/articles/:id",
-            description: "Delete article by ID (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-    },
-
-    // ---------- EMAIL TEMPLATES ----------
-    emailTemplates: {
-        list: {
-            method: "GET" as const,
-            path: "/api/v1/email-templates",
-            description: "List all email templates (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.array(emailTemplateSchema),
-                401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
-            },
-        },
-        get: {
-            method: "GET" as const,
-            path: "/api/v1/email-templates/:id",
-            description: "Get single email template (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: emailTemplateSchema,
-                400: errorSchemas.badRequest,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        create: {
-            method: "POST" as const,
-            path: "/api/v1/email-templates",
-            description: "Create new email template (admin only)",
-            input: insertEmailTemplateApiSchema,
-            requiresAuth: true,
-            responses: {
-                201: createSuccessResponse(emailTemplateSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                500: errorSchemas.internal,
-            },
-        },
-        update: {
-            method: "PUT" as const,
-            path: "/api/v1/email-templates/:id",
-            description: "Update email template by ID (admin only)",
-            input: insertEmailTemplateApiSchema.partial(),
-            requiresAuth: true,
-            responses: {
-                200: createSuccessResponse(emailTemplateSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        delete: {
-            method: "DELETE" as const,
-            path: "/api/v1/email-templates/:id",
-            description: "Delete email template by ID (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-    },
-    // ---------- SEO ----------
-    seo: {
-        list: {
-            method: "GET" as const,
-            path: "/api/v1/seo",
-            description: "List all SEO settings (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.array(seoSettingsSchema),
-                401: errorSchemas.unauthorized,
-                500: errorSchemas.internal,
-            },
-        },
-        get: {
-            method: "GET" as const,
-            path: "/api/v1/seo/:slug",
-            description: "Get SEO settings by slug (public)",
-            responses: {
-                200: seoSettingsSchema,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        create: {
-            method: "POST" as const,
-            path: "/api/v1/seo",
-            description: "Create new SEO settings (admin only)",
-            input: insertSeoSettingsApiSchema,
-            requiresAuth: true,
-            responses: {
-                201: createSuccessResponse(seoSettingsSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                409: z.object({ message: z.string() }),
-                500: errorSchemas.internal,
-            },
-        },
-        update: {
-            method: "PATCH" as const,
-            path: "/api/v1/seo/:id",
-            description: "Update SEO settings by ID (admin only)",
-            input: insertSeoSettingsApiSchema.partial(),
-            requiresAuth: true,
-            responses: {
-                200: createSuccessResponse(seoSettingsSchema),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-        delete: {
-            method: "DELETE" as const,
-            path: "/api/v1/seo/:id",
-            description: "Delete SEO settings by ID (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
-                401: errorSchemas.unauthorized,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
-    },
-    // ---------- GUESTBOOK ----------
-    guestbook: {
-        list: {
-            method: "GET" as const,
+    [...lines 557 - 811 ...]
+// ---------- GUESTBOOK ----------
+guestbook: {
+    list: {
+        method: "GET" as const,
             path: "/api/v1/guestbook",
-            description: "List all approved guestbook entries (public)",
-            responses: {
-                200: z.array(guestbookSchema),
+                description: "List all approved guestbook entries (public)",
+                    responses: {
+            200: z.array(guestbookSchema),
                 500: errorSchemas.internal,
             },
-        },
-        create: {
-            method: "POST" as const,
+    },
+    create: {
+        method: "POST" as const,
             path: "/api/v1/guestbook",
-            description: "Submit guestbook entry (public, rate-limited)",
-            input: insertGuestbookApiSchema,
-            responses: {
-                201: createSuccessResponse(guestbookSchema),
+                description: "Submit guestbook entry (public, rate-limited)",
+                    input: insertGuestbookApiSchema,
+                        responses: {
+            201: createSuccessResponse(guestbookSchema),
                 400: errorSchemas.validation,
-                500: errorSchemas.internal,
+                    500: errorSchemas.internal,
             },
-        },
-        adminList: {
-            method: "GET" as const,
+    },
+    react: {
+        method: "POST" as const,
+            path: "/api/v1/guestbook/:id/react",
+                description: "React to guestbook entry",
+                    input: z.object({ emoji: z.string() }),
+                        responses: {
+            200: createSuccessResponse(guestbookSchema),
+                400: errorSchemas.validation,
+                    404: errorSchemas.notFound,
+                        500: errorSchemas.internal,
+            },
+    },
+    adminList: {
+        method: "GET" as const,
             path: "/api/v1/guestbook/admin",
-            description: "List all guestbook entries (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.array(guestbookSchema),
+                description: "List all guestbook entries (admin only)",
+                    requiresAuth: true,
+                        responses: {
+            200: z.array(guestbookSchema),
                 401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
+                    403: errorSchemas.forbidden,
+                        500: errorSchemas.internal,
             },
-        },
-        approve: {
-            method: "PATCH" as const,
+    },
+    approve: {
+        method: "PATCH" as const,
             path: "/api/v1/admin/guestbook/:id/approve",
-            description: "Approve guestbook entry (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: createSuccessResponse(guestbookSchema),
+                description: "Approve guestbook entry (admin only)",
+                    requiresAuth: true,
+                        responses: {
+            200: createSuccessResponse(guestbookSchema),
                 401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
+                    403: errorSchemas.forbidden,
+                        404: errorSchemas.notFound,
+                            500: errorSchemas.internal,
             },
-        },
-        delete: {
-            method: "DELETE" as const,
+    },
+    delete: {
+        method: "DELETE" as const,
             path: "/api/v1/admin/guestbook/:id",
-            description: "Delete guestbook entry (admin only)",
-            requiresAuth: true,
-            responses: {
-                204: z.void(),
+                description: "Delete guestbook entry (admin only)",
+                    requiresAuth: true,
+                        responses: {
+            204: z.void(),
                 401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
+                    403: errorSchemas.forbidden,
+                        404: errorSchemas.notFound,
+                            500: errorSchemas.internal,
             },
-        },
     },
-    // ---------- CHAT ----------
-    chat: {
-        send: {
-            method: "POST" as const,
+},
+
+// ---------- CHAT ----------
+chat: {
+    send: {
+        method: "POST" as const,
             path: "/api/v1/chat",
-            description: "Send message to AI assistant (public, rate limited)",
-            input: z.object({
-                messages: z.array(z.object({
-                    role: z.enum(["user", "model"]),
-                    parts: z.array(z.object({
-                        text: z.string()
-                    }))
-                }))
-            }),
-            responses: {
-                200: createSuccessResponse(z.object({ message: z.string() })),
+                description: "Send message to AI assistant (public, rate limited)",
+                    input: z.object({
+                        messages: z.array(z.object({
+                            role: z.enum(["user", "model"]),
+                            parts: z.array(z.object({
+                                text: z.string()
+                            }))
+                        }))
+                    }),
+                        responses: {
+            200: createSuccessResponse(z.object({ message: z.string() })),
                 400: errorSchemas.validation,
-                429: z.object({ success: z.literal(false), message: z.string(), details: z.string().optional() }),
-                500: errorSchemas.internal,
+                    429: z.object({ success: z.literal(false), message: z.string(), details: z.string().optional() }),
+                        500: errorSchemas.internal,
             },
-        },
     },
-    // ---------- AUDIT LOG ----------
-    auditLog: {
-        list: {
-            method: "GET" as const,
+},
+// ---------- AUDIT LOG ----------
+auditLog: {
+    list: {
+        method: "GET" as const,
             path: "/api/v1/admin/audit-log",
-            description: "List audit log entries (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.object({
-                    entries: z.array(auditLogSchema),
-                    total: z.number(),
-                }),
+                description: "List audit log entries (admin only)",
+                    requiresAuth: true,
+                        responses: {
+            200: z.object({
+                entries: z.array(auditLogSchema),
+                total: z.number(),
+            }),
                 401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
+                    403: errorSchemas.forbidden,
+                        500: errorSchemas.internal,
             },
-        },
     },
-    // ---------- SETTINGS ----------
-    settings: {
-        get: {
-            method: "GET" as const,
+},
+// ---------- SETTINGS ----------
+settings: {
+    get: {
+        method: "GET" as const,
             path: "/api/v1/settings",
-            description: "Get site settings (public)",
-            responses: {
-                200: siteSettingsSchema,
+                description: "Get site settings (public)",
+                    responses: {
+            200: siteSettingsSchema,
                 500: errorSchemas.internal,
             },
-        },
-        update: {
-            method: "PATCH" as const,
+    },
+    update: {
+        method: "PATCH" as const,
             path: "/api/v1/settings",
-            description: "Update site settings (admin only)",
-            requiresAuth: true,
-            input: insertSiteSettingsApiSchema,
-            responses: {
-                200: createSuccessResponse(siteSettingsSchema),
+                description: "Update site settings (admin only)",
+                    requiresAuth: true,
+                        input: insertSiteSettingsApiSchema,
+                            responses: {
+            200: createSuccessResponse(siteSettingsSchema),
                 400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
+                    401: errorSchemas.unauthorized,
+                        403: errorSchemas.forbidden,
+                            500: errorSchemas.internal,
             },
-        }
     }
+}
 };
 
 export type Api = typeof api;
