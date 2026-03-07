@@ -103,7 +103,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@assets': path.resolve(__dirname, './Resources'),
-      '@shared': path.resolve(__dirname, './shared'),
+      '@shared': path.resolve(__dirname, '../packages/shared/src'),
+      '@portfolio/shared/schema': path.resolve(__dirname, '../packages/shared/src/schema.ts'),
+      '@portfolio/shared/routes': path.resolve(__dirname, '../packages/shared/src/routes.ts'),
       '@portfolio/shared': path.resolve(__dirname, '../packages/shared/src/index.ts'),
     },
   },

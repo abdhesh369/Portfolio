@@ -22,7 +22,7 @@ jobs:
         run: npm ci
         working-directory: Backend
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run type-check
         working-directory: Backend
       - name: Lint
         run: npm run lint

@@ -690,9 +690,10 @@ const siteSettingsBaseSchema = z.object({
   // Navbar Configuration
   navbarLinks: z.array(z.object({
     label: z.string(),
-    href: z.string().refine(isValidUrl, { message: "Invalid URL or path" }),
+    href: z.string(),
     icon: z.string().optional(),
   })).optional(),
+
   // Footer Configuration
   footerCopyright: z.string().max(255).optional(),
   footerTagline: z.string().max(500).optional(),
@@ -797,6 +798,7 @@ export const updateProjectSchema = insertProjectApiSchema.partial();
 export const updateSkillSchema = insertSkillApiSchema.partial();
 export const updateExperienceSchema = insertExperienceApiSchema.partial();
 export const updateTestimonialSchema = insertTestimonialApiSchema.partial();
+export const updateArticleSchema = insertArticleApiSchema.partial();
 export const updateMindsetSchema = insertMindsetApiSchema.partial();
 export const updateServiceSchema = insertServiceApiSchema.partial();
 

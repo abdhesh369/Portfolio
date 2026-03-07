@@ -56,3 +56,7 @@ playwright-report/
 stats.
 
 .qodo/
+
+# Shared package build artifacts
+packages/shared/dist/
+packages/shared/src/*.js

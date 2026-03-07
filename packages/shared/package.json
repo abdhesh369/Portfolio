@@ -3,37 +3,12 @@
     "version": "2.0.0",
     "private": true,
     "type": "module",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
     "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        },
-        "./schema": {
-            "import": "./dist/schema.js",
-            "types": "./dist/schema.d.ts",
-            "default": "./dist/schema.js"
-        },
-        "./schema.js": {
-            "import": "./dist/schema.js",
-            "types": "./dist/schema.d.ts",
-            "default": "./dist/schema.js"
-        },
-        "./routes": {
-            "import": "./dist/routes.js",
-            "types": "./dist/routes.d.ts",
-            "default": "./dist/routes.js"
-        },
-        "./routes.js": {
-            "import": "./dist/routes.js",
-            "types": "./dist/routes.d.ts",
-            "default": "./dist/routes.js"
-        }
-    },
-    "scripts": {
-        "build": "tsc"
+        ".": "./src/index.ts",
+        "./schema": "./src/schema.ts",
+        "./routes": "./src/routes.ts"
     },
     "dependencies": {
         "zod": "^3.24.1",
