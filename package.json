@@ -18,18 +18,19 @@
     "scripts": {
         "dev:backend": "npm run dev -w Backend",
         "dev:frontend": "npm run dev -w Frontend",
-        "build:backend": "npm run build -w Backend",
-        "build:frontend": "npm run build -w Frontend",
-        "test:backend": "npm run test -w Backend",
-        "test:frontend": "npm run test -w Frontend",
-        "test:all": "npm run test --workspaces",
+        "build:shared": "npm run build -w @portfolio/shared",
+        "build:backend": "npm run build:shared && npm run build -w Backend",
+        "build:frontend": "npm run build:shared && npm run build -w Frontend",
+        "test:backend": "npm run build:shared && npm run test -w Backend",
+        "test:frontend": "npm run build:shared && npm run test -w Frontend",
+        "test:all": "npm run build:shared && npm run test --workspaces",
         "lint:backend": "npm run lint -w Backend",
         "lint:frontend": "npm run lint -w Frontend",
         "lint:all": "npm run lint --workspaces",
-        "type-check:backend": "npm run type-check -w Backend",
-        "type-check:frontend": "npm run type-check -w Frontend",
-        "type-check:all": "npm run type-check --workspaces",
-        "schema:sync-check": "diff Backend/shared/schema.ts Frontend/shared/schema.ts"
+        "type-check:backend": "npm run build:shared && npm run type-check -w Backend",
+        "type-check:frontend": "npm run build:shared && npm run type-check -w Frontend",
+        "type-check:all": "npm run build:shared && npm run type-check --workspaces",
+        "schema:sync-check": "echo 'Schema consolidated in packages/shared/src/schema.ts'"
     },
     "overrides": {
         "ioredis": "5.10.0",

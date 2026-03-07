@@ -273,7 +273,7 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href="https://github.com/abdhesh369" target="_blank" rel="noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                    <a href="https://github.com/abdhesh369" target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
                       <Code className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
                     <a href="mailto:abdheshshah111@gmail.com?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20Abdhesh," className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">

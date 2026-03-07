@@ -3,8 +3,9 @@ import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
 import rateLimit from "express-rate-limit";
 import DOMPurify from 'isomorphic-dompurify';
-import { db } from "../db.js";
+import { eq, and } from "drizzle-orm";
 import { articlesTable, projectsTable, skillsTable, experiencesTable } from "@portfolio/shared";
+import { db } from "../db.js";
 import { env } from "../env.js";
 import { redis } from "../lib/redis.js";
 
@@ -24,6 +25,7 @@ const chatSchema = z.object({
     }))
 });
 
+
 /**
  * Build the system prompt from DB data, with Redis caching (15-min TTL).
  * Returns cached prompt on hit, queries DB and caches on miss.
@@ -39,23 +41,30 @@ export async function buildSystemPrompt(): Promise<string> {
         }
     }
 
-    // Cache miss — fetch from DB
+    // Cache miss — fetch from DB (filtered to avoid data leaks)
     const [articles, projects, skills, experiences] = await Promise.all([
-        db.select().from(articlesTable),
-        db.select().from(projectsTable),
+        db.select().from(articlesTable).where(eq(articlesTable.status, "published")),
+        db.select().from(projectsTable).where(
+            and(
+                eq(projectsTable.isHidden, false),
+                eq(projectsTable.status, "Completed")
+            )
+        ),
         db.select().from(skillsTable),
         db.select().from(experiencesTable),
     ]);
+
 
     const truncate = (text: string, maxLen = 500) =>
         text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
 
     const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.
             Your goal is to answer questions about Abdhesh based on the following information:
-            - Skills: ${skills.slice(0, 30).map(s => s.name).join(", ")}
-            - Projects: ${projects.slice(0, 10).map(p => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
-            - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
-            - Articles: ${articles.slice(0, 10).map(a => a.title).join(", ")}
+            - Skills: ${skills.slice(0, 30).map((s: any) => s.name).join(", ")}
+            - Projects: ${projects.slice(0, 10).map((p: any) => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
+            - Experiences: ${experiences.slice(0, 5).map((e: any) => `${e.role} at ${e.organization}`).join("; ")}
+            - Articles: ${articles.slice(0, 10).map((a: any) => a.title).join(", ")}
+
             
             Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
 

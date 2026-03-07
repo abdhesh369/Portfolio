@@ -292,9 +292,9 @@ export default function BlogPost() {
                                             {authorBio}
                                         </p>
                                         <div className="flex justify-center md:justify-start gap-4">
-                                            {settings?.socialTwitter && <a href={settings.socialTwitter} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>}
-                                            {settings?.socialLinkedin && <a href={settings.socialLinkedin} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>}
-                                            {settings?.socialGithub && <a href={settings.socialGithub} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>}
+                                            {settings?.socialTwitter && <a href={settings.socialTwitter} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">Twitter</a>}
+                                            {settings?.socialLinkedin && <a href={settings.socialLinkedin} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">LinkedIn</a>}
+                                            {settings?.socialGithub && <a href={settings.socialGithub} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">GitHub</a>}
                                         </div>
                                     </div>
                                 </div>

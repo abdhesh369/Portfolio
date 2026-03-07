@@ -1,4 +1,5 @@
 import React, { useState, type FormEvent } from "react";
+import DOMPurify from "dompurify";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -128,7 +129,7 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold text-white text-base mb-1">{tpl.name}</h3>
                                 <p className="text-xs text-purple-400 mb-2 truncate">{tpl.subject}</p>
-                                <div className="text-sm text-white/40 line-clamp-3 prose prose-invert prose-sm" dangerouslySetInnerHTML={{ __html: tpl.body }} />
+                                <div className="text-sm text-white/40 line-clamp-3 prose prose-invert prose-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tpl.body) }} />
                             </div>
                             <div className="flex gap-2 pt-2 border-t border-white/5">
                                 <Button variant="outline" size="sm" onClick={() => setEditing(tpl as Partial<EmailTemplate> & typeof emptyTemplate)} className="text-white/60">Edit</Button>

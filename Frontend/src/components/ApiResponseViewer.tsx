@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
+import DOMPurify from "dompurify";
 import { Code2, Copy, Check, Terminal, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { API_BASE_URL, apiFetch } from "@/lib/api-helpers";
 
@@ -224,7 +225,7 @@ export function ApiResponseViewer({
                 {formattedJson && !loading && (
                   <pre
                     className="px-4 py-4 text-xs font-mono leading-relaxed overflow-x-auto max-h-[400px] overflow-y-auto scrollbar-thin"
-                    dangerouslySetInnerHTML={{ __html: highlightJson(formattedJson) }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(highlightJson(formattedJson)) }}
                     style={{ color: 'var(--foreground-hex, #e2e8f0)' }}
                   />
                 )}
