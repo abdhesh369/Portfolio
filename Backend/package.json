@@ -9,7 +9,7 @@
     "dev": "tsx --watch src/index.ts",
     "lint": "eslint src --ext .ts --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "build": "tsc --project tsconfig.json",
+    "build": "npm run build -w @portfolio/shared && tsc --project tsconfig.json",
     "prestart": "npm run env:validate",
     "start": "node --import ./dist/src/instrument.js ./dist/src/index.js",
     "migrate": "npx drizzle-kit migrate",

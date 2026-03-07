@@ -4,32 +4,31 @@
     "private": true,
     "type": "module",
     "main": "./dist/index.js",
-    "types": "./src/index.ts",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./src/index.ts",
+            "types": "./dist/index.d.ts",
             "import": "./dist/index.js",
             "default": "./dist/index.js"
         },
         "./schema": {
-            "types": "./src/schema.ts",
+            "types": "./dist/schema.d.ts",
             "import": "./dist/schema.js",
             "default": "./dist/schema.js"
         },
         "./routes": {
-            "types": "./src/routes.ts",
+            "types": "./dist/routes.d.ts",
             "import": "./dist/routes.js",
             "default": "./dist/routes.js"
         },
         "./utils": {
-            "types": "./src/utils.ts",
+            "types": "./dist/utils.d.ts",
             "import": "./dist/utils.js",
             "default": "./dist/utils.js"
         }
     },
     "files": [
-        "dist",
-        "src"
+        "dist"
     ],
     "scripts": {
         "build": "tsc --project tsconfig.json"
