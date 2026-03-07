@@ -29,7 +29,7 @@ export function useMessageStream(enabled: boolean = true) {
     function connect() {
       try {
         // Use absolute URL if possible to avoid issues in cross-origin environments
-        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const backendUrl = import.meta.env.VITE_API_URL;
         const streamUrl = backendUrl
           ? `${backendUrl.replace(/\/$/, '')}/api/v1/messages/stream`
           : '/api/v1/messages/stream';

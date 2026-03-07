@@ -1,0 +1,167 @@
+[
+  {
+    "id": 11,
+    "name": "Git",
+    "category": "Tools",
+    "status": "Core",
+    "icon": "GitBranch",
+    "description": "Version control",
+    "proof": "All projects",
+    "x": 15,
+    "y": 60
+  },
+  {
+    "id": 12,
+    "name": "GitHub",
+    "category": "Tools",
+    "status": "Core",
+    "icon": "GitBranch",
+    "description": "Code hosting",
+    "proof": "All projects",
+    "x": 30,
+    "y": 70
+  },
+  {
+    "id": 13,
+    "name": "C",
+    "category": "Foundations",
+    "status": "Core",
+    "icon": "Terminal",
+    "description": "System programming language",
+    "proof": "Academic coursework",
+    "x": 20,
+    "y": 20
+  },
+  {
+    "id": 2,
+    "name": "C++",
+    "category": "Foundations",
+    "status": "Core",
+    "icon": "Code2",
+    "description": "Object-oriented programming",
+    "proof": "Academic coursework",
+    "x": 50,
+    "y": 18
+  },
+  {
+    "id": 3,
+    "name": "Python",
+    "category": "Foundations",
+    "status": "Core",
+    "icon": "Terminal",
+    "description": "General-purpose language",
+    "proof": "Project Edith, AI Study Buddy",
+    "x": 80,
+    "y": 20
+  },
+  {
+    "id": 145,
+    "name": "TypeScript",
+    "category": "Languages",
+    "status": "Advanced",
+    "icon": "Code",
+    "description": "",
+    "proof": "",
+    "x": 50,
+    "y": 50
+  },
+  {
+    "id": 146,
+    "name": "System Design",
+    "category": "Architecture",
+    "status": "Advanced",
+    "icon": "Cpu",
+    "description": "",
+    "proof": "",
+    "x": 50,
+    "y": 50
+  },
+  {
+    "id": 4,
+    "name": "HTML",
+    "category": "Frontend",
+    "status": "Core",
+    "icon": "Globe",
+    "description": "Web structure",
+    "proof": "All web projects",
+    "x": 30,
+    "y": 45
+  },
+  {
+    "id": 147,
+    "name": "TailwindCSS",
+    "category": "Frontend",
+    "status": "Advanced",
+    "icon": "Palette",
+    "description": "",
+    "proof": "",
+    "x": 50,
+    "y": 50
+  },
+  {
+    "id": 5,
+    "name": "CSS",
+    "category": "Frontend",
+    "status": "Core",
+    "icon": "Layers",
+    "description": "Web styling",
+    "proof": "All web projects",
+    "x": 50,
+    "y": 45
+  },
+  {
+    "id": 6,
+    "name": "JavaScript",
+    "category": "Frontend",
+    "status": "Core",
+    "icon": "Zap",
+    "description": "Web scripting",
+    "proof": "All web projects",
+    "x": 70,
+    "y": 45
+  },
+  {
+    "id": 25,
+    "name": "React",
+    "category": "Frontend",
+    "status": "Core",
+    "icon": "Code2",
+    "description": "Frontend library",
+    "proof": "Portfolio Website",
+    "x": 70,
+    "y": 60
+  },
+  {
+    "id": 27,
+    "name": "Node.js",
+    "category": "Backend",
+    "status": "Advanced",
+    "icon": "Server",
+    "description": "Server-side runtime",
+    "proof": "Portfolio Backend",
+    "x": 40,
+    "y": 70
+  },
+  {
+    "id": 9,
+    "name": "Express",
+    "category": "Backend",
+    "status": "Advanced",
+    "icon": "Terminal",
+    "description": "Web framework",
+    "proof": "Portfolio Backend",
+    "x": 60,
+    "y": 70
+  },
+  {
+    "id": 10,
+    "name": "PostgreSQL",
+    "category": "Backend",
+    "status": "Advanced",
+    "icon": "Database",
+    "description": "Relational database",
+    "proof": "Portfolio Backend",
+    "x": 50,
+    "y": 85
+  }
+]
