@@ -1,7 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
 import { api } from "@portfolio/shared/routes";
+import { interpolatePath } from "@portfolio/shared/utils";
 import { apiFetch } from "@/lib/api-helpers";
-import { useProjects } from "../portfolio/use-projects";
+import { useProjects } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Project } from "@portfolio/shared/schema";
 
@@ -42,7 +43,7 @@ export function useAdminProjects() {
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: any }) => {
-            const res = await apiFetch(api.projects.update.path.replace(":id", id.toString()), {
+            const res = await apiFetch(interpolatePath(api.projects.update.path, { id }), {
                 method: api.projects.update.method,
                 body: JSON.stringify(data),
             });
@@ -69,7 +70,7 @@ export function useAdminProjects() {
             }
         },
         mutationFn: async (id: number) => {
-            await apiFetch(api.projects.delete.path.replace(":id", id.toString()), {
+            await apiFetch(interpolatePath(api.projects.delete.path, { id }), {
                 method: api.projects.delete.method,
             });
         },

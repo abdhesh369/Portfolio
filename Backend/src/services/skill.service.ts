@@ -2,6 +2,7 @@ import { skillRepository } from "../repositories/skill.repository.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Skill, InsertSkill } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
+import { logger } from "../lib/logger.js";
 
 const FEATURE = "skill";
 const LIST_NAMESPACE = "list";
@@ -35,11 +36,7 @@ export class SkillService {
      */
     async create(data: InsertSkill): Promise<Skill> {
         const skill = await skillRepository.create(data);
-        try {
-            await this.invalidateCache();
-        } catch (err) {
-            console.error("Failed to invalidate skill cache after create:", err);
-        }
+        await this.invalidateCache();
         return skill;
     }
 
@@ -51,11 +48,7 @@ export class SkillService {
      */
     async update(id: number, data: Partial<InsertSkill>): Promise<Skill> {
         const skill = await skillRepository.update(id, data);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            console.error("Failed to invalidate skill cache after update:", err);
-        }
+        await this.invalidateCache(id);
         return skill;
     }
 
@@ -65,11 +58,7 @@ export class SkillService {
      */
     async delete(id: number): Promise<void> {
         await skillRepository.delete(id);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            console.error("Failed to invalidate skill cache after delete:", err);
-        }
+        await this.invalidateCache(id);
     }
 
     /**
@@ -78,24 +67,27 @@ export class SkillService {
      */
     async bulkDelete(ids: number[]): Promise<void> {
         await skillRepository.bulkDelete(ids);
+        await this.invalidateCache();
+        // Invalidate individual item caches
         try {
-            await this.invalidateCache();
-            // Invalidate individual item caches
-            for (const id of ids) {
-                await CacheService.invalidate(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
-            }
+            const keys = ids.map(id => CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            await CacheService.invalidate(...keys);
         } catch (err) {
-            console.error("Failed to invalidate skill cache after bulk delete:", err);
+            logger.error({ err, ids, feature: FEATURE }, "Failed to invalidate item caches after bulk delete");
         }
     }
 
     private async invalidateCache(id?: number) {
-        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
-        const keys = [listKey, CHAT_CACHE_KEY];
-        if (id !== undefined) {
-            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        try {
+            const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+            const keys = [listKey, CHAT_CACHE_KEY];
+            if (id !== undefined) {
+                keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            }
+            await CacheService.invalidate(...keys);
+        } catch (err) {
+            logger.error({ err, id, feature: FEATURE }, "Failed to invalidate cache");
         }
-        await CacheService.invalidate(...keys);
     }
 }
 

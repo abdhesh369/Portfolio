@@ -1,7 +1,7 @@
 import { mindsetRepository } from "../repositories/mindset.repository.js";
-import { redis } from "../lib/redis.js";
 import type { Mindset, InsertMindset } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
+import { logger } from "../lib/logger.js";
 
 const FEATURE = "mindset";
 const LIST_NAMESPACE = "list";
@@ -61,12 +61,16 @@ export class MindsetService {
     }
 
     private async invalidateCache(id?: number) {
-        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
-        const keys = [listKey];
-        if (id !== undefined) {
-            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        try {
+            const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+            const keys = [listKey];
+            if (id !== undefined) {
+                keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            }
+            await CacheService.invalidate(...keys);
+        } catch (err) {
+            logger.error({ err, id, feature: FEATURE }, "Failed to invalidate cache");
         }
-        await CacheService.invalidate(...keys);
     }
 }
 

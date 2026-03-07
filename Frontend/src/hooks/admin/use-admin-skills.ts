@@ -1,7 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
 import { api } from "@portfolio/shared/routes";
+import { interpolatePath } from "@portfolio/shared/utils";
 import { apiFetch } from "@/lib/api-helpers";
-import { useSkills } from "../portfolio/use-skills";
+import { useSkills } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Skill } from "@portfolio/shared/schema";
 
@@ -29,7 +30,7 @@ export function useAdminSkills() {
         successTitle: "Skill updated",
         successDescription: "The skill details have been saved.",
         mutationFn: async ({ id, data }: { id: number; data: any }) => {
-            const res = await apiFetch(api.skills.update.path.replace(":id", id.toString()), {
+            const res = await apiFetch(interpolatePath(api.skills.update.path, { id }), {
                 method: api.skills.update.method,
                 body: JSON.stringify(data),
             });
@@ -56,7 +57,7 @@ export function useAdminSkills() {
         successTitle: "Skill deleted",
         successDescription: "The skill has been removed.",
         mutationFn: async (id: number) => {
-            await apiFetch(api.skills.delete.path.replace(":id", id.toString()), {
+            await apiFetch(interpolatePath(api.skills.delete.path, { id }), {
                 method: api.skills.delete.method,
             });
         },

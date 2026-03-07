@@ -1,7 +1,8 @@
 import { useAdminMutation } from "./use-admin-mutation";
 import { api } from "@portfolio/shared/routes";
+import { interpolatePath } from "@portfolio/shared/utils";
 import { apiFetch } from "@/lib/api-helpers";
-import { useMindset } from "../portfolio/use-skills";
+import { useMindset } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Mindset } from "@portfolio/shared/schema";
 
@@ -42,7 +43,7 @@ export function useAdminMindset() {
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: any }) => {
-            const res = await apiFetch(api.mindset.update.path.replace(":id", id.toString()), {
+            const res = await apiFetch(interpolatePath(api.mindset.update.path, { id }), {
                 method: api.mindset.update.method,
                 body: JSON.stringify(data),
             });
@@ -69,7 +70,7 @@ export function useAdminMindset() {
             }
         },
         mutationFn: async (id: number) => {
-            await apiFetch(api.mindset.delete.path.replace(":id", id.toString()), {
+            await apiFetch(interpolatePath(api.mindset.delete.path, { id }), {
                 method: api.mindset.delete.method,
             });
         },

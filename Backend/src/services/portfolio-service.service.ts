@@ -1,7 +1,7 @@
 import { portfolioServiceRepository } from "../repositories/portfolio-service.repository.js";
-import { redis } from "../lib/redis.js";
 import type { Service, InsertService } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
+import { logger } from "../lib/logger.js";
 
 const FEATURE = "portfolio_service";
 const LIST_NAMESPACE = "list";
@@ -35,11 +35,7 @@ export class PortfolioServiceService {
      */
     async create(data: InsertService): Promise<Service> {
         const service = await portfolioServiceRepository.create(data);
-        try {
-            await this.invalidateCache();
-        } catch (err) {
-            console.error("Failed to invalidate portfolio service cache after create:", err);
-        }
+        await this.invalidateCache();
         return service;
     }
 
@@ -51,11 +47,7 @@ export class PortfolioServiceService {
      */
     async update(id: number, data: Partial<InsertService>): Promise<Service> {
         const service = await portfolioServiceRepository.update(id, data);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            console.error("Failed to invalidate portfolio service cache after update:", err);
-        }
+        await this.invalidateCache(id);
         return service;
     }
 
@@ -65,20 +57,20 @@ export class PortfolioServiceService {
      */
     async delete(id: number): Promise<void> {
         await portfolioServiceRepository.delete(id);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            console.error("Failed to invalidate portfolio service cache after delete:", err);
-        }
+        await this.invalidateCache(id);
     }
 
     private async invalidateCache(id?: number) {
-        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
-        const keys = [listKey];
-        if (id !== undefined && id !== null) {
-            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        try {
+            const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+            const keys = [listKey];
+            if (id !== undefined && id !== null) {
+                keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            }
+            await CacheService.invalidate(...keys);
+        } catch (err) {
+            logger.error({ err, id, feature: FEATURE }, "Failed to invalidate cache");
         }
-        await CacheService.invalidate(...keys);
     }
 }
 

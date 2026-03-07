@@ -26,16 +26,7 @@ export class ExperienceService {
      */
     async getById(id: number): Promise<Experience | null> {
         const key = CacheService.key(FEATURE, ITEM_NAMESPACE, id);
-
-        const cached = await CacheService.get<Experience>(key);
-        if (cached) return cached;
-
-        const experience = await experienceRepository.findById(id);
-        if (experience) {
-            await CacheService.set(key, experience, CACHE_TTL);
-        }
-
-        return experience;
+        return CacheService.getOrSet(key, CACHE_TTL, () => experienceRepository.findById(id));
     }
 
     /**
@@ -45,12 +36,7 @@ export class ExperienceService {
      */
     async create(data: InsertExperience): Promise<Experience> {
         const experience = await experienceRepository.create(data);
-        try {
-            await this.invalidateCache();
-        } catch (err) {
-            // Log but don't fail the request
-            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
-        }
+        await this.invalidateCache();
         return experience;
     }
 
@@ -62,11 +48,7 @@ export class ExperienceService {
      */
     async update(id: number, data: Partial<InsertExperience>): Promise<Experience> {
         const experience = await experienceRepository.update(id, data);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
-        }
+        await this.invalidateCache(id);
         return experience;
     }
 
@@ -76,20 +58,20 @@ export class ExperienceService {
      */
     async delete(id: number): Promise<void> {
         await experienceRepository.delete(id);
-        try {
-            await this.invalidateCache(id);
-        } catch (err) {
-            logger.error({ context: "experience-service", error: err }, "Failed to invalidate experience cache");
-        }
+        await this.invalidateCache(id);
     }
 
     private async invalidateCache(id?: number) {
-        const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
-        const keys = [listKey, CHAT_CACHE_KEY];
-        if (id !== undefined) {
-            keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+        try {
+            const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
+            const keys = [listKey, CHAT_CACHE_KEY];
+            if (id !== undefined) {
+                keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+            }
+            await CacheService.invalidate(...keys);
+        } catch (err) {
+            logger.error({ err, id, feature: FEATURE }, "Failed to invalidate cache");
         }
-        await CacheService.invalidate(...keys);
     }
 }
 
