@@ -1,7 +1,7 @@
 
 
-export function FormField({ label, value, onChange, placeholder, required, type = "text" }: {
-    label: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean; type?: string;
+export function FormField({ label, value, onChange, placeholder, required, type = "text", min, max }: {
+    label: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean; type?: string; min?: string | number; max?: string | number;
 }) {
     return (
         <div>
@@ -12,6 +12,8 @@ export function FormField({ label, value, onChange, placeholder, required, type 
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
                 required={required}
+                min={min}
+                max={max}
                 className="w-full px-3 py-2.5 rounded-lg text-white text-sm placeholder-white/25
           border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20
           transition-all outline-none"

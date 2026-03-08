@@ -403,7 +403,6 @@ export default function Hero() {
               I'm <strong className="text-white">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
             </p>
 
-            {/* CTA Buttons */}
             <m.div
               initial={fadeUp.initial}
               animate={fadeUp.animate}
@@ -427,6 +426,23 @@ export default function Hero() {
               >
                 {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
+
+              <Button
+                onClick={() => {
+                  const contactEl = document.getElementById("contact");
+                  if (contactEl) {
+                    contactEl.scrollIntoView({ behavior: 'smooth' });
+                    // Trigger a custom event to switch form mode if needed
+                    window.dispatchEvent(new CustomEvent("set-contact-mode", { detail: "wizard" }));
+                  }
+                }}
+                size="lg"
+                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
+              >
+                <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
+                AI Project Scope
+              </Button>
+
               <Button
                 onClick={() => {
                   const url = settings?.heroCtaSecondaryUrl || "#contact";

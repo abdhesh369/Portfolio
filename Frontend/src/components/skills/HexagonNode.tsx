@@ -88,8 +88,11 @@ export const HexagonNode = ({
                 animate={isActive ? {
                     opacity: [0.4, 0.8, 0.4],
                     scale: [1, 1.1, 1]
+                } : (node.mastery && node.mastery >= 85) ? {
+                    opacity: [0.15, 0.4, 0.15],
+                    scale: [1, 1.05, 1]
                 } : { opacity: 0.2, scale: 1 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                transition={{ duration: isActive ? 2 : 3, repeat: Infinity, ease: 'easeInOut' }}
             />
 
             {/* Main hexagon */}

@@ -47,6 +47,7 @@ export const skillsTable = pgTable("skills", {
   icon: varchar("icon", { length: 100 }).notNull().default("Code"),
   description: text("description").notNull().default(""),
   proof: text("proof").notNull().default(""),
+  mastery: integer("mastery").notNull().default(0),
   x: real("x").notNull().default(50),
   y: real("y").notNull().default(50),
 });
@@ -186,6 +187,27 @@ export const servicesTable = pgTable("services", {
   };
 });
 
+export const scopeRequestsTable = pgTable("scope_requests", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  projectType: varchar("projectType", { length: 100 }),
+  features: jsonb("features").$type<string[]>().notNull().default([]),
+  estimation: jsonb("estimation").$type<{
+    summary: string;
+    hours: { min: number; max: number };
+    cost: { min: number; max: number; currency: string };
+    milestones: { title: string; duration: string; description: string }[];
+    techSuggestions: string[];
+  }>(),
+  status: varchar("status", { length: 50 }).$type<"pending" | "processing" | "completed" | "failed">().notNull().default("pending"),
+  error: text("error"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 export const testimonialsTable = pgTable("testimonials", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -205,7 +227,7 @@ export const testimonialsTable = pgTable("testimonials", {
 
 export const auditLogTable = pgTable("audit_log", {
   id: serial("id").primaryKey(),
-  action: varchar("action", { length: 20 }).$type<"CREATE" | "UPDATE" | "DELETE">().notNull(),
+  action: varchar("action", { length: 20 }).notNull(),
   entity: varchar("entity", { length: 50 }).notNull(),
   entityId: integer("entity_id"),
   oldValues: jsonb("old_values"),
@@ -281,6 +303,9 @@ export const siteSettingsTable = pgTable("site_settings", {
     testimonials: true, guestbook: true, contact: true
   }),
 
+  // Availability
+  availabilitySlots: jsonb("availabilitySlots").$type<{ id: string; startDate: string; endDate: string; status: "available" | "booked" | "unavailable"; label?: string }[]>().default([]),
+
   // Feature Toggles
   featureBlog: boolean("featureBlog").notNull().default(true),
   featureGuestbook: boolean("featureGuestbook").notNull().default(true),
@@ -308,7 +333,7 @@ export const insertMessageSchema = createInsertSchema(messagesTable);
 
 export const auditLogSchema = z.object({
   id: z.number(),
-  action: z.enum(["CREATE", "UPDATE", "DELETE"]),
+  action: z.enum(["CREATE", "UPDATE", "DELETE", "OTHER"]),
   entity: z.string().min(1).max(50),
   entityId: z.number().nullable().optional(),
   oldValues: z.record(z.unknown()).nullable().optional(),
@@ -384,6 +409,30 @@ function sanitizeCss(css: string | null | undefined): string | null {
     .replace(/@namespace\b/gi, '/* namespace-stripped */');
 }
 
+export const selectScopeRequestSchema = createSelectSchema(scopeRequestsTable);
+export const insertScopeRequestSchema = createInsertSchema(scopeRequestsTable);
+
+export const scopeRequestSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(255),
+  email: z.string().email().max(255),
+  description: z.string().min(10).max(5000),
+  projectType: z.string().max(100).nullable().optional(),
+  features: z.array(z.string().max(100)).default([]),
+  estimation: z.object({
+    summary: z.string(),
+    hours: z.object({ min: z.number(), max: z.number() }),
+    cost: z.object({ min: z.number(), max: z.number(), currency: z.string() }),
+    milestones: z.array(z.object({ title: z.string(), duration: z.string(), description: z.string() })),
+    techSuggestions: z.array(z.string()),
+  }).nullable().optional(),
+  status: z.enum(["pending", "processing", "completed", "failed"]),
+  error: z.string().nullable().optional(),
+  completedAt: z.coerce.date().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
 export const projectSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(255),
@@ -429,6 +478,14 @@ export const insertProjectApiSchema = z.object({
   imageAlt: z.string().max(500).nullable().optional(),
 });
 
+export const insertScopeRequestApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  email: z.string().email().max(255),
+  description: z.string().min(10).max(5000),
+  projectType: z.string().max(100).optional(),
+  features: z.array(z.string().max(100)).default([]),
+});
+
 export const skillSchema = z.object({
   id: z.number(),
   name: z.string().min(1).max(100),
@@ -437,6 +494,7 @@ export const skillSchema = z.object({
   icon: z.string().max(100),
   description: z.string().max(1000),
   proof: z.string().max(1000),
+  mastery: z.number(),
   x: z.number(),
   y: z.number(),
 });
@@ -448,6 +506,7 @@ export const insertSkillApiSchema = z.object({
   icon: z.string().max(100).default("Code"),
   description: z.string().max(1000).default(""),
   proof: z.string().max(1000).default(""),
+  mastery: z.number().min(0).max(100).default(0),
   x: z.number().default(50),
   y: z.number().default(50),
 });
@@ -704,6 +763,15 @@ const siteSettingsBaseSchema = z.object({
   sectionOrder: z.array(z.string()).optional(),
   sectionVisibility: z.record(z.boolean()).optional(),
 
+  // Availability
+  availabilitySlots: z.array(z.object({
+    id: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    status: z.enum(["available", "booked", "unavailable"]),
+    label: z.string().optional(),
+  })).optional(),
+
   // Feature Toggles
   featureBlog: z.boolean().optional(),
   featureGuestbook: z.boolean().optional(),
@@ -762,6 +830,9 @@ export const insertArticleApiSchema = z.object({
 export const updateArticleApiSchema = insertArticleApiSchema.partial();
 
 // ================= TYPESCRIPT TYPES =================
+
+export type ScopeRequest = z.infer<typeof scopeRequestSchema>;
+export type InsertScopeRequest = z.infer<typeof insertScopeRequestApiSchema>;
 
 export type Project = z.infer<typeof projectSchema>;
 export type Skill = z.infer<typeof skillSchema>;

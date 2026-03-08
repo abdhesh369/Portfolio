@@ -76,6 +76,22 @@ export const SkillTooltip = ({
 
                 {/* Content */}
                 <div className="space-y-4">
+                    {node.mastery !== undefined && (
+                        <div>
+                            <div className="flex justify-between items-center mb-1.5 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                                <span>Mastery</span>
+                                <span>{node.mastery}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                                <m.div
+                                    className={`h-full ${colors.bg.replace('/20', '')}`}
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${node.mastery}%` }}
+                                    transition={{ duration: 1, ease: 'easeOut' }}
+                                />
+                            </div>
+                        </div>
+                    )}
                     <div>
                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">What I Use It For</span>
                         <p className="text-gray-300 text-sm mt-1 leading-relaxed">{node.description}</p>

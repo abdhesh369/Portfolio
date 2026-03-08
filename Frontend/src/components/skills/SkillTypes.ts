@@ -13,6 +13,7 @@ export interface SkillNode {
     proof: string;
     x: number;
     y: number;
+    mastery: number;
 }
 
 export interface Connection {

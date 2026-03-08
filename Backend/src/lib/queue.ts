@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import { env } from "../env.js";
 import { logger } from "./logger.js";
 import { isLocalRedisUrl, formatRedisUrlForLog } from "./redis.js";
+import { createScopeWorker } from "../workers/scope.worker.js";
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
@@ -42,6 +43,10 @@ if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
 const canUseRedis = !isProd || (hasRedisUrl && !isProdLocalRedis);
 
 export const emailQueue = canUseRedis ? new Queue("email", {
+    connection: toBullMQConnection(getRedisConnection())
+}) : null;
+
+export const scopeQueue = canUseRedis ? new Queue("scope", {
     connection: toBullMQConnection(getRedisConnection())
 }) : null;
 
@@ -106,6 +111,8 @@ export const emailWorker = canUseRedis ? new Worker("email", async (job: Job) =>
 }, {
     connection: toBullMQConnection(getRedisConnection())
 }) : null;
+
+export const scopeWorker = canUseRedis ? createScopeWorker(getRedisConnection() as any) : null;
 
 if (emailWorker) {
     emailWorker.on("completed", (job) => {

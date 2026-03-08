@@ -552,15 +552,6 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
-        liveVisitorCount: {
-            method: "GET" as const,
-            path: "/api/v1/analytics/live-visitors/count",
-            description: "Get live visitor count for polling fallback",
-            responses: {
-                200: z.object({ count: z.number() }),
-                500: errorSchemas.internal,
-            },
-        },
     },
 
     // ---------- TESTIMONIALS ----------
@@ -840,18 +831,6 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
-        react: {
-            method: "POST" as const,
-            path: "/api/v1/guestbook/:id/react",
-            description: "React to guestbook entry",
-            input: z.object({ emoji: z.string() }),
-            responses: {
-                200: createSuccessResponse(guestbookSchema),
-                400: errorSchemas.validation,
-                404: errorSchemas.notFound,
-                500: errorSchemas.internal,
-            },
-        },
         adminList: {
             method: "GET" as const,
             path: "/api/v1/guestbook/admin",
@@ -888,25 +867,6 @@ export const api = {
                 403: errorSchemas.forbidden,
                 404: errorSchemas.notFound,
                 500: errorSchemas.internal,
-            },
-        },
-    },
-    // ---------- GITHUB ----------
-    github: {
-        latestCommit: {
-            method: "GET" as const,
-            path: "/api/v1/github/latest-commit",
-            description: "Get the latest commit with AI summary",
-            responses: {
-                200: z.object({
-                    repo: z.string(),
-                    message: z.string(),
-                    url: z.string(),
-                    date: z.string(),
-                    aiSummary: z.string().optional(),
-                }),
-                500: errorSchemas.internal,
-                502: z.object({ message: z.string(), events: z.array(z.any()) }),
             },
         },
     },
@@ -975,48 +935,7 @@ export const api = {
                 500: errorSchemas.internal,
             },
         }
-    },
-
-    // ---------- ADMIN TOOLS ----------
-    adminTools: {
-        optimizeImages: {
-            method: "POST" as const,
-            path: "/api/v1/admin/optimize-images",
-            description: "Scan and optimize all images (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.object({
-                    success: z.boolean(),
-                    message: z.string(),
-                    data: z.object({
-                        totalScanned: z.number(),
-                        migratedToCloudinary: z.number(),
-                        optimizedUrls: z.number(),
-                        failed: z.number(),
-                    }),
-                }),
-                401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
-            },
-        },
-        deploy: {
-            method: "POST" as const,
-            path: "/api/v1/admin/deploy",
-            description: "Trigger a production deployment (admin only)",
-            requiresAuth: true,
-            responses: {
-                200: z.object({
-                    success: z.boolean(),
-                    message: z.string(),
-                }),
-                400: errorSchemas.validation,
-                401: errorSchemas.unauthorized,
-                403: errorSchemas.forbidden,
-                500: errorSchemas.internal,
-            },
-        },
-    },
+    }
 };
 
 export type Api = typeof api;

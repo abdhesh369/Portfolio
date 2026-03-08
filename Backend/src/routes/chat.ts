@@ -80,7 +80,8 @@ export async function buildSystemPrompt(): Promise<string> {
     return systemPrompt;
 }
 
-const CHAT_MODELS = [
+
+export const CHAT_MODELS = [
     "arcee-ai/trinity-large-preview:free",
     "meta-llama/llama-4-scout:free",
     "google/gemma-3-1b-it:free",
@@ -88,7 +89,7 @@ const CHAT_MODELS = [
 
 let openRouterClient: OpenRouter | null = null;
 
-function getOpenRouterClient() {
+export function getOpenRouterClient() {
     if (!openRouterClient) {
         const apiKey = process.env.OPENROUTER_API_KEY || env.OPENROUTER_API_KEY;
         if (!apiKey) {

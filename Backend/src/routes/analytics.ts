@@ -60,28 +60,29 @@ function isBotRequest(req: Request): boolean {
     return botPatterns.some(pattern => userAgent.includes(pattern));
 }
 
-import { visitorSSE } from \"../lib/sse.js\";
+import { visitorSSE } from "../lib/sse.js";
 
 export function registerAnalyticsRoutes(app: Router) {
     // GET /analytics/live-visitors - SSE endpoint for live visitor count
     app.get(
-        \"/analytics/live-visitors\",
+        "/analytics/live-visitors",
         asyncHandler(async (req, res) => {
-            res.setHeader(\"Content-Type\", \"text/event-stream\");
-            res.setHeader(\"Cache-Control\", \"no-cache\");
-            res.setHeader(\"Connection\", \"keep-alive\");
+            res.setHeader("Content-Type", "text/event-stream");
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("Connection", "keep-alive");
 
             const clientId = `visitor-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             visitorSSE.addClient(clientId, res);
 
             // Immediately broadcast new count to all
-            visitorSSE.emit(\"count\", { count: visitorSSE.clientCount });
+            visitorSSE.emit("count", { count: visitorSSE.clientCount });
 
-            req.on(\"close\", () => {
+            req.on("close", () => {
                 visitorSSE.removeClient(clientId);
-            // Broadcast update count when someone leaves
-            visitorSSE.emit(\"count\", { count: visitorSSE.clientCount });
+                // Broadcast update count when someone leaves
+                visitorSSE.emit("count", { count: visitorSSE.clientCount });
             });
+        })
     );
     // GET /analytics/live-visitors/count - Lightweight endpoint for polling fallback
     app.get(
@@ -91,56 +92,56 @@ export function registerAnalyticsRoutes(app: Router) {
         })
     );
 
-// POST /analytics/track - Log an analytics event
-app.post(
-    "/analytics/track",
-    analyticsLimiter,
-    validateBody(insertAnalyticsSchema),
-    asyncHandler(async (req, res) => {
-        if (isBotRequest(req)) {
-            return res.status(202).json({ success: true, message: "Request accepted (bot filtered)" });
-        }
-        const event = await analyticsService.logEvent(req.body);
-        res.status(201).json({
-            success: true,
-            message: "Event tracked successfully",
-            data: event
-        });
-    })
-);
+    // POST /analytics/track - Log an analytics event
+    app.post(
+        "/analytics/track",
+        analyticsLimiter,
+        validateBody(insertAnalyticsSchema),
+        asyncHandler(async (req, res) => {
+            if (isBotRequest(req)) {
+                return res.status(202).json({ success: true, message: "Request accepted (bot filtered)" });
+            }
+            const event = await analyticsService.logEvent(req.body);
+            res.status(201).json({
+                success: true,
+                message: "Event tracked successfully",
+                data: event
+            });
+        })
+    );
 
-// POST /analytics/vitals - Log a Core Web Vital metric
-app.post(
-    "/analytics/vitals",
-    vitalsLimiter,
-    validateBody(insertVitalSchema),
-    asyncHandler(async (req, res) => {
-        if (isBotRequest(req)) {
-            return res.status(204).end();
-        }
-        await analyticsService.logVital(req.body);
-        res.status(204).end();
-    })
-);
+    // POST /analytics/vitals - Log a Core Web Vital metric
+    app.post(
+        "/analytics/vitals",
+        vitalsLimiter,
+        validateBody(insertVitalSchema),
+        asyncHandler(async (req, res) => {
+            if (isBotRequest(req)) {
+                return res.status(204).end();
+            }
+            await analyticsService.logVital(req.body);
+            res.status(204).end();
+        })
+    );
 
-// GET /analytics/summary - Get aggregated analytics for dashboard
-app.get(
-    "/analytics/summary",
-    isAuthenticated,
-    asyncHandler(async (_req, res) => {
-        const summary = await analyticsService.getSummary();
-        res.json(summary);
-    })
-);
+    // GET /analytics/summary - Get aggregated analytics for dashboard
+    app.get(
+        "/analytics/summary",
+        isAuthenticated,
+        asyncHandler(async (_req, res) => {
+            const summary = await analyticsService.getSummary();
+            res.json(summary);
+        })
+    );
 
-// GET /analytics/vitals - Get Core Web Vitals summary for dashboard
-app.get(
-    "/analytics/vitals",
-    isAuthenticated,
-    asyncHandler(async (req, res) => {
-        const days = req.query.days ? Number(req.query.days) : 7;
-        const summary = await analyticsService.getVitalsSummary(days);
-        res.json(summary);
-    })
-);
+    // GET /analytics/vitals - Get Core Web Vitals summary for dashboard
+    app.get(
+        "/analytics/vitals",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const days = req.query.days ? Number(req.query.days) : 7;
+            const summary = await analyticsService.getVitalsSummary(days);
+            res.json(summary);
+        })
+    );
 }

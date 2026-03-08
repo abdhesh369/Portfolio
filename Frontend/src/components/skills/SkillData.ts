@@ -11,7 +11,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Manual memory management and low-level logic.',
         proof: 'Academic coursework & system programming.',
         x: 20,
-        y: 20
+        y: 20,
+        mastery: 70
     },
     {
         id: 'cpp',
@@ -22,7 +23,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Object-Oriented Programming and STL.',
         proof: 'University projects with complex data structures.',
         x: 50,
-        y: 18
+        y: 18,
+        mastery: 65
     },
     {
         id: 'python',
@@ -33,7 +35,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Scripting, automation, and data analysis.',
         proof: 'Data processing scripts and backend tools.',
         x: 80,
-        y: 20
+        y: 20,
+        mastery: 80
     },
     {
         id: 'html',
@@ -44,7 +47,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Semantic structure and accessibility.',
         proof: 'Foundation of all web projects.',
         x: 30,
-        y: 45
+        y: 45,
+        mastery: 95
     },
     {
         id: 'css',
@@ -55,7 +59,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Responsive design and animations.',
         proof: 'Styled multiple responsive websites.',
         x: 50,
-        y: 45
+        y: 45,
+        mastery: 90
     },
     {
         id: 'js',
@@ -66,7 +71,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Dynamic logic and DOM manipulation.',
         proof: 'Interactive features and game logic.',
         x: 70,
-        y: 45
+        y: 45,
+        mastery: 88
     },
     {
         id: 'ml',
@@ -77,7 +83,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Model training and data predictions.',
         proof: 'Academic projects in predictive analysis.',
         x: 50,
-        y: 70
+        y: 70,
+        mastery: 40
     },
     {
         id: 'react',
@@ -88,7 +95,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Component-based UI development.',
         proof: 'Built this portfolio and other SPA.',
         x: 70,
-        y: 60
+        y: 60,
+        mastery: 85
     },
     {
         id: 'git',
@@ -99,7 +107,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Version control system.',
         proof: 'Daily usage for code management.',
         x: 15,
-        y: 60
+        y: 60,
+        mastery: 85
     },
     {
         id: 'github',
@@ -110,7 +119,8 @@ export const DEFAULT_SKILL_NODES: SkillNode[] = [
         description: 'Code hosting and collaboration.',
         proof: 'Project repositories and CI/CD.',
         x: 30,
-        y: 70
+        y: 70,
+        mastery: 80
     }
 ];
 

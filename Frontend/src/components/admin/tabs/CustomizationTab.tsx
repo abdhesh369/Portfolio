@@ -26,6 +26,7 @@ import { ThemeSection } from "../customization/ThemeSection";
 import { FooterSection } from "../customization/FooterSection";
 import { SectionLayoutSection } from "../customization/SectionLayoutSection";
 import { ActiveFeaturesSection } from "../customization/ActiveFeaturesSection";
+import { AvailabilitySlotsSection } from "../customization/AvailabilitySlotsSection";
 import { StickyFormFooter } from "../customization/StickyFormFooter";
 
 const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
@@ -61,7 +62,8 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
     { label: "Contact", href: "#contact", icon: "mail" },
   ],
   sectionOrder: ["about", "skills", "whyhireme", "services", "mindset", "projects", "practice", "experience", "testimonials", "guestbook", "contact"],
-  sectionVisibility: { hero: true, about: true, projects: true, skills: true, testimonials: true, contact: true }
+  sectionVisibility: { hero: true, about: true, projects: true, skills: true, testimonials: true, contact: true },
+  availabilitySlots: []
 };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -93,7 +95,7 @@ export function CustomizationTab() {
     })
   );
 
-  const { register, control, handleSubmit, reset, formState: { isDirty } } = useForm<InsertSiteSettings>({
+  const { register, control, handleSubmit, reset, watch, setValue, formState: { isDirty } } = useForm<InsertSiteSettings>({
     defaultValues: settings || DEFAULT_SETTINGS,
     values: settings,
   });
@@ -290,6 +292,13 @@ export function CustomizationTab() {
           register={register}
           isOpen={activeSection === "features"}
           onToggle={() => toggleSection("features")}
+        />
+
+        <AvailabilitySlotsSection
+          slots={watch("availabilitySlots") || []}
+          onChange={(slots) => setValue("availabilitySlots", slots, { shouldDirty: true })}
+          isOpen={activeSection === "availability"}
+          onToggle={() => toggleSection("availability")}
         />
 
         <StickyFormFooter

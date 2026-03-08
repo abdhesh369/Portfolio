@@ -3,7 +3,7 @@ import { useVisitorCount } from "@/hooks/use-visitor-count";
 import { Users } from "lucide-react";
 
 export function LiveVisitorCount() {
-    const count = useVisitorCount();
+    const { count } = useVisitorCount();
 
     if (count <= 0) return null;
 

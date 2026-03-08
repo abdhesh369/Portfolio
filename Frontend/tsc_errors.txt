@@ -1,0 +1,2 @@
+npm warn config ignoring workspace config at D:\Portfolio\Frontend/.npmrc
+src/hooks/use-latest-commit.ts(8,46): error TS2339: Property 'github' does not exist on type '{ projects: { list: { method: "GET"; path: string; description: string; responses: { 200: ZodArray<ZodObject<{ id: ZodNumber; title: ZodString; description: ZodString; techStack: ZodDefault<...>; ... 16 more ...; viewCount: ZodDefault<...>; }, "strip", ZodTypeAny, { ...; }, { ...; }>, "many">; 500: ZodObject<...>; }...'.

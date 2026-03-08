@@ -57,6 +57,27 @@
       "when": 1772686265758,
       "tag": "0007_fix_site_settings_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1772686365758,
+      "tag": "0008_extended_customization",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1772949387447,
+      "tag": "0009_add_availability_slots",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1773468840730,
+      "tag": "0010_add_scope_requests",
+      "breakpoints": true
     }
   ]
 }

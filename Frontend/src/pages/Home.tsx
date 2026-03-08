@@ -24,6 +24,7 @@ const Footer = lazy(() => import("@/components/Footer"));
 const BackToTop = lazy(() => import("@/components/BackToTop"));
 const SectionReveal = lazy(() => import("@/components/SectionReveal"));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
+import { CurrentlyBuildingTicker } from "@/components/CurrentlyBuildingTicker";
 
 
 // Skeleton loading states that match section shapes
@@ -195,6 +196,7 @@ export default function Home() {
 
       <main id="main-content">
         <Hero />
+        <CurrentlyBuildingTicker />
 
         {sectionOrder.map((sectionId: string) => {
           const isVisible = sectionVisibility[sectionId] ?? true;

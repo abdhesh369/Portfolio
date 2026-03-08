@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
-import { emailQueue, emailWorker } from "./lib/queue.js";
+import { emailQueue, emailWorker, scopeQueue, scopeWorker } from "./lib/queue.js";
 import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
 import { logger } from "./lib/logger.js";
 import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
@@ -267,6 +267,8 @@ function setupGracefulShutdown() {
       try {
         if (emailQueue) await emailQueue.close();
         if (emailWorker) await emailWorker.close();
+        if (scopeQueue) await scopeQueue.close();
+        if (scopeWorker) await scopeWorker.close();
 
         // Disconnect main Redis client
         if (redis) {

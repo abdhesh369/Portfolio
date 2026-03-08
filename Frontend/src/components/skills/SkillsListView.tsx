@@ -151,6 +151,22 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
                                 className="overflow-hidden"
                               >
                                 <div className="ml-11 mr-3 mb-2 px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs">
+                                  {skill.mastery !== undefined && (
+                                    <div className="mb-3">
+                                      <div className="flex justify-between items-center mb-1 text-[10px] text-gray-500 font-semibold uppercase tracking-wider">
+                                        <span>Mastery</span>
+                                        <span>{skill.mastery}%</span>
+                                      </div>
+                                      <div className="h-1 w-full bg-gray-800/50 rounded-full overflow-hidden">
+                                        <m.div
+                                          className={`h-full bg-current ${statusStyle.badge.split(' ').find(c => c.startsWith('text-'))}`}
+                                          initial={{ width: 0 }}
+                                          animate={{ width: `${skill.mastery}%` }}
+                                          transition={{ duration: 1, ease: 'easeOut' }}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
                                   <p className="text-foreground/70 leading-relaxed mb-1.5">
                                     {skill.description}
                                   </p>

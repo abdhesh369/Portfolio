@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Skill } from "@portfolio/shared/schema";
 
-const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50 };
+const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50, mastery: 50 };
 
 import type { AdminTabProps } from "./types";
 
@@ -64,6 +64,7 @@ export function SkillsTab(_props: AdminTabProps) {
                             <option value="Learning">Learning</option>
                         </select>
                     </div>
+                    <FormField label="Mastery (%)" value={editing.mastery?.toString() || "0"} onChange={(v) => setEditing({ ...editing, mastery: parseInt(v) || 0 })} placeholder="0-100" type="number" min="0" max="100" />
                     <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
                     <FormTextarea label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} />
                     <FormTextarea label="Proof" value={editing.proof} onChange={(v) => setEditing({ ...editing, proof: v })} />

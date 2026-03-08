@@ -16,10 +16,12 @@ import { articlesRouter } from "./routes/articles.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
 import { registerSettingsRoutes } from "./routes/settings.js";
+import { registerAdminRoutes } from "./routes/admin.js";
 import feedRoutes from "./routes/feed.js";
 import githubRoutes from "./routes/github.js";
 import guestbookRoutes from "./routes/guestbook.js";
 import auditLogRoutes from "./routes/audit-log.js";
+import scopeRoutes from "./routes/scope.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
 import { logger } from "./lib/logger.js";
@@ -39,6 +41,7 @@ export function registerRoutes(app: Express) {
   v1Router.use("/feed", feedRoutes);
   v1Router.use("/github", githubRoutes);
   v1Router.use("/guestbook", guestbookRoutes);
+  v1Router.use("/scope", scopeRoutes);
 
   // CSP violation reporting route
   v1Router.post(
@@ -63,6 +66,7 @@ export function registerRoutes(app: Express) {
   registerTestimonialRoutes(v1Router);
   registerChatRoutes(v1Router);
   registerSettingsRoutes(v1Router);
+  registerAdminRoutes(v1Router);
 
   // Admin audit log
   v1Router.use("/admin", auditLogRoutes);

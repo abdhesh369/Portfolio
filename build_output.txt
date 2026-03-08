@@ -1,0 +1,16 @@
+
+> portfolio-monorepo@2.0.0 build:shared
+> npm run build -w @portfolio/shared
+
+
+> @portfolio/shared@2.0.0 build
+> tsc --project tsconfig.json
+
+
+> portfolio-backend@2.0.0 build
+> npm run build --prefix .. -w @portfolio/shared && tsc --project tsconfig.json
+
+
+> @portfolio/shared@2.0.0 build
+> tsc --project tsconfig.json
+
