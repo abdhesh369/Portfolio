@@ -1,5 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import * as Sentry from "@sentry/node";
+/**
+ * Main Entry Point - System Stabilized
+ */
 import { env } from "./env.js";
 import { createServer } from "http";
 import cors from "cors";
