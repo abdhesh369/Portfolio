@@ -100,6 +100,7 @@ app.use(
         "script-src": [
           "'self'",
           "https://www.googletagmanager.com",
+          "https://infird.com",
           (_req, res: any) => `'nonce-${res.locals.nonce}'`
         ],
         "object-src": ["'none'"],
@@ -121,9 +122,10 @@ app.use(
         "style-src": [
           "'self'",
           "https://fonts.googleapis.com",
+          "https://api.fontshare.com",
           (_req, res: any) => `'nonce-${res.locals.nonce}'`
         ],
-        "font-src": ["'self'", "https://fonts.gstatic.com"],
+        "font-src": ["'self'", "https://fonts.gstatic.com", "https://cdn.fontshare.com"],
         "frame-ancestors": ["'none'"],
         "form-action": ["'self'"],
         "report-uri": ["/api/v1/csp-report"],
