@@ -72,13 +72,13 @@ export function registerRoutes(app: Express) {
   registerSettingsRoutes(v1Router);
   registerAdminRoutes(v1Router);
 
-  // MF-2: AI Code Reviews
+  // MF-2: AI Project Analysis
   registerReviewRoutes(v1Router);
   // MF-3: Auto Case Studies
   registerCaseStudyRoutes(v1Router);
   // MF-4: Client Portal
   registerClientRoutes(v1Router);
-  // MF-5: Collaborative Whiteboard
+  // MF-5: Idea Canvas
   registerWhiteboardRoutes(v1Router);
 
   // Admin audit log

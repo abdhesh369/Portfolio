@@ -3,15 +3,14 @@ import { logger } from "../lib/logger.js";
 import { asyncHandler } from "../auth.js";
 import { cachePublic } from "../middleware/cache.js";
 import { getOpenRouterClient } from "./chat.js";
+import { env } from "../env.js";
 
 const githubRoutes = Router();
-
-const GITHUB_USERNAME = "abdhesh369";
 
 githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) => {
     try {
         logger.info({ context: "github-proxy" }, "Fetching GitHub activity");
-        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public`, {
+        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, {
             headers: {
                 "Accept": "application/vnd.github.v3+json",
                 "User-Agent": "Portfolio-Backend"
@@ -37,7 +36,7 @@ githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) 
 githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, res) => {
     try {
         logger.info({ context: "github-proxy" }, "Fetching latest GitHub commit");
-        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public`, {
+        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, {
             headers: {
                 "Accept": "application/vnd.github.v3+json",
                 "User-Agent": "Portfolio-Backend"

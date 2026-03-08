@@ -105,9 +105,9 @@ export function SettingsTab() {
         const { active, over } = event;
 
         if (over && active.id !== over.id) {
-            const currentOrder = settings?.sectionOrder ?? DEFAULT_SECTION_ORDER;
-            const oldIndex = currentOrder.indexOf(active.id as any);
-            const newIndex = currentOrder.indexOf(over.id as any);
+            const currentOrder = (settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER;
+            const oldIndex = currentOrder.indexOf(active.id as string);
+            const newIndex = currentOrder.indexOf(over.id as string);
 
             const newOrder = arrayMove([...currentOrder], oldIndex, newIndex);
 
@@ -155,10 +155,10 @@ export function SettingsTab() {
                 title: "Optimization Complete",
                 description: `Successfully optimized ${result.data.optimizedUrls} images.`,
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Optimization Failed",
-                description: error.message || "An error occurred during optimization.",
+                description: error instanceof Error ? error.message : "An error occurred during optimization.",
                 variant: "destructive",
             });
         } finally {
@@ -176,10 +176,10 @@ export function SettingsTab() {
                 title: "Deployment Triggered",
                 description: "Production deployment has been initiated on Render.",
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Deployment Failed",
-                description: error.message || "Failed to trigger deployment.",
+                description: error instanceof Error ? error.message : "Failed to trigger deployment.",
                 variant: "destructive",
             });
         } finally {
@@ -241,7 +241,7 @@ export function SettingsTab() {
                             onDragEnd={handleDragEnd}
                         >
                             <SortableContext
-                                items={settings?.sectionOrder ?? (DEFAULT_SECTION_ORDER as any)}
+                                items={(settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER}
                                 strategy={verticalListSortingStrategy}
                             >
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

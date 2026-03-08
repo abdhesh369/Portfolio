@@ -1,34 +1,49 @@
 import React, { useState, type FormEvent } from "react";
 import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@portfolio/shared/schema";
 
-const emptyExperience = { role: "", organization: "", period: "", startDate: new Date(), endDate: null as Date | null, description: "", type: "Experience" };
+interface ExperienceFormState extends Omit<Partial<Experience>, 'startDate' | 'endDate'> {
+    startDate: string | Date;
+    endDate: string | Date | null;
+}
+
+const emptyExperience: ExperienceFormState = {
+    role: "",
+    organization: "",
+    period: "",
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: null,
+    description: "",
+    type: "Experience"
+};
 
 import type { AdminTabProps } from "./types";
 
 export function ExperiencesTab(_props: AdminTabProps) {
     const { data: experiences } = useExperiences();
     const { create, update, remove, isPending } = useAdminExperiences();
-    const [editing, setEditing] = useState<(Partial<Experience> & typeof emptyExperience) | null>(null);
+    const [editing, setEditing] = useState<ExperienceFormState | null>(null);
 
     const save = async (e: FormEvent) => {
         e.preventDefault();
         if (!editing) return;
 
+        // Ensure dates are strings for the API payload if that's what it expects, 
+        // or Date objects if the hooks handle them. 
+        // Assuming the backend/hooks expect ISO strings or Dates.
         const payload = {
             ...editing,
-            startDate: editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString() : editing.startDate) : null,
-            endDate: editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString() : editing.endDate) : null,
+            startDate: editing.startDate instanceof Date ? editing.startDate.toISOString() : new Date(editing.startDate).toISOString(),
+            endDate: editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString() : new Date(editing.endDate).toISOString()) : null,
         };
 
         if (editing.id) {
-            await update({ id: editing.id, data: payload });
+            await update({ id: editing.id, data: payload as unknown as Partial<Experience> });
         } else {
-            await create(payload);
+            await create(payload as unknown as Partial<Experience>);
         }
         setEditing(null);
     };
@@ -45,26 +60,26 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     {editing.id ? "Edit Experience" : "New Experience"}
                 </h2>
                 <form onSubmit={save} className="space-y-4 max-w-2xl text-white">
-                    <FormField label="Role *" value={editing.role} onChange={(v) => setEditing({ ...editing, role: v })} required />
-                    <FormField label="Organization *" value={editing.organization} onChange={(v) => setEditing({ ...editing, organization: v })} required />
-                    <FormField label="Period * (e.g. Jan 2020 - Present)" value={editing.period} onChange={(v) => setEditing({ ...editing, period: v })} required />
+                    <FormField label="Role *" value={editing.role || ""} onChange={(v) => setEditing({ ...editing, role: v })} required />
+                    <FormField label="Organization *" value={editing.organization || ""} onChange={(v) => setEditing({ ...editing, organization: v })} required />
+                    <FormField label="Period * (e.g. Jan 2020 - Present)" value={editing.period || ""} onChange={(v) => setEditing({ ...editing, period: v })} required />
                     <div className="grid grid-cols-2 gap-4">
                         <FormField
                             label="Start Date *"
                             type="date"
-                            value={editing.startDate ? new Date(editing.startDate).toISOString().split('T')[0] : ""}
-                            onChange={(v) => setEditing({ ...editing, startDate: new Date(v) })}
+                            value={editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString().split('T')[0] : editing.startDate.toString().split('T')[0]) : ""}
+                            onChange={(v) => setEditing({ ...editing, startDate: v })}
                             required
                         />
                         <FormField
                             label="End Date"
                             type="date"
-                            value={editing.endDate ? new Date(editing.endDate).toISOString().split('T')[0] : ""}
-                            onChange={(v) => setEditing({ ...editing, endDate: v ? new Date(v) : null })}
+                            value={editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString().split('T')[0] : editing.endDate.toString().split('T')[0]) : ""}
+                            onChange={(v) => setEditing({ ...editing, endDate: v || null })}
                         />
                     </div>
-                    <FormTextarea label="Description *" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} required />
-                    <FormField label="Type" value={editing.type} onChange={(v) => setEditing({ ...editing, type: v })} placeholder="Experience, Education, etc." />
+                    <FormTextarea label="Description *" value={editing.description || ""} onChange={(v) => setEditing({ ...editing, description: v })} required />
+                    <FormField label="Type" value={editing.type || ""} onChange={(v) => setEditing({ ...editing, type: v })} placeholder="Experience, Education, etc." />
 
                     <div className="flex gap-3 pt-2">
                         <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
@@ -102,8 +117,8 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                 <Button variant="outline" size="sm" onClick={() => setEditing({
                                     ...exp,
                                     period: exp.period ?? "",
-                                    startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
-                                    endDate: exp.endDate ? new Date(exp.endDate) : null
+                                    startDate: exp.startDate ? (exp.startDate instanceof Date ? exp.startDate.toISOString().split('T')[0] : String(exp.startDate).split('T')[0]) : "",
+                                    endDate: exp.endDate ? (exp.endDate instanceof Date ? exp.endDate.toISOString().split('T')[0] : String(exp.endDate).split('T')[0]) : null
                                 })} className="text-white/60">Edit</Button>
                                 <Button variant="destructive" size="sm" onClick={() => deleteExp(exp.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
                             </div>

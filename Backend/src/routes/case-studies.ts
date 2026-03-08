@@ -3,6 +3,7 @@ import { caseStudyService } from "../services/case-study.service.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { recordAudit } from "../lib/audit.js";
 import { cachePublic } from "../middleware/cache.js";
+import { aiLimiter } from "../lib/rate-limit.js";
 
 export function registerCaseStudyRoutes(app: Router) {
     // GET /case-studies — public list
@@ -43,6 +44,7 @@ export function registerCaseStudyRoutes(app: Router) {
     app.post(
         "/case-studies/generate/:projectId",
         isAuthenticated,
+        aiLimiter,
         asyncHandler(async (req: Request, res: Response) => {
             const projectId = parseInt(req.params.projectId, 10);
             if (isNaN(projectId)) {

@@ -87,3 +87,13 @@ export const strictApiLimiter = createLimiter({
     message: "Action limit exceeded, please try again later",
     keyPrefix: "strict",
 });
+
+/**
+ * AI API limiter: 5 requests per minute
+ */
+export const aiLimiter = createLimiter({
+    windowMs: 60 * 1000,
+    max: 5,
+    message: "AI request limit exceeded, please try again in a minute",
+    keyPrefix: "ai",
+});

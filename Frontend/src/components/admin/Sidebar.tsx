@@ -32,7 +32,7 @@ const NAV_ITEMS = [
     { key: "audit", label: "Audit Log", icon: Shield },
     { key: "case-studies", label: "Case Studies", icon: BookOpen },
     { key: "clients", label: "Clients", icon: Users },
-    { key: "whiteboard", label: "Whiteboard", icon: PenTool },
+    { key: "whiteboard", label: "Idea Canvas", icon: PenTool },
     { key: "mindset", label: "Mindset", icon: Brain },
     { key: "settings", label: "Site Settings", icon: Sliders },
 ];

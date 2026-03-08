@@ -131,7 +131,6 @@ export function ProjectsTab(_props: AdminTabProps) {
         bulkDelete: bulkDeleteApi,
         bulkStatus: bulkStatusApi,
         isPending: saving,
-        refetch
     } = useAdminProjects();
 
     const [editing, setEditing] = useState<(Partial<Project> & typeof emptyProject) | null>(null);
@@ -149,7 +148,7 @@ export function ProjectsTab(_props: AdminTabProps) {
         try {
             await bulkDeleteApi(selectedIds);
             setSelectedIds([]);
-        } catch (err) {
+        } catch {
             // Error handled by hook toast
         }
     };
@@ -158,7 +157,7 @@ export function ProjectsTab(_props: AdminTabProps) {
         try {
             await bulkStatusApi({ ids: selectedIds, status });
             setSelectedIds([]);
-        } catch (err) {
+        } catch {
             // Error handled by hook toast
         }
     };
@@ -230,7 +229,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                 await create(body);
             }
             setEditing(null);
-        } catch (err) {
+        } catch {
             // Error handled by hook toast
         }
     };
@@ -239,7 +238,7 @@ export function ProjectsTab(_props: AdminTabProps) {
         if (!confirm("Delete this project?")) return;
         try {
             await remove(id);
-        } catch (err) {
+        } catch {
             // Error handled by hook toast
         }
     };

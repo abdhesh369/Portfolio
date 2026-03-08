@@ -3,6 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2, Heart, Star, ThumbsUp, Flame } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/portfolio/use-guestbook";
+import { useToast } from "@/hooks/use-toast";
 import type { GuestbookEntry } from "@portfolio/shared/schema";
 
 const REACTION_EMOJIS = [
@@ -16,6 +17,7 @@ export const Guestbook = () => {
     const { data: entries = [], isLoading: loading } = useGuestbook();
     const submitMutation = useSubmitGuestbook();
     const reactMutation = useReactToGuestbook();
+    const { toast } = useToast();
 
     const [message, setMessage] = useState("");
     const [name, setName] = useState("");
@@ -40,8 +42,12 @@ export const Guestbook = () => {
     const handleReact = async (id: number, emoji: string) => {
         try {
             await reactMutation.mutateAsync({ id, emoji });
-        } catch (err) {
-            console.error("Failed to react:", err);
+        } catch {
+            toast({
+                title: "Reaction failed",
+                description: "Failed to save your reaction. Please try again.",
+                variant: "destructive"
+            });
         }
     };
 
@@ -174,7 +180,7 @@ export const Guestbook = () => {
                                             </p>
 
                                             <div className="flex flex-wrap gap-2">
-                                                {REACTION_EMOJIS.map(({ emoji, icon: Icon, label }) => {
+                                                {REACTION_EMOJIS.map(({ emoji, icon: _Icon, label }) => {
                                                     const count = (entry.reactions as Record<string, number>)?.[emoji] || 0;
                                                     return (
                                                         <button

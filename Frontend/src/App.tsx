@@ -82,7 +82,7 @@ import Home from "@/pages/Home";
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
-const ClientPortalPage = lazy(() => import("@/components/ClientPortal").then(m => ({ default: m.ClientPortal })));
+const ClientPortalPage = lazy(() => import("@/components/ClientPortal"));
 const CaseStudyListPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
 const CaseStudyViewerPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
 import NotFound from "@/pages/not-found";

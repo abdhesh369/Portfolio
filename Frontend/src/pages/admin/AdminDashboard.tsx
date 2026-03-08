@@ -43,7 +43,7 @@ const TAB_LABELS: Record<Tab, string> = {
     audit: "AUDIT LOG",
     "case-studies": "CASE STUDIES",
     clients: "CLIENTS",
-    whiteboard: "WHITEBOARD",
+    whiteboard: "IDEA CANVAS",
     mindset: "MINDSET",
     customization: "CUSTOMIZATION",
     settings: "SITE SETTINGS",

@@ -13,7 +13,7 @@ export function useAdminExperiences() {
         queryKeyToInvalidate: ["experiences"],
         successTitle: "Experience created",
         successDescription: "The experience has been added successfully.",
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Partial<Experience>) => {
             const res = await apiFetch(api.experiences.create.path, {
                 method: api.experiences.create.method,
                 body: JSON.stringify(data),
@@ -35,12 +35,12 @@ export function useAdminExperiences() {
             );
             return { previousExperiences };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousExperiences) {
                 queryClient.setQueryData(["experiences"], context.previousExperiences);
             }
         },
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Experience> }) => {
             const res = await apiFetch(interpolatePath(api.experiences.update.path, { id }), {
                 method: api.experiences.update.method,
                 body: JSON.stringify(data),
@@ -62,7 +62,7 @@ export function useAdminExperiences() {
             );
             return { previousExperiences };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousExperiences) {
                 queryClient.setQueryData(["experiences"], context.previousExperiences);
             }

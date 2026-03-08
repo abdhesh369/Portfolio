@@ -4,6 +4,7 @@ import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullReque
 import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
+import { useToast } from "@/hooks/use-toast";
 
 type GitHubEvent = {
   type: string;
@@ -24,6 +25,7 @@ type ActivityItem = {
 
 export default function CodeAndPractice() {
   const [events, setEvents] = useState<ActivityItem[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     apiFetch("/api/v1/github/activity")
@@ -92,7 +94,14 @@ export default function CodeAndPractice() {
 
         setEvents(filtered);
       })
-      .catch(err => console.error("GitHub fetch failed:", err));
+      .catch(err => {
+        console.error("GitHub fetch failed:", err);
+        toast({
+          title: "Activity update failed",
+          description: "Could not fetch recent GitHub activity.",
+          variant: "destructive"
+        });
+      });
   }, []);
 
   return (

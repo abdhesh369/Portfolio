@@ -208,7 +208,7 @@ export const scopeRequestsTable = pgTable("scope_requests", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-// ================= MF-2: AI CODE REVIEWS =================
+// ================= MF-2: AI PROJECT ANALYSIS =================
 export const codeReviewsTable = pgTable("code_reviews", {
   id: serial("id").primaryKey(),
   projectId: integer("projectId").notNull().references(() => projectsTable.id, { onDelete: "cascade" }),
@@ -263,7 +263,7 @@ export const clientFeedbackTable = pgTable("client_feedback", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-// ================= MF-5: COLLABORATIVE WHITEBOARD =================
+// ================= MF-5: IDEA CANVAS =================
 export const whiteboardSessionsTable = pgTable("whiteboard_sessions", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull().default("Untitled Session"),

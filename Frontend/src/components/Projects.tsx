@@ -263,7 +263,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                 background: 'rgba(99, 102, 241, 0.2)',
                 border: '1px solid rgba(99, 102, 241, 0.4)'
               }}
-              aria-label="AI Code Review"
+              aria-label="AI Project Analysis"
             >
               <Bot className="w-5 h-5 text-indigo-400" />
             </m.button>
@@ -507,15 +507,14 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         aria-modal="true"
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
-        className="relative w-full max-w-3xl md:rounded-2xl overflow-hidden h-full md:h-auto md:max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-3xl md:rounded-2xl overflow-hidden h-full md:h-auto md:max-h-[90vh] flex flex-col bg-gradient-to-b from-slate-900/98 to-slate-950/98 border shadow-2xl shadow-black/60"
         style={{
-          background: 'linear-gradient(180deg, rgba(15, 10, 40, 0.98) 0%, rgba(10, 8, 30, 0.98) 100%)',
-          border: `1px solid ${catColor.text}40`,
+          borderColor: `${catColor.text}40`,
           boxShadow: `0 30px 100px rgba(0, 0, 0, 0.6), 0 0 60px ${catColor.glow}`
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(100, 100, 140, 0.2)' }}>
+        <div className="flex items-center justify-between p-5 border-b border-white/5">
           <div>
             <h3 id="modal-title" className="text-xl font-bold text-white">{project.title}</h3>
             <div className="flex items-center gap-3 mt-1 text-sm">
@@ -527,8 +526,8 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg transition-colors"
-            style={{ background: 'rgba(255, 255, 255, 0.05)' }}
+            className="p-2 rounded-lg transition-colors bg-white/5 hover:bg-white/10"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5 text-gray-400" />
           </button>
@@ -553,16 +552,11 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
 
           <div className="mb-5">
             <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Technologies</h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 text-cyan-400">
               {project.techStack.map((tech: string) => (
                 <span
                   key={tech}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium"
-                  style={{
-                    background: 'rgba(0, 212, 255, 0.1)',
-                    color: 'var(--color-cyan)',
-                    border: '1px solid rgba(0, 212, 255, 0.3)'
-                  }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium bg-cyan-500/10 border border-cyan-500/30"
                 >
                   {tech}
                 </span>
@@ -576,12 +570,7 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:bg-white/10"
-                style={{
-                  background: 'rgba(30, 30, 50, 0.8)',
-                  border: '1px solid rgba(100, 100, 140, 0.3)',
-                  color: 'var(--color-muted-text)'
-                }}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:bg-slate-800/80 bg-slate-900/80 border border-slate-700/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/50 flex-1 sm:flex-none"
               >
                 <Github className="w-4 h-4" />
                 View Code
@@ -592,10 +581,10 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:brightness-110 flex-1"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:brightness-110 flex-1 text-white"
                 style={{
                   background: `linear-gradient(135deg, ${catColor.glow}, rgba(15, 10, 35, 0.9))`,
-                  border: `1px solid ${catColor.text}50`,
+                  borderColor: `${catColor.text}50`,
                   color: catColor.text
                 }}
               >
@@ -607,8 +596,8 @@ const PreviewModal = ({ project, onClose }: { project: Project; onClose: () => v
         </div>
 
         {/* Decorative corners */}
-        <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 rounded-tl-2xl" style={{ borderColor: `${catColor.text}30` }} />
-        <div className="absolute bottom-0 right-0 w-12 h-12 border-r-2 border-b-2 rounded-br-2xl" style={{ borderColor: `${catColor.text}30` }} />
+        <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 rounded-tl-2xl pointer-events-none" style={{ borderColor: `${catColor.text}30` }} />
+        <div className="absolute bottom-0 right-0 w-12 h-12 border-r-2 border-b-2 rounded-br-2xl pointer-events-none" style={{ borderColor: `${catColor.text}30` }} />
       </m.div>
     </m.div>
   );
@@ -637,6 +626,7 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
+      aria-pressed={isActive}
       className="px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2"
       style={isActive ? activeStyle : inactiveStyle}
     >

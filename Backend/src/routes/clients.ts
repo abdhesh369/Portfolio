@@ -105,6 +105,14 @@ export function registerClientRoutes(app: Router) {
             if (!token) { res.status(401).json({ success: false, message: "Client token required" }); return; }
             const client = await clientService.getClientByToken(token);
             if (!client || client.status !== "active") { res.status(401).json({ success: false, message: "Invalid or inactive client" }); return; }
+
+            // Fix IDOR: verify client owns the project
+            const dashboard = await clientService.getPortalDashboard(client.id);
+            const isOwner = dashboard.projects.some(p => p.id === req.body.clientProjectId);
+            if (!isOwner) {
+                return res.status(403).json({ success: false, message: "Project not found or access denied" });
+            }
+
             const feedback = await clientService.submitFeedback({
                 ...req.body,
                 clientId: client.id,
@@ -123,6 +131,14 @@ export function registerClientRoutes(app: Router) {
             if (!client || client.status !== "active") { res.status(401).json({ success: false, message: "Invalid or inactive client" }); return; }
             const projectId = parseInt(req.params.projectId, 10);
             if (isNaN(projectId)) { res.status(400).json({ success: false, message: "Invalid project ID" }); return; }
+
+            // Fix IDOR: verify client owns the project
+            const dashboard = await clientService.getPortalDashboard(client.id);
+            const isOwner = dashboard.projects.some(p => p.id === projectId);
+            if (!isOwner) {
+                return res.status(403).json({ success: false, message: "Project not found or access denied" });
+            }
+
             const feedback = await clientService.getProjectFeedback(projectId);
             res.json({ success: true, data: feedback });
         })

@@ -51,6 +51,7 @@ export function registerWhiteboardRoutes(app: Router) {
     // PUT /whiteboard/sessions/:id — save canvas data
     app.put(
         "/whiteboard/sessions/:id",
+        isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }

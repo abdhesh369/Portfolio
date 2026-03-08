@@ -13,7 +13,7 @@ export function useAdminMindset() {
         queryKeyToInvalidate: ["mindset"],
         successTitle: "Principle created",
         successDescription: "The mindset principle has been added successfully.",
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Partial<Mindset>) => {
             const res = await apiFetch(api.mindset.create.path, {
                 method: api.mindset.create.method,
                 body: JSON.stringify(data),
@@ -35,12 +35,12 @@ export function useAdminMindset() {
             );
             return { previousMindset };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousMindset) {
                 queryClient.setQueryData(["mindset"], context.previousMindset);
             }
         },
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Mindset> }) => {
             const res = await apiFetch(interpolatePath(api.mindset.update.path, { id }), {
                 method: api.mindset.update.method,
                 body: JSON.stringify(data),
@@ -62,7 +62,7 @@ export function useAdminMindset() {
             );
             return { previousMindset };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousMindset) {
                 queryClient.setQueryData(["mindset"], context.previousMindset);
             }

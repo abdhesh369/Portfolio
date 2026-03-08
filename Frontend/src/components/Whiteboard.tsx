@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Pen, Eraser, Square, Circle as CircleIcon, Minus, Palette, RotateCcw, Download, Save } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Pen, Eraser, Square, Circle as CircleIcon, Minus, Palette, RotateCcw, Download, Save, MousePointer2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface Point { x: number; y: number }
 interface DrawElement {
@@ -19,13 +20,14 @@ const TOOLS = [
     { id: 'line', icon: <Minus size={16} />, label: 'Line' },
 ];
 
-interface WhiteboardProps {
+interface IdeaCanvasProps {
     sessionId?: number;
     onSave?: (canvasData: Record<string, unknown>) => void;
 }
 
-export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => {
+export const IdeaCanvas: React.FC<IdeaCanvasProps> = ({ sessionId: _sessionId, onSave }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [elements, setElements] = useState<DrawElement[]>([]);
     const [currentElement, setCurrentElement] = useState<DrawElement | null>(null);
     const [tool, setTool] = useState('pen');
@@ -34,10 +36,23 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => 
     const [isDrawing, setIsDrawing] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
 
-    const getPos = (e: React.MouseEvent<HTMLCanvasElement>): Point => {
+    const getPos = (e: React.MouseEvent | React.TouchEvent): Point => {
         const canvas = canvasRef.current!;
         const rect = canvas.getBoundingClientRect();
-        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+
+        let clientX, clientY;
+        if ('touches' in e) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = (e as React.MouseEvent).clientX;
+            clientY = (e as React.MouseEvent).clientY;
+        }
+
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
     };
 
     const drawAll = useCallback(() => {
@@ -47,7 +62,7 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw background grid
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
         ctx.lineWidth = 1;
         for (let x = 0; x < canvas.width; x += 40) {
             ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
@@ -86,34 +101,49 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => 
     useEffect(() => { drawAll(); }, [drawAll]);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-            canvas.width = canvas.parentElement!.clientWidth;
-            canvas.height = 600;
-            drawAll();
-        }
-    }, []);
+        const resizeCanvas = () => {
+            const canvas = canvasRef.current;
+            const container = containerRef.current;
+            if (canvas && container) {
+                const dpr = window.devicePixelRatio || 1;
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = Math.max(600, rect.height) * dpr;
+                const ctx = canvas.getContext('2d');
+                if (ctx) ctx.scale(dpr, dpr);
+                drawAll();
+            }
+        };
 
-    // Auto-save every 10 seconds
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        return () => window.removeEventListener('resize', resizeCanvas);
+    }, [drawAll]);
+
+    // Auto-save every 30 seconds
     useEffect(() => {
         if (!onSave || elements.length === 0) return;
         const interval = setInterval(() => {
-            onSave({ elements, savedAt: new Date().toISOString() });
-        }, 10000);
+            onSave({ elements, lastModified: new Date().toISOString() });
+        }, 30000);
         return () => clearInterval(interval);
     }, [elements, onSave]);
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
+        if ('touches' in e && e.touches.length > 1) return; // Ignore multi-touch
+
         const pos = getPos(e);
         setIsDrawing(true);
         const drawColor = tool === 'eraser' ? '#0a0a1a' : color;
-        const drawWidth = tool === 'eraser' ? 20 : lineWidth;
+        const drawWidth = tool === 'eraser' ? 30 : lineWidth;
         const type: DrawElement['type'] = tool === 'rect' ? 'rect' : tool === 'circle' ? 'circle' : 'line';
         setCurrentElement({ type, points: [pos], color: drawColor, width: drawWidth });
     };
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
         if (!isDrawing || !currentElement) return;
+        if ('touches' in e) e.preventDefault(); // Prevent scrolling while drawing
+
         const pos = getPos(e);
         if (currentElement.type === 'line') {
             setCurrentElement({ ...currentElement, points: [...currentElement.points, pos] });
@@ -122,7 +152,7 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => 
         }
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
         if (currentElement) {
             setElements((prev) => [...prev, currentElement]);
             setCurrentElement(null);
@@ -130,100 +160,162 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId, onSave }) => 
         setIsDrawing(false);
     };
 
-    const clear = () => { setElements([]); };
+    const clear = () => {
+        if (confirm("Reset the canvas? This cannot be undone.")) {
+            setElements([]);
+        }
+    };
 
     const exportCanvas = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = `whiteboard-${Date.now()}.png`;
-        link.href = canvas.toDataURL();
+        link.download = `idea-canvas-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
         link.click();
+        toast.success("Sketch exported as PNG");
+    };
+
+    const saveManual = () => {
+        if (onSave) {
+            onSave({ elements, savedAt: new Date().toISOString() });
+            toast.success("Canvas saved to server");
+        }
     };
 
     return (
-        <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-primary, rgba(255,255,255,0.1))' }}>
+        <div
+            ref={containerRef}
+            className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col shadow-2xl"
+        >
             {/* Toolbar */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem',
-                background: 'var(--surface-secondary, #1e1e3a)', borderBottom: '1px solid var(--border-primary)',
-                flexWrap: 'wrap',
-            }}>
-                {TOOLS.map((t) => (
-                    <button
-                        key={t.id}
-                        onClick={() => setTool(t.id)}
-                        title={t.label}
-                        style={{
-                            padding: '0.4rem', borderRadius: '6px', border: 'none',
-                            background: tool === t.id ? 'var(--accent-primary, #6366f1)' : 'transparent',
-                            color: tool === t.id ? '#fff' : 'var(--text-secondary)', cursor: 'pointer',
-                        }}
-                    >
-                        {t.icon}
-                    </button>
-                ))}
+            <div className="flex items-center gap-2 p-3 bg-slate-900/50 border-b border-slate-800 flex-wrap backdrop-blur-md">
+                <div className="flex items-center gap-1 bg-slate-950/50 p-1 rounded-lg border border-slate-800" role="toolbar" aria-label="Drawing tools">
+                    {TOOLS.map((t) => (
+                        <button
+                            key={t.id}
+                            onClick={() => setTool(t.id)}
+                            title={t.label}
+                            aria-label={t.label}
+                            aria-pressed={tool === t.id}
+                            className={`p-2 rounded-md transition-all ${tool === t.id
+                                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                                : "text-slate-400 hover:text-white hover:bg-slate-800"
+                                }`}
+                        >
+                            {t.icon}
+                        </button>
+                    ))}
+                </div>
 
-                <div style={{ width: '1px', height: '24px', background: 'var(--border-primary)', margin: '0 0.25rem' }} />
+                <div className="w-px h-6 bg-slate-800 mx-1" />
 
                 {/* Color picker */}
-                <div style={{ position: 'relative' }}>
-                    <button onClick={() => setShowColorPicker(!showColorPicker)} style={{
-                        padding: '0.4rem', borderRadius: '6px', border: 'none', background: 'transparent',
-                        color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
-                    }}>
-                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: color, border: '2px solid rgba(255,255,255,0.3)' }} />
+                <div className="relative">
+                    <button
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                        aria-label="Pick color"
+                        aria-expanded={showColorPicker}
+                        aria-haspopup="true"
+                        className="p-2 rounded-lg bg-slate-950/50 border border-slate-800 flex items-center gap-2 hover:bg-slate-800 transition-colors"
+                    >
+                        <div className="w-5 h-5 rounded-full ring-2 ring-white/10" style={{ background: color }} aria-hidden="true" />
+                        <Palette size={14} className="text-slate-400" />
                     </button>
-                    {showColorPicker && (
-                        <div style={{
-                            position: 'absolute', top: '100%', left: 0, zIndex: 10,
-                            display: 'flex', gap: '4px', padding: '8px', borderRadius: '8px',
-                            background: 'var(--surface-primary)', border: '1px solid var(--border-primary)', marginTop: '4px',
-                        }}>
-                            {COLORS.map((c) => (
-                                <button key={c} onClick={() => { setColor(c); setShowColorPicker(false); }} style={{
-                                    width: '20px', height: '20px', borderRadius: '50%', background: c, border: color === c ? '2px solid #fff' : '2px solid transparent',
-                                    cursor: 'pointer',
-                                }} />
-                            ))}
-                        </div>
-                    )}
+
+                    <AnimatePresence>
+                        {showColorPicker && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                role="menu"
+                                aria-label="Colors"
+                                className="absolute top-full left-0 z-50 mt-2 p-2 grid grid-cols-4 gap-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl"
+                            >
+                                {COLORS.map((c) => (
+                                    <button
+                                        key={c}
+                                        onClick={() => { setColor(c); setShowColorPicker(false); }}
+                                        aria-label={`Select color ${c}`}
+                                        className={`w-6 h-6 rounded-full transition-transform hover:scale-110 ${color === c ? "ring-2 ring-white scale-110" : ""
+                                            }`}
+                                        style={{ background: c }}
+                                    />
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Width */}
-                <input
-                    type="range" min="1" max="10" value={lineWidth}
-                    onChange={(e) => setLineWidth(parseInt(e.target.value))}
-                    style={{ width: '80px', accentColor: 'var(--accent-primary)' }}
-                />
+                <div className="flex items-center gap-3 px-3 bg-slate-950/50 rounded-lg border border-slate-800 h-10">
+                    <div className="w-4 h-4 rounded-full bg-slate-500 transition-transform duration-200" style={{ transform: `scale(${0.3 + lineWidth / 10})` }} aria-hidden="true" />
+                    <input
+                        type="range" min="1" max="15" value={lineWidth}
+                        onChange={(e) => setLineWidth(parseInt(e.target.value))}
+                        aria-label="Line width"
+                        className="w-24 accent-blue-500 hover:accent-blue-400 transition-all cursor-pointer"
+                    />
+                </div>
 
-                <div style={{ flex: 1 }} />
+                <div className="flex-1" />
 
-                <button onClick={clear} title="Clear" style={{ padding: '0.4rem', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                    <RotateCcw size={16} />
-                </button>
-                <button onClick={exportCanvas} title="Export PNG" style={{ padding: '0.4rem', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                    <Download size={16} />
-                </button>
-                {onSave && (
-                    <button onClick={() => onSave({ elements, savedAt: new Date().toISOString() })} title="Save" style={{
-                        padding: '0.4rem 0.75rem', borderRadius: '6px', border: 'none',
-                        background: 'var(--accent-primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem',
-                    }}>
-                        <Save size={14} /> Save
+                <div className="flex items-center gap-1 bg-slate-950/50 p-1 rounded-lg border border-slate-800">
+                    <button
+                        onClick={clear}
+                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all"
+                        title="Reset Canvas"
+                        aria-label="Reset Canvas"
+                    >
+                        <RotateCcw size={18} />
                     </button>
-                )}
+                    <button
+                        onClick={exportCanvas}
+                        className="p-2 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-md transition-all"
+                        title="Export as PNG"
+                        aria-label="Export as PNG"
+                    >
+                        <Download size={18} />
+                    </button>
+                </div>
+
+                <button
+                    onClick={saveManual}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+                >
+                    <Save size={16} aria-hidden="true" />
+                    <span className="hidden sm:inline">Save Session</span>
+                </button>
             </div>
 
             {/* Canvas */}
-            <canvas
-                ref={canvasRef}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                style={{ background: 'var(--bg-primary, #0a0a1a)', cursor: tool === 'eraser' ? 'crosshair' : 'default', display: 'block', width: '100%' }}
-            />
+            <div className="relative flex-1 bg-slate-950 cursor-crosshair overflow-hidden touch-none">
+                <canvas
+                    ref={canvasRef}
+                    onMouseDown={handleStart}
+                    onMouseMove={handleMove}
+                    onMouseUp={handleEnd}
+                    onMouseLeave={handleEnd}
+                    onTouchStart={handleStart}
+                    onTouchMove={handleMove}
+                    onTouchEnd={handleEnd}
+                    role="img"
+                    aria-label="Idea Canvas - Drawing area for sketching and visualizing ideas"
+                    className="block w-full h-full"
+                />
+                {!elements.length && !currentElement && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 select-none">
+                        <div className="text-center">
+                            <MousePointer2 className="w-12 h-12 mx-auto mb-2 text-blue-500" />
+                            <p className="text-xl font-bold uppercase tracking-widest text-white">Idea Canvas</p>
+                            <p className="text-sm">Start drawing to visualize your thoughts</p>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
+
+export default IdeaCanvas;

@@ -61,3 +61,8 @@ stats.
 packages/shared/dist/
 packages/shared/src/*.js
 test_browser/
+Portfolio_Review_v8.md
+Portfolio_Review_v7.md
+Frontend/current_lint_output.txt
+Frontend/final_lint_output.txt
+Frontend/lint_output.txt

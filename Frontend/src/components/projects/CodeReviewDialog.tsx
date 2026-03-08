@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Shield, Zap, Building2, TestTube, Accessibility, X, Loader2, RefreshCw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { apiFetch } from '@/lib/api-helpers';
 
 interface CodeReview {
@@ -14,11 +15,11 @@ interface CodeReview {
 }
 
 const BADGE_CONFIG: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
-    security: { icon: <Shield size={14} />, color: '#ef4444', label: 'Security' },
-    performance: { icon: <Zap size={14} />, color: '#f59e0b', label: 'Performance' },
-    architecture: { icon: <Building2 size={14} />, color: '#3b82f6', label: 'Architecture' },
-    testing: { icon: <TestTube size={14} />, color: '#10b981', label: 'Testing' },
-    accessibility: { icon: <Accessibility size={14} />, color: '#8b5cf6', label: 'Accessibility' },
+    security: { icon: <Shield size={14} />, color: 'var(--color-red, #ef4444)', label: 'Security' },
+    performance: { icon: <Zap size={14} />, color: 'var(--color-amber, #f59e0b)', label: 'Performance' },
+    architecture: { icon: <Building2 size={14} />, color: 'var(--color-blue, #3b82f6)', label: 'Architecture' },
+    testing: { icon: <TestTube size={14} />, color: 'var(--color-green, #22c55e)', label: 'Testing' },
+    accessibility: { icon: <Accessibility size={14} />, color: 'var(--color-purple, #8b5cf6)', label: 'Accessibility' },
 };
 
 interface CodeReviewDialogProps {
@@ -31,6 +32,14 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
     const [review, setReview] = useState<CodeReview | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const pollRef = useRef<NodeJS.Timeout | null>(null);
+
+    const clearPoll = () => {
+        if (pollRef.current) {
+            clearInterval(pollRef.current);
+            pollRef.current = null;
+        }
+    };
 
     const fetchReview = async () => {
         try {
@@ -44,30 +53,32 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
     const triggerReview = async () => {
         setLoading(true);
         setError(null);
+        clearPoll();
         try {
             const res = await apiFetch(`/projects/${projectId}/review`, { method: 'POST' });
             if (res?.data) {
                 setReview(res.data);
                 // Poll for completion
-                const poll = setInterval(async () => {
+                pollRef.current = setInterval(async () => {
                     const updated = await apiFetch(`/projects/${projectId}/review`);
                     if (updated?.data) {
                         setReview(updated.data);
                         if (updated.data.status === 'completed' || updated.data.status === 'failed') {
-                            clearInterval(poll);
+                            clearPoll();
                             setLoading(false);
                         }
                     }
                 }, 3000);
             }
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "An unknown error occurred");
             setLoading(false);
         }
     };
 
     useEffect(() => {
         if (isOpen) fetchReview();
+        return clearPoll;
     }, [isOpen, projectId]);
 
     if (!isOpen) return null;
@@ -75,48 +86,47 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
     return (
         <AnimatePresence>
             <motion.div
-                className="code-review-overlay"
+                className="fixed inset-0 bg-black/70 z-[1000] flex items-center justify-center p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={onClose}
-                style={{
-                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem',
-                }}
             >
                 <motion.div
+                    className="bg-surface-primary rounded-2xl max-w-[700px] w-full max-h-[80vh] overflow-auto p-8 border border-border-primary"
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    style={{
-                        background: 'var(--surface-primary, #1a1a2e)', borderRadius: '16px',
-                        maxWidth: '700px', width: '100%', maxHeight: '80vh', overflow: 'auto',
-                        padding: '2rem', border: '1px solid var(--border-primary, rgba(255,255,255,0.1))',
-                    }}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="review-dialog-title"
                 >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <Bot size={24} style={{ color: 'var(--accent-primary, #6366f1)' }} />
-                            <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary, #fff)' }}>AI Code Review</h2>
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-3">
+                            <Bot size={24} className="text-accent-primary" />
+                            <h2 id="review-dialog-title" className="m-0 text-xl text-text-primary font-semibold">AI Project Analysis</h2>
                         </div>
-                        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary, #888)' }}>
+                        <button
+                            onClick={onClose}
+                            className="bg-transparent border-none cursor-pointer text-text-secondary hover:text-text-primary transition-colors"
+                            aria-label="Close dialog"
+                        >
                             <X size={20} />
                         </button>
                     </div>
 
                     {/* Badges */}
                     {review?.badges && review.badges.length > 0 && (
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                        <div className="flex gap-2 flex-wrap mb-4">
                             {review.badges.map((b) => {
                                 const cfg = BADGE_CONFIG[b];
                                 if (!cfg) return null;
                                 return (
-                                    <span key={b} style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                        padding: '4px 10px', borderRadius: '999px', fontSize: '0.75rem',
-                                        background: `${cfg.color}20`, color: cfg.color, border: `1px solid ${cfg.color}40`,
+                                    <span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border" style={{
+                                        backgroundColor: `${cfg.color}20`,
+                                        color: cfg.color,
+                                        borderColor: `${cfg.color}40`
                                     }}>
                                         {cfg.icon} {cfg.label}
                                     </span>
@@ -127,42 +137,36 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
 
                     {/* Content */}
                     {review?.status === 'completed' && (
-                        <div
-                            style={{ color: 'var(--text-secondary, #ccc)', lineHeight: 1.7, fontSize: '0.9rem' }}
-                            dangerouslySetInnerHTML={{ __html: review.content.replace(/\n/g, '<br/>') }}
-                        />
+                        <div className="text-text-secondary leading-loose text-sm prose prose-invert max-w-none">
+                            <ReactMarkdown>{review.content}</ReactMarkdown>
+                        </div>
                     )}
 
                     {review?.status === 'processing' && (
-                        <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-secondary, #888)' }}>
-                            <Loader2 size={32} className="spin" style={{ marginBottom: '1rem' }} />
-                            <p>Analyzing your code...</p>
+                        <div className="text-center py-12 text-text-secondary">
+                            <Loader2 size={32} className="animate-spin mb-4 mx-auto" />
+                            <p>Analyzing project structure...</p>
                         </div>
                     )}
 
                     {review?.status === 'failed' && (
-                        <div style={{ textAlign: 'center', padding: '2rem', color: '#ef4444' }}>
-                            <p>Review failed: {review.error || 'Unknown error'}</p>
+                        <div className="text-center py-8 text-red-500">
+                            <p>Analysis failed: {review.error || 'Unknown error'}</p>
                         </div>
                     )}
 
-                    {error && <p style={{ color: '#ef4444' }}>{error}</p>}
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
 
                     {/* Actions */}
-                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'flex-end' }}>
+                    <div className="flex gap-3 mt-6 justify-end">
                         <button
                             onClick={triggerReview}
                             disabled={loading}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                padding: '0.5rem 1rem', borderRadius: '8px', border: 'none',
-                                background: 'var(--accent-primary, #6366f1)', color: '#fff',
-                                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
-                                fontSize: '0.875rem',
-                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-none bg-accent-primary text-white text-sm transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer hover:opacity-90'
+                                }`}
                         >
-                            {loading ? <Loader2 size={16} className="spin" /> : <RefreshCw size={16} />}
-                            {review ? 'Re-analyze' : 'Run AI Review'}
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                            {review ? 'Re-analyze Project' : 'Run Analysis'}
                         </button>
                     </div>
                 </motion.div>

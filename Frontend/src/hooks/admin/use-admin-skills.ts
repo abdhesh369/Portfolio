@@ -13,7 +13,7 @@ export function useAdminSkills() {
         queryKeyToInvalidate: ["skills"],
         successTitle: "Skill created",
         successDescription: "The skill has been added successfully.",
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Partial<Skill>) => {
             const res = await apiFetch(api.skills.create.path, {
                 method: api.skills.create.method,
                 body: JSON.stringify(data),
@@ -27,7 +27,7 @@ export function useAdminSkills() {
         queryKeyToInvalidate: ["skills"],
         successTitle: "Skill updated",
         successDescription: "The skill details have been saved.",
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Skill> }) => {
             const res = await apiFetch(interpolatePath(api.skills.update.path, { id }), {
                 method: api.skills.update.method,
                 body: JSON.stringify(data),
@@ -42,7 +42,7 @@ export function useAdminSkills() {
             );
             return { previous };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previous) {
                 queryClient.setQueryData(["skills"], context.previous);
             }
@@ -67,7 +67,7 @@ export function useAdminSkills() {
             );
             return { previous };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previous) {
                 queryClient.setQueryData(["skills"], context.previous);
             }

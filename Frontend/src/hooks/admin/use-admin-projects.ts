@@ -13,7 +13,7 @@ export function useAdminProjects() {
         queryKeyToInvalidate: ["projects"],
         successTitle: "Project created",
         successDescription: "The project has been added successfully.",
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Partial<Project>) => {
             const res = await apiFetch(api.projects.create.path, {
                 method: api.projects.create.method,
                 body: JSON.stringify(data),
@@ -35,12 +35,12 @@ export function useAdminProjects() {
             );
             return { previousProjects };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousProjects) {
                 queryClient.setQueryData(["projects"], context.previousProjects);
             }
         },
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Project> }) => {
             const res = await apiFetch(interpolatePath(api.projects.update.path, { id }), {
                 method: api.projects.update.method,
                 body: JSON.stringify(data),
@@ -62,7 +62,7 @@ export function useAdminProjects() {
             );
             return { previousProjects };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousProjects) {
                 queryClient.setQueryData(["projects"], context.previousProjects);
             }

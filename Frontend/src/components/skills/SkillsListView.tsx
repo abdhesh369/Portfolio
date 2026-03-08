@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, Code2 } from 'lucide-react';
 import { fadeUp, expand, DURATION, EASE, STAGGER } from '@/lib/animation';
-import type { SkillNode, SkillCategory, SkillStatus } from './SkillTypes';
+import type { SkillNode } from './SkillTypes';
 
 interface SkillsListViewProps {
   skillNodes: SkillNode[];

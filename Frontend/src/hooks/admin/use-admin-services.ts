@@ -13,7 +13,7 @@ export function useAdminServices() {
         queryKeyToInvalidate: ["services"],
         successTitle: "Service created",
         successDescription: "The service has been added successfully.",
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Partial<Service>) => {
             const res = await apiFetch(api.services.create.path, {
                 method: api.services.create.method,
                 body: JSON.stringify(data),
@@ -35,12 +35,12 @@ export function useAdminServices() {
             );
             return { previousServices };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousServices) {
                 queryClient.setQueryData(["services"], context.previousServices);
             }
         },
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Service> }) => {
             const res = await apiFetch(interpolatePath(api.services.update.path, { id }), {
                 method: api.services.update.method,
                 body: JSON.stringify(data),
@@ -62,7 +62,7 @@ export function useAdminServices() {
             );
             return { previousServices };
         },
-        onError: (_err, _vars, context: any) => {
+        onError: (_err, _vars, context) => {
             if (context?.previousServices) {
                 queryClient.setQueryData(["services"], context.previousServices);
             }

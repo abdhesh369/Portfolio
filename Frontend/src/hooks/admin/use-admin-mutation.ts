@@ -1,13 +1,13 @@
-import { useMutation, useQueryClient, type UseMutationOptions } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type UseMutationOptions, type QueryKey } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminMutationOptions<TData, TError, TVariables, TContext>
     extends UseMutationOptions<TData, TError, TVariables, TContext> {
-    queryKeyToInvalidate?: any[];
+    queryKeyToInvalidate?: QueryKey;
     successTitle?: string;
     successDescription?: string;
     errorTitle?: string;
-    route?: any;
+    route?: unknown;
     // Overriding these to be explicit about arguments
     onSuccess?: (data: TData, variables: TVariables, context: TContext) => Promise<unknown> | unknown;
     onError?: (error: TError, variables: TVariables, context: TContext | undefined) => Promise<unknown> | unknown;
@@ -36,7 +36,7 @@ export function useAdminMutation<
         ...mutationOptions
     } = options;
 
-    return useMutation({
+    return useMutation<TData, TError, TVariables, TContext>({
         ...mutationOptions,
         onSuccess: async (data, variables, context) => {
             if (queryKeyToInvalidate) {
@@ -54,10 +54,10 @@ export function useAdminMutation<
                 await onSuccess(data, variables, context);
             }
         },
-        onError: (error: any, variables, context) => {
+        onError: (error: TError, variables, context) => {
             toast({
                 title: errorTitle,
-                description: error.message || "An unexpected error occurred",
+                description: (error as Error).message || "An unexpected error occurred",
                 variant: "destructive",
             });
 

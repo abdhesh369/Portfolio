@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Users, Plus, Trash2, Edit, Copy, Check, UserCircle, Building, Mail } from 'lucide-react';
+import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
 
 interface ClientData {

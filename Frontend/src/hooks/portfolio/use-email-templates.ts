@@ -1,5 +1,5 @@
 import { api } from "@portfolio/shared";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { apiFetch } from "@/lib/api-helpers";
 import type { EmailTemplate } from "@portfolio/shared/schema";

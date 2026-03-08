@@ -1,8 +1,11 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { FileText, Trash2, Sparkles, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { FileText, Trash2, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/admin/AdminShared";
 
 interface CaseStudyData {
     id: number;
@@ -20,7 +23,9 @@ interface ProjectData {
     title: string;
 }
 
-export const CaseStudiesTab: React.FC = () => {
+import type { AdminTabProps } from "./types";
+
+export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
     const queryClient = useQueryClient();
 
     const { data: studies = [], isLoading } = useQuery({
@@ -50,75 +55,92 @@ export const CaseStudiesTab: React.FC = () => {
     });
 
     return (
-        <div style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0, color: 'var(--text-primary)' }}>
-                    <FileText size={22} /> Case Studies
+        <div className="animate-fade-in p-6">
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3" style={{ fontFamily: "var(--font-display)" }}>
+                    <FileText className="w-6 h-6" /> Case Studies
                 </h2>
             </div>
 
             {/* Generate from Project */}
-            <div style={{ marginBottom: '1.5rem', padding: '1rem', borderRadius: '10px', background: 'var(--surface-secondary)', border: '1px solid var(--border-primary)' }}>
-                <p style={{ margin: '0 0 0.75rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Generate a case study from an existing project:</p>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10">
+                <p className="text-sm text-white/60 mb-3">Generate a case study from an existing project:</p>
+                <div className="flex flex-wrap gap-2">
                     {(projects as ProjectData[]).map((p) => (
-                        <button
+                        <Button
                             key={p.id}
+                            variant="outline"
+                            size="sm"
                             onClick={() => generateMutation.mutate(p.id)}
                             disabled={generateMutation.isPending}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '4px',
-                                padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-primary)',
-                                background: 'var(--surface-primary)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '0.8rem',
-                            }}
+                            className="bg-white/5 border-white/10 text-white hover:bg-white/10"
                         >
-                            <Sparkles size={12} /> {p.title}
-                        </button>
+                            <Sparkles className="w-3 h-3 mr-2" /> {p.title}
+                        </Button>
                     ))}
                 </div>
-                {generateMutation.isPending && <p style={{ margin: '0.5rem 0 0', color: 'var(--accent-primary)', fontSize: '0.8rem' }}>Generating with AI...</p>}
+                {generateMutation.isPending && (
+                    <p className="mt-2 text-sm text-purple-400 flex items-center gap-2">
+                        <Sparkles className="w-3 h-3 animate-pulse" /> Generating with AI...
+                    </p>
+                )}
             </div>
 
             {isLoading ? (
-                <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
+                <div className="flex justify-center p-12">
+                    <p className="text-white/40">Loading...</p>
+                </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="space-y-3">
                     {(studies as CaseStudyData[]).map((study) => (
                         <motion.div
                             key={study.id}
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
-                                borderRadius: '10px', background: 'var(--surface-secondary)', border: '1px solid var(--border-primary)',
-                            }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
                         >
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>{study.title}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                            <div className="flex-1 min-w-0">
+                                <div className="font-semibold text-white mb-1">{study.title}</div>
+                                <div className="text-xs text-white/40">
                                     /case-studies/{study.slug} · {new Date(study.createdAt).toLocaleDateString()}
                                 </div>
                             </div>
-                            <span style={{
-                                padding: '2px 8px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600,
-                                background: study.status === 'published' ? '#10b98120' : '#f59e0b20',
-                                color: study.status === 'published' ? '#10b981' : '#f59e0b',
-                            }}>
-                                {study.status}
-                            </span>
-                            <button
-                                onClick={() => toggleStatusMutation.mutate({ id: study.id, status: study.status === 'published' ? 'draft' : 'published' })}
-                                title={study.status === 'published' ? 'Unpublish' : 'Publish'}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}
+                            <Badge
+                                variant="outline"
+                                className={study.status === 'published'
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                }
                             >
-                                {study.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
-                            <button onClick={() => deleteMutation.mutate(study.id)} title="Delete" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
-                                <Trash2 size={16} />
-                            </button>
+                                {study.status}
+                            </Badge>
+                            <div className="flex gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => toggleStatusMutation.mutate({
+                                        id: study.id,
+                                        status: study.status === 'published' ? 'draft' : 'published'
+                                    })}
+                                    title={study.status === 'published' ? 'Unpublish' : 'Publish'}
+                                    className="text-white/40 hover:text-white"
+                                >
+                                    {study.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => deleteMutation.mutate(study.id)}
+                                    title="Delete"
+                                    className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                                >
+                                    <Trash2 size={16} />
+                                </Button>
+                            </div>
                         </motion.div>
                     ))}
                     {(studies as CaseStudyData[]).length === 0 && (
-                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No case studies yet. Generate one from a project above.</p>
+                        <EmptyState icon="📝" text="No case studies yet. Generate one from a project above." />
                     )}
                 </div>
             )}

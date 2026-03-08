@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { aiReviewService } from "../services/ai-review.service.js";
 import { isAuthenticated, asyncHandler } from "../auth.js";
 import { recordAudit } from "../lib/audit.js";
+import { aiLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
 
@@ -10,6 +11,7 @@ export function registerReviewRoutes(app: Router) {
     app.post(
         "/projects/:id/review",
         isAuthenticated,
+        aiLimiter,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {

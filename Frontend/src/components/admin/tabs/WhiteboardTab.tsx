@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { PenTool, Plus, Trash2, Archive, ExternalLink, Calendar } from 'lucide-react';
+import { PenTool, Plus, Trash2, Archive, Calendar } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/admin/AdminShared";
 
 interface WhiteboardSessionData {
     id: number;
@@ -23,95 +26,116 @@ export const WhiteboardTab: React.FC = () => {
     });
 
     const createMutation = useMutation({
+        mutationKey: ['create-whiteboard-session'],
         mutationFn: (title: string) => apiFetch('/whiteboard/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
-        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] }); setNewTitle(''); },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] });
+            setNewTitle('');
+        },
     });
 
     const archiveMutation = useMutation({
+        mutationKey: ['archive-whiteboard-session'],
         mutationFn: (id: number) => apiFetch(`/whiteboard/sessions/${id}/archive`, { method: 'PUT' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] }),
     });
 
     const deleteMutation = useMutation({
+        mutationKey: ['delete-whiteboard-session'],
         mutationFn: (id: number) => apiFetch(`/whiteboard/sessions/${id}`, { method: 'DELETE' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] }),
     });
 
     return (
-        <div style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0, color: 'var(--text-primary)' }}>
-                    <PenTool size={22} /> Whiteboard Sessions
+        <div className="animate-fade-in p-6">
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3" style={{ fontFamily: "var(--font-display)" }}>
+                    <PenTool className="w-6 h-6" /> Idea Canvas Sessions
                 </h2>
             </div>
 
-            {/* Create new session */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <div className="flex gap-2 mb-8 bg-white/5 p-4 rounded-xl border border-white/10">
                 <input
                     value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTitle(e.target.value)}
                     placeholder="New session title..."
-                    onKeyDown={(e) => e.key === 'Enter' && newTitle && createMutation.mutate(newTitle)}
-                    style={{
-                        flex: 1, padding: '0.5rem 0.75rem', borderRadius: '8px',
-                        border: '1px solid var(--border-primary)', background: 'var(--surface-secondary)',
-                        color: 'var(--text-primary)', fontSize: '0.9rem',
-                    }}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && newTitle && createMutation.mutate(newTitle)}
+                    className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-white/20 focus:border-purple-500/50 outline-none transition-all"
                 />
-                <button
+                <Button
                     onClick={() => newTitle && createMutation.mutate(newTitle)}
                     disabled={!newTitle || createMutation.isPending}
-                    style={{
-                        display: 'flex', alignItems: 'center', gap: '0.5rem',
-                        padding: '0.5rem 1rem', borderRadius: '8px', border: 'none',
-                        background: 'var(--accent-primary, #6366f1)', color: '#fff',
-                        cursor: 'pointer', fontSize: '0.875rem',
-                    }}
+                    className="bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-lg shadow-purple-500/20"
                 >
-                    <Plus size={16} /> Create
-                </button>
+                    <Plus size={16} className="mr-2" /> Create
+                </Button>
             </div>
 
             {isLoading ? (
-                <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
+                <div className="flex justify-center p-12 text-white/40">
+                    <p>Loading...</p>
+                </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="space-y-3">
                     {(sessions as WhiteboardSessionData[]).map((session) => (
                         <motion.div
                             key={session.id}
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
-                                borderRadius: '10px', background: 'var(--surface-secondary)', border: '1px solid var(--border-primary)',
-                            }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group"
                         >
-                            <PenTool size={20} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{session.title}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                            <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform">
+                                <PenTool size={20} />
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                                <div className="font-semibold text-white truncate">{session.title}</div>
+                                <div className="text-xs text-white/40 flex items-center gap-1.5 mt-1">
                                     <Calendar size={12} /> {new Date(session.updatedAt).toLocaleString()}
-                                    {session.createdBy && <span>· {session.createdBy}</span>}
+                                    {session.createdBy && <span className="opacity-60">· Created by {session.createdBy}</span>}
                                 </div>
                             </div>
-                            <span style={{
-                                padding: '2px 8px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600,
-                                background: session.status === 'active' ? '#10b98120' : '#6b728020',
-                                color: session.status === 'active' ? '#10b981' : '#6b7280',
-                            }}>
+
+                            <Badge
+                                variant="outline"
+                                className={session.status === 'active'
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                    : "bg-white/5 text-white/40 border-white/10"
+                                }
+                            >
                                 {session.status}
-                            </span>
-                            {session.status === 'active' && (
-                                <button onClick={() => archiveMutation.mutate(session.id)} title="Archive" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-                                    <Archive size={16} />
-                                </button>
-                            )}
-                            <button onClick={() => deleteMutation.mutate(session.id)} title="Delete" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
-                                <Trash2 size={16} />
-                            </button>
+                            </Badge>
+
+                            <div className="flex gap-1">
+                                {session.status === 'active' && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => archiveMutation.mutate(session.id)}
+                                        title="Archive"
+                                        className="text-white/40 hover:text-white"
+                                    >
+                                        <Archive size={16} />
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                        if (confirm("Delete this session?")) {
+                                            deleteMutation.mutate(session.id);
+                                        }
+                                    }}
+                                    title="Delete"
+                                    className="text-red-400/60 hover:text-red-400 hover:bg-red-400/10"
+                                >
+                                    <Trash2 size={16} />
+                                </Button>
+                            </div>
                         </motion.div>
                     ))}
                     {(sessions as WhiteboardSessionData[]).length === 0 && (
-                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No whiteboard sessions yet.</p>
+                        <EmptyState icon="🎨" text="No idea canvas sessions yet. Start exploring your ideas!" />
                     )}
                 </div>
             )}

@@ -4,11 +4,12 @@ import { insertScopeRequestApiSchema } from "@portfolio/shared";
 import { scopeService } from "../services/scope.service.js";
 import { scopeRepository } from "../repositories/scope.repository.js";
 import { logger } from "../lib/logger.js";
+import { aiLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
 
 // POST /api/v1/scope/request - Submit wizard data & queue job
-router.post("/request", async (req, res) => {
+router.post("/request", aiLimiter, async (req, res) => {
     try {
         const validatedData = insertScopeRequestApiSchema.parse(req.body);
         const request = await scopeService.submitRequest(validatedData);
@@ -39,7 +40,6 @@ router.get("/stream/:id", async (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
-    res.setHeader("Access-Control-Allow-Origin", "*"); // Customize as needed
 
     // Send initial connection event
     res.write(`data: ${JSON.stringify({ type: "connected", requestId })}\n\n`);
