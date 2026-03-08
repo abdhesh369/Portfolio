@@ -23,6 +23,12 @@ export default defineConfig({
             provider: 'v8',
             reporter: ['text', 'json', 'html'],
             include: ['src/services/**/*', 'src/hooks/**/*', 'src/components/admin/**/*'],
+            thresholds: {
+                lines: 70,
+                functions: 70,
+                branches: 70,
+                statements: 70,
+            },
         },
     },
 })

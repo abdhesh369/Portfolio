@@ -4,11 +4,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("../db.js", () => ({
     db: {
         select: vi.fn().mockReturnValue({
-            from: vi.fn().mockReturnValue({
-                orderBy: vi.fn().mockResolvedValue([]),
-                where: vi.fn().mockReturnValue({
-                    returning: vi.fn().mockResolvedValue([]),
-                }),
+            from: vi.fn().mockReturnThis(),
+            where: vi.fn().mockReturnThis(),
+            orderBy: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            then: vi.fn(function (resolve) {
+                return Promise.resolve([]).then(resolve);
             }),
         }),
         insert: vi.fn().mockReturnValue({
@@ -58,12 +59,10 @@ describe("ProjectRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
-                from: vi.fn().mockReturnValue({
-                    where: vi.fn().mockReturnValue({
-                        orderBy: vi.fn().mockResolvedValue(mockProjects),
-                    }),
-                }),
+            const selectMock = db.select() as any;
+            vi.spyOn(selectMock, 'then').mockImplementation((resolve: any) => {
+                if (resolve) resolve(mockProjects);
+                return Promise.resolve(mockProjects) as any;
             });
 
             const result = await repo.findAll();

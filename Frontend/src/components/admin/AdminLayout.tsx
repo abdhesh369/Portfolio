@@ -32,6 +32,14 @@ export default function AdminLayout({
                 />
             )}
 
+            {/* Animated Grid Background */}
+            <div className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+                style={{
+                    backgroundImage: 'radial-gradient(var(--glass-border) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px'
+                }}
+            />
+
             {/* Sidebar */}
             <Sidebar
                 collapsed={sidebarCollapsed}
@@ -43,12 +51,10 @@ export default function AdminLayout({
             />
 
             {/* Main Content */}
-            <div
-                className={cn(
-                    "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
-                    sidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[288px]"
-                )}
-            >
+            <div className={cn(
+                "transition-all duration-300 relative z-10",
+                sidebarCollapsed ? "lg:ml-[var(--admin-sidebar-collapsed)]" : "lg:ml-[var(--admin-sidebar-width)]"
+            )}>
                 <TopBar
                     activeTab={activeTab}
                     setMobileMenuOpen={setMobileMenuOpen}
@@ -56,15 +62,13 @@ export default function AdminLayout({
                     isRefreshing={isRefreshing}
                 />
 
-                <main className="flex-1 p-4 lg:p-8 animate-in">
-                    <div className="max-w-7xl mx-auto space-y-8">
-                        {children}
-                    </div>
+                <main className="admin-content animate-in">
+                    {children}
                 </main>
-
-                <footer className="py-6 px-4 lg:px-8 text-center text-[var(--admin-text-secondary)] text-xs font-bold uppercase tracking-[0.2em]">
-                    &copy; {new Date().getFullYear()} {settings?.personalName?.toUpperCase() || "ABDHESH"} | NEUMORPHIC_OS_v3.0                </footer>
             </div>
+
+            {/* Notifications Container */}
+            <div id="admin-notifications" className="fixed bottom-8 right-8 z-[70] flex flex-col gap-4" />
         </div>
     );
 }

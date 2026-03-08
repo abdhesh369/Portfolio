@@ -58,19 +58,19 @@ export default function Sidebar({
     return (
         <aside
             className={cn(
-                "fixed inset-y-0 left-0 z-[60] bg-[var(--nm-bg)] transition-all duration-300 ease-in-out lg:translate-x-0",
-                collapsed ? "w-[80px]" : "w-[288px]",
+                "fixed inset-y-0 left-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 glass-nav",
+                collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-width)]",
                 mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
             )}
         >
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full bg-slate-900/40 backdrop-blur-xl">
                 {/* Brand */}
                 <div className="h-[72px] flex items-center px-6">
                     <div className={cn(
-                        "flex items-center gap-3 overflow-hidden p-2 rounded-xl nm-flat",
+                        "flex items-center gap-3 overflow-hidden p-2 rounded-xl bg-white/5 border border-white/10",
                         collapsed && "p-1"
                     )}>
-                        <div className="w-8 h-8 rounded-lg bg-[var(--nm-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-[var(--nm-accent)]/30 overflow-hidden">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--admin-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-[var(--admin-accent)]/30 overflow-hidden">
                             {(settings?.personalAvatar && !avatarError) ? (
                                 <img
                                     src={settings.personalAvatar}
@@ -83,8 +83,8 @@ export default function Sidebar({
                             )}
                         </div>
                         {!collapsed && (
-                            <span className="font-heading font-bold text-base tracking-tight whitespace-nowrap text-[var(--admin-text-primary)]">
-                                {brandName.replace(/\s+/g, '_').toUpperCase()}_OS
+                            <span className="font-heading font-black text-xs tracking-[0.2em] whitespace-nowrap text-[var(--admin-text-primary)]">
+                                {brandName.replace(/\s+/g, '_').toUpperCase()}
                             </span>
                         )}
                     </div>
@@ -92,14 +92,14 @@ export default function Sidebar({
                     {/* Mobile Close */}
                     <button
                         onClick={() => setMobileOpen(false)}
-                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-colors"
+                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-[var(--admin-accent)] transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2 mt-4 custom-scrollbar">
+                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-1 mt-2 custom-scrollbar">
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
                         const active = activeTab === item.key;
@@ -112,16 +112,19 @@ export default function Sidebar({
                                     setMobileOpen(false);
                                 }}
                                 className={cn(
-                                    "sidebar-link group relative",
-                                    active && "active"
+                                    "sidebar-link group relative py-3 px-4",
+                                    active && "active bg-indigo-500/10 text-indigo-400"
                                 )}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon size={20} className={cn("shrink-0 transition-all", active ? "text-[var(--nm-accent)]" : "group-hover:scale-110")} />
+                                <Icon size={18} className={cn("shrink-0 transition-transform duration-300", active ? "text-indigo-400" : "group-hover:scale-110 group-hover:text-white")} />
                                 {!collapsed && (
-                                    <span className="text-[13px] font-bold uppercase tracking-wider truncate">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.15em] truncate">
                                         {item.label}
                                     </span>
+                                )}
+                                {active && (
+                                    <div className="absolute left-0 w-1 h-6 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
                                 )}
                             </button>
                         );
@@ -129,15 +132,16 @@ export default function Sidebar({
                 </nav>
 
                 {/* Footer Toggle */}
-                <div className="p-4">
+                <div className="p-4 border-t border-white/5">
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl nm-button text-[var(--admin-text-secondary)] hover:text-[var(--nm-accent)] transition-all"
+                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl glass-button text-[var(--admin-text-secondary)] hover:text-[var(--admin-accent)] transition-all"
                     >
-                        {collapsed ? <ChevronRight size={20} /> : (
+                        {collapsed ? <ChevronRight size={18} /> : (
                             <div className="flex items-center gap-2">
-                                <ChevronLeft size={20} />
-                                <span className="text-xs font-bold uppercase tracking-widest">Dock System</span>                            </div>
+                                <ChevronLeft size={18} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Dock System</span>
+                            </div>
                         )}
                     </button>
                 </div>

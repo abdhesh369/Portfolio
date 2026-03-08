@@ -26,6 +26,8 @@ export default defineConfig({
             thresholds: {
                 lines: 60,
                 functions: 60,
+                branches: 60,
+                statements: 60,
             },
         },
         setupFiles: ["./src/test/setup.ts"],
