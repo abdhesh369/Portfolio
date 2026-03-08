@@ -21,8 +21,11 @@ const GuestbookTab = lazy(() => import("@/components/admin/tabs/GuestbookTab").t
 const MindsetTab = lazy(() => import("@/components/admin/tabs/MindsetTab"));
 const CustomizationTab = lazy(() => import("@/components/admin/tabs/CustomizationTab").then(m => ({ default: m.CustomizationTab })));
 const SettingsTab = lazy(() => import("@/components/admin/tabs/SettingsTab").then(m => ({ default: m.SettingsTab })));
+const CaseStudiesTab = lazy(() => import("@/components/admin/tabs/CaseStudiesTab").then(m => ({ default: m.CaseStudiesTab })));
+const ClientsTab = lazy(() => import("@/components/admin/tabs/ClientsTab").then(m => ({ default: m.ClientsTab })));
+const WhiteboardTab = lazy(() => import("@/components/admin/tabs/WhiteboardTab").then(m => ({ default: m.WhiteboardTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings" | "case-studies" | "clients" | "whiteboard";
 
 const TAB_LABELS: Record<Tab, string> = {
     overview: "OVERVIEW",
@@ -38,6 +41,9 @@ const TAB_LABELS: Record<Tab, string> = {
     testimonials: "TESTIMONIALS",
     guestbook: "GUESTBOOK",
     audit: "AUDIT LOG",
+    "case-studies": "CASE STUDIES",
+    clients: "CLIENTS",
+    whiteboard: "WHITEBOARD",
     mindset: "MINDSET",
     customization: "CUSTOMIZATION",
     settings: "SITE SETTINGS",
@@ -88,6 +94,9 @@ export default function AdminDashboard() {
                     {tab === "testimonials" && <TestimonialsTab />}
                     {tab === "guestbook" && <GuestbookTab />}
                     {tab === "audit" && <AuditLogTab />}
+                    {tab === "case-studies" && <CaseStudiesTab />}
+                    {tab === "clients" && <ClientsTab />}
+                    {tab === "whiteboard" && <WhiteboardTab />}
                     {tab === "mindset" && <MindsetTab />}
                     {tab === "customization" && <CustomizationTab />}
                     {tab === "settings" && <SettingsTab />}

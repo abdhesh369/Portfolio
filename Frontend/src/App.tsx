@@ -23,6 +23,9 @@ import Home from "@/pages/Home";
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
+const ClientPortalPage = lazy(() => import("@/components/ClientPortal").then(m => ({ default: m.ClientPortal })));
+const CaseStudyListPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
+const CaseStudyViewerPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
 import NotFound from "@/pages/not-found";
 
 // Lazy load admin pages
@@ -288,6 +291,15 @@ function Router() {
               {() => <Home />}
             </Route>
           )}
+
+          {/* Client Portal */}
+          <Route path="/portal" component={ClientPortalPage} />
+
+          {/* Case Studies */}
+          <Route path="/case-studies" component={CaseStudyListPage} />
+          <Route path="/case-studies/:slug">
+            {(params: { slug: string }) => <CaseStudyViewerPage slug={params.slug} />}
+          </Route>
 
           {/* Admin routes */}
           <Route path="/admin/login" component={AdminLogin} />

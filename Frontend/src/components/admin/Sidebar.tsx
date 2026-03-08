@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, ChevronLeft, ChevronRight, X
+    Brain, Sliders, ChevronLeft, ChevronRight, X, BookOpen, Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -30,6 +30,9 @@ const NAV_ITEMS = [
     { key: "testimonials", label: "Testimonials", icon: Star },
     { key: "guestbook", label: "Guestbook", icon: FileText },
     { key: "audit", label: "Audit Log", icon: Shield },
+    { key: "case-studies", label: "Case Studies", icon: BookOpen },
+    { key: "clients", label: "Clients", icon: Users },
+    { key: "whiteboard", label: "Whiteboard", icon: PenTool },
     { key: "mindset", label: "Mindset", icon: Brain },
     { key: "settings", label: "Site Settings", icon: Sliders },
 ];

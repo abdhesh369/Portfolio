@@ -3,8 +3,9 @@ import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
 import { type Project } from "@portfolio/shared/schema";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { ExternalLink, Github, ArrowRight, X, Eye, Folder, Code, Layers, Sparkles, Cpu, Zap, Terminal } from "lucide-react";
+import { ExternalLink, Github, ArrowRight, X, Eye, Folder, Code, Layers, Sparkles, Cpu, Zap, Terminal, Bot } from "lucide-react";
 import { Link } from "wouter";
+import { CodeReviewDialog } from "@/components/projects/CodeReviewDialog";
 
 // Enhanced 3D Tilt Card with Sci-Fi styling
 const ProjectCard = ({ project, onPreview, index }: { project: Project; onPreview: (p: Project) => void; index: number }) => {
@@ -12,6 +13,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -252,6 +254,19 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
             >
               <Eye className="w-5 h-5 text-pink-400" />
             </m.button>
+            <m.button
+              onClick={(e) => { e.stopPropagation(); setShowReview(true); }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 rounded-full transition-all"
+              style={{
+                background: 'rgba(99, 102, 241, 0.2)',
+                border: '1px solid rgba(99, 102, 241, 0.4)'
+              }}
+              aria-label="AI Code Review"
+            >
+              <Bot className="w-5 h-5 text-indigo-400" />
+            </m.button>
           </m.div>
 
           {/* Category & Flagship Badges */}
@@ -395,6 +410,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
         <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 rounded-tl-2xl" style={{ borderColor: `${catColor.text}30` }} />
         <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 rounded-br-2xl" style={{ borderColor: `${catColor.text}30` }} />
       </div>
+      <CodeReviewDialog projectId={project.id} isOpen={showReview} onClose={() => setShowReview(false)} />
     </m.div>
   );
 };
@@ -739,8 +755,8 @@ export default function Projects() {
               <button
                 onClick={() => setSortBy("default")}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "default"
-                    ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
-                    : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                  : "text-gray-500 hover:text-gray-300 border border-transparent"
                   }`}
               >
                 <Layers className="w-3.5 h-3.5" />
@@ -750,8 +766,8 @@ export default function Projects() {
               <button
                 onClick={() => setSortBy("views")}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "views"
-                    ? "bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
-                    : "text-gray-500 hover:text-gray-300 border border-transparent"
+                  ? "bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                  : "text-gray-500 hover:text-gray-300 border border-transparent"
                   }`}
               >
                 <Eye className="w-3.5 h-3.5" />
