@@ -2,8 +2,10 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import type { PoolClient } from "pg";
 import { db, pool } from "../db.js";
 import { logger } from "./logger.js";
+import path from "path";
+import fs from "fs";
 
-const STARTUP_MIGRATIONS_FOLDER = "drizzle/migrations";
+const STARTUP_MIGRATIONS_FOLDER = path.resolve(process.cwd(), "drizzle/migrations");
 
 function parseBoolean(value: unknown): boolean | null {
     if (typeof value === "boolean") return value;
@@ -17,13 +19,20 @@ function parseBoolean(value: unknown): boolean | null {
 
 async function runBestEffortMigrations() {
     try {
+        logger.info({ context: "schema-bootstrap", path: STARTUP_MIGRATIONS_FOLDER }, "📍 Checking migrations folder...");
+
+        if (!fs.existsSync(STARTUP_MIGRATIONS_FOLDER)) {
+            throw new Error(`Migrations folder not found: ${STARTUP_MIGRATIONS_FOLDER}`);
+        }
+
         await migrate(db, { migrationsFolder: STARTUP_MIGRATIONS_FOLDER });
         logger.info({ context: "schema-bootstrap" }, "✓ Migration check completed");
-    } catch (error) {
-        logger.warn(
-            { context: "schema-bootstrap", error },
-            "Migration step failed. Continuing with compatibility patching"
+    } catch (error: any) {
+        logger.error(
+            { context: "schema-bootstrap", error: error.message, stack: error.stack },
+            "❌ Migration step failed"
         );
+        // We still continue to applyConsistencyChecks which might create basic tables
     }
 }
 

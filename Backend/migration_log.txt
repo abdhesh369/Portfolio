@@ -1,0 +1,63 @@
+[dotenv@17.3.1] injecting env (20) from .env.production -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+Running migrations from: D:\Portfolio\Backend\drizzle\migrations
+Γ¥î Migration failed: DrizzleQueryError: Failed query: CREATE TABLE "analytics" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"targetId" integer,
+	"path" varchar(500) NOT NULL,
+	"browser" varchar(100),
+	"os" varchar(100),
+	"device" varchar(50),
+	"country" varchar(100),
+	"city" varchar(100),
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+
+params: 
+    at NodePgPreparedQuery.queryWithCache (file:///D:/Portfolio/node_modules/drizzle-orm/pg-core/session.js:41:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///D:/Portfolio/node_modules/drizzle-orm/pg-core/dialect.js:64:13
+    ... 3 lines matching cause stack trace ...
+    at async runMigrations (file:///D:/Portfolio/Backend/scripts/run-prod-migrations.js:27:9) {
+  query: 'CREATE TABLE "analytics" (\n' +
+    '\t"id" serial PRIMARY KEY NOT NULL,\n' +
+    '\t"type" varchar(50) NOT NULL,\n' +
+    '\t"targetId" integer,\n' +
+    '\t"path" varchar(500) NOT NULL,\n' +
+    '\t"browser" varchar(100),\n' +
+    '\t"os" varchar(100),\n' +
+    '\t"device" varchar(50),\n' +
+    '\t"country" varchar(100),\n' +
+    '\t"city" varchar(100),\n' +
+    '\t"createdAt" timestamp DEFAULT now() NOT NULL\n' +
+    ');\n',
+  params: [],
+  cause: error: relation "analytics" already exists
+      at D:\Portfolio\node_modules\pg\lib\client.js:631:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async file:///D:/Portfolio/node_modules/drizzle-orm/node-postgres/session.js:113:20
+      at async NodePgPreparedQuery.queryWithCache (file:///D:/Portfolio/node_modules/drizzle-orm/pg-core/session.js:39:16)
+      at async file:///D:/Portfolio/node_modules/drizzle-orm/pg-core/dialect.js:64:13
+      at async NodePgSession.transaction (file:///D:/Portfolio/node_modules/drizzle-orm/node-postgres/session.js:186:22)
+      at async PgDialect.migrate (file:///D:/Portfolio/node_modules/drizzle-orm/pg-core/dialect.js:60:5)
+      at async migrate (file:///D:/Portfolio/node_modules/drizzle-orm/node-postgres/migrator.js:4:3)
+      at async runMigrations (file:///D:/Portfolio/Backend/scripts/run-prod-migrations.js:27:9) {
+    length: 103,
+    severity: 'ERROR',
+    code: '42P07',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'heap.c',
+    line: '1160',
+    routine: 'heap_create_with_catalog'
+  }
+}
