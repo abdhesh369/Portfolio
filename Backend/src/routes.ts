@@ -22,6 +22,10 @@ import githubRoutes from "./routes/github.js";
 import guestbookRoutes from "./routes/guestbook.js";
 import auditLogRoutes from "./routes/audit-log.js";
 import scopeRoutes from "./routes/scope.js";
+import { registerReviewRoutes } from "./routes/review.js";
+import { registerCaseStudyRoutes } from "./routes/case-studies.js";
+import { registerClientRoutes } from "./routes/clients.js";
+import { registerWhiteboardRoutes } from "./routes/whiteboard.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
 import { logger } from "./lib/logger.js";
@@ -67,6 +71,15 @@ export function registerRoutes(app: Express) {
   registerChatRoutes(v1Router);
   registerSettingsRoutes(v1Router);
   registerAdminRoutes(v1Router);
+
+  // MF-2: AI Code Reviews
+  registerReviewRoutes(v1Router);
+  // MF-3: Auto Case Studies
+  registerCaseStudyRoutes(v1Router);
+  // MF-4: Client Portal
+  registerClientRoutes(v1Router);
+  // MF-5: Collaborative Whiteboard
+  registerWhiteboardRoutes(v1Router);
 
   // Admin audit log
   v1Router.use("/admin", auditLogRoutes);

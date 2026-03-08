@@ -208,6 +208,72 @@ export const scopeRequestsTable = pgTable("scope_requests", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+// ================= MF-2: AI CODE REVIEWS =================
+export const codeReviewsTable = pgTable("code_reviews", {
+  id: serial("id").primaryKey(),
+  projectId: integer("projectId").notNull().references(() => projectsTable.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  badges: jsonb("badges").$type<string[]>().notNull().default([]),
+  status: varchar("status", { length: 50 }).$type<"pending" | "processing" | "completed" | "failed">().notNull().default("pending"),
+  error: text("error"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+// ================= MF-3: AUTO CASE STUDIES =================
+export const caseStudiesTable = pgTable("case_studies", {
+  id: serial("id").primaryKey(),
+  projectId: integer("projectId").notNull().references(() => projectsTable.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  content: text("content").notNull(),
+  status: varchar("status", { length: 50 }).$type<"draft" | "published">().notNull().default("draft"),
+  generatedAt: timestamp("generatedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+// ================= MF-4: CLIENT PORTAL =================
+export const clientsTable = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  company: varchar("company", { length: 255 }),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  status: varchar("status", { length: 50 }).$type<"active" | "inactive">().notNull().default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const clientProjectsTable = pgTable("client_projects", {
+  id: serial("id").primaryKey(),
+  clientId: integer("clientId").notNull().references(() => clientsTable.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).$type<"not_started" | "in_progress" | "review" | "completed">().notNull().default("not_started"),
+  deadline: timestamp("deadline"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const clientFeedbackTable = pgTable("client_feedback", {
+  id: serial("id").primaryKey(),
+  clientProjectId: integer("clientProjectId").notNull().references(() => clientProjectsTable.id, { onDelete: "cascade" }),
+  clientId: integer("clientId").notNull().references(() => clientsTable.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  attachments: jsonb("attachments").$type<string[]>().default([]),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+// ================= MF-5: COLLABORATIVE WHITEBOARD =================
+export const whiteboardSessionsTable = pgTable("whiteboard_sessions", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull().default("Untitled Session"),
+  canvasData: jsonb("canvasData").$type<Record<string, unknown>>().default({}),
+  status: varchar("status", { length: 50 }).$type<"active" | "archived">().notNull().default("active"),
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 export const testimonialsTable = pgTable("testimonials", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -907,3 +973,107 @@ export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
 export function isAuditLog(obj: unknown): obj is AuditLog {
   return auditLogSchema.safeParse(obj).success;
 }
+
+// ================= MF-2: Code Review Schemas =================
+export const codeReviewSchema = z.object({
+  id: z.number(),
+  projectId: z.number(),
+  content: z.string(),
+  badges: z.array(z.string()).default([]),
+  status: z.enum(["pending", "processing", "completed", "failed"]),
+  error: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+});
+export type CodeReview = z.infer<typeof codeReviewSchema>;
+
+// ================= MF-3: Case Study Schemas =================
+export const caseStudySchema = z.object({
+  id: z.number(),
+  projectId: z.number(),
+  title: z.string(),
+  slug: z.string(),
+  content: z.string(),
+  status: z.enum(["draft", "published"]),
+  generatedAt: z.coerce.date().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type CaseStudy = z.infer<typeof caseStudySchema>;
+
+export const insertCaseStudyApiSchema = z.object({
+  projectId: z.number(),
+  title: z.string().min(1).max(255),
+  slug: z.string().min(1).max(255),
+  content: z.string().min(1),
+  status: z.enum(["draft", "published"]).default("draft"),
+});
+
+// ================= MF-4: Client Portal Schemas =================
+export const clientSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.string().email(),
+  company: z.string().nullable().optional(),
+  token: z.string(),
+  status: z.enum(["active", "inactive"]),
+  createdAt: z.coerce.date(),
+});
+export type Client = z.infer<typeof clientSchema>;
+
+export const insertClientApiSchema = z.object({
+  name: z.string().min(1).max(255),
+  email: z.string().email().max(255),
+  company: z.string().max(255).optional(),
+});
+
+export const clientProjectSchema = z.object({
+  id: z.number(),
+  clientId: z.number(),
+  title: z.string(),
+  status: z.enum(["not_started", "in_progress", "review", "completed"]),
+  deadline: z.coerce.date().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type ClientProject = z.infer<typeof clientProjectSchema>;
+
+export const insertClientProjectApiSchema = z.object({
+  clientId: z.number(),
+  title: z.string().min(1).max(255),
+  status: z.enum(["not_started", "in_progress", "review", "completed"]).default("not_started"),
+  deadline: z.coerce.date().optional(),
+  notes: z.string().max(5000).optional(),
+});
+
+export const clientFeedbackSchema = z.object({
+  id: z.number(),
+  clientProjectId: z.number(),
+  clientId: z.number(),
+  message: z.string(),
+  attachments: z.array(z.string()).default([]),
+  createdAt: z.coerce.date(),
+});
+export type ClientFeedback = z.infer<typeof clientFeedbackSchema>;
+
+export const insertClientFeedbackApiSchema = z.object({
+  clientProjectId: z.number(),
+  message: z.string().min(1).max(5000),
+});
+
+// ================= MF-5: Whiteboard Schemas =================
+export const whiteboardSessionSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  canvasData: z.record(z.unknown()).default({}),
+  status: z.enum(["active", "archived"]),
+  createdBy: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type WhiteboardSession = z.infer<typeof whiteboardSessionSchema>;
+
+export const insertWhiteboardSessionApiSchema = z.object({
+  title: z.string().min(1).max(255).default("Untitled Session"),
+  createdBy: z.string().max(255).optional(),
+});
