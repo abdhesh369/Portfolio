@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/admin/AdminShared";
 
-interface WhiteboardSessionData {
+interface SketchpadSessionData {
     id: number;
     title: string;
     status: 'active' | 'archived';
@@ -16,41 +16,41 @@ interface WhiteboardSessionData {
     updatedAt: string;
 }
 
-export const WhiteboardTab: React.FC = () => {
+export const SketchpadTab: React.FC = () => {
     const queryClient = useQueryClient();
     const [newTitle, setNewTitle] = useState('');
 
     const { data: sessions = [], isLoading } = useQuery({
-        queryKey: ['admin-whiteboard'],
-        queryFn: () => apiFetch('/admin/whiteboard/sessions'),
+        queryKey: ['admin-sketchpad'],
+        queryFn: () => apiFetch('/admin/sketchpad/sessions'),
     });
 
     const createMutation = useMutation({
-        mutationKey: ['create-whiteboard-session'],
-        mutationFn: (title: string) => apiFetch('/whiteboard/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
+        mutationKey: ['create-sketchpad-session'],
+        mutationFn: (title: string) => apiFetch('/sketchpad/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] });
             setNewTitle('');
         },
     });
 
     const archiveMutation = useMutation({
-        mutationKey: ['archive-whiteboard-session'],
-        mutationFn: (id: number) => apiFetch(`/whiteboard/sessions/${id}/archive`, { method: 'PUT' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] }),
+        mutationKey: ['archive-sketchpad-session'],
+        mutationFn: (id: number) => apiFetch(`/sketchpad/sessions/${id}/archive`, { method: 'PUT' }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
     });
 
     const deleteMutation = useMutation({
-        mutationKey: ['delete-whiteboard-session'],
-        mutationFn: (id: number) => apiFetch(`/whiteboard/sessions/${id}`, { method: 'DELETE' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-whiteboard'] }),
+        mutationKey: ['delete-sketchpad-session'],
+        mutationFn: (id: number) => apiFetch(`/sketchpad/sessions/${id}`, { method: 'DELETE' }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
     });
 
     return (
         <div className="animate-fade-in p-6">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white flex items-center gap-3" style={{ fontFamily: "var(--font-display)" }}>
-                    <PenTool className="w-6 h-6" /> Idea Canvas Sessions
+                    <PenTool className="w-6 h-6" /> Sketchpad Sessions
                 </h2>
             </div>
 
@@ -77,7 +77,7 @@ export const WhiteboardTab: React.FC = () => {
                 </div>
             ) : (
                 <div className="space-y-3">
-                    {(sessions as WhiteboardSessionData[]).map((session) => (
+                    {(sessions as SketchpadSessionData[]).map((session) => (
                         <motion.div
                             key={session.id}
                             initial={{ opacity: 0, y: 10 }}
@@ -134,8 +134,8 @@ export const WhiteboardTab: React.FC = () => {
                             </div>
                         </motion.div>
                     ))}
-                    {(sessions as WhiteboardSessionData[]).length === 0 && (
-                        <EmptyState icon="🎨" text="No idea canvas sessions yet. Start exploring your ideas!" />
+                    {(sessions as SketchpadSessionData[]).length === 0 && (
+                        <EmptyState icon="🎨" text="No sketchpad sessions yet. Start exploring your ideas!" />
                     )}
                 </div>
             )}

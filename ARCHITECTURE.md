@@ -199,6 +199,35 @@ Client                          Server                          Redis
 
 ---
 
+## Client Portal & Collaboration
+- **Client Portal**: A secure, token-based area for clients to view project progress and provide feedback.
+- **Sketchpad (Idea Canvas)**: A non-collaborative drawing tool for visualizing ideas, featuring auto-save and PNG export.
+- **AI Code Review**: Automated project analysis using Gemini API, now enhanced to fetch GitHub README and file structures.
+
+---
+
+## Database Schema (v7+)
+The following tables were added in v7 to support new features:
+
+| Table | Purpose |
+|---|---|
+| `clients` | Client metadata and hashed access tokens |
+| `client_projects` | Projects assigned to specific clients |
+| `client_feedback` | Feedback messages submitted via the portal |
+| `scope_requests` | Data from the Scope Wizard and Gemini estimations |
+| `code_reviews` | AI-generated code reviews and status tracking |
+| `case_studies` | Auto-generated case studies for projects |
+| `sketchpad_sessions` | Persistence for drawing canvas data |
+
+---
+
+## AI & Background Processing
+- **SSE Streaming**: Used in the Scope Wizard and Visitor Counter for real-time updates.
+- **BullMQ**: Orchestrates background tasks for Scope Estimation and Email notifications.
+- **Rate Limiting**: AI-heavy routes are protected by a 5 req/min per IP limit to prevent quota exhaustion.
+
+---
+
 ## Database Pool Configuration
 
 | Setting | Production | Development |

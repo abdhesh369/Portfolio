@@ -39,15 +39,15 @@ export function AvailabilityCalendar() {
         <div className="space-y-6">
             <div className="flex items-center gap-3 mb-8">
                 <div className="bg-purple-500/20 p-3 rounded-xl border border-purple-500/20">
-                    <Calendar className="text-purple-400" size={24} />
+                    <Calendar className="text-purple-400" size={24} aria-hidden="true" />
                 </div>
                 <div>
                     <h3 className="text-xl font-bold text-white uppercase tracking-wider">Availability Calendar</h3>
-                    <p className="text-xs text-white/40 font-medium">MY CURRENT WORKING WINDOWS</p>
+                    <p className="text-xs text-white/40 font-medium tracking-widest">MY CURRENT WORKING WINDOWS</p>
                 </div>
             </div>
 
-            <div className="grid gap-8">
+            <div className="grid gap-8" role="list" aria-label="Available time slots by day">
                 {days.map((day, dayIdx) => (
                     <motion.div
                         key={day}
@@ -56,22 +56,24 @@ export function AvailabilityCalendar() {
                         viewport={{ once: true }}
                         transition={{ delay: dayIdx * 0.1 }}
                         className="space-y-4"
+                        role="listitem"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="text-sm font-bold text-purple-400 uppercase tracking-widest bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/10">
+                            <h4 className="text-sm font-bold text-purple-400 uppercase tracking-widest bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/10">
                                 {format(parseISO(day), "EEEE, MMM do")}
-                            </div>
-                            <div className="h-px flex-1 bg-white/5" />
+                            </h4>
+                            <div className="h-px flex-1 bg-white/5" aria-hidden="true" />
                         </div>
 
                         <div className="grid gap-3 sm:grid-cols-2">
-                            {groupedSlots[day].map((slot, _slotIdx) => (
+                            {groupedSlots[day].map((slot) => (
                                 <div
                                     key={slot.id}
                                     className="group relative flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all cursor-default"
+                                    aria-label={`Time slot: ${format(parseISO(slot.startDate), "p")} to ${format(parseISO(slot.endDate), "p")}, Status: ${slot.status}${slot.label ? `, Label: ${slot.label}` : ''}`}
                                 >
                                     <div className="bg-white/5 p-2.5 rounded-lg text-white/40 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-colors">
-                                        <Clock size={16} />
+                                        <Clock size={16} aria-hidden="true" />
                                     </div>
 
                                     <div className="flex-1 min-w-0">
@@ -94,7 +96,7 @@ export function AvailabilityCalendar() {
                                         )}
                                     </div>
 
-                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">
                                         <ArrowRight size={14} className="text-white/20" />
                                     </div>
                                 </div>

@@ -23,9 +23,9 @@ const CustomizationTab = lazy(() => import("@/components/admin/tabs/Customizatio
 const SettingsTab = lazy(() => import("@/components/admin/tabs/SettingsTab").then(m => ({ default: m.SettingsTab })));
 const CaseStudiesTab = lazy(() => import("@/components/admin/tabs/CaseStudiesTab").then(m => ({ default: m.CaseStudiesTab })));
 const ClientsTab = lazy(() => import("@/components/admin/tabs/ClientsTab").then(m => ({ default: m.ClientsTab })));
-const WhiteboardTab = lazy(() => import("@/components/admin/tabs/WhiteboardTab").then(m => ({ default: m.WhiteboardTab })));
+const SketchpadTab = lazy(() => import("@/components/admin/tabs/SketchpadTab").then(m => ({ default: m.SketchpadTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings" | "case-studies" | "clients" | "whiteboard";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings" | "case-studies" | "clients" | "sketchpad";
 
 const TAB_LABELS: Record<Tab, string> = {
     overview: "OVERVIEW",
@@ -43,7 +43,7 @@ const TAB_LABELS: Record<Tab, string> = {
     audit: "AUDIT LOG",
     "case-studies": "CASE STUDIES",
     clients: "CLIENTS",
-    whiteboard: "IDEA CANVAS",
+    sketchpad: "SKETCHPAD",
     mindset: "MINDSET",
     customization: "CUSTOMIZATION",
     settings: "SITE SETTINGS",
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
                     {tab === "audit" && <AuditLogTab />}
                     {tab === "case-studies" && <CaseStudiesTab />}
                     {tab === "clients" && <ClientsTab />}
-                    {tab === "whiteboard" && <WhiteboardTab />}
+                    {tab === "sketchpad" && <SketchpadTab />}
                     {tab === "mindset" && <MindsetTab />}
                     {tab === "customization" && <CustomizationTab />}
                     {tab === "settings" && <SettingsTab />}

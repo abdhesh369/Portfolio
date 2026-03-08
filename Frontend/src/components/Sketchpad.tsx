@@ -20,12 +20,12 @@ const TOOLS = [
     { id: 'line', icon: <Minus size={16} />, label: 'Line' },
 ];
 
-interface IdeaCanvasProps {
+interface SketchpadProps {
     sessionId?: number;
     onSave?: (canvasData: Record<string, unknown>) => void;
 }
 
-export const IdeaCanvas: React.FC<IdeaCanvasProps> = ({ sessionId: _sessionId, onSave }) => {
+export const Sketchpad: React.FC<SketchpadProps> = ({ sessionId: _sessionId, onSave }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [elements, setElements] = useState<DrawElement[]>([]);
@@ -170,7 +170,7 @@ export const IdeaCanvas: React.FC<IdeaCanvasProps> = ({ sessionId: _sessionId, o
         const canvas = canvasRef.current;
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = `idea-canvas-${Date.now()}.png`;
+        link.download = `sketchpad-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         toast.success("Sketch exported as PNG");
@@ -301,14 +301,14 @@ export const IdeaCanvas: React.FC<IdeaCanvasProps> = ({ sessionId: _sessionId, o
                     onTouchMove={handleMove}
                     onTouchEnd={handleEnd}
                     role="img"
-                    aria-label="Idea Canvas - Drawing area for sketching and visualizing ideas"
+                    aria-label="Sketchpad - Drawing area for sketching and visualizing ideas"
                     className="block w-full h-full"
                 />
                 {!elements.length && !currentElement && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 select-none">
                         <div className="text-center">
                             <MousePointer2 className="w-12 h-12 mx-auto mb-2 text-blue-500" />
-                            <p className="text-xl font-bold uppercase tracking-widest text-white">Idea Canvas</p>
+                            <p className="text-xl font-bold uppercase tracking-widest text-white">Sketchpad</p>
                             <p className="text-sm">Start drawing to visualize your thoughts</p>
                         </div>
                     </div>
@@ -318,4 +318,4 @@ export const IdeaCanvas: React.FC<IdeaCanvasProps> = ({ sessionId: _sessionId, o
     );
 };
 
-export default IdeaCanvas;
+export default Sketchpad;

@@ -239,6 +239,30 @@ Set DSN to empty string or omit to disable Sentry entirely.
 
 ---
 
+## Client Portal Management
+
+### Creating a Client Access Token
+1. Use the Admin Dashboard (planned) or the `clientService.createClient` method via a script.
+2. The token is automatically hashed using bcrypt before being stored in the database.
+3. Provide the raw token to the client via their unique URL: `/portal?token=RAW_TOKEN`.
+
+### Troubleshooting Access
+- If a client cannot log in, verify the token in the `clients` table.
+- Remember that `FLUSHDB` in Redis does **not** affect client portal access as tokens are stored in PostgreSQL.
+
+---
+
+## AI Services & Rate Limiting
+
+### AI Quota Issues
+- All AI routes (`/review`, `/scope/request`, `/case-studies/generate`) are rate-limited to **5 requests per minute per IP**.
+- Monitor the `code_reviews` and `scope_requests` tables for "failed" statuses to debug Gemini API errors.
+
+### Background Jobs
+- Scope estimations run as BullMQ jobs. If estimations are stuck in "processing", check the BullMQ worker logs on Render.
+
+---
+
 ## Common Issues
 
 ### Neon Database Cold Start

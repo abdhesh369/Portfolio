@@ -40,10 +40,7 @@ const MouseGradient = () => {
       style={{ x, y }}
     >
       <div
-        className="absolute w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          background: "radial-gradient(circle, var(--primary-rgb-20) 0%, transparent 60%)",
-        }}
+        className="absolute w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_var(--primary-rgb-20)_0%,_transparent_60%)]"
       />
     </m.div>
   );
@@ -211,7 +208,7 @@ const ProfileCard = ({ settings }: { settings: SiteSettings | undefined | null }
         </div>
 
         {/* Scanline */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none animate-scan" style={{ backgroundSize: '100% 3px' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none animate-scan bg-[length:100%_3px]" />
       </div>
 
       {/* Floating Orbital Elements */}

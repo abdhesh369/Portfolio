@@ -37,7 +37,25 @@ export class AIReviewService {
                 return;
             }
 
-            const prompt = this.buildPrompt(project);
+            let githubContext = "";
+            if (project.githubUrl) {
+                try {
+                    const context = await this.fetchGithubContext(project.githubUrl);
+                    githubContext = `
+## Repository Context
+### README
+${context.readme || "README not found"}
+
+### File Structure
+${context.fileTree || "File tree not available"}
+`;
+                } catch (err) {
+                    logger.warn({ err, githubUrl: project.githubUrl }, "Failed to fetch GitHub context for AI review");
+                    // Continue without GitHub context if it fails
+                }
+            }
+
+            const prompt = this.buildPrompt(project, githubContext);
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -51,7 +69,17 @@ export class AIReviewService {
                 throw new Error(`Gemini API error: ${response.status}`);
             }
 
-            const data = await response.json() as any;
+            interface GeminiResponse {
+                candidates?: Array<{
+                    content?: {
+                        parts?: Array<{
+                            text?: string;
+                        }>;
+                    };
+                }>;
+            }
+
+            const data = await response.json() as GeminiResponse;
             const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No review generated.";
 
             // Extract badges from content
@@ -69,8 +97,41 @@ export class AIReviewService {
         }
     }
 
-    private buildPrompt(project: { title: string; description: string; techStack: string[]; githubUrl: string | null }): string {
+    private async fetchGithubContext(githubUrl: string): Promise<{ readme?: string; fileTree?: string }> {
+        const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+        if (!match) return {};
+
+        const owner = match[1];
+        const repo = match[2].replace(/\.git$/, "");
+        const results: { readme?: string; fileTree?: string } = {};
+
+        try {
+            // Fetch README (using the custom header for raw content)
+            const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+                headers: { "Accept": "application/vnd.github.v3.raw" }
+            });
+            if (readmeRes.ok) {
+                results.readme = (await readmeRes.text()).slice(0, 5000); // Limit size
+            }
+
+            // Fetch file tree (limit to top level and important subdirs)
+            const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents`);
+            if (treeRes.ok) {
+                const contents = await treeRes.json() as any[];
+                results.fileTree = contents
+                    .map(item => `${item.type === 'dir' ? '📁' : '📄'} ${item.path}`)
+                    .join("\n");
+            }
+        } catch (err) {
+            logger.error({ err, owner, repo }, "Error fetching GitHub context");
+        }
+
+        return results;
+    }
+
+    private buildPrompt(project: { title: string; description: string; techStack: string[]; githubUrl: string | null }, githubContext: string): string {
         return `You are a senior software engineer conducting a code review. Analyze the following project and provide a comprehensive review with actionable feedback.
+${githubContext}
 
 ## Project: ${project.title}
 

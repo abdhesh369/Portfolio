@@ -14,11 +14,11 @@ export class ClientService {
         return clientRepository.findByToken(token);
     }
 
-    async createClient(data: { name: string; email: string; company?: string }): Promise<Client> {
+    async createClient(data: { name: string; email: string; company?: string }): Promise<Client & { rawToken: string }> {
         return clientRepository.create(data);
     }
 
-    async updateClient(id: number, data: Partial<{ name: string; email: string; company: string; status: string }>): Promise<Client> {
+    async updateClient(id: number, data: Partial<{ name: string; email: string; company: string; status: "active" | "inactive" }>): Promise<Client> {
         return clientRepository.update(id, data);
     }
 
@@ -31,11 +31,11 @@ export class ClientService {
         return clientRepository.findProjectsByClientId(clientId);
     }
 
-    async createClientProject(data: { clientId: number; title: string; status?: string; deadline?: Date; notes?: string }): Promise<ClientProject> {
+    async createClientProject(data: { clientId: number; title: string; status?: "not_started" | "in_progress" | "review" | "completed"; deadline?: Date; notes?: string }): Promise<ClientProject> {
         return clientRepository.createProject(data);
     }
 
-    async updateClientProject(id: number, data: Partial<{ title: string; status: string; deadline: Date; notes: string }>): Promise<ClientProject> {
+    async updateClientProject(id: number, data: Partial<{ title: string; status: "not_started" | "in_progress" | "review" | "completed"; deadline: Date; notes: string }>): Promise<ClientProject> {
         return clientRepository.updateProject(id, data);
     }
 

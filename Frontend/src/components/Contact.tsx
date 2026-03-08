@@ -372,7 +372,7 @@ export default function Contact() {
 
 
                         {/* Honeypot field for spam protection */}
-                        <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
+                        <div className="absolute left-[-9999px] opacity-0" aria-hidden="true">
                           <input type="text" tabIndex={-1} autoComplete="off" {...form.register("website")} />
                         </div>
 

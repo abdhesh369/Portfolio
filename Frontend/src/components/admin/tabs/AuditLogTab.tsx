@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api-helpers";
+import { toast } from "react-hot-toast";
 import { LoadingSkeleton, EmptyState } from "@/components/admin/AdminShared";
 import { ChevronDown, ChevronRight, Filter, RefreshCw } from "lucide-react";
 
@@ -43,8 +44,9 @@ export function AuditLogTab() {
       const data: AuditResponse = await apiFetch(`/api/v1/admin/audit-log?${params}`);
       setEntries(data.entries);
       setTotal(data.total);
-    } catch {
-      // Silently fail
+    } catch (err: unknown) {
+      toast.error("Failed to load audit logs");
+      console.error(err);
     } finally {
       setLoading(false);
     }

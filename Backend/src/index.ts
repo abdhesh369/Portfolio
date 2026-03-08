@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 import { seedDatabase } from "./seed.js";
 
 import { checkDatabaseHealth } from "./db.js";
-import { emailQueue, emailWorker, scopeQueue, scopeWorker } from "./lib/queue.js";
+import { emailQueue, emailWorker, scopeQueue, scopeWorker, initQueues } from "./lib/queue.js";
 import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
 import { logger } from "./lib/logger.js";
 import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
@@ -310,6 +310,11 @@ async function startServer() {
         resolve();
       });
     });
+
+    // ── 1.1. Initialize background queues and workers ──
+    // Deferring this until after port binding ensures the service is "up" in Render's view
+    // and reduces congestion during the initial boot sequence.
+    initQueues();
 
     // ── 2. Database health check ──
     logger.info({ context: "startup" }, "📍 Checking database health...");

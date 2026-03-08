@@ -85,8 +85,8 @@ export function useMessageStream(enabled: boolean = true) {
             }
             lastKnownCount = messages.length;
           }
-        } catch {
-          // Silently fail
+        } catch (err: unknown) {
+          console.warn("Message polling failed:", err);
         }
       }
 

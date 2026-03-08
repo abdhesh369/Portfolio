@@ -77,7 +77,17 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
     };
 
     useEffect(() => {
-        if (isOpen) fetchReview();
+        if (isOpen) {
+            fetchReview();
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') onClose();
+            };
+            window.addEventListener('keydown', handleKeyDown);
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+                clearPoll();
+            };
+        }
         return clearPoll;
     }, [isOpen, projectId]);
 
@@ -118,17 +128,19 @@ export const CodeReviewDialog: React.FC<CodeReviewDialogProps> = ({ projectId, i
 
                     {/* Badges */}
                     {review?.badges && review.badges.length > 0 && (
-                        <div className="flex gap-2 flex-wrap mb-4">
+                        <div className="flex gap-2 flex-wrap mb-4" role="group" aria-label="Analysis highlights">
                             {review.badges.map((b) => {
                                 const cfg = BADGE_CONFIG[b];
                                 if (!cfg) return null;
                                 return (
-                                    <span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border" style={{
-                                        backgroundColor: `${cfg.color}20`,
-                                        color: cfg.color,
-                                        borderColor: `${cfg.color}40`
-                                    }}>
-                                        {cfg.icon} {cfg.label}
+                                    <span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border bg-slate-950/30"
+                                        style={{
+                                            color: cfg.color,
+                                            borderColor: `${cfg.color}40`
+                                        }}
+                                        title={`Category: ${cfg.label}`}
+                                    >
+                                        <span aria-hidden="true">{cfg.icon}</span> {cfg.label}
                                     </span>
                                 );
                             })}

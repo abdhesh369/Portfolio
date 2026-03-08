@@ -263,8 +263,8 @@ export const clientFeedbackTable = pgTable("client_feedback", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-// ================= MF-5: IDEA CANVAS =================
-export const whiteboardSessionsTable = pgTable("whiteboard_sessions", {
+// ================= MF-5: SKETCHPAD =================
+export const sketchpadSessionsTable = pgTable("sketchpad_sessions", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull().default("Untitled Session"),
   canvasData: jsonb("canvasData").$type<Record<string, unknown>>().default({}),
@@ -1061,8 +1061,8 @@ export const insertClientFeedbackApiSchema = z.object({
   message: z.string().min(1).max(5000),
 });
 
-// ================= MF-5: Whiteboard Schemas =================
-export const whiteboardSessionSchema = z.object({
+// ================= MF-5: Sketchpad Schemas =================
+export const sketchpadSessionSchema = z.object({
   id: z.number(),
   title: z.string(),
   canvasData: z.record(z.unknown()).default({}),
@@ -1071,9 +1071,9 @@ export const whiteboardSessionSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
-export type WhiteboardSession = z.infer<typeof whiteboardSessionSchema>;
+export type SketchpadSession = z.infer<typeof sketchpadSessionSchema>;
 
-export const insertWhiteboardSessionApiSchema = z.object({
+export const insertSketchpadSessionApiSchema = z.object({
   title: z.string().min(1).max(255).default("Untitled Session"),
   createdBy: z.string().max(255).optional(),
 });

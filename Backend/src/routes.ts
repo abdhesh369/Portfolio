@@ -25,7 +25,7 @@ import scopeRoutes from "./routes/scope.js";
 import { registerReviewRoutes } from "./routes/review.js";
 import { registerCaseStudyRoutes } from "./routes/case-studies.js";
 import { registerClientRoutes } from "./routes/clients.js";
-import { registerWhiteboardRoutes } from "./routes/whiteboard.js";
+import { registerSketchpadRoutes } from "./routes/sketchpad.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
 import { logger } from "./lib/logger.js";
@@ -78,8 +78,8 @@ export function registerRoutes(app: Express) {
   registerCaseStudyRoutes(v1Router);
   // MF-4: Client Portal
   registerClientRoutes(v1Router);
-  // MF-5: Idea Canvas
-  registerWhiteboardRoutes(v1Router);
+  // MF-5: Sketchpad
+  registerSketchpadRoutes(v1Router);
 
   // Admin audit log
   v1Router.use("/admin", auditLogRoutes);

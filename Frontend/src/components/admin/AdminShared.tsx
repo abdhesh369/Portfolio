@@ -14,10 +14,10 @@ export function FormField({ label, value, onChange, placeholder, required, type 
                 required={required}
                 min={min}
                 max={max}
+                aria-label={label}
                 className="w-full px-3 py-2.5 rounded-lg text-white text-sm placeholder-white/25
           border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20
-          transition-all outline-none"
-                style={{ background: "hsl(224 71% 4% / 0.5)" }}
+          transition-all outline-none bg-[#050b18]/50"
             />
         </div>
     );
@@ -34,10 +34,10 @@ export function FormTextarea({ label, value, onChange, required }: {
                 onChange={(e) => onChange(e.target.value)}
                 required={required}
                 rows={3}
+                aria-label={label}
                 className="w-full px-3 py-2.5 rounded-lg text-white text-sm placeholder-white/25
           border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20
-          transition-all outline-none resize-y"
-                style={{ background: "hsl(224 71% 4% / 0.5)" }}
+          transition-all outline-none resize-y bg-[#050b18]/50"
             />
         </div>
     );
@@ -56,7 +56,7 @@ export function LoadingSkeleton() {
     return (
         <div className="space-y-3 animate-pulse">
             {[1, 2, 3].map((i) => (
-                <div key={i} className="rounded-xl border border-white/5 p-5 h-24" style={{ background: "hsl(222 47% 11% / 0.3)" }} />
+                <div key={i} className="rounded-xl border border-white/5 p-5 h-24 bg-[#0a1121]/30" />
             ))}
         </div>
     );

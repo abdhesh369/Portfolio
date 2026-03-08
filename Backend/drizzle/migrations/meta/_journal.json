@@ -92,6 +92,13 @@
       "when": 1772966017010,
       "tag": "0012_empty_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1772971551816,
+      "tag": "0013_rename_whiteboard_to_sketchpad",
+      "breakpoints": true
     }
   ]
 }

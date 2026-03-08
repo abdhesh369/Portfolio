@@ -35,7 +35,7 @@ export class CacheService {
             const cached = await this.get<T>(key);
             if (cached !== null) return cached;
         } catch (err) {
-            // Silently fail and continue to fallback
+            logger.warn({ context: "cache", key, error: err }, "Cache read failure, falling back to DB");
         }
 
         const data = await fallback();
@@ -43,7 +43,7 @@ export class CacheService {
         try {
             await this.set(key, data, ttl);
         } catch (err) {
-            // Silently fail
+            logger.warn({ context: "cache", key, error: err }, "Cache write failure");
         }
 
         return data;

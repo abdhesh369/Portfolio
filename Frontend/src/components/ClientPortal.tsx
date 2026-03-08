@@ -18,7 +18,7 @@ interface DashboardData {
 
 const STATUS_CONFIG: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
     not_started: { icon: <Circle size={14} />, color: '#6b7280', label: 'Not Started' },
-    in_progress: { icon: <Loader2 size={14} />, color: '#3b82f6', label: 'In Progress' },
+    in_progress: { icon: <Loader2 size={14} className="animate-spin" />, color: '#3b82f6', label: 'In Progress' },
     review: { icon: <Clock size={14} />, color: '#f59e0b', label: 'In Review' },
     completed: { icon: <CheckCircle2 size={14} />, color: '#10b981', label: 'Completed' },
 };
@@ -31,6 +31,17 @@ export const ClientPortal: React.FC = () => {
     const [selectedProject, setSelectedProject] = useState<number | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const feedbackRef = useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                if (selectedProject) setSelectedProject(null);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedProject]);
 
     const authenticate = async () => {
         setError('');
@@ -66,7 +77,7 @@ export const ClientPortal: React.FC = () => {
                 },
                 body: JSON.stringify({
                     clientProjectId: selectedProject,
-                    content: feedbackMsg
+                    message: feedbackMsg
                 }),
             });
             if (!res.ok) {
@@ -158,11 +169,20 @@ export const ClientPortal: React.FC = () => {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`group p-6 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden ${isSelected
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={isSelected}
+                                    className={`group p-6 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${isSelected
                                         ? "bg-slate-900 border-indigo-500/50 shadow-[0_0_30px_-10px_rgba(99,102,241,0.4)]"
                                         : "bg-slate-900/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60"
                                         }`}
                                     onClick={() => setSelectedProject(project.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSelectedProject(project.id);
+                                        }
+                                    }}
                                 >
                                     {isSelected && (
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-[0_4px_12px_rgba(99,102,241,0.4)]" />
@@ -176,8 +196,11 @@ export const ClientPortal: React.FC = () => {
 
                                     <div className="flex items-center gap-3">
                                         <div
-                                            className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm"
-                                            style={{ backgroundColor: `${cfg.color}15`, color: cfg.color, border: `1px solid ${cfg.color}30` }}
+                                            className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm border bg-slate-950/30"
+                                            style={{
+                                                color: cfg.color,
+                                                borderColor: `${cfg.color}30`
+                                            }}
                                         >
                                             <span className="opacity-80">{cfg.icon}</span>
                                             {cfg.label}
@@ -207,12 +230,17 @@ export const ClientPortal: React.FC = () => {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="overflow-hidden"
                             >
-                                <div className="mt-16 p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 shadow-3xl relative">
+                                <div
+                                    ref={feedbackRef}
+                                    className="mt-16 p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 shadow-3xl relative"
+                                    role="form"
+                                    aria-labelledby="feedback-title"
+                                >
                                     <div className="absolute -top-12 right-10">
                                         <MessageSquare className="w-24 h-24 text-indigo-500/5 rotate-12" />
                                     </div>
 
-                                    <h4 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                                    <h4 id="feedback-title" className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
                                         Project Feedback
                                         <span className="text-indigo-500 text-sm font-mono tracking-tighter bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
                                             Direct channel
@@ -225,10 +253,12 @@ export const ClientPortal: React.FC = () => {
                                     <div className="relative group">
                                         <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition-opacity" />
                                         <textarea
+                                            id="feedback-message"
                                             value={feedbackMsg}
                                             onChange={(e) => setFeedbackMsg(e.target.value)}
                                             placeholder="Type your message here..."
                                             rows={5}
+                                            aria-label="Project feedback message"
                                             className="relative w-full p-6 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-base placeholder:text-slate-600 shadow-inner"
                                         />
                                     </div>

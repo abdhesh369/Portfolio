@@ -24,9 +24,9 @@ export function registerClientRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertClientApiSchema),
         asyncHandler(async (req: Request, res: Response) => {
-            const client = await clientService.createClient(req.body);
-            recordAudit("CREATE", "client", client.id, null, { name: client.name });
-            res.status(201).json({ success: true, data: client });
+            const result = await clientService.createClient(req.body);
+            recordAudit("CREATE", "client", result.id, null, { name: result.name });
+            res.status(201).json({ success: true, data: result.id, rawToken: result.rawToken, client: result });
         })
     );
 
