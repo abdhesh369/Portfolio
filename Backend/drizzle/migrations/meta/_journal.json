@@ -78,6 +78,13 @@
       "when": 1773468840730,
       "tag": "0010_add_scope_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1772956542943,
+      "tag": "0011_chemical_epoch",
+      "breakpoints": true
     }
   ]
 }

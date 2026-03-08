@@ -1,1 +1,0 @@
-npm warn config ignoring workspace config at D:\Portfolio\Frontend/.npmrc
