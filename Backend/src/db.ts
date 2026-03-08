@@ -27,7 +27,7 @@ export const db = drizzle(pool, { schema });
  */
 export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message: string }> {
     const timeout = new Promise<{ healthy: boolean; message: string }>((_, reject) =>
-        setTimeout(() => reject(new Error('Database health check timed out')), 5000)
+        setTimeout(() => reject(new Error('Database health check timed out')), 20000)
     );
 
     try {
