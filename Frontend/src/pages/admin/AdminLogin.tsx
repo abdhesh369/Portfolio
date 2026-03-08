@@ -103,7 +103,7 @@ export default function AdminLogin() {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••••••"
+                                    placeholder="••••••••••••••••"
                                     autoFocus
                                     disabled={loading}
                                     className="w-full px-4 py-3 pr-12 rounded-xl text-white placeholder-white/30

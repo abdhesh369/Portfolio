@@ -7,72 +7,48 @@ on:
     branches: [ main, master ]
 
 jobs:
-  backend:
-    name: Backend CI
+  test:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-          cache-dependency-path: Backend/package-lock.json
-      - name: Install dependencies
+      
+      - name: Install root dependencies
         run: npm ci
-        working-directory: Backend
-      - name: Type check
-        run: npm run type-check
-        working-directory: Backend
-      - name: Lint
-        run: npm run lint
-        working-directory: Backend
-      - name: Run Tests
-        run: npm run test
-        working-directory: Backend
+        
+      - name: Build shared package
+        run: npm run build:shared
+        
+      - name: Backend - Type check
+        run: npm run type-check -w Backend
+        
+      - name: Backend - Lint
+        run: npm run lint -w Backend
+        
+      - name: Backend - Run Tests
+        run: npm run test -w Backend
         env:
           NODE_ENV: test
           DATABASE_URL: postgresql://postgres:password@localhost:5432/postgres
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_padding__
-
-  frontend:
-    name: Frontend CI
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: Frontend/package-lock.json
-      - name: Install dependencies
-        run: npm ci
-        working-directory: Frontend
-      - name: Type check
-        run: npm run type-check
-        working-directory: Frontend
-      - name: Lint
-        run: npm run lint
-        working-directory: Frontend
-      - name: Run Tests
-        run: npm run test
-        working-directory: Frontend
+          JWT_REFRESH_SECRET: test_refresh_token_secret_key_at_least_64_characters_long_for_security__
+          
+      - name: Frontend - Type check
+        run: npm run type-check -w Frontend
+        
+      - name: Frontend - Lint
+        run: npm run lint -w Frontend
+        
+      - name: Frontend - Run Tests
+        run: npm run test -w Frontend
         env:
           VITE_API_URL: http://localhost:5000
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
           VITE_SENTRY_ENVIRONMENT: test
-
-  schema-sync:
-    name: Schema Sync Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Verify shared schemas are identical
-        run: |
-          if ! diff Backend/shared/schema.ts Frontend/shared/schema.ts; then
-            echo "::error::Schema files have drifted. Run: cp Backend/shared/schema.ts Frontend/shared/schema.ts"
-            exit 1
-          fi
-          echo "✓ Schema files are in sync."

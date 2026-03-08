@@ -43,8 +43,6 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
-  "https://abdheshsah.com.np",
-  "https://www.abdheshsah.com.np",
   process.env.FRONTEND_URL,
   ...(process.env.NODE_ENV !== "production" ? [
     "http://localhost:3000",
@@ -175,7 +173,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.get("/", (_req: Request, res: Response) => {
   res.json({
     name: "Portfolio API",
-    version: "1.0.0",
+    version: "2.0.0",
     status: "running",
     docs: "/health for health check, /api/* for API endpoints",
   });

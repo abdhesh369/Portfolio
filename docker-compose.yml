@@ -1,4 +1,4 @@
-version: '3.8'
+# Docker Compose for Portfolio Monorepo
 
 services:
   postgres:
@@ -24,7 +24,7 @@ services:
     image: redis:7-alpine
     container_name: portfolio-redis
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -71,9 +71,9 @@ services:
     environment:
       # These are build-time args for Vite, but Vite can also use runtime env
       # if configured, though standard Vite build embeds them.
-      VITE_API_URL: http://localhost:5000
+      VITE_API_URL: ${FRONTEND_VITE_API_URL:-http://localhost:5000}
       VITE_SENTRY_DSN: ${VITE_SENTRY_DSN}
-      VITE_SENTRY_ENVIRONMENT: development
+      VITE_SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-development}
     ports:
       - "3000:80"
     depends_on:

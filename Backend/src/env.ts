@@ -36,7 +36,7 @@ const envSchema = z.object({
     FRONTEND_URL: z.string().optional(),
     JWT_SECRET: z.string().min(64, "JWT_SECRET must be at least 64 characters"),
     JWT_REFRESH_SECRET: z.string().min(64, "JWT_REFRESH_SECRET must be at least 64 characters"),
-    ADMIN_PASSWORD: z.string().min(4, "ADMIN_PASSWORD must be at least 4 characters"),
+    ADMIN_PASSWORD: z.string().min(16, "ADMIN_PASSWORD must be at least 16 characters"),
     ADMIN_EMAIL: z.string().email(),
     CONTACT_EMAIL: z.string().email(),
     GEMINI_API_KEY: z.string().optional(),
@@ -48,7 +48,7 @@ const envSchema = z.object({
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().optional(),
     RENDER_DEPLOY_HOOK_URL: z.string().url().optional(),
-    GITHUB_USERNAME: z.string().default("abdhesh369"),
+    GITHUB_USERNAME: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

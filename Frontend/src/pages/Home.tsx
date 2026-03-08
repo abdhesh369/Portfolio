@@ -82,14 +82,15 @@ function useHashScroll() {
     const handleHashScroll = () => {
       const { hash } = window.location;
       if (hash) {
-        // Delay slightly to allow lazy-loaded sections to potentially start mounting
+        // Delay slighty to allow lazy-loaded sections to potentially start mounting
         // and for the browser to finish rendering the initial frame
+        // Refactored to 250ms per code review recommendation to minimize race conditions.
         setTimeout(() => {
           const element = document.querySelector(hash);
           if (element) {
             element.scrollIntoView({ behavior: "smooth" });
           }
-        }, 100);
+        }, 250);
       }
     };
 
