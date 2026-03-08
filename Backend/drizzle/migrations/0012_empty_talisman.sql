@@ -1,0 +1,1 @@
+ALTER TABLE "site_settings" ALTER COLUMN "sectionOrder" SET DEFAULT '["hero","about","skills","whyhireme","services","mindset","projects","practice","experience","guestbook","contact","testimonials"]'::jsonb;
