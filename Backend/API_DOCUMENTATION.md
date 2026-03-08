@@ -172,6 +172,72 @@ The portfolio includes an AI-powered assistant driven by **OpenRouter** (Default
 
 ---
 
+## 🚪 Client Portal
+
+### 1. Get Client Dashboard
+- **Path**: `/api/v1/clients/portal/dashboard`
+- **Method**: `GET`
+- **Headers**: `x-client-token` (required)
+- **Description**: Retrieves client project data for the portal.
+
+### 2. Submit Project Feedback
+- **Path**: `/api/v1/clients/portal/feedback`
+- **Method**: `POST`
+- **Headers**: `x-client-token` (required)
+- **Request Body**:
+  ```json
+  {
+    "clientProjectId": 1,
+    "message": "Feedback content"
+  }
+  ```
+
+---
+
+## 🎯 AI Project Scoping
+
+### 1. Submit Scope Request
+- **Path**: `/api/v1/scope/request`
+- **Method**: `POST`
+- **Description**: Initializes a new AI-powered project scoping request.
+- **Response**: Returns a `requestId` to track progress via SSE.
+
+### 2. Track Scope Progress (SSE)
+- **Path**: `/api/v1/scope/stream/:id`
+- **Method**: `GET`
+- **Description**: Server-Sent Events stream for tracking AI analysis progress and receiving the final estimation.
+
+---
+
+## 📄 Case Study Generation
+
+### 1. Generate Case Study
+- **Path**: `/api/v1/case-studies/generate`
+- **Method**: `POST`
+- **Description**: Generates a detailed case study for a project using AI.
+
+---
+
+## 🎨 Sketchpad (Live Collaboration)
+
+### 1. Shared Sessions
+- **Path**: `/api/v1/sketchpad/session`
+- **Method**: `POST`
+- **Description**: Creates or joins a shared sketching session for live collaboration.
+
+---
+
+## 📈 Analytics
+
+### 1. Live Visitors (SSE)
+- **Path**: `/api/v1/analytics/live-visitors`
+- **Method**: `GET`
+- **Description**: SSE stream for real-time visitor count updates.
+
+### 2. Visitor Count Fallback
+- **Path**: `/api/v1/analytics/live-visitors/count`
+- **Method**: `GET`
+- **Description**: Polling fallback to get current visitor count.
 
 ---
 
@@ -179,4 +245,5 @@ The portfolio includes an AI-powered assistant driven by **OpenRouter** (Default
 
 - **Projects**: `title` (max 255), `description` (max 5000), `imageUrl` (must be valid URL).
 - **Messages**: `email` (must be valid email format), `message` (max 5000).
+- **Client Feedback**: `message` (min 10 characters).
 - **Common**: All string fields are trimmed and sanitized before insertion.
