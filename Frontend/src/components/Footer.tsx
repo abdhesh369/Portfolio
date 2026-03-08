@@ -1,8 +1,8 @@
-import { Github, Linkedin, Twitter, Facebook, Instagram, Mail, Code2, Cpu, Globe, Youtube, MessageCircle } from "lucide-react";
-import { m } from "framer-motion";
+import { Github, Linkedin, Twitter, Facebook, Instagram, Mail, Code2, Globe, Youtube, MessageCircle, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useVisitorCount } from "@/hooks/use-visitor-count";
+import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 
 const defaultFooterNavItems = [
   { name: "Home", href: "/" },
@@ -21,17 +21,31 @@ export default function Footer() {
 
   // Build social links from settings
   const socialLinks = [
-    settings?.socialGithub && { href: settings.socialGithub, icon: Github, label: "GitHub", color: "#333" },
-    settings?.socialLinkedin && { href: settings.socialLinkedin, icon: Linkedin, label: "LinkedIn", color: "#0077b5" },
-    settings?.socialTwitter && { href: settings.socialTwitter, icon: Twitter, label: "Twitter", color: "#1da1f2" },
-    settings?.socialInstagram && { href: settings.socialInstagram, icon: Instagram, label: "Instagram", color: "#e1306c" },
-    settings?.socialFacebook && { href: settings.socialFacebook, icon: Facebook, label: "Facebook", color: "#1877f2" },
-    settings?.socialYoutube && { href: settings.socialYoutube, icon: Youtube, label: "YouTube", color: "#ff0000" },
-    settings?.socialDiscord && { href: settings.socialDiscord, icon: MessageCircle, label: "Discord", color: "#5865F2" },
-    settings?.socialStackoverflow && { href: settings.socialStackoverflow, icon: Globe, label: "Stack Overflow", color: "#F48024" },
-    settings?.socialDevto && { href: settings.socialDevto, icon: Code2, label: "Dev.to", color: "#0A0A0A" },
-    settings?.socialMedium && { href: settings.socialMedium, icon: Globe, label: "Medium", color: "#000000" },
-  ].filter(Boolean) as Array<{ href: string; icon: React.ElementType; label: string; color: string }>;
+    settings?.socialGithub && { href: settings.socialGithub, icon: <Github size={20} />, label: "GitHub" },
+    settings?.socialLinkedin && { href: settings.socialLinkedin, icon: <Linkedin size={20} />, label: "LinkedIn" },
+    settings?.socialTwitter && { href: settings.socialTwitter, icon: <Twitter size={20} />, label: "Twitter" },
+    settings?.socialInstagram && { href: settings.socialInstagram, icon: <Instagram size={20} />, label: "Instagram" },
+    settings?.socialFacebook && { href: settings.socialFacebook, icon: <Facebook size={20} />, label: "Facebook" },
+    settings?.socialYoutube && { href: settings.socialYoutube, icon: <Youtube size={20} />, label: "YouTube" },
+    settings?.socialDiscord && { href: settings.socialDiscord, icon: <MessageCircle size={20} />, label: "Discord" },
+    settings?.socialStackoverflow && { href: settings.socialStackoverflow, icon: <Globe size={20} />, label: "Stack Overflow" },
+    settings?.socialDevto && { href: settings.socialDevto, icon: <Code2 size={20} />, label: "Dev.to" },
+    settings?.socialMedium && { href: settings.socialMedium, icon: <Globe size={20} />, label: "Medium" },
+  ].filter(Boolean) as Array<{ href: string; icon: React.ReactNode; label: string }>;
+
+  // Contact info data
+  const contactInfo = [
+    {
+      icon: <Mail size={18} className="text-[#3ca2fa]" />,
+      text: settings?.socialEmail || "contact@example.com",
+      href: `mailto:${settings?.socialEmail || "contact@example.com"}`,
+    },
+    // We don't have phone/location in settings natively, but keeping the structure for future or static use
+    {
+      icon: <MapPin size={18} className="text-[#3ca2fa]" />,
+      text: "Remote, Global",
+    },
+  ];
 
   const handleNavClick = (href: string) => {
     if (href.startsWith("#")) {
@@ -50,67 +64,35 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative mt-20 pt-20 pb-10 overflow-hidden">
-      {/* Sci-fi Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-card to-background" />
+    <footer className="bg-[#0F0F11]/10 relative h-fit rounded-[2rem] overflow-hidden m-4 sm:m-8 mt-20 border border-white/5">
+      <div className="max-w-7xl mx-auto p-8 sm:p-14 z-40 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-16 pb-12">
 
-        {/* Grid Overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-            maskImage: 'linear-gradient(to top, black 40%, transparent 100%)'
-          }}
-        />
-
-        {/* Glowing Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent box-shadow-glow" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-
-          {/* Brand Column */}
-          <div className="md:col-span-5 space-y-6">
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center gap-2"
-            >
+          {/* Brand section */}
+          <div className="flex flex-col space-y-4 lg:col-span-1">
+            <div className="flex items-center space-x-2">
               <div className="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-xl border border-primary/30">
-                <Code2 className="w-6 h-6 text-primary" />
-                <div className="absolute -inset-1 bg-primary/20 blur-lg rounded-full opacity-50" />
+                <Code2 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-2xl font-bold font-display tracking-tight text-white">
-                {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-primary">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
-              </h3>
-            </m.div>
-
-            <p className="text-base text-gray-400 leading-relaxed max-w-sm">
+              <span className="text-white text-2xl sm:text-3xl font-bold font-display tracking-tight">
+                {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-[#3ca2fa]">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
               {settings?.footerTagline || "Crafting robust digital systems with a focus on performance, scalability, and intuitive user experiences."}
             </p>
-
-            <div className="flex flex-wrap gap-3">
-              <Badge icon={Cpu} text="System Design" color="primary" />
-              <Badge icon={Globe} text="Web Dev" color="secondary" />
-              <Badge icon={Code2} text="Algorithms" color="accent" />
-            </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="md:col-span-3 space-y-6">
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Navigation</h4>
+          {/* Navigation Links */}
+          <div>
+            <h4 className="text-white text-lg font-semibold mb-6">Navigation</h4>
             <ul className="space-y-3">
               {defaultFooterNavItems.map((item) => (
-                <li key={item.name}>
+                <li key={item.name} className="relative w-fit">
                   <button
                     onClick={() => handleNavClick(item.href)}
-                    className="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group"
+                    className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:scale-150 transition-transform" />
                     {item.name}
                   </button>
                 </li>
@@ -118,95 +100,88 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Connect Column */}
-          <div className="md:col-span-4 space-y-6">
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Connect</h4>
-            <div className="flex flex-wrap gap-4">
-              {socialLinks.map((social) => (
-                <FooterLink
-                  key={social.label}
-                  {...social}
-                />
+          {/* Connect section */}
+          <div>
+            <h4 className="text-white text-lg font-semibold mb-6">Contact Us</h4>
+            <ul className="space-y-4">
+              {contactInfo.map((item, i) => (
+                <li key={i} className="flex items-center space-x-3 text-gray-400">
+                  {item.icon}
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base break-all"
+                    >
+                      {item.text}
+                    </a>
+                  ) : (
+                    <span className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base">
+                      {item.text}
+                    </span>
+                  )}
+                </li>
               ))}
-            </div>
+            </ul>
+          </div>
 
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm mt-6">
-              <div className="flex items-center gap-3 text-gray-300 mb-2">
-                <Mail className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">Get in touch</span>
+          {/* Live Status section */}
+          <div>
+            <h4 className="text-white text-lg font-semibold mb-6">System Status</h4>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm w-fit">
+                <div className="relative flex items-center justify-center w-2 h-2">
+                  <div className={`absolute inset-0 rounded-full blur-[2px] animate-pulse ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                  <div className={`relative w-1.5 h-1.5 rounded-full ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-white leading-none">
+                    {visitorCount.count} Live Visitors
+                  </span>
+                </div>
               </div>
-              <a
-                href={`mailto:${settings?.socialEmail || "contact@example.com"}?subject=Contact%20from%20Portfolio`}
-                className="text-lg font-bold text-white hover:text-primary transition-colors truncate block"
-              >
-                {settings?.socialEmail || "contact@example.com"}
-              </a>
+              <p className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-0.5">
+                Updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-500 space-y-1 text-center md:text-left">
-            <p>{settings?.footerCopyright || `© ${currentYear} Portfolio. All rights reserved.`}</p>
-            <p className="text-[10px] font-mono opacity-50 uppercase tracking-tighter">
-              System last updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"} • Build: v3.2.0-stable
-            </p>
+        <hr className="border-t border-white/10 my-8" />
+
+        {/* Footer bottom */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
+          {/* Social icons */}
+          <div className="flex flex-wrap justify-center gap-4 text-gray-400">
+            {socialLinks.map(({ icon, label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="p-2 bg-white/5 rounded-full hover:bg-white/10 hover:text-[#3ca2fa] transition-colors"
+              >
+                {icon}
+              </a>
+            ))}
           </div>
 
-          {/* Live Visitor Count */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-            <div className="relative flex items-center justify-center w-2 h-2">
-              <div className={`absolute inset-0 rounded-full blur-[2px] animate-pulse ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
-              <div className={`relative w-1.5 h-1.5 rounded-full ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-white leading-none">
-                {visitorCount.count} Live Visitors
-              </span>
-              <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-0.5">
-                {visitorCount.isPolling ? `Polling Mode • ${visitorCount.lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "Real-time SSE Status"}
-              </span>
-            </div>
+          {/* Copyright */}
+          <div className="text-center md:text-right text-gray-500">
+            <p>{settings?.footerCopyright || `© ${currentYear} ${settings?.personalName || 'Portfolio'}. All rights reserved.`}</p>
           </div>
         </div>
       </div>
+
+      {/* Text hover effect */}
+      <div className="flex h-[20rem] sm:h-[25rem] md:h-[30rem] -mt-32 sm:-mt-40 md:-mt-52 mb-[-80px] sm:-mb-36 pointer-events-auto">
+        <TextHoverEffect
+          text={settings?.personalName ? settings.personalName.split(' ')[0].toUpperCase() : "PORTFOLIO"}
+          className="z-50"
+        />
+      </div>
+
+      <FooterBackgroundGradient />
     </footer>
-  );
-}
-
-function Badge({ icon: Icon, text, color }: { icon: React.ElementType, text: string, color: 'primary' | 'secondary' | 'accent' }) {
-  const colors = {
-    primary: 'bg-primary/10 text-primary border-primary/20',
-    secondary: 'bg-secondary/10 text-secondary border-secondary/20',
-    accent: 'bg-accent/10 text-accent border-accent/20',
-  };
-
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${colors[color]}`}>
-      <Icon className="w-3 h-3" />
-      {text}
-    </span>
-  );
-}
-
-function FooterLink({ href, icon: Icon, label, color }: { href: string, icon: React.ElementType, label: string, color: string }) {
-  return (
-    <m.a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      whileHover={{ scale: 1.1, y: -3 }}
-      whileTap={{ scale: 0.95 }}
-      className="p-2.5 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all relative group overflow-hidden"
-      aria-label={label}
-      style={{ '--hover-color': color } as React.CSSProperties}
-    >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-        style={{ backgroundColor: color }}
-      />
-      <Icon className="w-5 h-5 relative z-10 group-hover:text-[var(--hover-color)] transition-colors" />
-    </m.a>
   );
 }

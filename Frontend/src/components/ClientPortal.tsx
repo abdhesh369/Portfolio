@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Clock, MessageSquare, Send, CheckCircle2, Circle, Loader2, ArrowRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
