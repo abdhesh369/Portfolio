@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, asyncHandler, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { isAuthenticated, asyncHandler, createRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
 import { authLimiter } from "../lib/rate-limit.js";
@@ -62,12 +62,9 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         { expiresIn: "15m" }
     );
 
-    // Generate refresh token (random, not JWT) — 7 days
-    const refreshToken = crypto.randomBytes(32).toString("hex");
-    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-
-    // Store hashed refresh token in Redis with 7-day TTL
-    await storeRefreshToken(refreshTokenHash);
+    // Generate stateless JWT refresh token (validated by signature, not Redis)
+    const refreshToken = createRefreshToken();
+    await storeRefreshToken(refreshToken); // optional Redis revocation entry
 
     const isProd = process.env.NODE_ENV === "production";
 
@@ -141,8 +138,8 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         return res.status(401).json({ success: false, message: "No refresh token provided" });
     }
 
-    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-    const isValid = await validateRefreshToken(refreshTokenHash);
+    // validateRefreshToken now verifies the JWT signature (stateless, no Redis needed)
+    const isValid = await validateRefreshToken(refreshToken);
 
     if (!isValid) {
         return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
@@ -198,8 +195,7 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
     // Best-effort: revoke refresh token from Redis
     const refreshToken = req.cookies?.refresh_token;
     if (refreshToken) {
-        const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-        try { await revokeRefreshToken(refreshTokenHash); } catch { /* best-effort */ }
+        try { await revokeRefreshToken(refreshToken); } catch { /* best-effort */ }
     }
 
     const isProd = process.env.NODE_ENV === "production";

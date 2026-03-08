@@ -1,6 +1,6 @@
 import { Switch, Route, useRoute, useLocation } from "wouter";
 import { QueryClientProvider, useIsFetching, useIsMutating } from "@tanstack/react-query";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState, Component, type ReactNode } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,6 +12,65 @@ const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
 import { sanitizeCss } from "@/lib/utils";
+
+// ─── Chunk-Load Error Boundary ────────────────────────────────────────────
+// Catches React.lazy() failures (network blips, Render redeployment with
+// new chunk hashes, cold-start races). Without this every chunk error
+// bubbles to the global ErrorBoundary and shows "Critical System Error".
+interface ChunkBoundaryState { hasError: boolean; retrying: boolean; }
+
+class ChunkErrorBoundary extends Component<
+  { children: ReactNode },
+  ChunkBoundaryState
+> {
+  state: ChunkBoundaryState = { hasError: false, retrying: false };
+
+  static getDerivedStateFromError(): ChunkBoundaryState {
+    return { hasError: true, retrying: false };
+  }
+
+  componentDidCatch(error: Error) {
+    const isChunkError =
+      error.name === "ChunkLoadError" ||
+      /loading chunk/i.test(error.message) ||
+      /failed to fetch dynamically imported module/i.test(error.message) ||
+      /importing a module script failed/i.test(error.message);
+
+    if (isChunkError && !this.state.retrying) {
+      this.setState({ retrying: true });
+      // Hard reload picks up the freshly deployed chunks
+      setTimeout(() => window.location.reload(), 500);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center min-h-screen p-8">
+          <div className="text-center space-y-4 max-w-sm">
+            <p className="text-lg font-semibold text-foreground">
+              {this.state.retrying ? "Reloading…" : "Failed to load page"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {this.state.retrying
+                ? "A new version was detected. Refreshing automatically…"
+                : "A network error occurred loading this page."}
+            </p>
+            {!this.state.retrying && (
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Lazy load heavy components
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
@@ -266,55 +325,57 @@ function Router() {
   const showGuestbook = settings?.featureGuestbook ?? true;
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <m.div
-        key={location}
-        initial={transition.initial}
-        animate={transition.animate}
-        transition={transition.transition}
-      >
-        <Switch>
-          {/* Public routes */}
-          <Route path="/" component={Home} />
-          <Route path="/project/:id" component={ProjectDetail} />
+    <ChunkErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <m.div
+          key={location}
+          initial={transition.initial}
+          animate={transition.animate}
+          transition={transition.transition}
+        >
+          <Switch>
+            {/* Public routes */}
+            <Route path="/" component={Home} />
+            <Route path="/project/:id" component={ProjectDetail} />
 
-          {/* Feature-guarded routes */}
-          {showBlog && (
-            <>
-              <Route path="/blog" component={BlogList} />
-              <Route path="/blog/:slug" component={BlogPost} />
-            </>
-          )}
-
-          {showGuestbook && (
-            <Route path="/guestbook">
-              {() => <Home />}
-            </Route>
-          )}
-
-          {/* Client Portal */}
-          <Route path="/portal" component={ClientPortalPage} />
-
-          {/* Case Studies */}
-          <Route path="/case-studies" component={CaseStudyListPage} />
-          <Route path="/case-studies/:slug">
-            {(params: { slug: string }) => <CaseStudyViewerPage slug={params.slug} />}
-          </Route>
-
-          {/* Admin routes */}
-          <Route path="/admin/login" component={AdminLogin} />
-          <Route path="/admin">
-            {() => (
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
+            {/* Feature-guarded routes */}
+            {showBlog && (
+              <>
+                <Route path="/blog" component={BlogList} />
+                <Route path="/blog/:slug" component={BlogPost} />
+              </>
             )}
-          </Route>
 
-          <Route component={NotFound} />
-        </Switch>
-      </m.div>
-    </Suspense>
+            {showGuestbook && (
+              <Route path="/guestbook">
+                {() => <Home />}
+              </Route>
+            )}
+
+            {/* Client Portal */}
+            <Route path="/portal" component={ClientPortalPage} />
+
+            {/* Case Studies */}
+            <Route path="/case-studies" component={CaseStudyListPage} />
+            <Route path="/case-studies/:slug">
+              {(params: { slug: string }) => <CaseStudyViewerPage slug={params.slug} />}
+            </Route>
+
+            {/* Admin routes */}
+            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin">
+              {() => (
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              )}
+            </Route>
+
+            <Route component={NotFound} />
+          </Switch>
+        </m.div>
+      </Suspense>
+    </ChunkErrorBoundary>
   );
 }
 

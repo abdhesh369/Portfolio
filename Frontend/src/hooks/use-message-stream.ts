@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { apiFetch } from "../lib/api-helpers";
+import { apiFetch, API_BASE_URL } from "../lib/api-helpers";
 
 interface SSEMessage {
   id: number;
@@ -28,11 +28,8 @@ export function useMessageStream(enabled: boolean = true) {
 
     function connect() {
       try {
-        // Use absolute URL if possible to avoid issues in cross-origin environments
-        const backendUrl = import.meta.env.VITE_API_URL;
-        const streamUrl = backendUrl
-          ? `${backendUrl.replace(/\/$/, '')}/api/v1/messages/stream`
-          : '/api/v1/messages/stream';
+        // Use absolute URL from API_BASE_URL to avoid issues in cross-origin environments
+        const streamUrl = `${API_BASE_URL}/api/v1/messages/stream`;
 
         const eventSource = new EventSource(streamUrl, {
           withCredentials: true,

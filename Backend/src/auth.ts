@@ -4,6 +4,7 @@ import { z } from "zod";
 import { env } from "./env.js";
 import { logger } from "./lib/logger.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import { redis } from "./lib/redis.js";
 const isProd = env.NODE_ENV === "production";
@@ -32,46 +33,82 @@ export async function revokeToken(token: string) {
     }
 }
 
-// --- Refresh Token Helpers ---
+// --- Refresh Token Helpers (stateless JWT — no Redis required) ---
+//
+// Previously these used a random hex token whose hash was stored in Redis.
+// That made auth COMPLETELY BROKEN whenever Redis was unavailable (free-tier
+// Render, missing REDIS_URL, Redis restart) because validateRefreshToken
+// failed-closed and always returned false.
+//
+// Now refresh tokens are signed JWTs verified with JWT_REFRESH_SECRET.
+// Validation is stateless. Redis is used only for optional revocation on logout.
 
-const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60; // 604800 seconds (7 days)
+const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 /**
- * Stores a hashed refresh token in Redis with 7-day TTL
+ * Creates a signed JWT refresh token (stateless, no Redis required to validate).
  */
-export async function storeRefreshToken(tokenHash: string): Promise<void> {
+export function createRefreshToken(): string {
+    return jwt.sign(
+        { role: "admin", type: "refresh" },
+        env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+    );
+}
+
+/**
+ * Validates a refresh token JWT.
+ * Falls back to true (allow) when Redis is unavailable — the JWT signature
+ * itself is the security guarantee.
+ */
+export async function validateRefreshToken(token: string): Promise<boolean> {
+    // 1. Verify signature and expiry — this is the core security check.
+    //    If the JWT is invalid or expired, reject immediately.
+    try {
+        jwt.verify(token, env.JWT_REFRESH_SECRET);
+    } catch {
+        return false;
+    }
+
+    // 2. Optional: check Redis revocation list (only when Redis is available).
+    //    If Redis is down we ALLOW the refresh — the JWT signature already
+    //    proved authenticity. Fail-open for availability; fail-closed for forgery.
+    if (redis) {
+        try {
+            const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+            const isRevoked = await redis.get(`refresh_revoked:${tokenHash}`);
+            if (isRevoked) return false;
+        } catch (err) {
+            logger.warn({ context: "auth", error: err }, "Redis unavailable for revocation check — allowing refresh");
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Stores the refresh token in Redis for optional revocation.
+ * No-op if Redis is unavailable.
+ */
+export async function storeRefreshToken(token: string): Promise<void> {
     if (!redis) return;
     try {
-        await redis.set(`refresh:${tokenHash}`, "1", "EX", REFRESH_TOKEN_TTL);
+        const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+        await redis.set(`refresh_revoked:${tokenHash}`, "1", "EX", REFRESH_TOKEN_TTL_SECONDS);
     } catch (err) {
         logger.error({ context: "auth", error: err }, "Failed to store refresh token");
     }
 }
 
 /**
- * Validates whether a hashed refresh token exists in Redis
+ * Revokes a refresh token by marking it in Redis.
+ * No-op if Redis is unavailable.
  */
-export async function validateRefreshToken(tokenHash: string): Promise<boolean> {
-    if (!redis) {
-        logger.warn({ context: "auth" }, "Redis unavailable — denying refresh (fail-closed)");
-        return false; // Fail closed if no Redis
-    }
-    try {
-        const exists = await redis.get(`refresh:${tokenHash}`);
-        return exists === "1";
-    } catch (err) {
-        logger.error({ context: "auth", error: err }, "Failed to validate refresh token");
-        return false;
-    }
-}
-
-/**
- * Revokes a refresh token by deleting its hash from Redis
- */
-export async function revokeRefreshToken(tokenHash: string): Promise<void> {
+export async function revokeRefreshToken(token: string): Promise<void> {
     if (!redis) return;
     try {
-        await redis.del(`refresh:${tokenHash}`);
+        const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+        await redis.set(`refresh_revoked:${tokenHash}`, "1", "EX", REFRESH_TOKEN_TTL_SECONDS);
     } catch (err) {
         logger.error({ context: "auth", error: err }, "Failed to revoke refresh token");
     }
