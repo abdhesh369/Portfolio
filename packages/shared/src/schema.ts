@@ -5,7 +5,7 @@ import { z } from "zod";
 // ================= CONSTANTS =================
 export const DEFAULT_SECTION_ORDER = [
   "hero", "about", "skills", "whyhireme", "services", "mindset",
-  "projects", "practice", "experience", "testimonials", "guestbook", "contact"
+  "projects", "practice", "experience", "guestbook", "contact", "testimonials"
 ] as const;
 
 // ================= DATABASE TABLES =================

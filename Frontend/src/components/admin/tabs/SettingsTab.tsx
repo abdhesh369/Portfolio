@@ -3,10 +3,79 @@ import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/portfolio";
 import { LoadingSkeleton } from "@/components/admin/AdminShared";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Briefcase, Sparkles, RefreshCcw, CheckCircle2, AlertCircle, Rocket } from "lucide-react";
+import { Briefcase, Sparkles, RefreshCcw, CheckCircle2, AlertCircle, Rocket, GripVertical, Layers } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch } from "@/lib/api-helpers";
 import { Button } from "@/components/ui/button";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
+
+const SECTION_LABELS: Record<string, string> = {
+    hero: "Home (Hero)",
+    about: "About Me",
+    skills: "Skill",
+    whyhireme: "Why Hire Me as a Student Engineer",
+    services: "Service and Collaboration",
+    mindset: "Engineering Mindset",
+    projects: "Project",
+    practice: "Code and Practice",
+    experience: "My Journey (Experience)",
+    guestbook: "Guestbook",
+    contact: "Initialize Connection (Contact)",
+    testimonials: "Testimonials"
+};
+
+function SortableSection({ id, label }: { id: string; label: string }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : 0,
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`flex items-center gap-3 p-3 rounded-lg bg-white/5 border ${isDragging ? "border-blue-500/50 bg-white/10 shadow-xl" : "border-white/5 shadow-sm"
+                } group transition-all duration-200`}
+        >
+            <button
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-white/10 rounded-md transition-colors"
+                title="Drag to reorder"
+            >
+                <GripVertical className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+            </button>
+            <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">{label}</span>
+        </div>
+    );
+}
 
 export function SettingsTab() {
     const { toast } = useToast();
@@ -22,8 +91,46 @@ export function SettingsTab() {
         failed: number;
     } | null>(null);
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
     if (isLoading) return <LoadingSkeleton />;
     if (isError) return <div className="text-red-400">Failed to load settings.</div>;
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            const currentOrder = settings?.sectionOrder ?? DEFAULT_SECTION_ORDER;
+            const oldIndex = currentOrder.indexOf(active.id as any);
+            const newIndex = currentOrder.indexOf(over.id as any);
+
+            const newOrder = arrayMove([...currentOrder], oldIndex, newIndex);
+
+            updateMutation.mutate(
+                { sectionOrder: newOrder },
+                {
+                    onSuccess: () => {
+                        toast({
+                            title: "Layout Updated",
+                            description: "Homepage section order has been saved successfully.",
+                        });
+                    },
+                    onError: (error: Error) => {
+                        toast({
+                            title: "Failed to Update",
+                            description: error.message || "An error occurred while saving the new layout.",
+                            variant: "destructive",
+                        });
+                    },
+                }
+            );
+        }
+    };
 
     const handleToggleOpenToWork = (checked: boolean) => {
         updateMutation.mutate(
@@ -113,6 +220,49 @@ export function SettingsTab() {
                             disabled={updateMutation.isPending}
                         />
                     </div>
+                </div>
+
+                {/* Section Ordering Section */}
+                <div className="rounded-xl border border-white/10 p-6 bg-white/5 space-y-4">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-amber-500/10 rounded-lg">
+                            <Layers className="w-5 h-5 text-amber-400" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-semibold text-white">Homepage Layout</h3>
+                            <p className="text-sm text-white/40">Drag and drop to reorder the sections on your landing page.</p>
+                        </div>
+                    </div>
+
+                    <div className="p-1">
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={settings?.sectionOrder ?? (DEFAULT_SECTION_ORDER as any)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    {(settings?.sectionOrder ?? DEFAULT_SECTION_ORDER).map((sectionId) => (
+                                        <SortableSection
+                                            key={sectionId}
+                                            id={sectionId}
+                                            label={SECTION_LABELS[sectionId] || sectionId}
+                                        />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
+                    </div>
+
+                    {updateMutation.isPending && (
+                        <div className="flex items-center gap-2 text-xs text-amber-400/60 animate-pulse pt-2 px-1">
+                            <RefreshCcw className="w-3 h-3 animate-spin" />
+                            <span>Saving new layout order...</span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Maintenance & Tools Section */}
