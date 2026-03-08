@@ -23,7 +23,7 @@ const emptyMindset = {
     tags: [] as string[],
 };
 
-export default function MindsetTab() {
+export function MindsetTab() {
     const { data: mindset, isLoading } = useMindset();
     const { create, update, remove, isPending: saving } = useAdminMindset();
 

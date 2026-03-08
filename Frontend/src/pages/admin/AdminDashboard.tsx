@@ -18,7 +18,7 @@ const ArticlesTab = lazy(() => import("@/components/admin/tabs/ArticlesTab").the
 const TestimonialsTab = lazy(() => import("@/components/admin/tabs/TestimonialsTab").then(m => ({ default: m.TestimonialsTab })));
 const AuditLogTab = lazy(() => import("@/components/admin/tabs/AuditLogTab").then(m => ({ default: m.AuditLogTab })));
 const GuestbookTab = lazy(() => import("@/components/admin/tabs/GuestbookTab").then(m => ({ default: m.GuestbookTab })));
-const MindsetTab = lazy(() => import("@/components/admin/tabs/MindsetTab"));
+const MindsetTab = lazy(() => import("@/components/admin/tabs/MindsetTab").then(m => ({ default: m.MindsetTab })));
 const CustomizationTab = lazy(() => import("@/components/admin/tabs/CustomizationTab").then(m => ({ default: m.CustomizationTab })));
 const SettingsTab = lazy(() => import("@/components/admin/tabs/SettingsTab").then(m => ({ default: m.SettingsTab })));
 const CaseStudiesTab = lazy(() => import("@/components/admin/tabs/CaseStudiesTab").then(m => ({ default: m.CaseStudiesTab })));

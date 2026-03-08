@@ -45,7 +45,7 @@ export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: T
                         <span className="hover:text-[var(--nm-accent)] transition-colors cursor-pointer">System</span>
                         <ChevronRight size={12} className="opacity-50" />
                         <span className="text-[var(--admin-text-primary)] tracking-[0.15em]">
-                            {activeTab.replaceAll("-", "_")}
+                            {activeTab.replace(/-/g, "_")}
                         </span>
                         {isRefreshing && (
                             <div className="flex items-center gap-2 ml-4 px-2 py-1 rounded bg-[var(--nm-accent)]/10 text-[var(--nm-accent)]">
