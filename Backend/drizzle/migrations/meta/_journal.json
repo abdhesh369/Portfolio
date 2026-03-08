@@ -6,14 +6,14 @@
       "idx": 0,
       "version": "7",
       "when": 1772563638945,
-      "tag": "0000_futuristic_layla_miller",
+      "tag": "0000_init_schema",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
       "when": 1772568840730,
-      "tag": "0001_heavy_pretty_boy",
+      "tag": "0001_add_testimonials_linkedin",
       "breakpoints": true
     },
     {
@@ -34,14 +34,14 @@
       "idx": 4,
       "version": "7",
       "when": 1772600200000,
-      "tag": "0004_add_missing_columns",
+      "tag": "0004_add_alt_text_columns",
       "breakpoints": true
     },
     {
       "idx": 5,
       "version": "7",
       "when": 1772686065758,
-      "tag": "0005_secret_mentor",
+      "tag": "0005_add_comments_and_settings",
       "breakpoints": true
     },
     {
@@ -83,14 +83,14 @@
       "idx": 11,
       "version": "7",
       "when": 1772956542943,
-      "tag": "0011_chemical_epoch",
+      "tag": "0011_add_case_studies_and_clients",
       "breakpoints": true
     },
     {
       "idx": 12,
       "version": "7",
       "when": 1772966017010,
-      "tag": "0012_empty_talisman",
+      "tag": "0012_update_section_order_default",
       "breakpoints": true
     },
     {
