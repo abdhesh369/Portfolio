@@ -4,6 +4,13 @@ import { apiFetch } from "@/lib/api-helpers";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import type { Testimonial } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import {
+    Quote, Plus, Trash2, Edit3, X, User,
+    Linkedin, Building2, Briefcase,
+    Save, Hash, Users, MessageSquareQuote
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 
 const empty = {
     name: "",
@@ -60,203 +67,271 @@ export function TestimonialsTab(_props: AdminTabProps) {
                     method: "PATCH",
                     body: JSON.stringify(body),
                 });
-                toast({ title: "Testimonial updated" });
+                toast({ title: "Endorsement updated" });
             } else {
                 await apiFetch("/api/v1/testimonials", {
                     method: "POST",
                     body: JSON.stringify(body),
                 });
-                toast({ title: "Testimonial created" });
+                toast({ title: "New endorsement registered" });
             }
 
             setEditing(null);
             clearQueryCache();
             refetch();
         } catch (err: unknown) {
-            toast({ title: err instanceof Error ? err.message : "Failed to save testimonial", variant: "destructive" });
+            toast({ title: "Registration failed", variant: "destructive" });
         }
     }
 
     async function remove(id: number) {
-        if (!confirm("Delete this testimonial?")) return;
+        if (!confirm("Remove this endorsement permanentely?")) return;
         try {
             await apiFetch(`/api/v1/testimonials/${id}`, { method: "DELETE" });
-            toast({ title: "Testimonial deleted" });
+            toast({ title: "Endorsement removed" });
             clearQueryCache();
             refetch();
         } catch (err: unknown) {
-            toast({ title: err instanceof Error ? err.message : "Failed to delete", variant: "destructive" });
+            toast({ title: "Purge failed", variant: "destructive" });
         }
     }
 
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    Testimonials
-                </h2>
-                <button
-                    onClick={startCreate}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-primary hover:opacity-90 transition-opacity"
-                >
-                    + Add Testimonial
-                </button>
-            </div>
+    if (editing) {
+        return (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
+                <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 nm-inset rounded-2xl flex items-center justify-center text-indigo-500">
+                            <MessageSquareQuote size={24} strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <h2 className="text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                                {editing.id ? "Edit_Endorsement" : "New_Endorsement"}
+                            </h2>
+                            <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.3em] ml-1">
+                                Protocol: {editing.id ? `REF_${editing.id}` : "Allocation"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
+                    >
+                        <X size={16} className="mr-2" />
+                        Abort_Entry
+                    </button>
+                </div>
 
-            {/* Edit / Create Form */}
-            {editing && (
-                <div className="rounded-xl p-6 border border-white/10 space-y-4" style={{ background: "hsl(222 47% 11% / 0.6)" }}>
-                    <h3 className="text-white font-semibold text-sm">
-                        {editing.id ? "Edit" : "New"} Testimonial
-                    </h3>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Name *</label>
-                            <input
-                                value={editing.name}
-                                onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Role *</label>
-                            <input
-                                value={editing.role}
-                                onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Company</label>
-                            <input
-                                value={editing.company}
-                                onChange={(e) => setEditing({ ...editing, company: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Relationship</label>
-                            <select
-                                value={editing.relationship}
-                                onChange={(e) => setEditing({ ...editing, relationship: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            >
-                                <option value="Colleague">Colleague</option>
-                                <option value="Mentor">Mentor</option>
-                                <option value="Client">Client</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Friend">Friend</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Avatar URL</label>
-                            <input
-                                value={editing.avatarUrl}
-                                onChange={(e) => setEditing({ ...editing, avatarUrl: e.target.value })}
-                                placeholder="https://..."
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">LinkedIn URL</label>
-                            <input
-                                value={editing.linkedinUrl}
-                                onChange={(e) => setEditing({ ...editing, linkedinUrl: e.target.value })}
-                                placeholder="https://linkedin.com/in/..."
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-white/50 mb-1">Display Order</label>
-                            <input
-                                type="number"
-                                value={editing.displayOrder}
-                                onChange={(e) => setEditing({ ...editing, displayOrder: parseInt(e.target.value) || 0 })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50"
-                            />
+                <form onSubmit={(e) => { e.preventDefault(); save(); }} className="space-y-10">
+                    <div className="nm-flat p-8 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <FormField
+                            label="Contact_Name *"
+                            value={editing.name}
+                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            required
+                            placeholder="FULL IDENTITY"
+                        />
+                        <FormField
+                            label="Professional_Role *"
+                            value={editing.role}
+                            onChange={(v) => setEditing({ ...editing, role: v })}
+                            required
+                            placeholder="E.G. SENIOR ENGINEER"
+                        />
+                        <FormField
+                            label="Organization"
+                            value={editing.company}
+                            onChange={(v) => setEditing({ ...editing, company: v })}
+                            placeholder="COMPANY_NAME"
+                        />
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Association_Type</label>
+                            <div className="relative">
+                                <select
+                                    value={editing.relationship}
+                                    onChange={(e) => setEditing({ ...editing, relationship: e.target.value })}
+                                    className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
+                                >
+                                    <option value="Colleague">COLLEAGUE</option>
+                                    <option value="Mentor">MENTOR</option>
+                                    <option value="Client">CLIENT</option>
+                                    <option value="Manager">MANAGER</option>
+                                    <option value="Friend">SOCIAL_CONN</option>
+                                </select>
+                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
+                                    <Users size={14} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs text-white/50 mb-1">Quote *</label>
-                        <textarea
+                    <div className="nm-flat p-8 rounded-3xl space-y-8">
+                        <FormTextarea
+                            label="Endorsement_Payload *"
                             value={editing.quote}
-                            onChange={(e) => setEditing({ ...editing, quote: e.target.value })}
-                            rows={4}
-                            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-primary/50 resize-none"
+                            onChange={(v) => setEditing({ ...editing, quote: v })}
+                            required
+                            placeholder="VERBATIM QUOTE..."
                         />
                     </div>
 
-                    <div className="flex gap-3 justify-end">
-                        <button
-                            onClick={() => setEditing(null)}
-                            className="px-4 py-2 rounded-lg text-sm text-white/60 hover:text-white border border-white/10 hover:bg-white/5 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={save}
-                            disabled={!editing.name || !editing.quote || !editing.role}
-                            className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-primary hover:opacity-90 transition-opacity disabled:opacity-40"
-                        >
-                            {editing.id ? "Update" : "Create"}
-                        </button>
+                    <div className="nm-flat p-8 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <FormField
+                            label="Identity_Asset_URL"
+                            value={editing.avatarUrl}
+                            onChange={(v) => setEditing({ ...editing, avatarUrl: v })}
+                            placeholder="HTTPS://..."
+                        />
+                        <FormField
+                            label="LinkedIn_Access"
+                            value={editing.linkedinUrl}
+                            onChange={(v) => setEditing({ ...editing, linkedinUrl: v })}
+                            placeholder="HTTPS://LINKEDIN.COM/..."
+                        />
+                        <div className="md:col-span-2">
+                            <FormField
+                                label="Priority_Index"
+                                type="number"
+                                value={editing.displayOrder.toString()}
+                                onChange={(v) => setEditing({ ...editing, displayOrder: parseInt(v) || 0 })}
+                                placeholder="0"
+                            />
+                        </div>
                     </div>
+
+                    <button
+                        type="submit"
+                        disabled={!editing.name || !editing.quote || !editing.role}
+                        className="nm-button nm-button-primary w-full h-16 text-[12px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-40"
+                    >
+                        <Save size={20} />
+                        {editing.id ? "SYNC_ENDORSEMENT" : "COMMIT_ENTRY"}
+                    </button>
+                </form>
+            </div>
+        );
+    }
+
+    return (
+        <div className="animate-in fade-in duration-700 space-y-10">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <Users size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Distinctions
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                        Endorsements_Secured: {testimonials?.length ?? 0}
+                    </p>
                 </div>
-            )}
+
+                <button
+                    onClick={startCreate}
+                    className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                >
+                    <Plus size={20} strokeWidth={3} className="mr-3" />
+                    New_Entry
+                </button>
+            </div>
 
             {/* List */}
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {(!testimonials || testimonials.length === 0) && (
-                    <p className="text-white/40 text-sm text-center py-8">
-                        No testimonials yet. Click "+ Add Testimonial" to get started.
-                    </p>
+                    <div className="xl:col-span-2 nm-flat p-24 text-center">
+                        <EmptyState
+                            icon={<Quote size={48} className="opacity-20" />}
+                            text="No endorsement packets detected. Initialize new entry record."
+                        />
+                    </div>
                 )}
 
-                {testimonials?.map((t) => (
-                    <div
-                        key={t.id}
-                        className="rounded-xl p-5 border border-white/[0.06] flex flex-col sm:flex-row sm:items-start gap-4"
-                        style={{ background: "hsl(222 47% 11% / 0.4)" }}
-                    >
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="text-white font-medium text-sm">{t.name}</span>
-                                <span className="text-white/30 text-xs">·</span>
-                                <span className="text-white/40 text-xs">{t.role}</span>
-                                {t.company && (
-                                    <>
-                                        <span className="text-white/30 text-xs">·</span>
-                                        <span className="text-white/40 text-xs">{t.company}</span>
-                                    </>
-                                )}
-                            </div>
-                            <p className="text-white/60 text-sm italic line-clamp-2">"{t.quote}"</p>
-                            <div className="flex items-center gap-2 mt-2">
-                                <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/10 text-white/40">
-                                    {t.relationship}
-                                </span>
-                                <span className="text-white/20 text-xs">Order: {t.displayOrder}</span>
-                            </div>
-                        </div>
+                <AnimatePresence>
+                    {testimonials?.map((t) => (
+                        <motion.div
+                            key={t.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="nm-flat p-6 rounded-3xl flex flex-col gap-6 relative group overflow-hidden border border-transparent hover:border-indigo-500/10 transition-colors"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 nm-inset rounded-2xl flex items-center justify-center text-indigo-500/40 relative overflow-hidden">
+                                        {t.avatarUrl ? (
+                                            <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <User size={24} />
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-sm font-black text-[var(--admin-text-primary)] uppercase tracking-tight truncate">
+                                            {t.name}
+                                        </h4>
+                                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                                            <span className="text-[9px] font-bold text-[var(--admin-text-muted)] uppercase flex items-center gap-1">
+                                                <Briefcase size={10} />
+                                                {t.role}
+                                            </span>
+                                            {t.company && (
+                                                <span className="text-[9px] font-bold text-indigo-400/60 uppercase flex items-center gap-1">
+                                                    <Building2 size={10} />
+                                                    {t.company}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                            <button
-                                onClick={() => startEdit(t)}
-                                className="px-3 py-1.5 rounded-lg text-xs text-white/60 hover:text-white border border-white/10 hover:bg-white/5 transition-colors"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => remove(t.id)}
-                                className="px-3 py-1.5 rounded-lg text-xs text-red-400/60 hover:text-red-400 border border-red-400/20 hover:bg-red-400/5 transition-colors"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => startEdit(t)}
+                                        className="w-10 h-10 nm-button rounded-xl text-indigo-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                    >
+                                        <Edit3 size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => remove(t.id)}
+                                        className="w-10 h-10 nm-button rounded-xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p className="text-sm text-[var(--admin-text-secondary)] font-medium leading-relaxed bg-[var(--nm-bg)]/50 p-5 rounded-2xl nm-inset italic line-clamp-3">
+                                "{t.quote}"
+                            </p>
+
+                            <div className="flex items-center justify-between mt-auto pt-2">
+                                <div className="flex gap-3">
+                                    <span className="text-[8px] font-black px-3 py-1 rounded-full nm-inset text-indigo-500 uppercase tracking-widest">
+                                        {t.relationship}
+                                    </span>
+                                    {t.linkedinUrl && (
+                                        <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer" className="nm-inset w-6 h-6 rounded-lg flex items-center justify-center text-indigo-400 hover:text-indigo-500">
+                                            <Linkedin size={10} />
+                                        </a>
+                                    )}
+                                </div>
+                                <span className="text-[9px] font-black text-[var(--admin-text-muted)] uppercase flex items-center gap-1.5 opacity-50">
+                                    <Hash size={10} />
+                                    IDX_{t.displayOrder}
+                                </span>
+                            </div>
+
+                            {/* Decorative background quote */}
+                            <div className="absolute -right-4 -bottom-4 opacity-[0.02] text-indigo-500 pointer-events-none group-hover:opacity-[0.05] transition-opacity">
+                                <Quote size={120} strokeWidth={1} />
+                            </div>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
         </div>
     );

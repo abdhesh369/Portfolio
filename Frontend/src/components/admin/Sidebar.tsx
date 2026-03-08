@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, ChevronLeft, ChevronRight, X, BookOpen, Users, Globe
+    Brain, Sliders, BookOpen, Users, Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";

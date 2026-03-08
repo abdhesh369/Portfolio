@@ -1,9 +1,8 @@
 import React, { useState, type FormEvent } from "react";
 import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
-import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import type { Experience } from "@portfolio/shared/schema";
-import { Briefcase, Calendar, Building2, Trash2, Edit2, Plus, X, Check, BriefcaseBusiness } from "lucide-react";
+import { Briefcase, Calendar, Building2, Trash2, Edit2, Plus, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ExperienceFormState extends Omit<Partial<Experience>, 'startDate' | 'endDate'> {

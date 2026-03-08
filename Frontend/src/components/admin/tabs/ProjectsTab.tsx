@@ -1,14 +1,11 @@
 import React, { useState, useEffect, type FormEvent } from "react";
-import { useProjects } from "@/hooks/use-portfolio";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { useProjects, useAdminProjects } from "@/hooks/use-portfolio";
+import type { Project } from "@portfolio/shared";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Layers, Zap } from "lucide-react";
+import { FormField, EmptyState, FormSelect, FormCheckbox } from "../AdminShared";
+import { ImageUpload } from "../ImageUpload";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { useAdminProjects } from "@/hooks/admin/use-admin-projects";
-import { FormField, EmptyState } from "@/components/admin/AdminShared";
-import type { Project } from "@portfolio/shared/schema";
-import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Filter, Layers } from "lucide-react";
 import {
     DndContext,
     closestCenter,
@@ -178,7 +175,7 @@ export function ProjectsTab(_props: AdminTabProps) {
         try {
             await bulkDeleteApi(selectedIds);
             setSelectedIds([]);
-        } catch { }
+        } catch (err) { console.error(err); }
     };
 
     const handleBulkStatus = async (status: string) => {
@@ -186,7 +183,7 @@ export function ProjectsTab(_props: AdminTabProps) {
         try {
             await bulkStatusApi({ ids: selectedIds, status });
             setSelectedIds([]);
-        } catch { }
+        } catch (err) { console.error(err); }
     };
 
     useEffect(() => {
@@ -250,7 +247,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                 await create(body);
             }
             setEditing(null);
-        } catch { }
+        } catch (err) { console.error(err); }
     };
 
     if (editing) {
@@ -284,44 +281,31 @@ export function ProjectsTab(_props: AdminTabProps) {
                                 <FormField label="Primary Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required placeholder="Classification (e.g. Web3, AI, Fintech)..." />
 
                                 <div className="grid md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">Lifecycle Status</label>
-                                        <div className="nm-inset relative bg-nm-bg pr-4 rounded-xl">
-                                            <select
-                                                value={editing.status || "Completed"}
-                                                onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
-                                                className="w-full bg-transparent appearance-none px-5 py-3 text-admin-text-primary text-sm font-bold outline-none cursor-pointer"
-                                            >
-                                                <option value="In Progress">ACTIVE DEVELOPMENT</option>
-                                                <option value="Completed">DEPLOYED / STABLE</option>
-                                                <option value="Archived">ARCHIVED / LEGACY</option>
-                                            </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-admin-text-muted">
-                                                <Layers size={14} />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <FormSelect
+                                        label="Lifecycle Status"
+                                        value={editing.status || "Completed"}
+                                        onChange={(v) => setEditing({ ...editing, status: v as "In Progress" | "Completed" | "Archived" })}
+                                        options={[
+                                            { label: "ACTIVE DEVELOPMENT", value: "In Progress" },
+                                            { label: "DEPLOYED / STABLE", value: "Completed" },
+                                            { label: "ARCHIVED / LEGACY", value: "Archived" },
+                                        ]}
+                                        icon={<Layers size={14} />}
+                                    />
+
                                     <div className="flex flex-col justify-end gap-5 pb-1">
-                                        <label className="flex items-center gap-4 cursor-pointer group select-none">
-                                            <div className={cn(
-                                                "w-5 h-5 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
-                                                editing.isFlagship ? "bg-amber-500 text-white" : "group-hover:nm-flat"
-                                            )}>
-                                                {editing.isFlagship && <Check size={12} strokeWidth={4} />}
-                                            </div>
-                                            <input type="checkbox" className="hidden" checked={Boolean(editing.isFlagship)} onChange={(e) => setEditing({ ...editing, isFlagship: e.target.checked })} />
-                                            <span className="text-[11px] font-black uppercase tracking-widest text-admin-text-secondary group-hover:text-admin-text-primary">Flagship Status</span>
-                                        </label>
-                                        <label className="flex items-center gap-4 cursor-pointer group select-none">
-                                            <div className={cn(
-                                                "w-5 h-5 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
-                                                editing.isHidden ? "bg-rose-500 text-white" : "group-hover:nm-flat"
-                                            )}>
-                                                {editing.isHidden && <Check size={12} strokeWidth={4} />}
-                                            </div>
-                                            <input type="checkbox" className="hidden" checked={Boolean(editing.isHidden)} onChange={(e) => setEditing({ ...editing, isHidden: e.target.checked })} />
-                                            <span className="text-[11px] font-black uppercase tracking-widest text-admin-text-secondary group-hover:text-admin-text-primary">Stealth Mode</span>
-                                        </label>
+                                        <FormCheckbox
+                                            label="Flagship Status"
+                                            checked={Boolean(editing.isFlagship)}
+                                            onChange={(checked) => setEditing({ ...editing, isFlagship: checked })}
+                                            activeColor="bg-amber-500"
+                                        />
+                                        <FormCheckbox
+                                            label="Stealth Mode"
+                                            checked={Boolean(editing.isHidden)}
+                                            onChange={(checked) => setEditing({ ...editing, isHidden: checked })}
+                                            activeColor="bg-rose-500"
+                                        />
                                     </div>
                                 </div>
 
@@ -464,7 +448,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                                     onEdit={openEdit}
                                     onDelete={async (id) => {
                                         if (confirm("Delete this project?")) {
-                                            try { await remove(id); } catch { }
+                                            try { await remove(id); } catch (err) { console.error(err); }
                                         }
                                     }}
                                     isSelected={selectedIds.includes(p.id)}

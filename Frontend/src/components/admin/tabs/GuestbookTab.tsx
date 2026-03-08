@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "@/hooks/portfolio/use-guestbook";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import { EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
-import { CheckCircle2, Trash2, Clock } from "lucide-react";
+import {
+    Trash2, Clock, MessageSquare,
+    Search, RefreshCw, User, Mail, Calendar,
+    ShieldCheck, X, Check
+} from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function GuestbookTab() {
     const { data: entriesData, isLoading } = useAdminGuestbook();
@@ -38,107 +43,167 @@ export function GuestbookTab() {
     };
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-white shrink-0" style={{ fontFamily: "var(--font-display)" }}>
-                    Guestbook <Badge variant="secondary" className="ml-2">{entries.length}</Badge>
-                </h2>
-                <div className="flex flex-1 max-w-md gap-3">
-                    <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">🔍</span>
+        <div className="animate-in fade-in duration-700 space-y-10">
+            {/* Header Area */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <MessageSquare size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Guestbook
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_var(--nm-accent)]" />
+                        COMM_LOGS: {entries.length} RECORDS
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
                         <input
                             type="text"
-                            placeholder="Search name, email, or content..."
+                            placeholder="FILTER_RECORDS..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all"
+                            className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-64 transition-all focus:w-80"
                         />
+                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] })} className="text-white/60">Refresh</Button>
+                    <button
+                        onClick={() => queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] })}
+                        className="w-14 h-14 nm-button flex items-center justify-center text-[var(--admin-text-secondary)]"
+                    >
+                        <RefreshCw size={20} />
+                    </button>
                 </div>
             </div>
 
             {filtered.length === 0 ? (
-                <EmptyState icon="📝" text={searchQuery ? "No matches found" : "No entries yet"} />
+                <div className="nm-flat p-24 text-center">
+                    <EmptyState
+                        icon={<MessageSquare size={48} className="opacity-20" />}
+                        text={searchQuery ? "No matching communication records" : "No guestbook transmissions received"}
+                    />
+                </div>
             ) : (
-                <div className="space-y-3">
-                    {filtered.map((entry) => (
-                        <div key={entry.id} className="rounded-xl border border-white/10 p-4 flex flex-col md:flex-row md:items-start gap-4 group hover:border-white/20 transition-colors"
-                            style={{ background: "hsl(222 47% 11% / 0.5)" }}
-                        >
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-semibold text-white text-sm">{entry.name}</span>
-                                    {entry.email && <span className="text-xs text-white/40">{entry.email}</span>}
-                                    {entry.isApproved ? (
-                                        <Badge variant="outline" className="text-[10px] h-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1 px-1.5 font-medium">
-                                            <CheckCircle2 size={10} /> Approved
-                                        </Badge>
+                <div className="space-y-6">
+                    <AnimatePresence mode="popLayout">
+                        {filtered.map((entry) => (
+                            <motion.div
+                                key={entry.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="nm-flat p-6 flex flex-col md:flex-row md:items-start gap-8 group relative overflow-hidden"
+                            >
+                                <div className="hidden md:flex flex-col items-center gap-4 shrink-0">
+                                    <div className="w-14 h-14 nm-inset rounded-2xl flex items-center justify-center text-indigo-500/50">
+                                        <User size={24} />
+                                    </div>
+                                    <div className={cn(
+                                        "w-2 h-2 rounded-full",
+                                        entry.isApproved ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-amber-500 shadow-[0_0_8px_#f59e0b]"
+                                    )} />
+                                </div>
+
+                                <div className="flex-1 min-w-0 space-y-4">
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <h4 className="text-sm font-black text-[var(--admin-text-primary)] uppercase tracking-tight">
+                                            {entry.name}
+                                        </h4>
+                                        {entry.email && (
+                                            <span className="text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
+                                                <Mail size={12} className="text-indigo-400" />
+                                                {entry.email}
+                                            </span>
+                                        )}
+                                        <div className="md:hidden ml-auto">
+                                            <span className={cn(
+                                                "text-[8px] font-black px-2 py-0.5 rounded-full nm-inset",
+                                                entry.isApproved ? "text-emerald-500" : "text-amber-500"
+                                            )}>
+                                                {entry.isApproved ? "APPROVED" : "PENDING"}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-sm text-[var(--admin-text-secondary)] font-medium leading-relaxed bg-[var(--nm-bg)]/50 p-4 rounded-xl nm-inset italic">
+                                        "{entry.content}"
+                                    </p>
+
+                                    {entry.reactions && Object.keys(entry.reactions).length > 0 && (
+                                        <div className="flex flex-wrap gap-3">
+                                            {Object.entries(entry.reactions).map(([emoji, count]) => (
+                                                <div key={emoji} className="nm-inset px-3 py-1 rounded-full flex items-center gap-2">
+                                                    <span className="text-xs">{emoji}</span>
+                                                    <span className="text-[10px] font-black text-indigo-500">{count}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center gap-4 text-[9px] font-black text-[var(--admin-text-muted)] uppercase tracking-[0.2em]">
+                                        <span className="flex items-center gap-1.5">
+                                            <Calendar size={12} />
+                                            {new Date(entry.createdAt).toLocaleDateString()}
+                                        </span>
+                                        <span className="flex items-center gap-1.5">
+                                            <Clock size={12} />
+                                            {new Date(entry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 shrink-0 md:pt-1">
+                                    {!entry.isApproved && (
+                                        <button
+                                            onClick={() => handleApprove(entry.id)}
+                                            disabled={approveMutation.isPending}
+                                            className="w-12 h-12 nm-button rounded-2xl text-emerald-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                            title="Authorize Transmission"
+                                        >
+                                            <Check size={20} strokeWidth={3} />
+                                        </button>
+                                    )}
+
+                                    {isDeletingId === entry.id ? (
+                                        <div className="flex items-center gap-2 animate-in slide-in-from-right-2">
+                                            <button
+                                                onClick={() => handleDeleteConfirm(entry.id)}
+                                                disabled={deleteMutation.isPending}
+                                                className="h-12 px-4 nm-button bg-rose-500/10 text-rose-500 text-[10px] font-black uppercase tracking-widest"
+                                            >
+                                                CONFIRM
+                                            </button>
+                                            <button
+                                                onClick={() => setIsDeletingId(null)}
+                                                className="w-12 h-12 nm-button text-[var(--admin-text-muted)] flex items-center justify-center"
+                                            >
+                                                <X size={18} />
+                                            </button>
+                                        </div>
                                     ) : (
-                                        <Badge variant="outline" className="text-[10px] h-4 bg-amber-500/10 text-amber-400 border-amber-500/20 gap-1 px-1.5 font-medium">
-                                            <Clock size={10} /> Pending
-                                        </Badge>
+                                        <button
+                                            onClick={() => setIsDeletingId(entry.id)}
+                                            className="w-12 h-12 nm-button rounded-2xl text-rose-500/70 flex items-center justify-center hover:scale-110 hover:text-rose-500 transition-all"
+                                            title="Purge Record"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
                                     )}
                                 </div>
-                                <p className="text-sm text-white/70 break-words">{entry.content}</p>
-                                {entry.reactions && Object.keys(entry.reactions).length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {Object.entries(entry.reactions).map(([emoji, count]) => (
-                                            <div key={emoji} className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
-                                                <span>{emoji}</span>
-                                                <span className="font-medium text-white/80">{count}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                <p className="text-xs text-white/30 mt-2">{new Date(entry.createdAt).toLocaleString()}</p>
-                            </div>
-                            <div className="flex gap-2 shrink-0 self-center md:self-start">
-                                {!entry.isApproved && (
-                                    <Button
-                                        size="sm"
-                                        onClick={() => handleApprove(entry.id)}
-                                        disabled={approveMutation.isPending}
-                                        className="bg-emerald-600 hover:bg-emerald-500 text-white h-8"
-                                    >
-                                        Approve
-                                    </Button>
-                                )}
-                                {isDeletingId === entry.id ? (
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs text-white/70">Are you sure?</span>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => handleDeleteConfirm(entry.id)}
-                                            disabled={deleteMutation.isPending}
-                                            className="h-8"
-                                        >
-                                            Yes
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setIsDeletingId(null)}
-                                            className="h-8 text-white/60"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => setIsDeletingId(entry.id)}
-                                        disabled={deleteMutation.isPending}
-                                        className="opacity-60 group-hover:opacity-100 transition-opacity h-8"
-                                    >
-                                        <Trash2 size={14} />
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+
+                                {/* Decorative Background Icon */}
+                                <div className="absolute -right-4 -bottom-4 opacity-[0.02] text-indigo-500 pointer-events-none group-hover:opacity-[0.05] transition-opacity">
+                                    <ShieldCheck size={120} strokeWidth={1} />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             )}
         </div>

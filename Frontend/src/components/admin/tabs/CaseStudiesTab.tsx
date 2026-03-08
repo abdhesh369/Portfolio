@@ -3,11 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
     FileText, Trash2, Sparkles, Eye, EyeOff,
-    ChevronRight, Layout, AlertCircle, Plus, Search
+    ChevronRight, Layout, Plus
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/admin/AdminShared";
 import { cn } from "@/lib/utils";
 

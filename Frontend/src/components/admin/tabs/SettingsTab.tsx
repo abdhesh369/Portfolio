@@ -44,7 +44,7 @@ const SECTION_LABELS: Record<string, string> = {
     about: "About Me",
     skills: "Skill",
     whyhireme: "Why Hire Me as a Student Engineer",
-    services: "Service and Collaboration",
+    services: "Services & Collaboration",
     mindset: "Engineering Mindset",
     projects: "Project",
     practice: "Code and Practice",
@@ -124,11 +124,16 @@ export function SettingsTab() {
         </div>
     );
 
+    const savedOrder = (settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER;
+    const currentOrder = [
+        ...savedOrder,
+        ...DEFAULT_SECTION_ORDER.filter(id => !savedOrder.includes(id))
+    ];
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
         if (over && active.id !== over.id) {
-            const currentOrder = (settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER;
             const oldIndex = currentOrder.indexOf(active.id as string);
             const newIndex = currentOrder.indexOf(over.id as string);
 
@@ -387,11 +392,11 @@ export function SettingsTab() {
                             onDragEnd={handleDragEnd}
                         >
                             <SortableContext
-                                items={(settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER}
+                                items={currentOrder}
                                 strategy={verticalListSortingStrategy}
                             >
                                 <div className="grid gap-3 p-1">
-                                    {(settings?.sectionOrder ?? DEFAULT_SECTION_ORDER).map((sectionId) => (
+                                    {currentOrder.map((sectionId) => (
                                         <SortableSection
                                             key={sectionId}
                                             id={sectionId}

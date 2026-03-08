@@ -9,7 +9,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
-import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, FormSelect } from "@/components/admin/AdminShared";
 import {
     FileText, Plus, Trash2, Edit3, X, Eye, Calendar,
     Tag, Globe, Search, ChevronRight, Save, Image as ImageIcon,
@@ -244,25 +244,18 @@ export function ArticlesTab(_props: AdminTabProps) {
                                     onChange={(v) => setEditing({ ...editing, slug: v })}
                                     placeholder="auto-generated-id"
                                 />
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Index_Status</label>
-                                    <div className="relative">
-                                        <select
-                                            value={editing.status}
-                                            onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
-                                            className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
-                                        >
-                                            <option value="draft">DRAFT_MODE</option>
-                                            <option value="published">LIVE_SYNC</option>
-                                            <option value="archived">ARCHIVED</option>
-                                        </select>
-                                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
-                                            <Layout size={14} />
-                                        </div>
-                                    </div>
-                                </div>
+                                <FormSelect
+                                    label="Index_Status"
+                                    value={editing.status}
+                                    onChange={(v) => setEditing({ ...editing, status: v as "draft" | "published" | "archived" })}
+                                    options={[
+                                        { label: "DRAFT_MODE", value: "draft" },
+                                        { label: "LIVE_SYNC", value: "published" },
+                                        { label: "ARCHIVED", value: "archived" },
+                                    ]}
+                                    icon={<Layout size={14} />}
+                                />
                             </div>
-
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Rich_Text_Payload</label>
                                 <div className="nm-inset rounded-3xl p-4 min-h-[400px]">
@@ -331,8 +324,8 @@ export function ArticlesTab(_props: AdminTabProps) {
                             {saving ? "EXECUTING..." : (editing.id ? "SYNC_PROTOCOL" : "INIT_PROTOCOL")}
                         </button>
                     </div>
-                </form>
-            </div>
+                </form >
+            </div >
         );
     }
 

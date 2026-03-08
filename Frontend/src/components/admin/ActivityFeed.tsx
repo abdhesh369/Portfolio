@@ -1,5 +1,4 @@
 import { Mail, Zap, Rocket, Clock, LucideIcon, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ActivityItem {
     id: string | number;

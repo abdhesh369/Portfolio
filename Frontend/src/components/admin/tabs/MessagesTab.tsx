@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMessages } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";

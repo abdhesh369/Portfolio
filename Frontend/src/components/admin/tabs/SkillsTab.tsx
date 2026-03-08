@@ -1,7 +1,5 @@
 import React, { useState, type FormEvent } from "react";
 import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
 import { Plus, Trash2, Edit3, X, Check, Zap, Cpu, Code, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +9,7 @@ const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advance
 
 import type { AdminTabProps } from "./types";
 
-export function SkillsTab({ onNavigate }: AdminTabProps) {
+export function SkillsTab(_props: AdminTabProps) {
     const { data: skills } = useSkills();
     const { create, update, remove, bulkDelete, isPending } = useAdminSkills();
 

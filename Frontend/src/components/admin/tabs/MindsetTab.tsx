@@ -1,11 +1,13 @@
 import React, { useState, type FormEvent } from "react";
 import { useMindset } from "@/hooks/use-portfolio";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useAdminMindset } from "@/hooks/admin/use-admin-mindset";
 import { FormField, FormTextarea, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Mindset } from "@portfolio/shared/schema";
-import { Loader2, Plus, Pencil, Trash2, Brain, Lightbulb, Zap, Anchor, Target, Compass } from "lucide-react";
+import {
+    Loader2, Plus, Pencil, Trash2, Brain, Lightbulb,
+    Zap, Anchor, Target, Compass, ChevronRight
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const ICON_OPTIONS = [
     { label: "Brain", value: "Brain", icon: Brain },
@@ -66,41 +68,58 @@ export function MindsetTab() {
 
     if (editing) {
         return (
-            <div className="animate-fade-in max-w-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                    <Button variant="ghost" size="sm" onClick={() => setEditing(null)} className="h-8 w-8 p-0 rounded-full">
-                        <span className="text-xl">←</span>
-                    </Button>
-                    <h2 className="text-2xl font-bold text-white tracking-tight">
-                        {editing.id ? "Edit Mindset" : "New Mindset"}
-                    </h2>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
+                <div className="flex items-center gap-4 mb-10">
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button w-12 h-12 rounded-2xl hover:text-indigo-500"
+                        aria-label="Back"
+                    >
+                        <ChevronRight size={24} className="rotate-180" />
+                    </button>
+                    <div>
+                        <h2 className="text-3xl font-black text-[var(--admin-text-primary)] uppercase tracking-tight">
+                            {editing.id ? "Edit Philosophy" : "Add New Principle"}
+                        </h2>
+                        <p className="text-[var(--admin-text-muted)] text-xs font-bold uppercase tracking-widest mt-1">
+                            {editing.id ? "Refine your core beliefs" : "Document a new guiding value"}
+                        </p>
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6 glass-card p-6 bg-white/5 border-white/10 rounded-2xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="nm-flat p-8 md:p-10 space-y-10 relative overflow-hidden">
+                    {/* Decorative glow */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <FormField
-                            label="Title *"
+                            label="Principle Title"
                             value={editing.title}
                             onChange={(v) => setEditing({ ...editing, title: v })}
+                            placeholder="e.g., Radical Transparency"
                             required
                         />
-                        <div>
-                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">Icon</label>
-                            <div className="flex flex-wrap gap-2">
+
+                        <div className="space-y-3">
+                            <label className="block text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Icon Representation</label>
+                            <div className="flex flex-wrap gap-4">
                                 {ICON_OPTIONS.map((opt) => {
                                     const IconComp = opt.icon;
+                                    const isActive = editing.icon === opt.value;
                                     return (
                                         <button
                                             key={opt.value}
                                             type="button"
                                             onClick={() => setEditing({ ...editing, icon: opt.value })}
-                                            className={`p-2 rounded-lg border transition-all ${editing.icon === opt.value
-                                                ? "bg-purple-500/20 border-purple-500 text-purple-400 scale-110 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-                                                : "bg-white/5 border-white/10 text-white/40 hover:border-white/30"
-                                                }`}
+                                            className={cn(
+                                                "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300",
+                                                isActive
+                                                    ? "nm-inset text-indigo-500 scale-95"
+                                                    : "nm-button text-[var(--admin-text-muted)] hover:text-[var(--admin-text-primary)]"
+                                            )}
                                             title={opt.label}
                                         >
-                                            <IconComp size={20} />
+                                            <IconComp size={20} strokeWidth={isActive ? 2.5 : 2} />
                                         </button>
                                     );
                                 })}
@@ -109,27 +128,35 @@ export function MindsetTab() {
                     </div>
 
                     <FormTextarea
-                        label="Description *"
+                        label="Philosophical Breakdown"
                         value={editing.description}
                         onChange={(v) => setEditing({ ...editing, description: v })}
+                        placeholder="Explain the 'why' behind this principle..."
                         required
                     />
 
                     <FormField
-                        label="Tags (comma-separated)"
+                        label="Categorization (Tags)"
                         value={tagInput}
                         onChange={setTagInput}
-                        placeholder="philosophy, principle, software"
+                        placeholder="design, engineering, growth (comma-separated)"
                     />
 
-                    <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={saving} className="bg-purple-600 hover:bg-purple-500 text-white px-8">
-                            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {editing.id ? "Update" : "Create"}
-                        </Button>
-                        <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50 hover:text-white hover:bg-white/5">
-                            Cancel
-                        </Button>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="nm-button-primary px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center min-w-[200px]"
+                        >
+                            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (editing.id ? "Save Changes" : "Deploy Insight")}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setEditing(null)}
+                            className="nm-button px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm text-[var(--admin-text-muted)] hover:text-[var(--admin-text-primary)]"
+                        >
+                            Abort
+                        </button>
                     </div>
                 </form>
             </div>
@@ -137,54 +164,78 @@ export function MindsetTab() {
     }
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex items-center justify-between mb-8">
+        <div className="space-y-10 nm-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold text-white tracking-tight">Mindset</h2>
-                    <p className="text-white/40 text-sm mt-1">Manage philosophy cards and core principles.</p>
+                    <h2 className="text-4xl font-black text-[var(--admin-text-primary)] uppercase tracking-tighter">Mindset</h2>
+                    <p className="text-[var(--admin-text-muted)] text-xs font-bold uppercase tracking-[0.2em] mt-2 flex items-center gap-2">
+                        <Brain size={14} className="text-indigo-400" />
+                        Operating System for Thought & Action
+                    </p>
                 </div>
-                <Button onClick={handleNew} className="bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                    <Plus className="w-4 h-4 mr-2" /> New Entry
-                </Button>
+                <button
+                    onClick={handleNew}
+                    className="nm-button-primary px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-3 self-start md:self-center group"
+                >
+                    <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
+                    New Insight
+                </button>
             </div>
 
             {!mindset?.length ? (
-                <EmptyState icon="🧠" text="No mindset entries found. Click 'New Entry' to add one." />
+                <EmptyState icon={<Brain size={48} />} text="No mindset entries found. Click 'New Insight' to share your philosophy." />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mindset.map((item) => {
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {mindset.map((item, index) => {
                         const IconComp = ICON_OPTIONS.find(opt => opt.value === item.icon)?.icon || Brain;
                         return (
                             <div
                                 key={item.id}
-                                className="group relative glass-card p-6 bg-white/5 border-white/10 rounded-2xl hover:border-purple-500/50 hover:bg-white/[0.08] transition-all duration-300"
+                                className="nm-flat p-8 flex flex-col group relative overflow-hidden animate-in fade-in slide-in-from-bottom-4"
+                                style={{ animationDelay: `${index * 100}ms` }}
                             >
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-                                        <IconComp size={24} />
+                                {/* Decorative Gradient Overlay */}
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                <div className="flex items-start justify-between mb-8">
+                                    <div className="icon-container-inset text-indigo-500 group-hover:scale-110 transition-transform duration-500 group-hover:nm-flat">
+                                        <IconComp size={22} strokeWidth={2.5} className="animate-float" />
                                     </div>
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex gap-3">
                                         <button
                                             onClick={() => handleEdit(item)}
-                                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-indigo-500 transition-all shadow-sm"
+                                            title="Edit"
                                         >
                                             <Pencil size={16} />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(item.id)}
-                                            className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-red-400/60 hover:text-red-400 transition-colors"
+                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-rose-500 transition-all shadow-sm"
+                                            title="Delete"
                                         >
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-white/60 text-sm line-clamp-3 leading-relaxed mb-4">{item.description}</p>
-                                <div className="flex flex-wrap gap-2 mt-auto">
+
+                                <div className="space-y-4 flex-1">
+                                    <h3 className="text-xl font-bold text-[var(--admin-text-primary)] leading-tight group-hover:text-indigo-500 transition-colors uppercase tracking-tight">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-[var(--admin-text-secondary)] text-sm line-clamp-4 leading-relaxed font-medium">
+                                        {item.description}
+                                    </p>
+                                </div>
+
+                                <div className="mt-8 flex flex-wrap gap-2">
                                     {(item.tags as string[] || []).map((tag) => (
-                                        <Badge key={tag} variant="outline" className="text-[10px] uppercase tracking-wider font-semibold border-white/10 text-white/40 bg-white/5">
+                                        <span
+                                            key={tag}
+                                            className="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg nm-inset text-[var(--admin-text-muted)] bg-transparent"
+                                        >
                                             {tag}
-                                        </Badge>
+                                        </span>
                                     ))}
                                 </div>
                             </div>
