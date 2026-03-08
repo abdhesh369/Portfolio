@@ -316,47 +316,32 @@ async function startServer() {
     // and reduces congestion during the initial boot sequence.
     initQueues();
 
-    // ── 2. Database health check ──
-    logger.info({ context: "startup" }, "📍 Checking database health...");
-    const health = await checkDatabaseHealth();
+    // ── 2. Ensure database is ready before proceeding ──
+    logger.info({ context: "startup" }, "📍 Ensuring database is ready (waiting for potential cold start)...");
+    const maxAttempts = 10;
+    let attempts = 0;
+    let dbReady = false;
 
-    if (!health.healthy) {
-      logger.error({ context: "startup", error: health.message }, "❌ Database connection failed. Shutting down...");
-      process.exit(1);
-    }
-    logger.info({ context: "startup" }, "✓ Database is healthy");
-
-    // ── 2.1. Ensure schema compatibility for production safety ──
-    logger.info({ context: "startup" }, "📍 Ensuring schema compatibility...");
-    await bootstrapDatabaseSchema();
-    logger.info({ context: "startup" }, "✓ Schema compatibility ensured");
-
-    // ── 3. Ensure database is ready before proceeding ──
-    if (process.env.NODE_ENV !== "production") {
-      logger.info({ context: "startup" }, "📍 Ensuring database is ready...");
-      const maxAttempts = 10;
-      let attempts = 0;
-      let dbReady = false;
-
-      while (attempts < maxAttempts && !dbReady) {
-        try {
-          await checkDatabaseHealth();
-          dbReady = true;
-        } catch (err) {
-          attempts++;
-          if (attempts < maxAttempts) {
-            logger.info({ context: "startup" }, `📍 Database not ready, retrying (${attempts}/${maxAttempts})...`);
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
+    while (attempts < maxAttempts && !dbReady) {
+      const health = await checkDatabaseHealth();
+      if (health.healthy) {
+        dbReady = true;
+      } else {
+        attempts++;
+        if (attempts < maxAttempts) {
+          logger.info({ context: "startup" }, `📍 Database not ready (${health.message}), retrying (${attempts}/${maxAttempts})...`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
-
-      if (!dbReady) {
-        logger.error({ context: "startup" }, "❌ Database failed to become ready. Shutting down...");
-        process.exit(1);
-      }
-      logger.info({ context: "startup" }, "✓ Database is ready");
     }
+
+    if (!dbReady) {
+      logger.error({ context: "startup" }, "❌ Database failed to become ready after multiple attempts. Shutting down...");
+      process.exit(1);
+    }
+    logger.info({ context: "startup" }, "✓ Database is ready");
+
+    // ── 2.1. Ensure schema compatibility for production safety ──
 
     // Controlled seeding: Skip in production unless explicitly forced
     const shouldSeed = process.env.NODE_ENV !== "production" || process.env.FORCE_SEED === "true";
