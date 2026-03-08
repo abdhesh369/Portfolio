@@ -2,7 +2,7 @@ import { useProjects, useSkills, useExperiences, useMessages } from "@/hooks/use
 import { useState, useEffect, useCallback, useRef } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import {
-    Rocket, Mail, Zap, Briefcase, Plus
+    Rocket, Mail, Zap, Briefcase, Plus, Activity
 } from "lucide-react";
 import StatCard from "../StatCard";
 import ActivityFeed from "../ActivityFeed";
@@ -57,8 +57,13 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         return () => { abortRef.current?.abort(); };
     }, [fetchHealth]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const activities: any[] = (messages || []).slice(0, 5).map((msg, idx) => ({
+    const activities: {
+        id: string | number;
+        type: "message" | "project" | "skill" | "system";
+        content: string;
+        timestamp: string;
+        metadata?: string;
+    }[] = (messages || []).slice(0, 5).map((msg, idx) => ({
         id: msg.id || idx,
         type: "message" as const,
         content: `New message from ${msg.name}`,
@@ -66,7 +71,6 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         metadata: (msg.message || "").slice(0, 50) + ((msg.message || "").length > 50 ? "..." : "")
     }));
 
-    // Pad with system activities if empty
     if (activities.length === 0) {
         activities.push({
             id: "system-1",
@@ -78,68 +82,70 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     }
 
     return (
-        <div className="space-y-8 animate-in">
-            {/* Welcome Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black text-[var(--admin-text-primary)] tracking-tight uppercase">
-                        Unified_Dashboard
-                    </h1>
-                    <p className="text-[var(--admin-text-secondary)] text-xs mt-2 font-bold uppercase tracking-[0.3em] flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        System_Status: Operational
+        <div className="space-y-10 animate-in fade-in duration-700">
+            {/* Soft Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <Activity size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Overview
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                        Kernel: Status_Active
                     </p>
                 </div>
+
                 <button
                     onClick={() => onNavigate?.("projects")}
-                    className="h-12 px-8 rounded-2xl nm-button text-[11px] font-black uppercase tracking-[0.2em] text-[var(--admin-text-primary)] hover:text-[var(--nm-accent)] transition-all flex items-center gap-3"
+                    className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
                 >
-                    <Plus size={18} strokeWidth={3} />
-                    Deploy_Module
+                    <Plus size={20} strokeWidth={3} className="mr-3" />
+                    New_Project
                 </button>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Neumorphic Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                 <StatCard
-                    label="Total Projects"
+                    label="Active Projects"
                     value={projects?.length ?? 0}
                     icon={Rocket}
-                    color="blue"
-                    trend={{ value: "12%", isUp: true, label: "this month" }}
+                    trend={{ value: "12%", isUp: true, label: "Growth" }}
                     delay="100ms"
                 />
                 <StatCard
-                    label="Active Messages"
+                    label="Inbox Requests"
                     value={messages.length}
                     icon={Mail}
-                    color="green"
-                    trend={{ value: messages.length > 0 ? "LIVE" : "NULL", isUp: true }}
+                    trend={{ value: messages.length > 0 ? "LIVE" : "0", isUp: messages.length > 0 }}
                     delay="200ms"
                 />
                 <StatCard
-                    label="Skill Modules"
+                    label="Core Skills"
                     value={skills?.length ?? 0}
                     icon={Zap}
-                    color="purple"
                     delay="300ms"
                 />
                 <StatCard
-                    label="Experience Logs"
+                    label="Exp Entries"
                     value={experiences?.length ?? 0}
                     icon={Briefcase}
-                    color="orange"
                     delay="400ms"
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Activity Feed */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                {/* Activity Feed Section */}
                 <div className="lg:col-span-2">
                     <ActivityFeed activities={activities} onFetchAll={() => onNavigate?.("messages")} />
                 </div>
 
-                {/* System Health */}
+                {/* Heartbeat Monitoring */}
                 <div className="lg:col-span-1">
                     <SystemStatus
                         apiHealth={healthLoading ? "loading" : (healthData?.status || "unreachable")}
@@ -152,8 +158,8 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                 </div>
             </div>
 
-            {/* System Console */}
-            <div className="animate-nm-in" style={{ animationDelay: '500ms' }}>
+            {/* Interactive System Console */}
+            <div className="animate-in slide-in-from-bottom-6 duration-1000" style={{ animationDelay: '600ms' }}>
                 <TerminalConsole />
             </div>
         </div>

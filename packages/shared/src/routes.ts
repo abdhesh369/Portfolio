@@ -400,6 +400,19 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
+        bulkDelete: {
+            method: "POST" as const,
+            path: "/api/v1/experiences/bulk-delete",
+            description: "Bulk delete experiences (admin only)",
+            requiresAuth: true,
+            input: z.object({ ids: z.array(z.number()) }),
+            responses: {
+                204: z.void(),
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
     },
 
     // ---------- SERVICES ----------

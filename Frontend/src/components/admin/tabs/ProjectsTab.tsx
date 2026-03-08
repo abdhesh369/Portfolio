@@ -8,6 +8,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { useAdminProjects } from "@/hooks/admin/use-admin-projects";
 import { FormField, EmptyState } from "@/components/admin/AdminShared";
 import type { Project } from "@portfolio/shared/schema";
+import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Filter, Layers } from "lucide-react";
 import {
     DndContext,
     closestCenter,
@@ -25,6 +26,7 @@ import {
     useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
 
 const emptyProject = {
     title: "", description: "", techStack: [] as string[], imageUrl: "",
@@ -54,66 +56,94 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
     };
 
     const statusColors: Record<string, string> = {
-        "In Progress": "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-        "Completed": "bg-green-500/10 text-green-400 border-green-500/20",
-        "Archived": "bg-gray-500/10 text-gray-400 border-gray-500/20",
+        "In Progress": "text-amber-500 bg-amber-500/5",
+        "Completed": "text-emerald-500 bg-emerald-500/5",
+        "Archived": "text-slate-500 bg-slate-500/5",
     };
 
     return (
         <div
             ref={setNodeRef}
             style={style}
-            {...attributes}
-            {...listeners}
-            className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-card/80 backdrop-blur-sm cursor-move touch-none"
+            className={cn(
+                "nm-flat p-5 flex flex-col sm:flex-row sm:items-center gap-6 group relative transition-all duration-300 hover:scale-[1.01]",
+                isSelected && "nm-inset border-nm-accent/20"
+            )}
         >
-            <div className="flex items-center gap-3 pl-2">
+            <div className="flex items-center gap-4">
                 <div
-                    className={`w-5 h-5 rounded border flex items-center justify-center cursor-pointer transition-colors ${isSelected ? "bg-purple-500 border-purple-500" : "border-white/20 hover:border-white/40"}`}
-                    onClick={(e) => { e.stopPropagation(); onToggleSelect(project.id); }}
+                    {...attributes}
+                    {...listeners}
+                    className="p-2 cursor-grab active:cursor-grabbing text-admin-text-muted hover:text-admin-text-secondary transition-colors"
                 >
-                    {isSelected && <span className="text-white text-xs">✓</span>}
+                    <GripVertical size={18} />
                 </div>
-                <div className="w-8 h-8 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-colors">
-                    ⋮⋮
+
+                <div
+                    onClick={(e) => { e.stopPropagation(); onToggleSelect(project.id); }}
+                    className={cn(
+                        "w-6 h-6 rounded-lg nm-inset flex items-center justify-center cursor-pointer transition-all duration-300",
+                        isSelected ? "bg-nm-accent text-white" : "hover:shadow-lg"
+                    )}
+                >
+                    {isSelected && <Check size={14} strokeWidth={4} />}
                 </div>
             </div>
-            <OptimizedImage
-                src={project.imageUrl}
-                alt={project.title}
-                width={100}
-                height={100}
-                className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5"
-            />
+
+            <div className="relative shrink-0 group/img">
+                <div className="nm-inset p-1 rounded-xl overflow-hidden bg-nm-bg">
+                    <OptimizedImage
+                        src={project.imageUrl}
+                        alt={project.title}
+                        width={120}
+                        height={120}
+                        className="w-20 h-20 rounded-lg object-cover grayscale-[0.3] group-hover/img:grayscale-0 transition-all duration-500"
+                    />
+                </div>
+                {project.isFlagship && (
+                    <div className="absolute -top-2 -right-2 nm-float bg-amber-500 p-1.5 rounded-lg text-white shadow-xl animate-bounce-subtle">
+                        <Zap size={12} fill="currentColor" />
+                    </div>
+                )}
+            </div>
+
             <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <p className="font-semibold text-white text-sm">{project.title}</p>
-                    {project.isFlagship && (
-                        <Badge variant="outline" className="text-[10px] border border-amber-400/40 text-amber-300 bg-amber-500/10">
-                            Flagship
-                        </Badge>
+                <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+                    <h4 className="font-bold text-admin-text-primary text-base tracking-tight leading-none">{project.title}</h4>
+                    {project.status && (
+                        <div className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest nm-inset", statusColors[project.status])}>
+                            {project.status}
+                        </div>
                     )}
                     {project.isHidden && (
-                        <Badge variant="outline" className="text-[10px] border border-red-400/40 text-red-300 bg-red-500/10">
-                            Hidden
-                        </Badge>
-                    )}
-                    {project.status && (
-                        <Badge variant="outline" className={`text-[10px] border ${statusColors[project.status] || "border-white/10"}`}>
-                            {project.status}
-                        </Badge>
+                        <span className="text-[10px] font-bold text-rose-500 nm-inset px-2 py-0.5 rounded-md">Hidden</span>
                     )}
                 </div>
-                <p className="text-xs text-white/40 mt-0.5">{project.category}</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                    {(project.techStack ?? []).slice(0, 4).map((t) => (
-                        <Badge key={t} variant="outline" className="text-[10px] text-white/50 border-white/10">{t}</Badge>
+                <p className="text-[11px] text-nm-accent font-black uppercase tracking-[0.2em] mb-3">{project.category}</p>
+                <div className="flex flex-wrap gap-2">
+                    {(project.techStack ?? []).slice(0, 5).map((t) => (
+                        <span key={t} className="px-3 py-1 rounded-lg text-[10px] font-bold text-admin-text-secondary nm-inset opacity-80 hover:opacity-100 transition-opacity">
+                            {t}
+                        </span>
                     ))}
                 </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-                <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onEdit(project); }} className="text-white/60 pointer-events-auto">Edit</Button>
-                <Button variant="destructive" size="sm" onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="opacity-60 group-hover:opacity-100 pointer-events-auto">Delete</Button>
+
+            <div className="flex items-center gap-3 shrink-0 sm:self-center">
+                <button
+                    onClick={() => onEdit(project)}
+                    className="nm-button p-3 text-nm-accent hover:text-nm-accent transition-colors"
+                    title="Edit Protocol"
+                >
+                    <Edit3 size={18} />
+                </button>
+                <button
+                    onClick={() => onDelete(project.id)}
+                    className="nm-button p-3 text-rose-500 hover:text-rose-600 transition-colors"
+                    title="Terminate Entity"
+                >
+                    <Trash2 size={18} />
+                </button>
             </div>
         </div>
     );
@@ -144,22 +174,19 @@ export function ProjectsTab(_props: AdminTabProps) {
     };
 
     const handleBulkDelete = async () => {
-        if (!confirm(`Delete ${selectedIds.length} projects?`)) return;
+        if (!confirm(`Confirm deletion of ${selectedIds.length} project artifacts?`)) return;
         try {
             await bulkDeleteApi(selectedIds);
             setSelectedIds([]);
-        } catch {
-            // Error handled by hook toast
-        }
+        } catch { }
     };
 
     const handleBulkStatus = async (status: string) => {
+        if (!confirm(`Update classification of ${selectedIds.length} artifacts to ${status}?`)) return;
         try {
             await bulkStatusApi({ ids: selectedIds, status });
             setSelectedIds([]);
-        } catch {
-            // Error handled by hook toast
-        }
+        } catch { }
     };
 
     useEffect(() => {
@@ -168,9 +195,7 @@ export function ProjectsTab(_props: AdminTabProps) {
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -180,11 +205,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                 const oldIndex = items.findIndex((i) => i.id === active.id);
                 const newIndex = items.findIndex((i) => i.id === over?.id);
                 const newItems = arrayMove(items, oldIndex, newIndex);
-
-                // Save order to backend
-                const orderedIds = newItems.map(p => p.id);
-                reorderApi(orderedIds);
-
+                reorderApi(newItems.map(p => p.id));
                 return newItems;
             });
         }
@@ -229,86 +250,150 @@ export function ProjectsTab(_props: AdminTabProps) {
                 await create(body);
             }
             setEditing(null);
-        } catch {
-            // Error handled by hook toast
-        }
-    };
-
-    const deleteProject = async (id: number) => {
-        if (!confirm("Delete this project?")) return;
-        try {
-            await remove(id);
-        } catch {
-            // Error handled by hook toast
-        }
+        } catch { }
     };
 
     if (editing) {
         return (
-            <div className="animate-fade-in">
-                <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
-                    {editing.id ? "Edit Project" : "New Project"}
-                </h2>
-                <form onSubmit={save} className="space-y-4 max-w-2xl">
-                    <FormField label="Title *" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v })} required />
-                    <RichTextEditor label="Description *" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} className="mb-4" />
-                    <ImageUpload label="Project Image *" value={editing.imageUrl} onChange={(v) => setEditing({ ...editing, imageUrl: v })} className="mb-4" />
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <FormField label="Category *" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required />
-                        <div className="space-y-2">
-                            <div>
-                                <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">Status</label>
-                                <select
-                                    value={editing.status || "Completed"}
-                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "In Progress" | "Completed" | "Archived" })}
-                                    className="w-full px-3 py-2.5 rounded-lg text-white text-sm bg-[hsl(224_71%_4%_/_0.5)] border border-white/10 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 transition-all outline-none"
-                                >
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Archived">Archived</option>
-                                </select>
+            <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
+                <div className="flex items-center justify-between mb-10">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="nm-inset p-2 rounded-lg text-nm-accent">
+                                <Plus size={20} />
                             </div>
-                            <label className="inline-flex items-center gap-2 text-xs text-white/70">
-                                <input
-                                    type="checkbox"
-                                    className="rounded border-white/30 bg-transparent"
-                                    checked={Boolean(editing.isFlagship)}
-                                    onChange={(e) => setEditing({ ...editing, isFlagship: e.target.checked })}
-                                />
-                                Mark as flagship case study
-                            </label>
-                            <label className="inline-flex items-center gap-2 text-xs text-white/70">
-                                <input
-                                    type="checkbox"
-                                    className="rounded border-white/30 bg-transparent"
-                                    checked={Boolean(editing.isHidden)}
-                                    onChange={(e) => setEditing({ ...editing, isHidden: e.target.checked })}
-                                />
-                                Hidden from public
-                            </label>
+                            <h2 className="text-3xl font-black text-admin-text-primary tracking-tighter uppercase italic">
+                                {editing.id ? "Edit Artifact" : "Initialize Artifact"}
+                            </h2>
+                        </div>
+                        <p className="text-xs text-admin-text-muted font-bold tracking-[0.3em] uppercase ml-12">Project Protocol Design</p>
+                    </div>
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button px-6 py-3 text-xs font-black uppercase tracking-widest text-admin-text-secondary hover:text-admin-text-primary transition-all"
+                    >
+                        Cancel Release
+                    </button>
+                </div>
+
+                <form onSubmit={save} className="space-y-10 max-w-6xl pb-32">
+                    <div className="grid lg:grid-cols-12 gap-10">
+                        <div className="lg:col-span-7 space-y-10">
+                            <div className="nm-flat p-8 space-y-8">
+                                <FormField label="Artifact Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v })} required placeholder="Enter primary designation..." />
+                                <FormField label="Primary Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required placeholder="Classification (e.g. Web3, AI, Fintech)..." />
+
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">Lifecycle Status</label>
+                                        <div className="nm-inset relative bg-nm-bg pr-4 rounded-xl">
+                                            <select
+                                                value={editing.status || "Completed"}
+                                                onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
+                                                className="w-full bg-transparent appearance-none px-5 py-3 text-admin-text-primary text-sm font-bold outline-none cursor-pointer"
+                                            >
+                                                <option value="In Progress">ACTIVE DEVELOPMENT</option>
+                                                <option value="Completed">DEPLOYED / STABLE</option>
+                                                <option value="Archived">ARCHIVED / LEGACY</option>
+                                            </select>
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-admin-text-muted">
+                                                <Layers size={14} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col justify-end gap-5 pb-1">
+                                        <label className="flex items-center gap-4 cursor-pointer group select-none">
+                                            <div className={cn(
+                                                "w-5 h-5 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
+                                                editing.isFlagship ? "bg-amber-500 text-white" : "group-hover:nm-flat"
+                                            )}>
+                                                {editing.isFlagship && <Check size={12} strokeWidth={4} />}
+                                            </div>
+                                            <input type="checkbox" className="hidden" checked={Boolean(editing.isFlagship)} onChange={(e) => setEditing({ ...editing, isFlagship: e.target.checked })} />
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-admin-text-secondary group-hover:text-admin-text-primary">Flagship Status</span>
+                                        </label>
+                                        <label className="flex items-center gap-4 cursor-pointer group select-none">
+                                            <div className={cn(
+                                                "w-5 h-5 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
+                                                editing.isHidden ? "bg-rose-500 text-white" : "group-hover:nm-flat"
+                                            )}>
+                                                {editing.isHidden && <Check size={12} strokeWidth={4} />}
+                                            </div>
+                                            <input type="checkbox" className="hidden" checked={Boolean(editing.isHidden)} onChange={(e) => setEditing({ ...editing, isHidden: e.target.checked })} />
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-admin-text-secondary group-hover:text-admin-text-primary">Stealth Mode</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <FormField label="Technology Stack" value={techInput} onChange={setTechInput} placeholder="React, Tailwind, PostgreSQL, Docker..." />
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">Source Repository</label>
+                                        <div className="relative">
+                                            <Github className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-text-muted" size={16} />
+                                            <input
+                                                value={editing.githubUrl ?? ""}
+                                                onChange={(e) => setEditing({ ...editing, githubUrl: e.target.value })}
+                                                placeholder="https://github.com/..."
+                                                className="nm-inset w-full pl-12 pr-5 py-3 rounded-xl text-admin-text-primary text-sm transition-all outline-none focus:ring-2 focus:ring-nm-accent/20"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">Live Endpoint</label>
+                                        <div className="relative">
+                                            <ExternalLink className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-text-muted" size={16} />
+                                            <input
+                                                value={editing.liveUrl ?? ""}
+                                                onChange={(e) => setEditing({ ...editing, liveUrl: e.target.value })}
+                                                placeholder="https://..."
+                                                className="nm-inset w-full pl-12 pr-5 py-3 rounded-xl text-admin-text-primary text-sm transition-all outline-none focus:ring-2 focus:ring-nm-accent/20"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-5 space-y-10">
+                            <div className="nm-flat p-8 space-y-8">
+                                <ImageUpload label="Hero Media Asset" value={editing.imageUrl} onChange={(v) => setEditing({ ...editing, imageUrl: v })} className="h-[280px] rounded-2xl overflow-hidden nm-inset border-none" />
+                                <RichTextEditor label="Executive Architecture Summary" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} className="min-h-[260px]" />
+                            </div>
                         </div>
                     </div>
 
-                    <FormField label="Tech Stack (comma-separated)" value={techInput} onChange={setTechInput} />
-                    <FormField label="GitHub URL" value={editing.githubUrl ?? ""} onChange={(v) => setEditing({ ...editing, githubUrl: v })} />
-                    <FormField label="Live URL" value={editing.liveUrl ?? ""} onChange={(v) => setEditing({ ...editing, liveUrl: v })} />
+                    <div className="nm-flat p-10 space-y-12">
+                        <div className="border-l-4 border-nm-accent pl-6">
+                            <h3 className="text-xl font-black text-admin-text-primary tracking-tight uppercase italic">Case Study deep-dive</h3>
+                            <p className="text-[10px] text-admin-text-muted uppercase tracking-[0.4em] font-bold mt-1">Detailed Technical Specifications</p>
+                        </div>
 
-                    <div className="space-y-4 pt-2">
-                        <RichTextEditor label="Problem Statement" value={editing.problemStatement ?? ""} onChange={(v) => setEditing({ ...editing, problemStatement: v })} />
-                        <RichTextEditor label="Motivation" value={editing.motivation ?? ""} onChange={(v) => setEditing({ ...editing, motivation: v })} />
-                        <RichTextEditor label="System Design" value={editing.systemDesign ?? ""} onChange={(v) => setEditing({ ...editing, systemDesign: v })} />
-                        <RichTextEditor label="Challenges" value={editing.challenges ?? ""} onChange={(v) => setEditing({ ...editing, challenges: v })} />
-                        <RichTextEditor label="Learnings" value={editing.learnings ?? ""} onChange={(v) => setEditing({ ...editing, learnings: v })} />
-                        <RichTextEditor label="Impact" value={editing.impact ?? ""} onChange={(v) => setEditing({ ...editing, impact: v })} />
-                        <RichTextEditor label="Your Role" value={editing.role ?? ""} onChange={(v) => setEditing({ ...editing, role: v })} />
+                        <div className="grid md:grid-cols-2 gap-16">
+                            <div className="space-y-10">
+                                <RichTextEditor label="Problem Vector" value={editing.problemStatement ?? ""} onChange={(v) => setEditing({ ...editing, problemStatement: v })} />
+                                <RichTextEditor label="Innovation Motivation" value={editing.motivation ?? ""} onChange={(v) => setEditing({ ...editing, motivation: v })} />
+                                <RichTextEditor label="Engineering Challenges" value={editing.challenges ?? ""} onChange={(v) => setEditing({ ...editing, challenges: v })} />
+                            </div>
+                            <div className="space-y-10">
+                                <RichTextEditor label="System Architecture" value={editing.systemDesign ?? ""} onChange={(v) => setEditing({ ...editing, systemDesign: v })} />
+                                <RichTextEditor label="Knowledge Acquisition" value={editing.learnings ?? ""} onChange={(v) => setEditing({ ...editing, learnings: v })} />
+                                <RichTextEditor label="Strategic Impact" value={editing.impact ?? ""} onChange={(v) => setEditing({ ...editing, impact: v })} />
+                            </div>
+                        </div>
+                        <div className="pt-10 border-t border-nm-shadow/30">
+                            <RichTextEditor label="Personal Contribution / Lead Role" value={editing.role ?? ""} onChange={(v) => setEditing({ ...editing, role: v })} />
+                        </div>
                     </div>
 
-                    <div className="flex gap-3 pt-2">
-                        <Button type="submit" disabled={saving}>
-                            {saving ? "Saving..." : (editing.id ? "Update" : "Create")}
-                        </Button>
-                        <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
+                    <div className="flex flex-col sm:flex-row gap-6 pt-10">
+                        <button type="submit" disabled={saving} className="nm-button-primary px-12 py-4 h-auto font-black uppercase tracking-widest text-sm flex-1 sm:flex-none">
+                            {saving ? "Deploying..." : (editing.id ? "Sync Changes" : "Commit Artifact")}
+                        </button>
+                        <button type="button" onClick={() => setEditing(null)} className="nm-button px-12 py-4 h-auto font-black uppercase tracking-widest text-sm text-admin-text-secondary hover:text-rose-500 flex-1 sm:flex-none">
+                            Discard
+                        </button>
                     </div>
                 </form>
             </div>
@@ -322,38 +407,66 @@ export function ProjectsTab(_props: AdminTabProps) {
     );
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-white shrink-0" style={{ fontFamily: "var(--font-display)" }}>
-                    Projects <Badge variant="secondary" className="ml-2">{projects?.length ?? 0}</Badge>
-                </h2>
-                <div className="flex flex-1 max-w-md gap-3">
-                    <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">🔍</span>
+        <div className="animate-in fade-in duration-700">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-8">
+                <div>
+                    <h2 className="text-4xl font-black text-admin-text-primary tracking-tighter uppercase italic mb-2">
+                        Artifacts
+                    </h2>
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] text-nm-accent font-black uppercase tracking-[0.3em]">Project Repository</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-nm-accent shadow-[0_0_8px_var(--nm-accent)]" />
+                        <span className="text-[10px] text-admin-text-muted font-bold tracking-widest">{projects?.length ?? 0} ITEMS LOGGED</span>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 flex-1 justify-end">
+                    <div className="relative group max-w-md w-full">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-nm-accent transition-all group-focus-within:scale-110" size={16} />
                         <input
                             type="text"
-                            placeholder="Search title, category, or tech..."
+                            placeholder="FILTER PROTOCOLS..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all"
+                            className="nm-inset w-full py-4 pl-14 pr-6 text-sm font-bold text-admin-text-primary placeholder:text-admin-text-muted outline-none transition-all focus:ring-2 focus:ring-nm-accent/10"
                         />
                     </div>
-                    <Button size="sm" onClick={openNew}>+ Add Project</Button>
+                    <button
+                        onClick={openNew}
+                        className="nm-button-primary p-4 rounded-2xl transition-all hover:rotate-90 active:rotate-180"
+                        title="Initialize New Artifact"
+                    >
+                        <Plus size={24} strokeWidth={3} />
+                    </button>
                 </div>
             </div>
 
             {!filtered.length ? (
-                <EmptyState icon="🔍" text={searchQuery ? "No matches found" : "No projects yet"} />
+                <div className="nm-flat p-24 text-center border-none">
+                    <EmptyState
+                        icon="🗂️"
+                        text={searchQuery ? "No matching project archetypes found in current sector." : "Project database currently contains zero logged artifacts."}
+                    />
+                    {!searchQuery && (
+                        <button onClick={openNew} className="mt-10 nm-button px-10 py-4 font-black uppercase tracking-widest text-sm text-nm-accent">
+                            Initialize Repository
+                        </button>
+                    )}
+                </div>
             ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={filtered} strategy={verticalListSortingStrategy}>
-                        <div className="grid gap-3">
+                        <div className="grid gap-6">
                             {filtered.map((p) => (
                                 <SortableProjectItem
                                     key={p.id}
                                     project={p}
                                     onEdit={openEdit}
-                                    onDelete={deleteProject}
+                                    onDelete={async (id) => {
+                                        if (confirm("Delete this project?")) {
+                                            try { await remove(id); } catch { }
+                                        }
+                                    }}
                                     isSelected={selectedIds.includes(p.id)}
                                     onToggleSelect={toggleSelect}
                                 />
@@ -364,17 +477,18 @@ export function ProjectsTab(_props: AdminTabProps) {
             )}
 
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0f172a] border border-white/10 rounded-full shadow-2xl px-6 py-3 flex items-center gap-4 animate-in slide-in-from-bottom-5 fade-in">
-                    <span className="text-sm font-medium text-white">{selectedIds.length} selected</span>
-                    <div className="h-4 w-px bg-white/10" />
-                    <div className="flex items-center gap-2">
-                        <Button size="sm" variant="ghost" className="text-white/70 hover:text-white h-8" onClick={() => handleBulkStatus("In Progress")}>In Progress</Button>
-                        <Button size="sm" variant="ghost" className="text-white/70 hover:text-white h-8" onClick={() => handleBulkStatus("Completed")}>Completed</Button>
-                        <Button size="sm" variant="ghost" className="text-white/70 hover:text-white h-8" onClick={() => handleBulkStatus("Archived")}>Archived</Button>
+                <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 nm-float bg-nm-bg/95 border-none px-10 py-6 flex items-center gap-10 animate-in slide-in-from-bottom-20 fade-in duration-500 backdrop-blur-xl">
+                    <div className="flex flex-col pr-8 border-r border-nm-shadow/30">
+                        <span className="text-base font-black text-admin-text-primary tracking-tighter uppercase italic">{selectedIds.length} Entities Selected</span>
+                        <span className="text-[9px] text-nm-accent font-black uppercase tracking-[0.4em] mt-1">Batch Protocol Active</span>
                     </div>
-                    <div className="h-4 w-px bg-white/10" />
-                    <Button size="sm" variant="destructive" className="h-8" onClick={handleBulkDelete}>Delete</Button>
-                    <Button size="sm" variant="ghost" className="h-8 text-white/50" onClick={() => setSelectedIds([])}>✕</Button>
+                    <div className="flex items-center gap-4">
+                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-indigo-500" onClick={() => handleBulkStatus("In Progress")}>Development</button>
+                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-emerald-500" onClick={() => handleBulkStatus("Completed")}>Production</button>
+                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-slate-500" onClick={() => handleBulkStatus("Archived")}>Legacy</button>
+                    </div>
+                    <button className="nm-button px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/5 hover:bg-rose-500 hover:text-white border-none" onClick={handleBulkDelete}>Terminate Selection</button>
+                    <button onClick={() => setSelectedIds([])} className="nm-button w-10 h-10 rounded-full text-admin-text-muted hover:text-admin-text-primary transition-colors">✕</button>
                 </div>
             )}
         </div>

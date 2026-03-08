@@ -28,7 +28,7 @@ export default function StatCard({ label, value, icon: Icon, trend, delay = "0ms
 
         const targetValue = Number(value);
         const startValue = 0;
-        const duration = 1800; // 1.8 seconds
+        const duration = 1500;
         const frameRate = 1000 / 60;
         const totalFrames = Math.round(duration / frameRate);
         let frame = 0;
@@ -61,12 +61,12 @@ export default function StatCard({ label, value, icon: Icon, trend, delay = "0ms
 
     return (
         <div
-            className="nm-flat rounded-3xl p-6 flex flex-col gap-5 group hover:nm-flat-hover transition-all duration-400 animate-nm-in"
+            className="nm-flat stat-card group cursor-default"
             style={{ animationDelay: delay }}
         >
             <div className="flex items-start justify-between">
-                <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-[var(--admin-text-secondary)] group-hover:text-indigo-500 transition-colors float-icon">
-                    <Icon size={24} strokeWidth={2.5} />
+                <div className="icon-container-inset group-hover:text-indigo-500 group-hover:rotate-6 transition-all duration-500">
+                    <Icon size={24} strokeWidth={2.5} className="animate-float-icon" />
                 </div>
 
                 {trend && (
@@ -74,16 +74,17 @@ export default function StatCard({ label, value, icon: Icon, trend, delay = "0ms
                         "nm-inset px-3 py-1.5 rounded-full flex items-center gap-1.5",
                         trend.isUp ? "text-emerald-500" : "text-rose-500"
                     )}>
-                        <span className="text-[10px] font-black uppercase tracking-widest">
+                        <span className="text-[10px] font-black tracking-widest uppercase">
                             {trend.isUp === true ? "+" : trend.isUp === false ? "-" : ""}{trend.value}
-                        </span>                    </div>
+                        </span>
+                    </div>
                 )}
             </div>
 
-            <div className="space-y-1">
+            <div className="mt-6 space-y-1">
                 <h3 className={cn(
-                    "text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter tabular-nums transition-transform duration-300",
-                    isPulsing ? "scale-110 text-indigo-500" : "scale-100"
+                    "text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter tabular-nums transition-all duration-300",
+                    isPulsing && "animate-count-pulse text-indigo-500"
                 )}>
                     {displayValue}
                 </h3>
@@ -92,13 +93,23 @@ export default function StatCard({ label, value, icon: Icon, trend, delay = "0ms
                         {label}
                     </p>
                     {trend?.label && (
-                        <span className="w-1 h-1 rounded-full bg-[var(--nm-dark)]" />
+                        <span className="w-1 h-1 rounded-full bg-black/10" />
                     )}
                     {trend?.label && (
-                        <p className="text-[10px] font-bold text-[var(--admin-text-secondary)] uppercase tracking-wider opacity-60">
+                        <p className="text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider italic">
                             {trend.label}
                         </p>
                     )}
+                </div>
+            </div>
+
+            {/* Subtle Progress Bar Inset */}
+            <div className="mt-5 pt-4 border-t border-black/5">
+                <div className="progress-track h-1.5">
+                    <div
+                        className="progress-fill"
+                        style={{ width: '65%', background: trend?.isUp ? undefined : 'linear-gradient(90deg, #f43f5e, #fb7185)' }}
+                    />
                 </div>
             </div>
         </div>

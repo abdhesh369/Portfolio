@@ -87,4 +87,21 @@ export function registerExperienceRoutes(app: Router) {
             res.status(204).send();
         })
     );
+
+    // POST /experiences/bulk-delete - Bulk delete experiences
+    app.post(
+        "/experiences/bulk-delete",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const { ids } = req.body;
+            if (!Array.isArray(ids)) {
+                res.status(400).json({ success: false, message: "IDs must be an array" });
+                return;
+            }
+            await experienceService.bulkDelete(ids);
+            // Record audit for each if needed, or just one for the bulk action
+            recordAudit("DELETE", "experience", 0, null, { bulk: true, ids });
+            res.status(204).send();
+        })
+    );
 }

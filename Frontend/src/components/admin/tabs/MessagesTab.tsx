@@ -8,8 +8,8 @@ import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
-
-
+import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function MessagesTab() {
     const { data: messagesData, isLoading } = useMessages();
@@ -58,70 +58,159 @@ export function MessagesTab() {
     );
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-white shrink-0" style={{ fontFamily: "var(--font-display)" }}>
-                    Messages <Badge variant="secondary" className="ml-2">{messages.length}</Badge>
-                </h2>
-                <div className="flex flex-1 max-w-md gap-3">
-                    <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">🔍</span>
+        <div className="animate-in fade-in duration-700">
+            {/* Header / Stats */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 nm-flat p-8 rounded-[2.5rem]">
+                <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl nm-inset flex items-center justify-center text-nm-accent">
+                        <Mail size={32} />
+                    </div>
+                    <div className="space-y-1">
+                        <h2 className="text-3xl font-bold text-admin-text-primary tracking-tighter font-display">
+                            Inbox
+                        </h2>
+                        <div className="flex items-center gap-3">
+                            <p className="text-xs text-admin-text-secondary font-bold uppercase tracking-[0.2em]">
+                                Communications
+                            </p>
+                            <span className="w-1 h-1 rounded-full bg-admin-text-secondary/20" />
+                            <span className="px-2 py-0.5 rounded-md nm-inset text-[10px] font-black text-nm-accent">
+                                {messages.length} TOTAL
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 mt-6 md:mt-0">
+                    <div className="relative group">
                         <input
                             type="text"
-                            placeholder="Search name, email, or message..."
+                            placeholder="SEARCH INBOX..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all"
+                            className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-64 transition-all focus:w-80 group-hover:nm-flat"
                         />
+                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-nm-accent/50" />
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ["messages"] })} className="text-white/60">Refresh</Button>
+                    <button
+                        onClick={() => queryClient.invalidateQueries({ queryKey: ["messages"] })}
+                        className="w-14 h-14 rounded-2xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-nm-accent"
+                        title="Refresh Messages"
+                    >
+                        <RefreshCw size={20} />
+                    </button>
                 </div>
             </div>
 
-            {filtered.length === 0 ? (
-                <EmptyState icon="🔍" text={searchQuery ? "No matches found" : "No messages yet"} />
+            {!filtered.length ? (
+                <div className="nm-flat p-20 rounded-[3rem] text-center border border-white/5 overflow-hidden relative">
+                    <div className="absolute top-0 right-0 p-8 opacity-5">
+                        <MessageSquare size={200} />
+                    </div>
+                    <EmptyState icon={<Mail size={48} className="text-admin-text-secondary/20 mb-4" />} text={searchQuery ? "No matches found in your archives." : "Inbox clean. No incoming transmissions yet."} />
+                </div>
             ) : (
-                <div className="space-y-3">
-                    {filtered.map((msg) => (
-                        <div key={msg.id} className="rounded-xl border border-white/10 p-4 flex flex-col md:flex-row md:items-start gap-4 group hover:border-white/20 transition-colors"
-                            style={{ background: "hsl(222 47% 11% / 0.5)" }}
+                <div className="space-y-6">
+                    {filtered.map((msg, index) => (
+                        <div
+                            key={msg.id}
+                            className={cn(
+                                "nm-flat p-6 rounded-3xl flex flex-col md:flex-row md:items-start gap-6 group transition-all duration-500 border border-white/5 animate-in slide-in-from-bottom-4",
+                                selectedIds.includes(msg.id) ? "nm-inset border-nm-accent/20" : "hover:nm-inset hover:border-white/10"
+                            )}
+                            style={{ animationDelay: `${index * 50}ms` }}
                         >
-                            <div className="flex items-center self-start pt-0.5">
-                                <div
-                                    className={`w-5 h-5 rounded border flex items-center justify-center cursor-pointer transition-colors ${selectedIds.includes(msg.id) ? "bg-purple-500 border-purple-500" : "border-white/20 hover:border-white/40"}`}
+                            {/* Selector */}
+                            <div className="flex items-center self-start pt-1">
+                                <button
+                                    className={cn(
+                                        "w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0",
+                                        selectedIds.includes(msg.id)
+                                            ? "bg-nm-accent text-white shadow-lg"
+                                            : "nm-inset text-transparent hover:text-admin-text-secondary hover:nm-flat"
+                                    )}
                                     onClick={() => toggleSelect(msg.id)}
                                 >
-                                    {selectedIds.includes(msg.id) && <span className="text-white text-xs">✓</span>}
+                                    <Check size={16} />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 min-w-0 space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full nm-inset flex items-center justify-center text-admin-text-secondary">
+                                            <User size={20} />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-admin-text-primary text-base truncate tracking-tight">{msg.name}</h4>
+                                            <p className="text-xs text-nm-accent font-medium">{msg.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-[10px] text-admin-text-secondary/40 font-black uppercase tracking-widest">
+                                        <Clock size={12} />
+                                        {new Date(msg.createdAt).toLocaleString('en-US', {
+                                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="p-5 rounded-2xl nm-inset bg-transparent group-hover:nm-flat transition-all">
+                                    {msg.subject && (
+                                        <h5 className="text-sm font-bold text-admin-text-primary mb-2 flex items-center gap-2 italic">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-nm-accent" />
+                                            {msg.subject}
+                                        </h5>
+                                    )}
+                                    <p className="text-sm text-admin-text-secondary leading-relaxed break-words whitespace-pre-wrap">
+                                        {msg.message}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-semibold text-white text-sm">{msg.name}</span>
-                                    <span className="text-xs text-white/40">{msg.email}</span>
-                                </div>
-                                {msg.subject && <p className="text-xs text-purple-400 mb-1">{msg.subject}</p>}
-                                <p className="text-sm text-white/70 break-words">{msg.message}</p>
-                                <p className="text-xs text-white/30 mt-2">{new Date(msg.createdAt).toLocaleString()}</p>
-                            </div>
-                            <div className="flex gap-2 shrink-0">
+
+                            {/* Actions */}
+                            <div className="flex md:flex-col gap-3 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 md:ml-4 translate-x-2 group-hover:translate-x-0 self-center">
                                 <ReplyDialog message={msg} />
-                                <Button variant="destructive" size="sm" onClick={() => deleteMessage(msg.id)}
-                                    className="opacity-60 group-hover:opacity-100 transition-opacity shrink-0"
+                                <button
+                                    onClick={() => deleteMessage(msg.id)}
+                                    className="w-12 h-12 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
+                                    title="Discard Transmission"
                                 >
-                                    Delete
-                                </Button>
+                                    <Trash2 size={20} />
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
 
+            {/* Bulk Selection Bar */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0f172a] border border-white/10 rounded-full shadow-2xl px-6 py-3 flex items-center gap-4 animate-in slide-in-from-bottom-5 fade-in">
-                    <span className="text-sm font-medium text-white">{selectedIds.length} selected</span>
-                    <div className="h-4 w-px bg-white/10" />
-                    <Button size="sm" variant="destructive" className="h-8" onClick={handleBulkDelete}>Delete Selected</Button>
-                    <Button size="sm" variant="ghost" className="h-8 text-white/50" onClick={() => setSelectedIds([])}>✕</Button>
+                <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-white/10 rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl border-t-white/20">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-rose-500 animate-pulse">
+                            <Trash2 size={24} />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-lg font-black text-admin-text-primary tracking-tighter leading-none">{selectedIds.length} Selected</span>
+                            <span className="text-[10px] text-admin-text-secondary uppercase tracking-[0.2em] font-black mt-1">Bulk Management</span>
+                        </div>
+                    </div>
+
+                    <div className="h-10 w-px nm-inset" />
+
+                    <div className="flex items-center gap-4">
+                        <button
+                            className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            onClick={handleBulkDelete}
+                        >
+                            Delete Transmissions
+                        </button>
+                        <button
+                            className="w-12 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-admin-text-primary transition-colors flex items-center justify-center"
+                            onClick={() => setSelectedIds([])}
+                        >
+                            <X size={20} />
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
@@ -167,53 +256,101 @@ function ReplyDialog({ message }: { message: Message }) {
         }
     };
 
-    if (!open) return <Button size="sm" variant="outline" onClick={() => setOpen(true)} className="text-purple-400 border-purple-500/30 hover:bg-purple-500/10">Reply</Button>;
+    if (!open) return (
+        <button
+            onClick={() => setOpen(true)}
+            className="w-12 h-12 rounded-xl nm-button flex items-center justify-center text-nm-accent transition-all hover:scale-110 active:scale-95"
+            title="Reply"
+        >
+            <Reply size={20} />
+        </button>
+    );
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setOpen(false)} />
-            <div className="relative w-full max-w-3xl rounded-2xl border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200"
-                style={{ background: "hsl(224 71% 4%)" }}
-            >
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 className="text-xl font-bold text-white">Reply to {message.name}</h3>
-                        <p className="text-xs text-white/40 mt-1">{message.email}</p>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8">
+            <div className="absolute inset-0 bg-admin-bg/60 backdrop-blur-md animate-in fade-in duration-300" onClick={() => setOpen(false)} />
+            <div className="relative w-full max-w-5xl nm-flat rounded-[3rem] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-5 duration-500 border border-white/10 shadow-2xl">
+                {/* Modal Header */}
+                <div className="p-8 flex items-center justify-between border-b border-white/5 nm-flat">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl nm-inset flex items-center justify-center text-nm-accent">
+                            <Reply size={32} />
+                        </div>
+                        <div>
+                            <h3 className="text-2xl font-bold text-admin-text-primary tracking-tight font-display">Reply Transmission</h3>
+                            <p className="text-xs text-admin-text-secondary font-medium mt-1">Responding to <span className="text-nm-accent font-bold">{message.name}</span></p>
+                        </div>
                     </div>
-                    <button onClick={() => setOpen(false)} className="text-white/40 hover:text-white transition-colors">✕</button>
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="w-12 h-12 rounded-2xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
+                    >
+                        <X size={24} />
+                    </button>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <div className="lg:col-span-1 space-y-3">
-                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Templates</p>
-                        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 lg:grid-cols-4 h-[600px]">
+                    {/* Templates Sidebar */}
+                    <div className="lg:col-span-1 p-8 nm-flat border-r border-white/5 overflow-y-auto custom-scrollbar">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 rounded-lg nm-inset flex items-center justify-center text-nm-accent">
+                                <Plus size={16} />
+                            </div>
+                            <p className="text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em]">Templates</p>
+                        </div>
+                        <div className="space-y-4">
                             {templates.length === 0 ? (
-                                <p className="text-xs text-white/20 italic">No templates available</p>
+                                <div className="p-6 rounded-2xl nm-inset text-center opacity-40">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest">No stored protocols</p>
+                                </div>
                             ) : (
                                 templates.map(tpl => (
                                     <button
                                         key={tpl.id}
                                         onClick={() => handleApplyTemplate(tpl)}
-                                        className="w-full text-left p-2 rounded-lg border border-white/5 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all group"
+                                        className="w-full text-left p-4 rounded-2xl nm-button group transition-all"
                                     >
-                                        <p className="text-xs font-medium text-white/70 group-hover:text-purple-400 truncate">{tpl.name}</p>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <p className="text-xs font-black text-admin-text-primary uppercase tracking-tight truncate group-hover:text-nm-accent transition-colors">{tpl.name}</p>
+                                            <ChevronRight size={12} className="text-admin-text-secondary opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-4px] group-hover:translate-x-0" />
+                                        </div>
+                                        <p className="text-[10px] text-admin-text-secondary/60 line-clamp-1 italic">{tpl.subject}</p>
                                     </button>
                                 ))
                             )}
                         </div>
                     </div>
 
-                    <div className="lg:col-span-3 space-y-4">
-                        <FormField label="Subject" value={subject} onChange={setSubject} />
-                        <div className="space-y-1.5">
-                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">Reply Content</label>
-                            <RichTextEditor value={body} onChange={setBody} />
+                    {/* Compose Area */}
+                    <div className="lg:col-span-3 p-10 flex flex-col nm-inset bg-transparent gap-8 overflow-y-auto custom-scrollbar">
+                        <FormField label="COMM_SUBJECT" value={subject} onChange={setSubject} placeholder="Transmission Subject..." />
+
+                        <div className="flex-1 flex flex-col space-y-3">
+                            <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.25em] ml-1">COMM_CONTENT</label>
+                            <div className="flex-1 rounded-3xl nm-flat p-1 overflow-hidden transition-all focus-within:nm-inset">
+                                <RichTextEditor value={body} onChange={setBody} />
+                            </div>
                         </div>
-                        <div className="flex justify-end gap-3 pt-2">
-                            <Button variant="ghost" onClick={() => setOpen(false)} className="text-white/40">Cancel</Button>
-                            <Button onClick={handleSend} disabled={sending}>
-                                {sending ? "Sending..." : "Send Reply"}
-                            </Button>
+
+                        <div className="flex justify-end gap-6 pt-4">
+                            <button
+                                onClick={() => setOpen(false)}
+                                className="px-10 h-14 rounded-2xl nm-button text-admin-text-secondary font-black text-[12px] uppercase tracking-[0.2em]"
+                            >
+                                Discard_Draft
+                            </button>
+                            <button
+                                onClick={handleSend}
+                                disabled={sending || !body}
+                                className="nm-button nm-button-primary px-12 h-14 font-black text-[12px] uppercase tracking-[0.25em] flex items-center gap-3 disabled:opacity-50 disabled:grayscale transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                                {sending ? (
+                                    <RefreshCw size={18} className="animate-spin" />
+                                ) : (
+                                    <Send size={18} />
+                                )}
+                                <span>{sending ? "TRANSMITTING..." : "SEND_PROTOCOL"}</span>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { experiencesTable, type Experience, type InsertExperience } from "@portfolio/shared";
 
@@ -64,6 +64,11 @@ export class ExperienceRepository {
 
     async delete(id: number): Promise<void> {
         await db.delete(experiencesTable).where(eq(experiencesTable.id, id));
+    }
+
+    async bulkDelete(ids: number[]): Promise<void> {
+        if (!ids.length) return;
+        await db.delete(experiencesTable).where(inArray(experiencesTable.id, ids));
     }
 }
 

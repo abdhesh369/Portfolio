@@ -3,18 +3,21 @@ import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import { Plus, Trash2, Edit3, X, Check, Zap, Cpu, Code, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Skill } from "@portfolio/shared/schema";
 
 const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50, mastery: 50 };
 
 import type { AdminTabProps } from "./types";
 
-export function SkillsTab(_props: AdminTabProps) {
+export function SkillsTab({ onNavigate }: AdminTabProps) {
     const { data: skills } = useSkills();
     const { create, update, remove, bulkDelete, isPending } = useAdminSkills();
 
     const [editing, setEditing] = useState<(Partial<Skill> & typeof emptySkill) | null>(null);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const toggleSelect = (id: number) => {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
@@ -45,77 +48,233 @@ export function SkillsTab(_props: AdminTabProps) {
 
     if (editing) {
         return (
-            <div className="animate-fade-in">
-                <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
-                    {editing.id ? "Edit Skill" : "New Skill"}
-                </h2>
-                <form onSubmit={save} className="space-y-4 max-w-2xl">
-                    <FormField label="Name *" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v })} required />
-                    <FormField label="Category *" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} placeholder="e.g. Frontend, Backend, Tools" required />
-                    <div className="space-y-1">
-                        <label className="text-sm text-white/70">Status</label>
-                        <select
-                            value={editing.status}
-                            onChange={(e) => setEditing({ ...editing, status: e.target.value as "Core" | "Advanced" | "Learning" })}
-                            className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-white"
-                        >
-                            <option value="Core">Core</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Learning">Learning</option>
-                        </select>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 nm-inset rounded-2xl flex items-center justify-center text-indigo-500">
+                            <Cpu size={24} strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <h2 className="text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                                {editing.id ? "Edit_Skill" : "New_Skill"}
+                            </h2>
+                            <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.3em] ml-1">
+                                Protocol: {editing.id ? `ID_${editing.id}` : "Allocation"}
+                            </p>
+                        </div>
                     </div>
-                    <FormField label="Mastery (%)" value={editing.mastery?.toString() || "0"} onChange={(v) => setEditing({ ...editing, mastery: parseInt(v) || 0 })} placeholder="0-100" type="number" min="0" max="100" />
-                    <FormField label="Icon" value={editing.icon} onChange={(v) => setEditing({ ...editing, icon: v })} placeholder="Lucide icon name" />
-                    <FormTextarea label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} />
-                    <FormTextarea label="Proof" value={editing.proof} onChange={(v) => setEditing({ ...editing, proof: v })} />
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
+                    >
+                        <X size={16} className="mr-2" />
+                        Cancel_Task
+                    </button>
+                </div>
 
-                    <div className="flex gap-3 pt-2">
-                        <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : (editing.id ? "Update" : "Create")}</Button>
-                        <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
+                <form onSubmit={save} className="nm-flat p-10 space-y-10 max-w-4xl mx-auto">
+                    <div className="grid md:grid-cols-2 gap-10">
+                        <FormField
+                            label="Skill Name"
+                            value={editing.name}
+                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            placeholder="e.g. React.js"
+                            required
+                        />
+                        <FormField
+                            label="Category"
+                            value={editing.category}
+                            onChange={(v) => setEditing({ ...editing, category: v })}
+                            placeholder="Frontend, Backend, Tools..."
+                            required
+                        />
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-10">
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Class_Status</label>
+                            <div className="relative">
+                                <select
+                                    value={editing.status}
+                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "Core" | "Advanced" | "Learning" })}
+                                    className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
+                                >
+                                    <option value="Core">CORE_TECH</option>
+                                    <option value="Advanced">ADVANCED</option>
+                                    <option value="Learning">RESEARCHING</option>
+                                </select>
+                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
+                                    <Layers size={14} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="md:col-span-2">
+                            <FormField
+                                label="Mastery_Level (0-100)"
+                                value={editing.mastery?.toString() || "0"}
+                                onChange={(v) => setEditing({ ...editing, mastery: parseInt(v) || 0 })}
+                                type="number"
+                                min="0"
+                                max="100"
+                            />
+                        </div>
+                    </div>
+
+                    <FormField
+                        label="System_Icon"
+                        value={editing.icon}
+                        onChange={(v) => setEditing({ ...editing, icon: v })}
+                        placeholder="Lucide icon name (e.g. Code, Zap, Cpu)"
+                    />
+
+                    <FormTextarea
+                        label="Capability_Description"
+                        value={editing.description}
+                        onChange={(v) => setEditing({ ...editing, description: v })}
+                        placeholder="Detail Technical Proficiency..."
+                    />
+
+                    <FormTextarea
+                        label="Validation_Link (Proof/Project)"
+                        value={editing.proof}
+                        onChange={(v) => setEditing({ ...editing, proof: v })}
+                        placeholder="https://..."
+                    />
+
+                    <div className="flex gap-6 pt-6 border-t border-black/5">
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="nm-button nm-button-primary h-14 px-12 text-[12px] font-black uppercase tracking-[0.2em] flex-1"
+                        >
+                            {isPending ? "Executing..." : (editing.id ? "Update_Protocol" : "Initialize_Skill")}
+                        </button>
                     </div>
                 </form>
             </div>
         );
     }
 
+    const filteredSkills = (skills ?? []).filter(s =>
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     // Group skills by category
     const grouped: Record<string, Skill[]> = {};
-    (skills ?? []).forEach((s) => {
+    filteredSkills.forEach((s) => {
         (grouped[s.category] ??= []).push(s);
     });
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    Skills <Badge variant="secondary" className="ml-2">{skills?.length ?? 0}</Badge>
-                </h2>
-                <Button size="sm" onClick={() => setEditing({ ...emptySkill })}>+ Add Skill</Button>
+        <div className="animate-in fade-in duration-700 space-y-10">
+            {/* Header Area */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <Zap size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Skills
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_var(--nm-accent)]" />
+                        Stack_Index: {skills?.length ?? 0}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
+                        <input
+                            type="text"
+                            placeholder="FIND_CAPABILITY..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-64 transition-all focus:w-80"
+                        />
+                        <Code size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
+                    </div>
+                    <button
+                        onClick={() => setEditing({ ...emptySkill })}
+                        className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                    >
+                        <Plus size={20} strokeWidth={3} className="mr-3" />
+                        New_Skill
+                    </button>
+                </div>
             </div>
 
-            {!skills?.length ? <EmptyState icon="⚡" text="No skills yet" /> : (
-                <div className="space-y-6">
+            {!skills?.length ? (
+                <div className="nm-flat p-24 text-center">
+                    <EmptyState icon="⚡" text="No technical protocols indexed" />
+                </div>
+            ) : (
+                <div className="space-y-12">
                     {Object.entries(grouped).map(([cat, items]) => (
-                        <div key={cat}>
-                            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-3">{cat}</h3>
-                            <div className="grid gap-2">
+                        <div key={cat} className="space-y-6">
+                            <div className="flex items-center gap-4 px-2">
+                                <h3 className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.4em] italic">{cat || "Uncategorized"}</h3>
+                                <div className="h-px flex-1 nm-inset opacity-30" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {items.map((s) => (
-                                    <div key={s.id} className="rounded-xl border border-white/10 px-4 py-3 flex items-center gap-3 group hover:border-white/20 transition-colors"
-                                        style={{ background: "hsl(222 47% 11% / 0.5)" }}
+                                    <div
+                                        key={s.id}
+                                        className={cn(
+                                            "nm-flat p-6 flex flex-col gap-6 group transition-all relative overflow-hidden",
+                                            selectedIds.includes(s.id) && "ring-2 ring-indigo-500/50"
+                                        )}
                                     >
-                                        <div
-                                            className={`w-5 h-5 rounded border flex items-center justify-center cursor-pointer transition-colors ${selectedIds.includes(s.id) ? "bg-purple-500 border-purple-500" : "border-white/20 hover:border-white/40"}`}
-                                            onClick={() => toggleSelect(s.id)}
-                                        >
-                                            {selectedIds.includes(s.id) && <span className="text-white text-xs">✓</span>}
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div
+                                                    className={cn(
+                                                        "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all shrink-0",
+                                                        selectedIds.includes(s.id) ? "nm-inset text-indigo-500 scale-95" : "nm-inset text-[var(--admin-text-muted)] group-hover:text-indigo-400"
+                                                    )}
+                                                    onClick={() => toggleSelect(s.id)}
+                                                >
+                                                    {selectedIds.includes(s.id) ? <Check size={18} strokeWidth={4} /> : <div className="w-2.5 h-2.5 rounded-full bg-current opacity-20" />}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <h4 className="text-sm font-black text-[var(--admin-text-primary)] truncate uppercase tracking-tight">{s.name}</h4>
+                                                    <span className="text-[9px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">{s.status}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                <button
+                                                    onClick={() => setEditing({ ...s })}
+                                                    className="w-8 h-8 nm-button rounded-lg text-indigo-500 hover:scale-110"
+                                                >
+                                                    <Edit3 size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteSkill(s.id)}
+                                                    className="w-8 h-8 nm-button rounded-lg text-rose-500 hover:scale-110"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 flex items-center gap-3">
-                                            <span className="text-white font-medium text-sm">{s.name}</span>
-                                            <Badge variant="outline" className="text-[10px] text-white/40 border-white/10">{s.status}</Badge>
+
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-end">
+                                                <span className="text-[9px] font-black text-[var(--admin-text-muted)] uppercase tracking-widest">Mastery</span>
+                                                <span className="text-[11px] font-black text-indigo-500 italic">{s.mastery}%</span>
+                                            </div>
+                                            <div className="progress-track">
+                                                <div
+                                                    className="progress-fill"
+                                                    style={{ width: `${s.mastery}%` }}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex gap-2 shrink-0">
-                                            <Button variant="outline" size="sm" onClick={() => setEditing({ ...s })} className="text-white/60">Edit</Button>
-                                            <Button variant="destructive" size="sm" onClick={() => deleteSkill(s.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
+
+                                        {/* Ambient Background Number */}
+                                        <div className="absolute -bottom-4 -right-4 text-8xl font-black text-black/[0.02] italic pointer-events-none select-none">
+                                            {s.mastery}
                                         </div>
                                     </div>
                                 ))}
@@ -125,12 +284,38 @@ export function SkillsTab(_props: AdminTabProps) {
                 </div>
             )}
 
+            {/* Bulk Actions Fixed Bar */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0f172a] border border-white/10 rounded-full shadow-2xl px-6 py-3 flex items-center gap-4 animate-in slide-in-from-bottom-5 fade-in">
-                    <span className="text-sm font-medium text-white">{selectedIds.length} selected</span>
-                    <div className="h-4 w-px bg-white/10" />
-                    <Button size="sm" variant="destructive" className="h-8" onClick={handleBulkDelete}>Delete Selected</Button>
-                    <Button size="sm" variant="ghost" className="h-8 text-white/50" onClick={() => setSelectedIds([])}>✕</Button>
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-500">
+                    <div className="nm-float bg-[var(--nm-bg)]/90 backdrop-blur-xl px-10 py-5 flex items-center gap-8 border border-white/10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                                <Layers size={20} />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[12px] font-black text-[var(--admin-text-primary)] uppercase tracking-tight">{selectedIds.length} BATCH_LOAD</span>
+                                <span className="text-[9px] text-[var(--admin-text-muted)] uppercase tracking-[0.2em] font-bold">Protocol_Selection</span>
+                            </div>
+                        </div>
+
+                        <div className="w-px h-8 nm-inset opacity-20" />
+
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={handleBulkDelete}
+                                className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/10"
+                            >
+                                <Trash2 size={16} className="mr-2" />
+                                DELETE_ALL
+                            </button>
+                            <button
+                                onClick={() => setSelectedIds([])}
+                                className="nm-button h-12 w-12 text-[var(--admin-text-secondary)]"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

@@ -74,14 +74,29 @@ export function useAdminExperiences() {
         },
     });
 
+    const bulkDeleteMutation = useAdminMutation({
+        route: api.experiences.bulkDelete,
+        queryKeyToInvalidate: ["experiences"],
+        successTitle: "Experiences deleted",
+        successDescription: "Selected experiences have been removed.",
+        mutationFn: async (ids: number[]) => {
+            await apiFetch(api.experiences.bulkDelete.path, {
+                method: api.experiences.bulkDelete.method,
+                body: JSON.stringify({ ids }),
+            });
+        },
+    });
+
     return {
         create: createMutation.mutateAsync,
         update: updateMutation.mutateAsync,
         remove: deleteMutation.mutateAsync,
+        bulkDelete: bulkDeleteMutation.mutateAsync,
         isPending:
             createMutation.isPending ||
             updateMutation.isPending ||
-            deleteMutation.isPending,
+            deleteMutation.isPending ||
+            bulkDeleteMutation.isPending,
         refetch,
     };
 }

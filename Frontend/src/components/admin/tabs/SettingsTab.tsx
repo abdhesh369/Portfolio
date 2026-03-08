@@ -3,10 +3,23 @@ import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/portfolio";
 import { LoadingSkeleton } from "@/components/admin/AdminShared";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Briefcase, Sparkles, RefreshCcw, CheckCircle2, AlertCircle, Rocket, GripVertical, Layers } from "lucide-react";
+import {
+    Briefcase,
+    Sparkles,
+    RefreshCcw,
+    CheckCircle2,
+    AlertCircle,
+    Rocket,
+    GripVertical,
+    Layers,
+    Monitor,
+    Shield,
+    Terminal
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch } from "@/lib/api-helpers";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
     DndContext,
     closestCenter,
@@ -61,18 +74,22 @@ function SortableSection({ id, label }: { id: string; label: string }) {
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-3 p-3 rounded-lg bg-white/5 border ${isDragging ? "border-blue-500/50 bg-white/10 shadow-xl" : "border-white/5 shadow-sm"
-                } group transition-all duration-200`}
+            className={cn(
+                "flex items-center gap-3 p-4 rounded-2xl transition-all duration-300",
+                isDragging
+                    ? "nm-convex bg-background/50 scale-[1.02] shadow-2xl border-primary/20"
+                    : "nm-flat hover:nm-convex border-transparent"
+            )}
         >
             <button
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-white/10 rounded-md transition-colors"
+                className="cursor-grab active:cursor-grabbing p-2 nm-inset rounded-xl hover:text-primary transition-colors"
                 title="Drag to reorder"
             >
-                <GripVertical className="w-4 h-4 text-white/30 group-hover:text-white/60" />
+                <GripVertical className="w-4 h-4 opacity-40" />
             </button>
-            <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">{label}</span>
+            <span className="text-sm font-semibold tracking-tight">{label}</span>
         </div>
     );
 }
@@ -99,7 +116,13 @@ export function SettingsTab() {
     );
 
     if (isLoading) return <LoadingSkeleton />;
-    if (isError) return <div className="text-red-400">Failed to load settings.</div>;
+    if (isError) return (
+        <div className="nm-flat rounded-[2.5rem] p-12 text-center border-destructive/10">
+            <AlertCircle className="w-16 h-16 text-destructive/40 mx-auto mb-6" />
+            <h3 className="text-xl font-bold tracking-tight">System Connection Failed</h3>
+            <p className="text-muted-foreground text-sm mt-3 max-w-xs mx-auto">Unable to retrieve configuration telemetry from the server core.</p>
+        </div>
+    );
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
@@ -116,14 +139,14 @@ export function SettingsTab() {
                 {
                     onSuccess: () => {
                         toast({
-                            title: "Layout Updated",
-                            description: "Homepage section order has been saved successfully.",
+                            title: "Sequence Updated",
+                            description: "Homepage node sequence has been realigned successfully.",
                         });
                     },
                     onError: (error: Error) => {
                         toast({
-                            title: "Failed to Update",
-                            description: error.message || "An error occurred while saving the new layout.",
+                            title: "Update Failed",
+                            description: error.message || "Failed to commit sequence change to the core database.",
                             variant: "destructive",
                         });
                     },
@@ -137,7 +160,7 @@ export function SettingsTab() {
             { isOpenToWork: checked },
             {
                 onError: (error: Error) => {
-                    toast({ title: "Error", description: error.message || "Failed to update settings", variant: "destructive" });
+                    toast({ title: "Signal Error", description: error.message || "Failed to update availability status", variant: "destructive" });
                 },
             }
         );
@@ -153,12 +176,12 @@ export function SettingsTab() {
             setStats(result.data);
             toast({
                 title: "Optimization Complete",
-                description: `Successfully optimized ${result.data.optimizedUrls} images.`,
+                description: `Neural process optimized ${result.data.optimizedUrls} image artifacts.`,
             });
         } catch (error: unknown) {
             toast({
-                title: "Optimization Failed",
-                description: error instanceof Error ? error.message : "An error occurred during optimization.",
+                title: "Process Failed",
+                description: error instanceof Error ? error.message : "Internal optimization sequence interrupted.",
                 variant: "destructive",
             });
         } finally {
@@ -173,13 +196,13 @@ export function SettingsTab() {
                 method: "POST"
             });
             toast({
-                title: "Deployment Triggered",
-                description: "Production deployment has been initiated on Render.",
+                title: "Deployment Initiated",
+                description: "Production uplink synchronized. Build sequence started on remote cluster.",
             });
         } catch (error: unknown) {
             toast({
-                title: "Deployment Failed",
-                description: error instanceof Error ? error.message : "Failed to trigger deployment.",
+                title: "Uplink Failed",
+                description: error instanceof Error ? error.message : "Failed to establish production deployment bridge.",
                 variant: "destructive",
             });
         } finally {
@@ -188,53 +211,176 @@ export function SettingsTab() {
     };
 
     return (
-        <div className="animate-fade-in space-y-6">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    Site Settings
-                </h2>
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-12 pb-24">
+            <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                    <div className="p-3 nm-flat rounded-2xl text-primary">
+                        <Monitor className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black tracking-tighter" style={{ fontFamily: "var(--font-display)" }}>
+                            Control Center
+                        </h2>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Uplink & Global Parameters</p>
+                    </div>
+                </div>
             </div>
 
-            <div className="grid gap-6">
-                {/* Availability Section */}
-                <div className="rounded-xl border border-white/10 p-6 bg-white/5 space-y-4">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-500/10 rounded-lg">
-                            <Briefcase className="w-5 h-5 text-blue-400" />
+            <div className="grid lg:grid-cols-2 gap-10">
+                {/* Left Column */}
+                <div className="space-y-10">
+                    {/* Availability Section */}
+                    <div className="nm-flat rounded-[2.5rem] p-8 space-y-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity animation-delay-500">
+                            <Shield className="w-24 h-24 rotate-12" />
                         </div>
-                        <div>
-                            <h3 className="text-lg font-semibold text-white">Availability</h3>
-                            <p className="text-sm text-white/40">Control your current work status across the site.</p>
+
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 nm-inset rounded-2xl text-blue-500">
+                                <Briefcase className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight">Public Status</h3>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black opacity-50">Market Readiness Signal</p>
+                            </div>
+                        </div>
+
+                        <div className="nm-inset rounded-3xl p-6 flex items-center justify-between group/status hover:nm-flat transition-all duration-500 hover:shadow-xl">
+                            <div className="space-y-1">
+                                <Label htmlFor="open-to-work" className="text-base font-bold tracking-tight cursor-pointer">Open to Collaboration</Label>
+                                <p className="text-xs text-muted-foreground">Broadcast availability for new engineering ventures.</p>
+                            </div>
+                            <Switch
+                                id="open-to-work"
+                                checked={settings?.isOpenToWork ?? false}
+                                onCheckedChange={handleToggleOpenToWork}
+                                disabled={updateMutation.isPending}
+                                className="nm-flat data-[state=checked]:bg-blue-500 h-7 w-12"
+                            />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/5 group hover:border-white/10 transition-colors">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="open-to-work" className="text-base text-white cursor-pointer">Open to Work</Label>
-                            <p className="text-sm text-white/40">When enabled, "Available for new projects" badges will be shown.</p>
+                    {/* Maintenance Section */}
+                    <div className="nm-flat rounded-[2.5rem] p-8 space-y-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity animation-delay-700">
+                            <Terminal className="w-24 h-24 -rotate-12" />
                         </div>
-                        <Switch
-                            id="open-to-work"
-                            checked={settings?.isOpenToWork ?? false}
-                            onCheckedChange={handleToggleOpenToWork}
-                            disabled={updateMutation.isPending}
-                        />
+
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 nm-inset rounded-2xl text-purple-500">
+                                <Sparkles className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight">Maintenance Protocol</h3>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black opacity-50">Performance Optimization</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {/* Bulk Image Optimizer */}
+                            <div className="nm-inset rounded-3xl p-6 space-y-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                    <div className="space-y-2 max-w-xs">
+                                        <h4 className="font-bold tracking-tight">Asset Compaction</h4>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            Synchronize external media with Cloudinary and inject neural optimization parameters for lightning speed.
+                                        </p>
+                                    </div>
+                                    <Button
+                                        onClick={handleOptimizeImages}
+                                        disabled={isOptimizing}
+                                        className={cn(
+                                            "nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300",
+                                            "text-[10px] font-black uppercase tracking-[0.2em] group/btn",
+                                            isOptimizing && "opacity-50"
+                                        )}
+                                    >
+                                        {isOptimizing ? (
+                                            <>
+                                                <RefreshCcw className="w-4 h-4 mr-3 animate-spin text-primary" />
+                                                Optimizing...
+                                            </>
+                                        ) : (
+                                            "Execute Optimizer"
+                                        )}
+                                    </Button>
+                                </div>
+
+                                {stats && (
+                                    <div className="grid grid-cols-2 gap-4 animate-in zoom-in-95 duration-500">
+                                        <div className="p-4 nm-flat rounded-2xl border border-primary/5">
+                                            <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-black mb-1">Scanned</p>
+                                            <p className="text-2xl font-black">{stats.totalScanned}</p>
+                                        </div>
+                                        <div className="p-4 nm-flat rounded-2xl border border-emerald-500/10">
+                                            <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-black mb-1">Optimized</p>
+                                            <p className="text-2xl font-black text-emerald-500">{stats.optimizedUrls}</p>
+                                        </div>
+                                        <div className="col-span-full py-3 px-4 nm-flat rounded-xl flex items-center gap-3">
+                                            <div className="p-1.5 nm-inset rounded-full text-emerald-500">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Success Protocol Completed</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Deploy Hook */}
+                            <div className="nm-inset rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                <div className="space-y-2 max-w-xs">
+                                    <h4 className="font-bold tracking-tight text-blue-500/90">Production Uplink</h4>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                        Transmit code manifests to the production cluster for a fresh deployment sequence.
+                                    </p>
+                                </div>
+                                <Button
+                                    onClick={handleDeploy}
+                                    disabled={isDeploying}
+                                    className={cn(
+                                        "nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300",
+                                        "text-[10px] font-black uppercase tracking-[0.2em] text-blue-500",
+                                        isDeploying && "opacity-50"
+                                    )}
+                                >
+                                    {isDeploying ? (
+                                        <>
+                                            <RefreshCcw className="w-4 h-4 mr-3 animate-spin" />
+                                            Syncing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Rocket className="w-4 h-4 mr-3" />
+                                            Initialize Uplink
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Section Ordering Section */}
-                <div className="rounded-xl border border-white/10 p-6 bg-white/5 space-y-4">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-amber-500/10 rounded-lg">
-                            <Layers className="w-5 h-5 text-amber-400" />
+                {/* Right Column - Section Ordering Section */}
+                <div className="nm-flat rounded-[2.5rem] p-8 space-y-8 h-fit">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 nm-inset rounded-2xl text-amber-500">
+                                <Layers className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight">Mainframe Hierarchy</h3>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black opacity-50">Homepage Section Alignment</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 className="text-lg font-semibold text-white">Homepage Layout</h3>
-                            <p className="text-sm text-white/40">Drag and drop to reorder the sections on your landing page.</p>
-                        </div>
+                        {updateMutation.isPending && (
+                            <div className="flex items-center gap-2 p-2 nm-inset rounded-xl text-[10px] font-black text-amber-500 uppercase tracking-widest animate-pulse">
+                                <RefreshCcw className="w-3 h-3 animate-spin" />
+                                <span>Syncing</span>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="p-1">
+                    <div className="nm-inset rounded-[2rem] p-4 min-h-[500px]">
                         <DndContext
                             sensors={sensors}
                             collisionDetection={closestCenter}
@@ -244,7 +390,7 @@ export function SettingsTab() {
                                 items={(settings?.sectionOrder as string[]) ?? DEFAULT_SECTION_ORDER}
                                 strategy={verticalListSortingStrategy}
                             >
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div className="grid gap-3 p-1">
                                     {(settings?.sectionOrder ?? DEFAULT_SECTION_ORDER).map((sectionId) => (
                                         <SortableSection
                                             key={sectionId}
@@ -256,116 +402,16 @@ export function SettingsTab() {
                             </SortableContext>
                         </DndContext>
                     </div>
-
-                    {updateMutation.isPending && (
-                        <div className="flex items-center gap-2 text-xs text-amber-400/60 animate-pulse pt-2 px-1">
-                            <RefreshCcw className="w-3 h-3 animate-spin" />
-                            <span>Saving new layout order...</span>
-                        </div>
-                    )}
                 </div>
+            </div>
 
-                {/* Maintenance & Tools Section */}
-                <div className="rounded-xl border border-white/10 p-6 bg-white/5 space-y-4">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-purple-500/10 rounded-lg">
-                            <Sparkles className="w-5 h-5 text-purple-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold text-white">Maintenance & Tools</h3>
-                            <p className="text-sm text-white/40">Run various maintenance tasks to keep the site optimized.</p>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-6 p-4 rounded-lg bg-white/5 border border-white/5">
-                        {/* Bulk Image Optimizer */}
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-0.5">
-                                <h4 className="text-sm font-medium text-white">Bulk Image Optimizer</h4>
-                                <p className="text-xs text-white/40">
-                                    Migrates external images to Cloudinary and injects optimization parameters.
-                                </p>
-                            </div>
-                            <Button
-                                size="sm"
-                                onClick={handleOptimizeImages}
-                                disabled={isOptimizing}
-                                className="bg-purple-600 hover:bg-purple-500 text-white font-medium min-w-[140px]"
-                            >
-                                {isOptimizing ? (
-                                    <>
-                                        <RefreshCcw className="w-3 h-3 mr-2 animate-spin" />
-                                        Optimizing...
-                                    </>
-                                ) : (
-                                    "Optimize All Images"
-                                )}
-                            </Button>
-                        </div>
-
-                        {/* Deploy Hook */}
-                        <div className="flex items-center justify-between border-t border-white/5 pt-6">
-                            <div className="space-y-0.5">
-                                <h4 className="text-sm font-medium text-white">Production Deployment</h4>
-                                <p className="text-xs text-white/40">
-                                    Triggers a fresh production build on Render.
-                                </p>
-                            </div>
-                            <Button
-                                size="sm"
-                                onClick={handleDeploy}
-                                disabled={isDeploying}
-                                className="bg-blue-600 hover:bg-blue-500 text-white font-medium min-w-[140px]"
-                            >
-                                {isDeploying ? (
-                                    <>
-                                        <RefreshCcw className="w-3 h-3 mr-2 animate-spin" />
-                                        Deploying...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Rocket className="w-3 h-3 mr-2" />
-                                        Deploy to Production
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-
-                        {stats && (
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
-                                <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                                    <p className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Scanned</p>
-                                    <p className="text-xl font-bold text-white">{stats.totalScanned}</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                                    <p className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Migrated</p>
-                                    <p className="text-xl font-bold text-blue-400">{stats.migratedToCloudinary}</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                                    <p className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Optimized</p>
-                                    <p className="text-xl font-bold text-green-400">{stats.optimizedUrls}</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-black/20 border border-white/5 flex flex-col">
-                                    <p className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Failed</p>
-                                    <div className="flex items-center gap-1.5">
-                                        <p className={`text-xl font-bold ${stats.failed > 0 ? "text-red-400" : "text-white/20"}`}>{stats.failed}</p>
-                                        {stats.failed > 0 && <AlertCircle className="w-4 h-4 text-red-500/50" />}
-                                    </div>
-                                </div>
-                                <div className="col-span-full py-2 px-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-green-400" />
-                                    <span className="text-xs text-green-400/80 font-medium">Last optimization run completed successfully.</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+            {/* Kernel Bays */}
+            <div className="nm-inset rounded-[3rem] p-16 flex flex-col items-center justify-center text-center group border-2 border-dashed border-primary/5">
+                <div className="w-24 h-24 rounded-full nm-flat flex items-center justify-center mb-8 group-hover:nm-convex transition-all duration-700">
+                    <Shield className="w-10 h-10 opacity-10 group-hover:opacity-30 group-hover:text-primary transition-all rotate-12" />
                 </div>
-
-                {/* More settings can be added here */}
-                <div className="rounded-xl border border-dashed border-white/10 p-12 flex flex-col items-center justify-center text-center">
-                    <div className="text-3xl mb-3 opacity-20">⚙️</div>
-                    <p className="text-white/30 text-sm italic">More granular site controls coming soon...</p>
-                </div>
+                <h4 className="font-black uppercase tracking-[0.4em] text-sm opacity-20 group-hover:opacity-40 transition-opacity">Core Bays Restricted</h4>
+                <p className="text-xs text-muted-foreground mt-4 max-w-sm opacity-30 group-hover:opacity-60 transition-opacity">Advanced kernel parameters and neural weights are currently managed by the master orchestration layer.</p>
             </div>
         </div>
     );

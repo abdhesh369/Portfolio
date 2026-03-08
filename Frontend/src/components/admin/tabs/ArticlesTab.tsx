@@ -10,7 +10,14 @@ import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
 import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import {
+    FileText, Plus, Trash2, Edit3, X, Eye, Calendar,
+    Tag, Globe, Search, ChevronRight, Save, Image as ImageIcon,
+    Layout
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Article } from "@portfolio/shared/schema";
+import type { AdminTabProps } from "./types";
 
 type ArticleWithTags = Article & { tags: string[] };
 
@@ -31,50 +38,82 @@ function ArticleItem({ article, onEdit, onDelete }: {
     onEdit: (a: Article) => void,
     onDelete: (id: number) => void
 }) {
-    const statusColors: Record<string, string> = {
-        "draft": "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-        "published": "bg-green-500/10 text-green-400 border-green-500/20",
-        "archived": "bg-gray-500/10 text-gray-400 border-gray-500/20",
+    const statusConfig: Record<string, { label: string, color: string, icon: any }> = {
+        "draft": { label: "DRAFT", color: "text-amber-500", icon: FileText },
+        "published": { label: "PUBLISHED", color: "text-emerald-500", icon: Globe },
+        "archived": { label: "ARCHIVED", color: "text-slate-400", icon: X },
     };
 
+    const config = statusConfig[article.status] || statusConfig.draft;
+
     return (
-        <div className="rounded-xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 group hover:border-white/20 transition-colors bg-card/80 backdrop-blur-sm">
-            {article.featuredImage && (
-                <OptimizedImage
-                    src={article.featuredImage}
-                    alt={article.title}
-                    width={100}
-                    height={100}
-                    className="w-16 h-16 rounded-lg object-cover shrink-0 bg-white/5"
-                />
-            )}
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                    <p className="font-semibold text-white text-sm truncate">{article.title}</p>
-                    <Badge variant="outline" className={`text-[10px] border ${statusColors[article.status] || "border-white/10"}`}>
-                        {article.status}
-                    </Badge>
+        <div className="nm-flat p-5 flex flex-col md:flex-row items-center gap-6 group transition-all relative overflow-hidden">
+            {article.featuredImage ? (
+                <div className="w-24 h-24 rounded-2xl nm-inset overflow-hidden shrink-0">
+                    <OptimizedImage
+                        src={article.featuredImage}
+                        alt={article.title}
+                        width={100}
+                        height={100}
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    />
                 </div>
-                <p className="text-xs text-white/40 mt-0.5 truncate">/{article.slug}</p>
-                <div className="flex items-center gap-3 mt-2">
-                    <span className="text-[10px] text-white/30">👁️ {article.viewCount} views</span>
+            ) : (
+                <div className="w-24 h-24 rounded-2xl nm-inset flex items-center justify-center text-[var(--admin-text-muted)] shrink-0 opacity-30">
+                    <ImageIcon size={32} />
+                </div>
+            )}
+
+            <div className="flex-1 min-w-0 space-y-2 text-center md:text-left">
+                <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start">
+                    <h4 className="text-lg font-black text-[var(--admin-text-primary)] truncate uppercase tracking-tight">
+                        {article.title}
+                    </h4>
+                    <span className={cn(
+                        "text-[9px] font-black px-2 py-0.5 rounded-full nm-inset",
+                        config.color
+                    )}>
+                        {config.label}
+                    </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest justify-center md:justify-start">
+                    <span className="flex items-center gap-1.5">
+                        <ChevronRight size={12} className="text-indigo-400" />
+                        /{article.slug}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <Eye size={12} />
+                        {article.viewCount} VIEWS
+                    </span>
                     {article.publishedAt && (
-                        <span className="text-[10px] text-white/30">📅 {new Date(article.publishedAt).toLocaleDateString()}</span>
+                        <span className="flex items-center gap-1.5">
+                            <Calendar size={12} />
+                            {new Date(article.publishedAt).toLocaleDateString()}
+                        </span>
                     )}
                 </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-                {article.status === 'draft' && (
-                    <Button variant="outline" size="sm" onClick={() => window.open(`/blog/${article.slug}`, '_blank')} className="text-white/60">Preview</Button>
-                )}
-                <Button variant="outline" size="sm" onClick={() => onEdit(article)} className="text-white/60">Edit</Button>
-                <Button variant="destructive" size="sm" onClick={() => onDelete(article.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
+
+            <div className="flex gap-4 shrink-0">
+                <button
+                    onClick={() => onEdit(article)}
+                    className="w-12 h-12 nm-button rounded-2xl text-indigo-500 flex items-center justify-center hover:scale-110 transition-transform"
+                    title="Edit Protocol"
+                >
+                    <Edit3 size={18} />
+                </button>
+                <button
+                    onClick={() => onDelete(article.id)}
+                    className="w-12 h-12 nm-button rounded-2xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                    title="Terminate Entry"
+                >
+                    <Trash2 size={18} />
+                </button>
             </div>
         </div>
     );
 }
-
-import type { AdminTabProps } from "./types";
 
 export function ArticlesTab(_props: AdminTabProps) {
     const { data: articles, refetch, isLoading } = useArticles();
@@ -108,7 +147,6 @@ export function ArticlesTab(_props: AdminTabProps) {
         if (!editing) return;
         setSaving(true);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: _id, ...articleData } = editing;
         const body = {
             ...articleData,
@@ -118,38 +156,34 @@ export function ArticlesTab(_props: AdminTabProps) {
             excerpt: articleData.excerpt || null,
         };
 
-        // Optimistic UI update
         const previousArticles = queryClient.getQueryData<Article[]>(["articles"]);
 
         try {
             if (editing.id) {
-                // Optimistic Update
                 queryClient.setQueryData<Article[]>(["articles"], old =>
                     old ? old.map(a => a.id === editing.id ? { ...a, ...body } as Article : a) : []
                 );
 
                 await apiFetch(`/api/v1/articles/${editing.id}`, { method: "PATCH", body: JSON.stringify(body) });
-                toast({ title: "Article updated" });
+                toast({ title: "Protocol updated" });
             } else {
                 await apiFetch("/api/v1/articles", { method: "POST", body: JSON.stringify(body) });
-                toast({ title: "Article created" });
+                toast({ title: "New protocol initialized" });
             }
             setEditing(null);
             clearQueryCache();
             refetch();
         } catch (err) {
-            // Revert on error
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
-            toast({ title: "Save failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            toast({ title: "Execution failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
         } finally {
             setSaving(false);
         }
     };
 
     const deleteArticle = async (id: number) => {
-        if (!confirm("Delete this article?")) return;
+        if (!confirm("Terminate this article protocol?")) return;
 
-        // Optimistic UI update
         const previousArticles = queryClient.getQueryData<Article[]>(["articles"]);
         queryClient.setQueryData<Article[]>(["articles"], old =>
             old ? old.filter(a => a.id !== id) : []
@@ -157,68 +191,145 @@ export function ArticlesTab(_props: AdminTabProps) {
 
         try {
             await apiFetch(`/api/v1/articles/${id}`, { method: "DELETE" });
-            toast({ title: "Article deleted" });
+            toast({ title: "Protocol deleted" });
             clearQueryCache();
             refetch();
         } catch (err) {
-            // Revert on error
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
-            toast({ title: "Delete failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            toast({ title: "Termination failed", variant: "destructive" });
         }
     };
 
     if (editing) {
         return (
-            <div className="animate-fade-in">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-                        {editing.id ? "Edit Article" : "New Article"}
-                    </h2>
-                    <Button variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto">
+                <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 nm-inset rounded-2xl flex items-center justify-center text-indigo-500">
+                            <FileText size={24} strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <h2 className="text-3xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                                {editing.id ? "Edit_Article" : "New_Article"}
+                            </h2>
+                            <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.3em] ml-1">
+                                Protocol: {editing.id ? `ID_${editing.id}` : "Allocation"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
+                    >
+                        <X size={16} className="mr-2" />
+                        Abort_Changes
+                    </button>
                 </div>
 
-                <form onSubmit={save} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-6">
-                        <FormField label="Title *" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v })} required />
-                        <FormField label="Slug (optional)" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} placeholder="auto-generated-from-title" />
+                <form onSubmit={save} className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div className="lg:col-span-2 space-y-10">
+                        <div className="nm-flat p-8 rounded-3xl space-y-8">
+                            <FormField
+                                label="Protocol Title *"
+                                value={editing.title}
+                                onChange={(v) => setEditing({ ...editing, title: v })}
+                                required
+                                placeholder="E.G. THE NEUMORPHIC REVOLUTION"
+                            />
 
-                        <div className="space-y-1.5">
-                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">Content *</label>
-                            <RichTextEditor value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} />
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <FormField
+                                    label="Access_Slug"
+                                    value={editing.slug}
+                                    onChange={(v) => setEditing({ ...editing, slug: v })}
+                                    placeholder="auto-generated-id"
+                                />
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Index_Status</label>
+                                    <div className="relative">
+                                        <select
+                                            value={editing.status}
+                                            onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
+                                            className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
+                                        >
+                                            <option value="draft">DRAFT_MODE</option>
+                                            <option value="published">LIVE_SYNC</option>
+                                            <option value="archived">ARCHIVED</option>
+                                        </select>
+                                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
+                                            <Layout size={14} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Rich_Text_Payload</label>
+                                <div className="nm-inset rounded-3xl p-4 min-h-[400px]">
+                                    <RichTextEditor value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} />
+                                </div>
+                            </div>
                         </div>
 
-                        <FormTextarea label="Excerpt" value={editing.excerpt ?? ""} onChange={(v) => setEditing({ ...editing, excerpt: v })} />
+                        <div className="nm-flat p-8 rounded-3xl space-y-6">
+                            <h3 className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-4 italic">Core_Metadata</h3>
+                            <FormTextarea
+                                label="Excerpt_Summary"
+                                value={editing.excerpt ?? ""}
+                                onChange={(v) => setEditing({ ...editing, excerpt: v })}
+                                placeholder="BRIEF CONTENT OVERVIEW..."
+                            />
+                        </div>
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-6">
-                            <div>
-                                <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">Status</label>
-                                <select
-                                    value={editing.status}
-                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "draft" | "published" | "archived" })}
-                                    className="w-full px-3 py-2 rounded-lg text-white text-sm bg-white/5 border border-white/10 focus:border-purple-500 outline-none transition-all"
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                    <option value="archived">Archived</option>
-                                </select>
+                    <div className="space-y-10">
+                        <div className="nm-flat p-8 rounded-3xl space-y-8">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Visual_Asset</label>
+                                <div className="nm-inset rounded-2xl p-4">
+                                    <ImageUpload value={editing.featuredImage ?? ""} onChange={(v) => setEditing({ ...editing, featuredImage: v })} />
+                                </div>
                             </div>
 
-                            <ImageUpload label="Featured Image" value={editing.featuredImage ?? ""} onChange={(v) => setEditing({ ...editing, featuredImage: v })} />
-
-                            <FormField label="Tags (comma separated)" value={tagInput} onChange={setTagInput} />
-
-                            <div className="pt-4 border-t border-white/10 space-y-4">
-                                <p className="text-xs font-bold text-white/40 uppercase tracking-widest">SEO Settings</p>
-                                <FormField label="Meta Title" value={editing.metaTitle ?? ""} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
-                                <FormTextarea label="Meta Description" value={editing.metaDescription ?? ""} onChange={(v) => setEditing({ ...editing, metaDescription: v })} />
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Taxonomy_Tags</label>
+                                <div className="relative group">
+                                    <input
+                                        type="text"
+                                        placeholder="JS, TECH, DESIGN..."
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-full transition-all"
+                                    />
+                                    <Tag size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
+                                </div>
                             </div>
-
-                            <Button type="submit" className="w-full" disabled={saving}>
-                                {saving ? "Saving..." : (editing.id ? "Update Article" : "Create Article")}
-                            </Button>
                         </div>
+
+                        <div className="nm-flat p-8 rounded-3xl space-y-8">
+                            <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] mb-4 italic">SEO_Optimization</h3>
+                            <FormField
+                                label="Meta_Title"
+                                value={editing.metaTitle ?? ""}
+                                onChange={(v) => setEditing({ ...editing, metaTitle: v })}
+                                placeholder="SEARCH ENGINE TITLE"
+                            />
+                            <FormTextarea
+                                label="Meta_Description"
+                                value={editing.metaDescription ?? ""}
+                                onChange={(v) => setEditing({ ...editing, metaDescription: v })}
+                                placeholder="SEARCH EXCERPT..."
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="nm-button nm-button-primary w-full h-16 text-[12px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
+                        >
+                            <Save size={20} />
+                            {saving ? "EXECUTING..." : (editing.id ? "SYNC_PROTOCOL" : "INIT_PROTOCOL")}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -231,34 +342,56 @@ export function ArticlesTab(_props: AdminTabProps) {
     ) || [];
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-white shrink-0" style={{ fontFamily: "var(--font-display)" }}>
-                    Articles <Badge variant="secondary" className="ml-2">{articles?.length ?? 0}</Badge>
-                </h2>
-                <div className="flex flex-1 max-w-md gap-3">
-                    <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">🔍</span>
+        <div className="animate-in fade-in duration-700 space-y-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <FileText size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Articles
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_var(--nm-accent)]" />
+                        Entries_Indexed: {articles?.length ?? 0}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
                         <input
                             type="text"
-                            placeholder="Search articles..."
+                            placeholder="FIND_PROTOCOL..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all"
+                            className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-64 transition-all focus:w-80"
                         />
+                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
-                    <Button onClick={openNew}>+ New Article</Button>
+                    <button
+                        onClick={openNew}
+                        className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                    >
+                        <Plus size={20} strokeWidth={3} className="mr-3" />
+                        New_Article
+                    </button>
                 </div>
             </div>
 
             {isLoading ? (
-                <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                <div className="grid gap-8">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="h-32 nm-flat rounded-3xl animate-pulse" />
+                    ))}
                 </div>
             ) : !filtered.length ? (
-                <EmptyState icon="📝" text={searchQuery ? "No matches found" : "No articles yet"} />
+                <div className="nm-flat p-24 text-center">
+                    <EmptyState icon={<FileText size={48} className="opacity-20" />} text={searchQuery ? "No matching protocols found" : "No articles yet indexed"} />
+                </div>
             ) : (
-                <div className="grid gap-3">
+                <div className="grid gap-8">
                     {filtered.map((a) => (
                         <ArticleItem
                             key={a.id}

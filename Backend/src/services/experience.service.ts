@@ -61,6 +61,11 @@ export class ExperienceService {
         await this.invalidateCache(id);
     }
 
+    async bulkDelete(ids: number[]): Promise<void> {
+        await experienceRepository.bulkDelete(ids);
+        await this.invalidateCache();
+    }
+
     private async invalidateCache(id?: number) {
         try {
             const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);

@@ -1,11 +1,15 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { FileText, Trash2, Sparkles, Eye, EyeOff } from 'lucide-react';
+import {
+    FileText, Trash2, Sparkles, Eye, EyeOff,
+    ChevronRight, Layout, AlertCircle, Plus, Search
+} from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/admin/AdminShared";
+import { cn } from "@/lib/utils";
 
 interface CaseStudyData {
     id: number;
@@ -55,92 +59,145 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
     });
 
     return (
-        <div className="animate-fade-in p-6">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-3" style={{ fontFamily: "var(--font-display)" }}>
-                    <FileText className="w-6 h-6" /> Case Studies
-                </h2>
+        <div className="animate-in fade-in duration-700 space-y-10">
+            {/* Soft Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-indigo-500">
+                            <Sparkles size={20} strokeWidth={3} />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--admin-text-primary)] tracking-tighter uppercase italic">
+                            Case_Studies
+                        </h1>
+                    </div>
+                    <p className="text-[var(--admin-text-secondary)] text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-3 ml-1">
+                        <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_#a855f7]" />
+                        IA_Generator: Ready
+                    </p>
+                </div>
             </div>
 
-            {/* Generate from Project */}
-            <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-sm text-white/60 mb-3">Generate a case study from an existing project:</p>
-                <div className="flex flex-wrap gap-2">
+            {/* AI Generation Control Pod */}
+            <div className="nm-flat p-8 rounded-3xl space-y-6">
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center text-purple-500">
+                        <Plus size={16} strokeWidth={3} />
+                    </div>
+                    <h3 className="text-[11px] font-black text-[var(--admin-text-primary)] uppercase tracking-[0.3em] italic">Generate_New_Protocol</h3>
+                </div>
+
+                <div className="flex flex-wrap gap-4">
                     {(projects as ProjectData[]).map((p) => (
-                        <Button
+                        <button
                             key={p.id}
-                            variant="outline"
-                            size="sm"
                             onClick={() => generateMutation.mutate(p.id)}
                             disabled={generateMutation.isPending}
-                            className="bg-white/5 border-white/10 text-white hover:bg-white/10"
+                            className="nm-button nm-button-primary h-12 px-6 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 disabled:opacity-50"
                         >
-                            <Sparkles className="w-3 h-3 mr-2" /> {p.title}
-                        </Button>
+                            <Sparkles size={14} className={generateMutation.isPending ? "animate-spin" : ""} />
+                            {p.title}
+                        </button>
                     ))}
+                    {projects.length === 0 && (
+                        <p className="text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest italic py-2 px-4 nm-inset rounded-xl">
+                            No active projects available for distillation
+                        </p>
+                    )}
                 </div>
+
                 {generateMutation.isPending && (
-                    <p className="mt-2 text-sm text-purple-400 flex items-center gap-2">
-                        <Sparkles className="w-3 h-3 animate-pulse" /> Generating with AI...
-                    </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-4 p-4 nm-inset rounded-2xl border border-purple-500/20"
+                    >
+                        <div className="w-8 h-8 rounded-full border-2 border-purple-500/30 border-t-purple-500 animate-spin" />
+                        <div className="flex-1">
+                            <p className="text-[10px] font-black text-purple-500 uppercase tracking-[0.2em]">Neural_Processing_Active</p>
+                            <p className="text-[9px] text-[var(--admin-text-muted)] font-bold uppercase tracking-wider">Distilling project data into case study structure...</p>
+                        </div>
+                    </motion.div>
                 )}
             </div>
 
+            {/* List Section */}
             {isLoading ? (
-                <div className="flex justify-center p-12">
-                    <p className="text-white/40">Loading...</p>
+                <div className="grid gap-6">
+                    {[1, 2].map(i => (
+                        <div key={i} className="h-24 nm-flat rounded-3xl animate-pulse" />
+                    ))}
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="space-y-6">
                     {(studies as CaseStudyData[]).map((study) => (
                         <motion.div
                             key={study.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="nm-flat p-6 flex flex-col md:flex-row items-center gap-6 group transition-all relative overflow-hidden"
                         >
-                            <div className="flex-1 min-w-0">
-                                <div className="font-semibold text-white mb-1">{study.title}</div>
-                                <div className="text-xs text-white/40">
-                                    /case-studies/{study.slug} · {new Date(study.createdAt).toLocaleDateString()}
+                            <div className="flex-1 min-w-0 space-y-2 text-center md:text-left">
+                                <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start">
+                                    <h4 className="text-lg font-black text-[var(--admin-text-primary)] truncate uppercase tracking-tight">
+                                        {study.title}
+                                    </h4>
+                                    <span className={cn(
+                                        "text-[9px] font-black px-2 py-0.5 rounded-full nm-inset",
+                                        study.status === 'published' ? "text-emerald-500" : "text-amber-500"
+                                    )}>
+                                        {study.status.toUpperCase()}
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest justify-center md:justify-start">
+                                    <span className="flex items-center gap-1.5">
+                                        <ChevronRight size={12} className="text-indigo-400" />
+                                        /case-studies/{study.slug}
+                                    </span>
+                                    <span className="flex items-center gap-1.5">
+                                        <Layout size={12} />
+                                        PROJ_{study.projectId}
+                                    </span>
+                                    <span className="flex items-center gap-1.5">
+                                        <FileText size={12} />
+                                        {new Date(study.createdAt).toLocaleDateString()}
+                                    </span>
                                 </div>
                             </div>
-                            <Badge
-                                variant="outline"
-                                className={study.status === 'published'
-                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                                }
-                            >
-                                {study.status}
-                            </Badge>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
+
+                            <div className="flex gap-4 shrink-0">
+                                <button
                                     onClick={() => toggleStatusMutation.mutate({
                                         id: study.id,
                                         status: study.status === 'published' ? 'draft' : 'published'
                                     })}
+                                    className={cn(
+                                        "w-12 h-12 nm-button rounded-2xl flex items-center justify-center hover:scale-110 transition-all",
+                                        study.status === 'published' ? "text-emerald-500" : "text-amber-500"
+                                    )}
                                     title={study.status === 'published' ? 'Unpublish' : 'Publish'}
-                                    className="text-white/40 hover:text-white"
                                 >
-                                    {study.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
+                                    {study.status === 'published' ? <Eye size={18} /> : <EyeOff size={18} />}
+                                </button>
+                                <button
                                     onClick={() => deleteMutation.mutate(study.id)}
-                                    title="Delete"
-                                    className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                                    className="w-12 h-12 nm-button rounded-2xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                    title="Terminate Entry"
                                 >
-                                    <Trash2 size={16} />
-                                </Button>
+                                    <Trash2 size={18} />
+                                </button>
                             </div>
                         </motion.div>
                     ))}
+
                     {(studies as CaseStudyData[]).length === 0 && (
-                        <EmptyState icon="📝" text="No case studies yet. Generate one from a project above." />
+                        <div className="nm-flat p-24 text-center">
+                            <EmptyState
+                                icon={<FileText size={48} className="opacity-20" />}
+                                text="No distilled case studies indexed. Use the generator above."
+                            />
+                        </div>
                     )}
                 </div>
             )}

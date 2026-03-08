@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, ChevronLeft, ChevronRight, X, BookOpen, Users
+    Brain, Sliders, ChevronLeft, ChevronRight, X, BookOpen, Users, Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -56,96 +57,101 @@ export default function Sidebar({
     const brandInitial = brandName.charAt(0).toUpperCase();
 
     return (
-        <aside
-            className={cn(
-                "fixed inset-y-0 left-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 glass-nav",
-                collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-width)]",
-                mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        <>
+            {/* Mobile Backdrop */}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
+                    onClick={() => setMobileOpen(false)}
+                />
             )}
-        >
-            <div className="flex flex-col h-full bg-slate-900/40 backdrop-blur-xl">
-                {/* Brand */}
-                <div className="h-[72px] flex items-center px-6">
-                    <div className={cn(
-                        "flex items-center gap-3 overflow-hidden p-2 rounded-xl bg-white/5 border border-white/10",
-                        collapsed && "p-1"
-                    )}>
-                        <div className="w-8 h-8 rounded-lg bg-[var(--admin-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-[var(--admin-accent)]/30 overflow-hidden">
-                            {(settings?.personalAvatar && !avatarError) ? (
+
+            <aside className={cn(
+                "fixed lg:sticky top-0 left-0 h-screen z-50 transition-all duration-500 ease-out",
+                "sidebar-container flex flex-col",
+                collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-width)]",
+                mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+            )}>
+                {/* Brand Section */}
+                <div className="h-[72px] flex items-center shrink-0 justify-center relative">
+                    <div
+                        className="icon-container-inset group cursor-pointer"
+                        onClick={() => setCollapsed(!collapsed)}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-rose-500 flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform duration-500">
+                            {settings?.personalAvatar && !avatarError ? (
                                 <img
                                     src={settings.personalAvatar}
-                                    alt="Logo"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover rounded-lg"
                                     onError={() => setAvatarError(true)}
+                                    alt="Logo"
                                 />
                             ) : (
-                                <span className="text-white font-bold text-lg">{brandInitial}</span>
+                                <span className="font-bold text-lg">{brandInitial}</span>
                             )}
                         </div>
-                        {!collapsed && (
-                            <span className="font-heading font-black text-xs tracking-[0.2em] whitespace-nowrap text-[var(--admin-text-primary)]">
-                                {brandName.replace(/\s+/g, '_').toUpperCase()}
-                            </span>
-                        )}
                     </div>
-
-                    {/* Mobile Close */}
-                    <button
-                        onClick={() => setMobileOpen(false)}
-                        className="ml-auto lg:hidden p-2 text-[var(--admin-text-secondary)] hover:text-[var(--admin-accent)] transition-colors"
-                    >
-                        <X size={20} />
-                    </button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-1 mt-2 custom-scrollbar">
+                {/* Navigation Items */}
+                <nav className="flex-1 py-6 px-3 flex flex-col gap-3 overflow-y-auto overflow-x-hidden custom-scrollbar">
                     {NAV_ITEMS.map((item) => {
+                        const isActive = activeTab === item.key;
                         const Icon = item.icon;
-                        const active = activeTab === item.key;
 
                         return (
                             <button
                                 key={item.key}
                                 onClick={() => {
                                     onNavigate(item.key);
-                                    setMobileOpen(false);
+                                    if (window.innerWidth < 1024) setMobileOpen(false);
                                 }}
                                 className={cn(
-                                    "sidebar-link group relative py-3 px-4",
-                                    active && "active bg-indigo-500/10 text-indigo-400"
+                                    "nm-nav-item group relative",
+                                    isActive && "active",
+                                    collapsed && "justify-center p-0 h-[48px] w-[48px] mx-auto shrink-0"
                                 )}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon size={18} className={cn("shrink-0 transition-transform duration-300", active ? "text-indigo-400" : "group-hover:scale-110 group-hover:text-white")} />
+                                <div className={cn(
+                                    "flex items-center justify-center transition-all duration-500 shrink-0",
+                                    isActive ? "text-indigo-500" : "group-hover:text-indigo-400 group-hover:rotate-12"
+                                )}>
+                                    <Icon size={20} strokeWidth={2.5} />
+                                </div>
+
                                 {!collapsed && (
-                                    <span className="text-[11px] font-black uppercase tracking-[0.15em] truncate">
+                                    <span className="font-bold text-xs tracking-tight whitespace-nowrap opacity-100 transition-opacity duration-300 uppercase">
                                         {item.label}
                                     </span>
                                 )}
-                                {active && (
-                                    <div className="absolute left-0 w-1 h-6 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+
+                                {isActive && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full shadow-[0_0_12px_rgba(99,102,241,0.5)]" />
                                 )}
                             </button>
                         );
                     })}
                 </nav>
 
-                {/* Footer Toggle */}
-                <div className="p-4 border-t border-white/5">
-                    <button
-                        onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:flex w-full items-center justify-center p-3 rounded-xl glass-button text-[var(--admin-text-secondary)] hover:text-[var(--admin-accent)] transition-all"
-                    >
-                        {collapsed ? <ChevronRight size={18} /> : (
-                            <div className="flex items-center gap-2">
-                                <ChevronLeft size={18} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Dock System</span>
+                {/* Footer Action */}
+                <div className="p-4 border-t border-black/5 bg-black/[0.01]">
+                    <div className={cn(
+                        "nm-inset p-2.5 transition-all duration-500",
+                        collapsed ? "w-10 h-10 p-0 flex items-center justify-center mx-auto" : "flex items-center gap-3"
+                    )}>
+                        <div className="w-7 h-7 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 animate-pulse">
+                            <Globe size={14} />
+                        </div>
+                        {!collapsed && (
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">Context</span>
+                                <span className="text-[10px] font-bold truncate uppercase">{brandName}</span>
                             </div>
                         )}
-                    </button>
+                    </div>
                 </div>
-            </div>
-        </aside>
+            </aside>
+        </>
     );
 }
