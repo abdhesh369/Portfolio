@@ -163,7 +163,7 @@ The portfolio includes an AI-powered assistant driven by **OpenRouter** (Default
 - **Response (200 OK)**:
   ```json
   {
-    "text": "Based on my records, some of the top projects include [Project Name]..."
+    "message": "Based on my records, some of the top projects include [Project Name]..."
   }
   ```
 - **Error Responses**:

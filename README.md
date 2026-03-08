@@ -8,8 +8,8 @@ This is a monorepo containing both the state-of-the-art cyberpunk frontend exper
 
 | Component | Description | Technologies |
 | :--- | :--- | :--- |
-| **[Frontend](./Frontend/README.md)** | An immersive, HUD-style interactive experience featuring glow effects, particle systems, and complex framer-motion animations. | React 19, Vite, Tailwind CSS, Framer Motion, Radix UI |
-| **[Backend](./Backend/README.md)** | A scalable, type-safe RESTful API integrating a relational database to power dynamic portfolio content. | Node.js, Express, TypeScript, PostgreSQL 16, Drizzle ORM, Zod |
+| **[Frontend](./Frontend/README.md)** | An immersive, HUD-style interactive experience featuring glow effects, particle systems, and complex framer-motion animations. | React 19, Vite 8, Tailwind CSS, Framer Motion, Radix UI |
+| **[Backend](./Backend/README.md)** | A scalable, type-safe RESTful API integrating a relational database to power dynamic portfolio content. | Node.js, Express, TypeScript, PostgreSQL 16 (Neon), Drizzle ORM, Zod |
 
 ### 🚀 Getting Started
 
@@ -23,7 +23,7 @@ Navigate to the `Frontend` directory, install dependencies, and launch Vite. Com
 
 ## 💡 Engineering Highlights
 
-- **Shared Type Safety:** Utilizes a common `shared/` directory to seamlessly align Zod schema validations and Drizzle ORM definitions directly across frontend API consumers and backend route handlers, strictly typing payloads.
+- **Shared Type Safety:** Utilizes a workspace-managed `@portfolio/shared` package to seamlessly align Zod schema validations and Drizzle ORM definitions directly across frontend API consumers and backend route handlers.
 - **Premium User Experience:** Implements complex visual features like glitch hover artifacts, floating ambient particles, responsive layout morphing, and a completely custom-styled interactive cursor to match the cyberpunk theme.
 
 ---

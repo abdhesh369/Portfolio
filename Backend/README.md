@@ -1,6 +1,6 @@
 # Portfolio Backend
 
-A robust and scalable backend for a personal portfolio website, built with Node.js, Express, and TypeScript. It features a science-fiction minimalist HUD-style API and integrates with MySQL using Drizzle ORM.
+A robust and scalable backend for a personal portfolio website, built with Node.js, Express, and TypeScript. It features a science-fiction minimalist HUD-style API and integrates with PostgreSQL using Drizzle ORM.
 
 ## 🚀 Technologies
 
@@ -8,8 +8,8 @@ A robust and scalable backend for a personal portfolio website, built with Node.
 - **Language**: TypeScript
 - **Framework**: Express.js
 - **Validation**: Zod
-- **AI**: OpenRouter (Default: `nvidia/nemotron-nano-12b-v2-vl:free`)
-- **Email**: Nodemailer (Gmail integration)
+- **AI**: OpenRouter (Supports: `arcee-ai/trinity-large-preview:free`, `meta-llama/llama-4-scout:free`, `google/gemma-3-1b-it:free`)
+- **Email**: Resend with BullMQ for background processing
 
 ## 📁 Project Structure
 
@@ -33,8 +33,8 @@ A robust and scalable backend for a personal portfolio website, built with Node.
 
 - **Project Management**: CRUD operations for portfolio projects.
 - **Skills & Experiences**: Manage technical skills and professional history with caching.
-- **AI Assistant**: Context-aware chatbot powered by OpenRouter (Nemotron 12B).
-- **Contact Form**: Secure message submission with automatic Gmail notifications.
+- **AI Assistant**: Context-aware chatbot powered by OpenRouter with multi-model failover support.
+- **Contact Form**: Secure message submission with background email delivery via Resend and BullMQ.
 - **Database Migrations**: Managed via Drizzle Kit for easy schema updates.
 - **Type Safety**: End-to-end type safety using shared schemas and Zod validation.
 
@@ -58,16 +58,16 @@ Create a `.env` file in the root directory:
 
 ```env
 PORT=5000
-# Database (MySQL)
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your_password
-MYSQL_DATABASE=portfolio
+# Database (PostgreSQL)
+DATABASE_URL=postgres://user:password@host:port/database
+
+# Redis (Required for Caching & Queues)
+REDIS_URL=redis://localhost:6379
 
 FRONTEND_URL=http://localhost:5173
-GMAIL_USER=your-email@gmail.com
-GMAIL_APP_PASSWORD=your-app-password
+RESEND_API_KEY=re_...
+CONTACT_EMAIL=your-email@example.com
+OPENROUTER_API_KEY=sk-or-...
 ```
 
 ### 3. Database Initialization

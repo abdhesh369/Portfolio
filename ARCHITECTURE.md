@@ -6,7 +6,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              Frontend (React 19 + Vite 7)        │
+│              Frontend (React 19 + Vite 8)        │
 │  Netlify / Cloudflare Pages                      │
 │  ┌─────────┐ ┌───────────┐ ┌──────────────────┐ │
 │  │ wouter  │ │ TanStack  │ │ framer-motion    │ │
@@ -23,7 +23,7 @@
 │  Render (Docker)                                 │
 │  ┌────────┐ ┌──────────┐ ┌────────────────────┐ │
 │  │ Routes │→│ Services │→│ Repositories       │ │
-│  └────┬───┘ └────┬─────┘ └────────┬───────────┘ │
+│  └────┬───┘ └──────────┘ └────────┬───────────┘ │
 │       │          │                │              │
 │  ┌────▼──┐ ┌─────▼────┐ ┌────────▼───────────┐  │
 │  │ Auth  │ │ BullMQ   │ │ Drizzle ORM        │  │
@@ -43,22 +43,22 @@
 
 ---
 
-## Shared Zod Schema Pattern
+## Shared Package Pattern
 
-The same `shared/schema.ts` file is duplicated in both `Backend/shared/` and `Frontend/shared/`. This file:
+The project utilizes a monorepo structure with a dedicated workspace package `@portfolio/shared` located in `packages/shared/`. This package:
 
 - Defines **all database tables** using `drizzle-orm/pg-core` (`pgTable`)
 - Auto-generates **Zod validation schemas** via `drizzle-zod` (`createInsertSchema`, `createSelectSchema`)
-- Applies additional refinements (string length, email format, etc.) using raw `zod`
+- Exports **TypeScript types** and **validation logic** used by both Frontend and Backend
 
-**Why duplication instead of a shared package?**
+**Benefits of the Shared Package:**
 
-1. **Zero build complexity** — No monorepo tooling (Turborepo, Nx) or `npm link` required
-2. **Identical types** — Both sides get the same TypeScript types and runtime Zod validators
-3. **Frontend uses it for**: form validation, type inference, API response typing
-4. **Backend uses it for**: Drizzle ORM queries, request body validation, API response shaping
+1. **Single Source of Truth** — Database schemas and API contracts are defined in one place.
+2. **End-to-End Type Safety** — Frontend API consumers and Backend handlers stay perfectly in sync.
+3. **Reduced Boilerplate** — Runtime validation and type definitions are generated from the same schema.
+4. **Modern Monorepo Tooling** — Managed via `npm` workspaces for seamless local development.
 
-**Convention**: Any table/schema change must be applied to **both** copies. The Backend copy is the source of truth.
+**Convention**: Any schema changes should be made within `packages/shared/src/` and will be automatically available to both sub-packages after a rebuild.
 
 ---
 
