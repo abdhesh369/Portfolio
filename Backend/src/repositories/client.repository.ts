@@ -63,13 +63,13 @@ export class ClientRepository {
     }
 
     async createProject(data: { clientId: number; title: string; status?: "not_started" | "in_progress" | "review" | "completed"; deadline?: Date; notes?: string }): Promise<ClientProject> {
-        const [inserted] = await db.insert(clientProjectsTable).values(data as any).returning();
+        const [inserted] = await db.insert(clientProjectsTable).values(data).returning();
         if (!inserted) throw new Error("Failed to create client project");
         return inserted as ClientProject;
     }
 
     async updateProject(id: number, data: Partial<{ title: string; status: "not_started" | "in_progress" | "review" | "completed"; deadline: Date; notes: string }>): Promise<ClientProject> {
-        const [updated] = await db.update(clientProjectsTable).set({ ...data, updatedAt: new Date() } as any).where(eq(clientProjectsTable.id, id)).returning();
+        const [updated] = await db.update(clientProjectsTable).set({ ...data, updatedAt: new Date() }).where(eq(clientProjectsTable.id, id)).returning();
         if (!updated) throw new Error("Client project not found");
         return updated as ClientProject;
     }

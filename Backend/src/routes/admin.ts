@@ -11,24 +11,24 @@ export function registerAdminRoutes(app: Router) {
         "/api/v1/admin/optimize-images",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            logger.info({ context: "admin-tools", user: (req as any).user?.email }, "Starting bulk image optimization");
+            logger.info({ context: "admin-tools", user: typeof req.user === 'object' ? req.user.email : undefined }, "Starting bulk image optimization");
 
             try {
                 const stats = await BulkImageService.optimizeAll();
 
-                recordAudit("UPDATE", "bulk_image_optimizer", undefined, null, stats as any);
+                recordAudit("UPDATE", "bulk_image_optimizer", undefined, null, stats as unknown as Record<string, unknown>);
 
                 res.json({
                     success: true,
                     message: "Image optimization completed successfully",
                     data: stats
                 });
-            } catch (error: any) {
+            } catch (error: unknown) {
                 logger.error({ context: "admin-tools", error }, "Bulk image optimization failed");
                 res.status(500).json({
                     success: false,
                     message: "Image optimization failed",
-                    details: error.message
+                    details: error instanceof Error ? error.message : "Unknown error"
                 });
             }
         })
@@ -39,7 +39,7 @@ export function registerAdminRoutes(app: Router) {
         "/api/v1/admin/deploy",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const userEmail = (req as any).user?.email;
+            const userEmail = typeof req.user === 'object' ? req.user.email : undefined;
             logger.info({ context: "admin-tools", user: userEmail }, "Request to trigger production deployment");
 
             if (!env.RENDER_DEPLOY_HOOK_URL) {
@@ -67,12 +67,13 @@ export function registerAdminRoutes(app: Router) {
                     success: true,
                     message: "Production deployment triggered successfully via Render hook."
                 });
-            } catch (error: any) {
-                logger.error({ context: "admin-tools", error: error.message }, "Failed to trigger production deployment");
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Unknown error";
+                logger.error({ context: "admin-tools", error: message }, "Failed to trigger production deployment");
                 res.status(500).json({
                     success: false,
                     message: "Failed to trigger deployment",
-                    details: error.message
+                    details: message
                 });
             }
         })

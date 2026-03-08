@@ -22,14 +22,14 @@ export class CaseStudyRepository {
         return (result as CaseStudy) ?? null;
     }
 
-    async create(data: { projectId: number; title: string; slug: string; content: string; status?: string; generatedAt?: Date }): Promise<CaseStudy> {
-        const [inserted] = await db.insert(caseStudiesTable).values(data as any).returning();
+    async create(data: { projectId: number; title: string; slug: string; content: string; status?: "draft" | "published"; generatedAt?: Date }): Promise<CaseStudy> {
+        const [inserted] = await db.insert(caseStudiesTable).values(data).returning();
         if (!inserted) throw new Error("Failed to create case study");
         return inserted as CaseStudy;
     }
 
-    async update(id: number, data: Partial<{ title: string; content: string; status: string }>): Promise<CaseStudy> {
-        const [updated] = await db.update(caseStudiesTable).set({ ...data, updatedAt: new Date() } as any).where(eq(caseStudiesTable.id, id)).returning();
+    async update(id: number, data: Partial<{ title: string; content: string; status: "draft" | "published" }>): Promise<CaseStudy> {
+        const [updated] = await db.update(caseStudiesTable).set({ ...data, updatedAt: new Date() }).where(eq(caseStudiesTable.id, id)).returning();
         if (!updated) throw new Error("Case study not found");
         return updated as CaseStudy;
     }

@@ -21,22 +21,22 @@ export class SketchpadRepository {
     }
 
     async create(data: { title?: string; createdBy?: string }): Promise<SketchpadSession> {
-        const [inserted] = await db.insert(sketchpadSessionsTable).values(data as any).returning();
+        const [inserted] = await db.insert(sketchpadSessionsTable).values(data).returning();
         if (!inserted) throw new Error("Failed to create sketchpad session");
         return inserted as SketchpadSession;
     }
 
     async updateCanvas(id: number, canvasData: Record<string, unknown>): Promise<SketchpadSession> {
         const [updated] = await db.update(sketchpadSessionsTable)
-            .set({ canvasData, updatedAt: new Date() } as any)
+            .set({ canvasData, updatedAt: new Date() })
             .where(eq(sketchpadSessionsTable.id, id))
             .returning();
         if (!updated) throw new Error("Session not found");
         return updated as SketchpadSession;
     }
 
-    async updateStatus(id: number, status: string): Promise<void> {
-        await db.update(sketchpadSessionsTable).set({ status, updatedAt: new Date() } as any).where(eq(sketchpadSessionsTable.id, id));
+    async updateStatus(id: number, status: "active" | "archived"): Promise<void> {
+        await db.update(sketchpadSessionsTable).set({ status, updatedAt: new Date() }).where(eq(sketchpadSessionsTable.id, id));
     }
 
     async delete(id: number): Promise<void> {

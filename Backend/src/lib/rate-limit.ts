@@ -22,8 +22,11 @@ const createLimiter = (options: {
         legacyHeaders: false,
         skipSuccessfulRequests: options.skipSuccessfulRequests || false,
         store: redis ? new RedisStore({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis version mismatch; pinned in root overrides
-            sendCommand: (...args: string[]) => (redis as any).call(...args),
+            sendCommand: async (...args: string[]) => {
+                const [command, ...rest] = args;
+                const result = await redis!.call(command, ...rest);
+                return result as import("rate-limit-redis").RedisReply;
+            },
             prefix: `rl:${options.keyPrefix}:`,
         }) : undefined,
         handler: (req, res, next, options) => {

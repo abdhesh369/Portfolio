@@ -15,6 +15,13 @@ import {
 import type { InsertSiteSettings } from "@portfolio/shared";
 import { insertSiteSettingsApiSchema } from "@portfolio/shared";
 
+type FormPrimitiveArray<T> = {
+  fields: Record<"id", string>[];
+  append: (value: T) => void;
+  remove: (index: number) => void;
+  move: (from: number, to: number) => void;
+};
+
 // Sub-components
 import { CustomizationHeader } from "../customization/CustomizationHeader";
 import { PersonalBrandingSection } from "../customization/PersonalBrandingSection";
@@ -102,9 +109,8 @@ export function CustomizationTab() {
 
   const { fields: taglineFields, append: appendTagline, remove: removeTagline } = useFieldArray({
     control,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: "heroTaglines" as any,
-  });
+    name: "heroTaglines" as never,
+  }) as unknown as FormPrimitiveArray<string>;
 
   const { fields: navFields, append: appendNav, remove: removeNav, move: moveNav } = useFieldArray<InsertSiteSettings, "navbarLinks">({
     control,
@@ -113,9 +119,8 @@ export function CustomizationTab() {
 
   const { fields: sectionOrderFields, move: moveSection } = useFieldArray({
     control,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: "sectionOrder" as any,
-  });
+    name: "sectionOrder" as never,
+  }) as unknown as FormPrimitiveArray<string>;
 
   const handleNavDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

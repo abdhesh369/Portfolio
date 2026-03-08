@@ -57,10 +57,9 @@ export const queryClient = new QueryClient({
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: unknown) => {
         // Don't retry 401 errors
-        if (error?.message?.includes('401')) {
+        if (error instanceof Error && error.message.includes('401')) {
           return false;
         }
         // Retry up to 3 times for network/5xx errors (handles cold starts)
@@ -73,9 +72,8 @@ export const queryClient = new QueryClient({
       },
     },
     mutations: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      retry: (failureCount, error: any) => {
-        if (error?.message?.includes('401')) {
+      retry: (failureCount, error: unknown) => {
+        if (error instanceof Error && error.message.includes('401')) {
           return false;
         }
         return failureCount < 2;

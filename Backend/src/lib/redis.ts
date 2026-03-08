@@ -101,8 +101,8 @@ export class RedisClient {
         try {
             await this.instance.ping();
             return { healthy: true, message: "Redis connected successfully" };
-        } catch (error: any) {
-            return { healthy: false, message: error.message };
+        } catch (error: unknown) {
+            return { healthy: false, message: error instanceof Error ? error.message : "Redis health check failed" };
         }
     }
 

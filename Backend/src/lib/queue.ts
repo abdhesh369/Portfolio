@@ -122,7 +122,7 @@ export function initQueues() {
         connection: toBullMQConnection(getRedisConnection())
     });
 
-    scopeWorker = createScopeWorker(getRedisConnection() as any);
+    scopeWorker = createScopeWorker(getRedisConnection() as unknown as import("ioredis").Redis);
 
     if (emailWorker) {
         emailWorker.on("completed", (job) => {

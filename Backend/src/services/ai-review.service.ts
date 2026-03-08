@@ -4,6 +4,14 @@ import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
 import type { CodeReview } from "@portfolio/shared";
 
+/** Strip HTML/XML tags and control chars to prevent prompt injection */
+function sanitizeForPrompt(text: string): string {
+    return text
+        .replace(/<[^>]*>/g, "")          // Remove HTML/XML tags
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") // Remove control chars
+        .trim();
+}
+
 export class AIReviewService {
     async getLatestReview(projectId: number): Promise<CodeReview | null> {
         return codeReviewRepository.findByProjectId(projectId);
@@ -91,9 +99,10 @@ ${context.fileTree || "File tree not available"}
             if (text.toLowerCase().includes("accessibility")) badges.push("accessibility");
 
             await codeReviewRepository.updateStatus(reviewId, "completed", text, badges);
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Unknown error";
             logger.error({ err, reviewId }, "AI review generation failed");
-            await codeReviewRepository.updateStatus(reviewId, "failed", undefined, undefined, err.message);
+            await codeReviewRepository.updateStatus(reviewId, "failed", undefined, undefined, message);
         }
     }
 
@@ -117,7 +126,7 @@ ${context.fileTree || "File tree not available"}
             // Fetch file tree (limit to top level and important subdirs)
             const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents`);
             if (treeRes.ok) {
-                const contents = await treeRes.json() as any[];
+                const contents = await treeRes.json() as Array<{ type: string; path: string }>;
                 results.fileTree = contents
                     .map(item => `${item.type === 'dir' ? '📁' : '📄'} ${item.path}`)
                     .join("\n");
@@ -130,16 +139,19 @@ ${context.fileTree || "File tree not available"}
     }
 
     private buildPrompt(project: { title: string; description: string; techStack: string[]; githubUrl: string | null }, githubContext: string): string {
+        const safeTitle = sanitizeForPrompt(project.title);
+        const safeDesc = sanitizeForPrompt(project.description);
+        const safeTech = project.techStack.map(t => sanitizeForPrompt(t)).join(", ");
         return `You are a senior software engineer conducting a code review. Analyze the following project and provide a comprehensive review with actionable feedback.
 ${githubContext}
 
-## Project: ${project.title}
+## Project: ${safeTitle}
 
-**Description:** ${project.description}
+**Description:** ${safeDesc}
 
-**Tech Stack:** ${project.techStack.join(", ")}
+**Tech Stack:** ${safeTech}
 
-${project.githubUrl ? `**GitHub:** ${project.githubUrl}` : ""}
+${project.githubUrl ? `**GitHub:** ${sanitizeForPrompt(project.githubUrl)}` : ""}
 
 Please provide your review in the following markdown format:
 

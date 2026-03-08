@@ -42,8 +42,8 @@ export async function checkDatabaseHealth(): Promise<{ healthy: boolean; message
         };
 
         return await Promise.race([check(), timeout]) as { healthy: boolean; message: string };
-    } catch (error: any) {
-        return { healthy: false, message: error.message };
+    } catch (error: unknown) {
+        return { healthy: false, message: error instanceof Error ? error.message : "Database health check failed" };
     }
 }
 

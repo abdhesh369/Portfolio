@@ -4,6 +4,14 @@ import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
 import type { CaseStudy } from "@portfolio/shared";
 
+/** Strip HTML/XML tags and control chars to prevent prompt injection */
+function sanitizeForPrompt(text: string): string {
+    return text
+        .replace(/<[^>]*>/g, "")          // Remove HTML/XML tags
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") // Remove control chars
+        .trim();
+}
+
 export class CaseStudyService {
     async getAll(): Promise<CaseStudy[]> {
         return caseStudyRepository.findAll();
@@ -26,13 +34,13 @@ export class CaseStudyService {
 
         const prompt = `Generate a detailed case study for the following project. Write in first person as the developer.
 
-## Project: ${project.title}
-**Description:** ${project.description}
-**Tech Stack:** ${project.techStack.join(", ")}
-**Category:** ${project.category}
-${project.problemStatement ? `**Problem:** ${project.problemStatement}` : ""}
-${project.challenges ? `**Challenges:** ${project.challenges}` : ""}
-${project.learnings ? `**Learnings:** ${project.learnings}` : ""}
+## Project: ${sanitizeForPrompt(project.title)}
+**Description:** ${sanitizeForPrompt(project.description)}
+**Tech Stack:** ${project.techStack.map(t => sanitizeForPrompt(t)).join(", ")}
+**Category:** ${sanitizeForPrompt(project.category)}
+${project.problemStatement ? `**Problem:** ${sanitizeForPrompt(project.problemStatement)}` : ""}
+${project.challenges ? `**Challenges:** ${sanitizeForPrompt(project.challenges)}` : ""}
+${project.learnings ? `**Learnings:** ${sanitizeForPrompt(project.learnings)}` : ""}
 
 Generate a comprehensive case study with these sections in markdown:
 ## Overview
@@ -53,7 +61,17 @@ Generate a comprehensive case study with these sections in markdown:
 
         if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
 
-        const data = await response.json() as any;
+        interface GeminiResponse {
+            candidates?: Array<{
+                content?: {
+                    parts?: Array<{
+                        text?: string;
+                    }>;
+                };
+            }>;
+        }
+
+        const data = await response.json() as GeminiResponse;
         const content = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No case study generated.";
 
         const slug = project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -68,7 +86,7 @@ Generate a comprehensive case study with these sections in markdown:
         });
     }
 
-    async update(id: number, data: Partial<{ title: string; content: string; status: string }>): Promise<CaseStudy> {
+    async update(id: number, data: Partial<{ title: string; content: string; status: "draft" | "published" }>): Promise<CaseStudy> {
         return caseStudyRepository.update(id, data);
     }
 

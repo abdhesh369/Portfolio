@@ -9,8 +9,8 @@ async function main() {
         await migrate(db, { migrationsFolder: "drizzle/migrations" });
         logger.info({ context: "migration" }, "Migrations applied successfully!");
         process.exit(0);
-    } catch (err: any) {
-        logger.error({ context: "migration", error: err.message }, "Migration failed");
+    } catch (err: unknown) {
+        logger.error({ context: "migration", error: err instanceof Error ? err.message : "Unknown error" }, "Migration failed");
         process.exit(1);
     } finally {
         await pool.end();

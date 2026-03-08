@@ -27,9 +27,11 @@ async function runBestEffortMigrations() {
 
         await migrate(db, { migrationsFolder: STARTUP_MIGRATIONS_FOLDER });
         logger.info({ context: "schema-bootstrap" }, "✓ Migration check completed");
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        const stack = error instanceof Error ? error.stack : undefined;
         logger.error(
-            { context: "schema-bootstrap", error: error.message, stack: error.stack },
+            { context: "schema-bootstrap", error: message, stack },
             "❌ Migration step failed"
         );
         // We still continue to applyConsistencyChecks which might create basic tables

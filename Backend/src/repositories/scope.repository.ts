@@ -9,7 +9,7 @@ export class ScopeRepository {
     private transformScopeRequest(req: DbScopeRequest): ScopeRequest {
         return {
             ...req,
-            estimation: req.estimation ? (req.estimation as any) : null,
+            estimation: req.estimation ? (req.estimation as ScopeRequest["estimation"]) : null,
             error: req.error ?? null,
             completedAt: req.completedAt ?? null,
         };

@@ -134,8 +134,8 @@ export function registerMessageRoutes(app: Router) {
                 } else {
                     logger.warn({ context: "messages" }, "Skipping email notification: Queue not initialized");
                 }
-            } catch (error: any) {
-                if (error.message === "Message rejected") {
+            } catch (error: unknown) {
+                if (error instanceof Error && error.message === "Message rejected") {
                     logger.warn({ context: "messages", email: req.body.email }, "Spam blocked (Honeypot filled)");
                     // Fake success to trick the bot
                     res.status(201).json({

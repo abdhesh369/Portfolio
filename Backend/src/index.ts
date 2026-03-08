@@ -198,10 +198,10 @@ if (process.env.NODE_ENV !== "production") {
 async function getRedisHealthSafe(): Promise<{ healthy: boolean; message: string }> {
   try {
     return await RedisClient.checkHealth();
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       healthy: false,
-      message: error?.message || "Redis health check failed",
+      message: error instanceof Error ? error.message : "Redis health check failed",
     };
   }
 }

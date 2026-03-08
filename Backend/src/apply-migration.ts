@@ -42,12 +42,13 @@ async function applyMigration() {
                 logger.info({ statement: statement.substring(0, 50) }, `Executing statement`);
                 try {
                     await client.query(statement);
-                } catch (err: any) {
-                    if (err.code === '42P07' || err.code === '42701') {
+                } catch (err: unknown) {
+                    const pgErr = err as { code?: string; message?: string };
+                    if (pgErr.code === '42P07' || pgErr.code === '42701') {
                         // 42P07 = table already exists, 42701 = duplicate column
                         logger.info(`  Already exists, skipping...`);
                     } else {
-                        logger.error({ err }, `  Error executing statement: ${err.message}`);
+                        logger.error({ err }, `  Error executing statement: ${pgErr.message || "Unknown error"}`);
                     }
                 }
             }

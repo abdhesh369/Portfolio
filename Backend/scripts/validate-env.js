@@ -38,7 +38,7 @@ const parseEnv = (filePath) => {
 const requiredKeys = parseEnv(envExamplePath);
 const actualKeys = parseEnv(envPath);
 
-const missingKeys = [...requiredKeys].filter(key => !actualKeys.has(key));
+const missingKeys = [...requiredKeys].filter(key => !actualKeys.has(key) && !process.env[key]);
 
 if (missingKeys.length > 0) {
     console.error(`❌ Your .env file is missing the following required keys:\n  - ${missingKeys.join('\n  - ')}`);

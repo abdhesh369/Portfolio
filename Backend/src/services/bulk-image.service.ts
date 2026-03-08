@@ -135,7 +135,9 @@ export class BulkImageService {
         }
 
         if (updated) {
-            await settingsRepository.updateSettings(settings as any);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { id, updatedAt, ...updateData } = settings;
+            await settingsRepository.updateSettings(updateData);
         }
     }
 

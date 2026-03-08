@@ -29,9 +29,11 @@ export function registerUploadRoutes(app: Router) {
             // Use the hoisted upload middleware
 
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- multer callback requires any
             uploadMem(req, res, async (err: any) => {
                 if (err) {
-                    if (err.code === "LIMIT_FILE_SIZE") {
+                    const multerErr = err as { code?: string };
+                    if (multerErr.code === "LIMIT_FILE_SIZE") {
                         return res.status(413).json({ message: "File too large. Maximum size is 5MB." });
                     }
                     return res.status(500).json({ message: "Upload service error", details: err.message });
@@ -49,10 +51,10 @@ export function registerUploadRoutes(app: Router) {
                         message: "File uploaded successfully",
                         data: { url: result.url }
                     });
-                } catch (error: any) {
+                } catch (error: unknown) {
                     res.status(400).json({
                         success: false,
-                        message: error.message || "Upload failed"
+                        message: error instanceof Error ? error.message : "Upload failed"
                     });
                 }
             });

@@ -60,10 +60,10 @@ export async function buildSystemPrompt(): Promise<string> {
 
     const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.
             Your goal is to answer questions about Abdhesh based on the following information:
-            - Skills: ${skills.slice(0, 30).map((s: any) => s.name).join(", ")}
-            - Projects: ${projects.slice(0, 10).map((p: any) => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
-            - Experiences: ${experiences.slice(0, 5).map((e: any) => `${e.role} at ${e.organization}`).join("; ")}
-            - Articles: ${articles.slice(0, 10).map((a: any) => a.title).join(", ")}
+            - Skills: ${skills.slice(0, 30).map(s => s.name).join(", ")}
+            - Projects: ${projects.slice(0, 10).map(p => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
+            - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
+            - Articles: ${articles.slice(0, 10).map(a => a.title).join(", ")}
 
             
             Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
@@ -115,14 +115,15 @@ const chatLimiter = rateLimit({
 });
 
 export const registerChatRoutes = (router: Router) => {
-    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req: any, res: any) => {
+    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
         try {
             let openrouter: OpenRouter;
             try {
                 openrouter = getOpenRouterClient();
-            } catch (err: any) {
-                logger.error({ context: "chat" }, err.message);
-                return res.status(500).json({ message: err.message });
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : "Chat service unavailable";
+                logger.error({ context: "chat" }, message);
+                return res.status(500).json({ message });
             }
 
             const validatedData: z.infer<typeof chatSchema> = req.body;
@@ -131,8 +132,9 @@ export const registerChatRoutes = (router: Router) => {
             let systemPrompt: string;
             try {
                 systemPrompt = await buildSystemPrompt();
-            } catch (dbErr: any) {
-                logger.error({ context: "chat", error: dbErr.message }, "Failed to build system prompt from DB");
+            } catch (dbErr: unknown) {
+                const message = dbErr instanceof Error ? dbErr.message : "Unknown error";
+                logger.error({ context: "chat", error: message }, "Failed to build system prompt from DB");
                 return res.status(503).json({
                     success: false,
                     message: "Chat is temporarily unavailable. Database connection issue."
@@ -141,9 +143,9 @@ export const registerChatRoutes = (router: Router) => {
 
             // Map internal history to OpenRouter messages format { role, content }
             // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
-            const allMessages = validatedData.messages.map((msg: any) => ({
+            const allMessages = validatedData.messages.map(msg => ({
                 role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
-                content: msg.parts.map((p: any) => p.text).join("\n")
+                content: msg.parts.map(p => p.text).join("\n")
             }));
             const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
 
@@ -157,7 +159,7 @@ export const registerChatRoutes = (router: Router) => {
             ];
 
             // Try each model in order until one succeeds
-            let lastError: any = null;
+            let lastError: unknown = null;
             for (const model of CHAT_MODELS) {
                 try {
                     const response = await openrouter.chat.send({
@@ -171,24 +173,29 @@ export const registerChatRoutes = (router: Router) => {
                     const text = response.choices?.[0]?.message?.content || "No response generated.";
 
                     return res.json({ message: text });
-                } catch (modelErr: any) {
+                } catch (modelErr: unknown) {
                     lastError = modelErr;
-                    logger.warn({ context: "chat", model, error: modelErr.message }, `Model ${model} failed, trying next`);
+                    const msg = modelErr instanceof Error ? modelErr.message : "Unknown error";
+                    logger.warn({ context: "chat", model, error: msg }, `Model ${model} failed, trying next`);
                     continue;
                 }
             }
 
             // All models failed
-            logger.error({ context: "chat", error: lastError?.message }, "All chat models failed");
+            const lastErrMsg = lastError instanceof Error ? lastError.message : "Unknown error";
+            logger.error({ context: "chat", error: lastErrMsg }, "All chat models failed");
             throw lastError;
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const errMsg = error instanceof Error ? error.message : "Unknown error";
+            const errStatus = (error as Record<string, unknown>)?.status;
+            const errResponseData = (error as Record<string, unknown>)?.response;
             logger.error({
                 context: "chat",
-                error: error.message,
-                responseData: error.response?.data
+                error: errMsg,
+                responseData: errResponseData
             }, "Chat API Error");
 
-            if (error.status === 429 || error.message.includes("429")) {
+            if (errStatus === 429 || errMsg.includes("429")) {
                 return res.status(429).json({
                     success: false,
                     message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
