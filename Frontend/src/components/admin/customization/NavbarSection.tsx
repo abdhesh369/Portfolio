@@ -38,7 +38,7 @@ export function NavbarSection({
         >
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <p className="text-xs text-white/40">Manage your site's navigation menu.</p>
+                    <p className="text-xs text-admin-text-muted">Manage your site's navigation menu.</p>
                     <Button type="button" variant="outline" size="sm" onClick={() => appendNav({ label: "New Link", href: "#", icon: "link" })} className="h-7 text-[10px]">
                         <Plus className="w-3 h-3 mr-1" /> Add Link
                     </Button>
@@ -58,10 +58,10 @@ export function NavbarSection({
                                 <SortableItem key={field.id} id={field.id}>
                                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {({ attributes, listeners, isDragging }: { attributes: any; listeners: any; isDragging: boolean }) => (
-                                        <div className={`flex flex-col md:flex-row gap-2 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5"}`}>
+                                        <div className={`flex flex-col md:flex-row gap-2 p-3 rounded-lg nm-inset border transition-colors group ${isDragging ? "border-purple-500/50 nm-inset shadow-xl" : "border-transparent"}`}>
                                             <div className="flex items-center gap-2 grow">
                                                 <div
-                                                    className="text-white/20 group-hover:text-white/40 cursor-grab px-1 active:cursor-grabbing"
+                                                    className="text-admin-text-muted group-hover:text-admin-text-muted cursor-grab px-1 active:cursor-grabbing"
                                                     {...attributes}
                                                     {...listeners}
                                                 >
@@ -93,7 +93,7 @@ export function NavbarSection({
                                                         size="icon"
                                                         disabled={index === 0}
                                                         onClick={() => moveNav(index, index - 1)}
-                                                        className="text-white/30 h-7 w-7"
+                                                        className="text-admin-text-muted h-7 w-7"
                                                     >
                                                         <ChevronDown className="w-4 h-4 rotate-180" />
                                                     </Button>
@@ -103,7 +103,7 @@ export function NavbarSection({
                                                         size="icon"
                                                         disabled={index === navFields.length - 1}
                                                         onClick={() => moveNav(index, index + 1)}
-                                                        className="text-white/30 h-7 w-7"
+                                                        className="text-admin-text-muted h-7 w-7"
                                                     >
                                                         <ChevronDown className="w-4 h-4" />
                                                     </Button>
@@ -113,7 +113,7 @@ export function NavbarSection({
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={() => removeNav(index)}
-                                                    className="text-white/30 hover:text-red-400 hover:bg-red-400/10 h-9 w-9 self-center"
+                                                    className="text-admin-text-muted hover:text-red-400 hover:bg-red-400/10 h-9 w-9 self-center"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </Button>

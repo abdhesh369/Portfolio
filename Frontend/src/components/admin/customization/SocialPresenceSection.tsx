@@ -33,7 +33,7 @@ export function SocialPresenceSection({ register, isOpen, onToggle }: SocialPres
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {SOCIAL_FIELDS.map((social) => (
                     <div key={social.id} className="space-y-2">
-                        <label htmlFor={social.id} className="text-xs font-medium text-white/50 uppercase">{social.label}</label>
+                        <label htmlFor={social.id} className="text-xs font-medium text-admin-text-secondary uppercase">{social.label}</label>
                         <input id={social.id} {...register(social.id as keyof InsertSiteSettings)} type="url" className="admin-input" placeholder="https://..." />
                     </div>
                 ))}

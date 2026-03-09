@@ -26,9 +26,9 @@ export function ActiveFeaturesSection({ register, isOpen, onToggle }: ActiveFeat
         >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {FEATURE_TOGGLES.map((feature) => (
-                    <label key={feature.id} htmlFor={feature.id} className="flex items-center p-3 rounded-lg bg-white/5 border border-white/5 hover:border-purple-500/30 cursor-pointer transition-colors">
-                        <input id={feature.id} {...register(feature.id as keyof InsertSiteSettings)} type="checkbox" className="w-4 h-4 rounded border-white/20 bg-transparent text-purple-600 focus:ring-purple-500" />
-                        <span className="ml-3 text-sm text-white/80">{feature.label}</span>
+                    <label key={feature.id} htmlFor={feature.id} className="flex items-center p-3 rounded-lg nm-inset border border-transparent hover:border-purple-500/30 cursor-pointer transition-colors">
+                        <input id={feature.id} {...register(feature.id as keyof InsertSiteSettings)} type="checkbox" className="w-4 h-4 rounded border-admin-text-muted/30 bg-transparent text-purple-600 focus:ring-purple-500" />
+                        <span className="ml-3 text-sm text-admin-text-primary">{feature.label}</span>
                     </label>
                 ))}
             </div>

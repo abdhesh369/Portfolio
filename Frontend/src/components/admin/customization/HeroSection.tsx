@@ -23,16 +23,16 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
         >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label htmlFor="heroGreeting" className="text-xs font-medium text-white/50 uppercase">Greeting Text</label>
+                    <label htmlFor="heroGreeting" className="text-xs font-medium text-admin-text-secondary uppercase">Greeting Text</label>
                     <input id="heroGreeting" {...register("heroGreeting")} className="admin-input" />
                 </div>
                 <div className="space-y-2">
-                    <label htmlFor="heroBadgeText" className="text-xs font-medium text-white/50 uppercase">Badge Text</label>
+                    <label htmlFor="heroBadgeText" className="text-xs font-medium text-admin-text-secondary uppercase">Badge Text</label>
                     <input id="heroBadgeText" {...register("heroBadgeText")} className="admin-input" />
                 </div>
                 <div className="md:col-span-2 space-y-3">
                     <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-white/50 uppercase">Dynamic Taglines</label>
+                        <label className="text-xs font-medium text-admin-text-secondary uppercase">Dynamic Taglines</label>
                         <Button type="button" variant="outline" size="sm" onClick={() => appendTagline("")} className="h-7 text-[10px]">
                             <Plus className="w-3 h-3 mr-1" /> Add Tagline
                         </Button>
@@ -50,7 +50,7 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => removeTagline(index)}
-                                    className="text-white/30 hover:text-red-400 hover:bg-red-400/10 shrink-0"
+                                    className="text-admin-text-muted hover:text-red-400 hover:bg-red-400/10 shrink-0"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </Button>

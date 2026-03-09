@@ -18,7 +18,6 @@ interface SidebarProps {
 
 const NAV_ITEMS = [
     { key: "overview", label: "Overview", icon: LayoutDashboard },
-    { key: "analytics", label: "Analytics", icon: BarChart3 },
     { key: "messages", label: "Messages", icon: Mail },
     { key: "projects", label: "Projects", icon: FolderKanban },
     { key: "skills", label: "Skills", icon: Zap },

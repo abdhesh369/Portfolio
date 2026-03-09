@@ -74,57 +74,57 @@ export function AvailabilitySlotsSection({
         <CollapsibleSection title="Availability Calendar" isOpen={isOpen} onToggle={onToggle}>
             <div className="space-y-6">
                 {/* Add New Slot Form */}
-                <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-4">
-                    <h4 className="text-sm font-medium text-white/80 flex items-center gap-2">
+                <div className="nm-inset border border-transparent rounded-lg p-4 space-y-4">
+                    <h4 className="text-sm font-medium text-admin-text-primary flex items-center gap-2">
                         <Plus size={16} />
                         Add New Availability Slot
                     </h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs text-white/40 uppercase tracking-wider font-bold">Start Date & Time</label>
+                            <label className="text-xs text-admin-text-muted uppercase tracking-wider font-bold">Start Date & Time</label>
                             <div className="flex gap-2">
                                 <input
                                     type="date"
                                     value={newSlot.startDate}
                                     onChange={(e) => setNewSlot({ ...newSlot, startDate: e.target.value })}
-                                    className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                                    className="flex-1 bg-transparent border border-transparent rounded px-3 py-2 text-admin-text-primary focus:outline-none focus:border-purple-500/50"
                                 />
                                 <input
                                     type="time"
                                     value={newSlot.startTime}
                                     onChange={(e) => setNewSlot({ ...newSlot, startTime: e.target.value })}
-                                    className="w-24 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                                    className="w-24 bg-transparent border border-transparent rounded px-3 py-2 text-admin-text-primary focus:outline-none focus:border-purple-500/50"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs text-white/40 uppercase tracking-wider font-bold">End Date & Time</label>
+                            <label className="text-xs text-admin-text-muted uppercase tracking-wider font-bold">End Date & Time</label>
                             <div className="flex gap-2">
                                 <input
                                     type="date"
                                     value={newSlot.endDate}
                                     onChange={(e) => setNewSlot({ ...newSlot, endDate: e.target.value })}
-                                    className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                                    className="flex-1 bg-transparent border border-transparent rounded px-3 py-2 text-admin-text-primary focus:outline-none focus:border-purple-500/50"
                                 />
                                 <input
                                     type="time"
                                     value={newSlot.endTime}
                                     onChange={(e) => setNewSlot({ ...newSlot, endTime: e.target.value })}
-                                    className="w-24 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                                    className="w-24 bg-transparent border border-transparent rounded px-3 py-2 text-admin-text-primary focus:outline-none focus:border-purple-500/50"
                                 />
                             </div>
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs text-white/40 uppercase tracking-wider font-bold">Label (Optional)</label>
+                            <label className="text-xs text-admin-text-muted uppercase tracking-wider font-bold">Label (Optional)</label>
                             <input
                                 type="text"
                                 placeholder="e.g., Client Meeting, Project Sync"
                                 value={newSlot.label}
                                 onChange={(e) => setNewSlot({ ...newSlot, label: e.target.value })}
-                                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                                className="w-full bg-transparent border border-transparent rounded px-3 py-2 text-admin-text-primary focus:outline-none focus:border-purple-500/50"
                             />
                         </div>
                     </div>
@@ -132,7 +132,7 @@ export function AvailabilitySlotsSection({
                     <button
                         type="button"
                         onClick={handleAddSlot}
-                        className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition-colors"
+                        className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-admin-text-primary font-medium py-2 px-4 rounded transition-colors"
                     >
                         <Plus size={18} />
                         Add Slot
@@ -141,9 +141,9 @@ export function AvailabilitySlotsSection({
 
                 {/* List of Slots */}
                 <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-white/80">Configured Slots</h4>
+                    <h4 className="text-sm font-medium text-admin-text-primary">Configured Slots</h4>
                     {sortedSlots.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-white/10 rounded-lg text-white/40">
+                        <div className="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-transparent rounded-lg text-admin-text-muted">
                             <Calendar size={32} className="mb-2 opacity-20" />
                             <p className="text-sm">No availability slots configured yet.</p>
                         </div>
@@ -152,7 +152,7 @@ export function AvailabilitySlotsSection({
                             {sortedSlots.map((slot) => (
                                 <div
                                     key={slot.id}
-                                    className="group flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg hover:border-white/20 transition-all"
+                                    className="group flex items-center justify-between p-3 nm-inset border border-transparent rounded-lg hover:border-admin-text-muted/30 transition-all"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="bg-purple-500/10 p-2 rounded text-purple-400">
@@ -160,16 +160,16 @@ export function AvailabilitySlotsSection({
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-medium text-white">
+                                                <span className="text-sm font-medium text-admin-text-primary">
                                                     {format(parseISO(slot.startDate), "PPP")}
                                                 </span>
                                                 {slot.label && (
-                                                    <span className="text-[10px] px-1.5 py-0.5 bg-white/10 rounded text-white/60 uppercase font-bold tracking-tight">
+                                                    <span className="text-[10px] px-1.5 py-0.5 nm-inset rounded text-admin-text-secondary uppercase font-bold tracking-tight">
                                                         {slot.label}
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="text-xs text-white/40">
+                                            <div className="text-xs text-admin-text-muted">
                                                 {format(parseISO(slot.startDate), "p")} - {format(parseISO(slot.endDate), "p")}
                                             </div>
                                         </div>
@@ -178,7 +178,7 @@ export function AvailabilitySlotsSection({
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveSlot(slot.id)}
-                                        className="p-2 text-white/20 hover:text-red-400 hover:bg-red-400/10 rounded transition-all opacity-0 group-hover:opacity-100"
+                                        className="p-2 text-admin-text-muted hover:text-red-400 hover:bg-red-400/10 rounded transition-all opacity-0 group-hover:opacity-100"
                                     >
                                         <Trash2 size={16} />
                                     </button>

@@ -38,7 +38,7 @@ export function SectionLayoutSection({
             onToggle={onToggle}
         >
             <div className="space-y-4">
-                <p className="text-xs text-white/40 italic">
+                <p className="text-xs text-admin-text-muted italic">
                     Drag sections to reorder how they appear on your homepage. Use the toggle to hide/show sections.
                 </p>
 
@@ -59,16 +59,16 @@ export function SectionLayoutSection({
                                 return (
                                     <SortableItem key={field.id} id={field.id}>
                                         {({ attributes, listeners, isDragging }: { attributes: DraggableAttributes; listeners: SyntheticListenerMap | undefined; isDragging: boolean }) => (
-                                            <div className={`flex items-center gap-3 p-3 rounded-lg bg-white/5 border transition-colors group ${isDragging ? "border-purple-500/50 bg-white/10 shadow-xl" : "border-white/5 hover:border-purple-500/30"}`}>
+                                            <div className={`flex items-center gap-3 p-3 rounded-lg nm-inset border transition-colors group ${isDragging ? "border-purple-500/50 nm-inset shadow-xl" : "border-transparent hover:border-purple-500/30"}`}>
                                                 <div
-                                                    className="text-white/20 group-hover:text-white/40 cursor-grab px-1 active:cursor-grabbing"
+                                                    className="text-admin-text-muted group-hover:text-admin-text-muted cursor-grab px-1 active:cursor-grabbing"
                                                     {...attributes}
                                                     {...listeners}
                                                 >
                                                     <GripVertical className="w-4 h-4" />
                                                 </div>
 
-                                                <span className="text-sm font-medium text-white/80 grow">{label}</span>
+                                                <span className="text-sm font-medium text-admin-text-primary grow">{label}</span>
 
                                                 <div className="flex items-center gap-4">
                                                     <label className="flex items-center cursor-pointer">
@@ -77,7 +77,7 @@ export function SectionLayoutSection({
                                                             {...register(`sectionVisibility.${sectionId}` as Path<InsertSiteSettings>)}
                                                             className="sr-only peer"
                                                         />
-                                                        <div className="relative w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white/40 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
+                                                        <div className="relative w-9 h-5 nm-inset peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-admin-text-primary/10 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white/40 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
                                                     </label>
 
                                                     <div className="flex gap-1">
@@ -87,7 +87,7 @@ export function SectionLayoutSection({
                                                             size="icon"
                                                             disabled={index === 0}
                                                             onClick={() => moveSection(index, index - 1)}
-                                                            className="text-white/30 h-7 w-7"
+                                                            className="text-admin-text-muted h-7 w-7"
                                                         >
                                                             <ChevronDown className="w-3 h-3 rotate-180" />
                                                         </Button>
@@ -97,7 +97,7 @@ export function SectionLayoutSection({
                                                             size="icon"
                                                             disabled={index === sectionOrderFields.length - 1}
                                                             onClick={() => moveSection(index, index + 1)}
-                                                            className="text-white/30 h-7 w-7"
+                                                            className="text-admin-text-muted h-7 w-7"
                                                         >
                                                             <ChevronDown className="w-3 h-3" />
                                                         </Button>

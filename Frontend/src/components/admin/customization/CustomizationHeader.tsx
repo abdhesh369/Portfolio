@@ -12,11 +12,11 @@ export function CustomizationHeader({ onExport, onImportClick, onReset }: Custom
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-                <h2 className="text-3xl font-bold text-white tracking-tight">Customization</h2>
-                <p className="text-white/40 text-sm mt-1">Configure your branding, layout, and toggles.</p>
+                <h2 className="text-3xl font-bold text-admin-text-primary tracking-tight">Customization</h2>
+                <p className="text-admin-text-muted text-sm mt-1">Configure your branding, layout, and toggles.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={onExport} className="text-white/70">
+                <Button variant="outline" size="sm" onClick={onExport} className="text-admin-text-secondary">
                     <Download className="w-4 h-4 mr-2" /> Export
                 </Button>
 
@@ -24,12 +24,12 @@ export function CustomizationHeader({ onExport, onImportClick, onReset }: Custom
                     variant="outline"
                     size="sm"
                     onClick={onImportClick}
-                    className="text-white/70"
+                    className="text-admin-text-secondary"
                 >
                     <Upload className="w-4 h-4 mr-2" /> Import
                 </Button>
 
-                <Button variant="outline" size="sm" onClick={onReset} className="text-white/70 hover:text-red-400">
+                <Button variant="outline" size="sm" onClick={onReset} className="text-admin-text-secondary hover:text-red-400">
                     <RotateCcw className="w-4 h-4 mr-2" /> Reset
                 </Button>
             </div>

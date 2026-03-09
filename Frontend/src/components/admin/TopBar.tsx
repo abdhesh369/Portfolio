@@ -1,7 +1,8 @@
 import {
-    Menu, Bell, Search, User, LogOut, ChevronRight, Settings
+    Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings
 } from "lucide-react";
 import { useAuth } from "@/hooks/auth-context";
+import { useTheme } from "@/components/theme-provider";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ interface TopBarProps {
 
 export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: TopBarProps) {
     const { user, logout } = useAuth();
+    const { theme, setTheme } = useTheme();
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
@@ -72,8 +74,23 @@ export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: T
                             <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
                         </button>
 
-                        <button className="w-10 h-10 nm-button hidden sm:flex hover:text-indigo-500">
-                            <Settings size={18} />
+                        <button
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            className="w-10 h-10 nm-button hidden sm:flex hover:text-indigo-500 relative overflow-hidden"
+                            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                        >
+                            <div className={cn(
+                                "absolute inset-0 flex items-center justify-center transition-transform duration-500",
+                                theme === "dark" ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
+                            )}>
+                                <Moon size={18} />
+                            </div>
+                            <div className={cn(
+                                "absolute inset-0 flex items-center justify-center transition-transform duration-500",
+                                theme === "light" ? "rotate-0 opacity-100" : "rotate-90 opacity-0"
+                            )}>
+                                <Sun size={18} />
+                            </div>
                         </button>
 
                         <div className="w-px h-6 bg-black/5 mx-1 hidden sm:block" />

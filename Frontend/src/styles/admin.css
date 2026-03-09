@@ -75,6 +75,31 @@ body.admin-mode {
   border: none;
 }
 
+/* Customization Inputs */
+.admin-input {
+  width: 100%;
+  background: var(--nm-bg);
+  box-shadow: inset 4px 4px 8px var(--nm-shadow),
+    inset -4px -4px 8px var(--nm-light);
+  border-radius: 12px;
+  border: none;
+  padding: 12px 20px;
+  color: var(--admin-text-primary);
+  font-size: 14px;
+  transition: all 0.3s var(--nm-timing);
+  outline: none;
+}
+
+.admin-input:focus {
+  box-shadow: inset 5px 5px 10px var(--nm-shadow),
+    inset -5px -5px 10px var(--nm-light),
+    0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.admin-input::placeholder {
+  color: var(--admin-text-muted);
+}
+
 /* Interactive Soft Button */
 .nm-button {
   background: var(--nm-bg);
