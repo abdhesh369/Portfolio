@@ -6,10 +6,9 @@ import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
-import { SpringToggle } from "../AdminShared";
+import { SpringToggle, AdminButton } from "../AdminShared";
 
 interface SectionLayoutSectionProps {
-    register: UseFormRegister<InsertSiteSettings>;
     control: Control<InsertSiteSettings>;
     sectionOrderFields: { id: string }[];
     moveSection: UseFieldArrayMove;
@@ -93,22 +92,26 @@ export function SectionLayoutSection({
                                                     <div className="h-10 w-px bg-white/5" />
 
                                                     <div className="flex gap-2">
-                                                        <button
+                                                        <AdminButton
                                                             type="button"
+                                                            variant="secondary"
+                                                            size="sm"
                                                             disabled={index === 0}
                                                             onClick={() => moveSection(index, index - 1)}
-                                                            className="p-2 rounded-lg bg-white/5 text-admin-text-muted hover:text-white disabled:opacity-20 transition-all hover:bg-white/10"
+                                                            className="h-8 w-8 p-0"
                                                         >
-                                                            <ChevronUp size={16} />
-                                                        </button>
-                                                        <button
+                                                            <ChevronUp size={14} />
+                                                        </AdminButton>
+                                                        <AdminButton
                                                             type="button"
+                                                            variant="secondary"
+                                                            size="sm"
                                                             disabled={index === sectionOrderFields.length - 1}
                                                             onClick={() => moveSection(index, index + 1)}
-                                                            className="p-2 rounded-lg bg-white/5 text-admin-text-muted hover:text-white disabled:opacity-20 transition-all hover:bg-white/10"
+                                                            className="h-8 w-8 p-0"
                                                         >
-                                                            <ChevronDown size={16} />
-                                                        </button>
+                                                            <ChevronDown size={14} />
+                                                        </AdminButton>
                                                     </div>
                                                 </div>
                                             </div>

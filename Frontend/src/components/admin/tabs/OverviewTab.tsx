@@ -8,6 +8,7 @@ import StatCard from "../StatCard";
 import ActivityFeed from "../ActivityFeed";
 import SystemStatus from "../SystemStatus";
 import TerminalConsole from "../TerminalConsole";
+import { AdminButton } from "../AdminShared";
 import type { AdminTabProps } from "./types";
 
 interface HealthData {
@@ -37,7 +38,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             const start = performance.now();
             const data = await apiFetch("/health", { signal: controller.signal });
             const elapsed = Math.round(performance.now() - start);
-            setHealthData({ ...data, responseTimeMs: elapsed });
+            setHealthData(prev => ({ ...prev, ...data, responseTimeMs: elapsed }));
         } catch (err) {
             if (err instanceof DOMException && err.name === "AbortError") return;
             setHealthData({
@@ -100,13 +101,13 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                     </p>
                 </div>
 
-                <button
+                <AdminButton
                     onClick={() => onNavigate?.("projects")}
-                    className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                    variant="primary"
+                    icon={Plus}
                 >
-                    <Plus size={20} strokeWidth={3} className="mr-3" />
                     New_Project
-                </button>
+                </AdminButton>
             </div>
 
             {/* Neumorphic Stats Grid */}

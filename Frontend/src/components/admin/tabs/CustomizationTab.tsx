@@ -143,7 +143,7 @@ export function CustomizationTab() {
   const [activeSection, setActiveSection] = useState<string | null>("personal");
 
   const toggleSection = (id: string) => {
-    setActiveSection(activeSection === id ? null : id);
+    setActiveSection(prev => prev === id ? null : id);
   };
 
   const onSubmit = async (data: InsertSiteSettings) => {
@@ -282,7 +282,7 @@ export function CustomizationTab() {
         />
 
         <SectionLayoutSection
-          register={register}
+          control={control}
           sectionOrderFields={sectionOrderFields}
           moveSection={moveSection}
           sensors={sensors}
@@ -294,7 +294,7 @@ export function CustomizationTab() {
         />
 
         <ActiveFeaturesSection
-          register={register}
+          control={control}
           isOpen={activeSection === "features"}
           onToggle={() => toggleSection("features")}
         />

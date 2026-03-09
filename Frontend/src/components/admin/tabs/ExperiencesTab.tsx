@@ -1,6 +1,6 @@
 import React, { useState, type FormEvent } from "react";
 import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FloatingLabelInput } from "@/components/admin/AdminShared";
 import type { Experience } from "@portfolio/shared/schema";
 import { Briefcase, Calendar, Building2, Trash2, Edit2, Plus, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,27 +90,27 @@ export function ExperiencesTab(_props: AdminTabProps) {
                 <div className="nm-flat p-8 rounded-3xl border border-white/5">
                     <form onSubmit={save} className="space-y-8 max-w-4xl mx-auto">
                         <div className="grid md:grid-cols-2 gap-8">
-                            <FormField
+                            <FloatingLabelInput
                                 label="Role *"
                                 value={editing.role || ""}
-                                onChange={(v) => setEditing({ ...editing, role: v })}
+                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, role: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Senior Frontend Developer"
                             />
-                            <FormField
+                            <FloatingLabelInput
                                 label="Organization *"
                                 value={editing.organization || ""}
-                                onChange={(v) => setEditing(prev => prev ? { ...prev, organization: v } : null)}
+                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, organization: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Google, Amazon, etc."
                             />
                         </div>
 
                         <div className="nm-inset p-1 rounded-2xl">
-                            <FormField
+                            <FloatingLabelInput
                                 label="Period * (Label only)"
                                 value={editing.period || ""}
-                                onChange={(v) => setEditing(prev => prev ? { ...prev, period: v } : null)}
+                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, period: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Jan 2020 - Present"
                                 className="nm-flat border-0 shadow-none bg-transparent"
@@ -122,14 +122,14 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                 label="Start Date *"
                                 type="date"
                                 value={editing.startDate ? (editing.startDate instanceof Date ? editing.startDate.toISOString().split('T')[0] : editing.startDate.toString().split('T')[0]) : ""}
-                                onChange={(v) => setEditing({ ...editing, startDate: v })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, startDate: v } : null)}
                                 required
                             />
                             <FormField
                                 label="End Date"
                                 type="date"
                                 value={editing.endDate ? (editing.endDate instanceof Date ? editing.endDate.toISOString().split('T')[0] : editing.endDate.toString().split('T')[0]) : ""}
-                                onChange={(v) => setEditing({ ...editing, endDate: v || null })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, endDate: v || null } : null)}
                             />
                         </div>
 
@@ -149,7 +149,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                         <button
                                             key={type}
                                             type="button"
-                                            onClick={() => setEditing({ ...editing, type })}
+                                            onClick={() => setEditing(prev => prev ? { ...prev, type } : null)}
                                             className={cn(
                                                 "py-3 rounded-xl text-xs font-bold transition-all",
                                                 editing.type === type

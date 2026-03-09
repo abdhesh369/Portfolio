@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
-import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
+import { FormField, EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -330,7 +330,7 @@ function ReplyDialog({ message }: { message: Message }) {
 
                     {/* Compose Area */}
                     <div className="lg:col-span-3 p-10 flex flex-col nm-inset bg-transparent gap-8 overflow-y-auto custom-scrollbar">
-                        <FormField label="COMM_SUBJECT" value={subject} onChange={setSubject} placeholder="Transmission Subject..." />
+                        <FloatingLabelInput label="COMM_SUBJECT" value={subject} onChange={(e: any) => setSubject(e.target.value)} placeholder="Transmission Subject..." />
 
                         <div className="flex-1 flex flex-col space-y-3">
                             <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.25em] ml-1">COMM_CONTENT</label>

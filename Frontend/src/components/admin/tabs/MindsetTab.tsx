@@ -1,7 +1,7 @@
 import React, { useState, type FormEvent } from "react";
 import { useMindset } from "@/hooks/use-portfolio";
 import { useAdminMindset } from "@/hooks/admin/use-admin-mindset";
-import { FormField, FormTextarea, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import type { Mindset } from "@portfolio/shared/schema";
 import {
     Loader2, Plus, Pencil, Trash2, Brain, Lightbulb,
@@ -70,13 +70,15 @@ export function MindsetTab() {
         return (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
                 <div className="flex items-center gap-4 mb-10">
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
-                        className="nm-button w-12 h-12 rounded-2xl hover:text-indigo-500"
+                        variant="secondary"
+                        icon={ChevronRight}
+                        className="w-12 h-12 rounded-2xl nm-button hover:text-indigo-500 flex items-center justify-center transition-all"
                         aria-label="Back"
+                        iconClassName="rotate-180"
                     >
-                        <ChevronRight size={24} className="rotate-180" />
-                    </button>
+                    </AdminButton>
                     <div>
                         <h2 className="text-3xl font-black text-[var(--admin-text-primary)] uppercase tracking-tight">
                             {editing.id ? "Edit Philosophy" : "Add New Principle"}
@@ -95,7 +97,7 @@ export function MindsetTab() {
                         <FormField
                             label="Principle Title"
                             value={editing.title}
-                            onChange={(v) => setEditing({ ...editing, title: v })}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, title: v }) : null)}
                             placeholder="e.g., Radical Transparency"
                             required
                         />
@@ -110,7 +112,7 @@ export function MindsetTab() {
                                         <button
                                             key={opt.value}
                                             type="button"
-                                            onClick={() => setEditing({ ...editing, icon: opt.value })}
+                                            onClick={() => setEditing(prev => prev ? ({ ...prev, icon: opt.value }) : null)}
                                             className={cn(
                                                 "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300",
                                                 isActive
@@ -130,7 +132,7 @@ export function MindsetTab() {
                     <FormTextarea
                         label="Philosophical Breakdown"
                         value={editing.description}
-                        onChange={(v) => setEditing({ ...editing, description: v })}
+                        onChange={(v) => setEditing(prev => prev ? ({ ...prev, description: v }) : null)}
                         placeholder="Explain the 'why' behind this principle..."
                         required
                     />
@@ -143,20 +145,21 @@ export function MindsetTab() {
                     />
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button
+                        <AdminButton
                             type="submit"
-                            disabled={saving}
+                            isLoading={saving}
                             className="nm-button-primary px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center min-w-[200px]"
                         >
-                            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (editing.id ? "Save Changes" : "Deploy Insight")}
-                        </button>
-                        <button
+                            {editing.id ? "Save Changes" : "Deploy Insight"}
+                        </AdminButton>
+                        <AdminButton
                             type="button"
                             onClick={() => setEditing(null)}
+                            variant="secondary"
                             className="nm-button px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm text-[var(--admin-text-muted)] hover:text-[var(--admin-text-primary)]"
                         >
                             Abort
-                        </button>
+                        </AdminButton>
                     </div>
                 </form>
             </div>
@@ -173,13 +176,13 @@ export function MindsetTab() {
                         Operating System for Thought & Action
                     </p>
                 </div>
-                <button
+                <AdminButton
                     onClick={handleNew}
+                    icon={Plus}
                     className="nm-button-primary px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-3 self-start md:self-center group"
                 >
-                    <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
                     New Insight
-                </button>
+                </AdminButton>
             </div>
 
             {!mindset?.length ? (
@@ -202,20 +205,22 @@ export function MindsetTab() {
                                         <IconComp size={22} strokeWidth={2.5} className="animate-float" />
                                     </div>
                                     <div className="flex gap-3">
-                                        <button
+                                        <AdminButton
                                             onClick={() => handleEdit(item)}
-                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-indigo-500 transition-all shadow-sm"
+                                            variant="secondary"
+                                            icon={Pencil}
+                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-indigo-500 transition-all shadow-sm flex items-center justify-center"
                                             title="Edit"
                                         >
-                                            <Pencil size={16} />
-                                        </button>
-                                        <button
+                                        </AdminButton>
+                                        <AdminButton
                                             onClick={() => handleDelete(item.id)}
-                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-rose-500 transition-all shadow-sm"
+                                            variant="secondary"
+                                            icon={Trash2}
+                                            className="nm-button w-10 h-10 rounded-xl text-[var(--admin-text-muted)] hover:text-rose-500 transition-all shadow-sm flex items-center justify-center"
                                             title="Delete"
                                         >
-                                            <Trash2 size={16} />
-                                        </button>
+                                        </AdminButton>
                                     </div>
                                 </div>
 

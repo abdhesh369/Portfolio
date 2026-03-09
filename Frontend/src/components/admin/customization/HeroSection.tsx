@@ -56,13 +56,15 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
                                     placeholder="e.g. Building high-performance apps"
                                     {...register(`heroTaglines.${index}` as const)}
                                 />
-                                <button
+                                <AdminButton
                                     type="button"
+                                    variant="ghost"
+                                    size="sm"
                                     onClick={() => removeTagline(index)}
-                                    className="p-3 rounded-xl bg-pink-500/5 text-pink-500 hover:bg-pink-500/10 transition-colors"
+                                    className="h-11 w-11 p-0 text-pink-500 hover:text-pink-400 hover:bg-pink-500/10 rounded-xl"
                                 >
                                     <Trash2 size={16} />
-                                </button>
+                                </AdminButton>
                             </div>
                         ))}
                     </div>

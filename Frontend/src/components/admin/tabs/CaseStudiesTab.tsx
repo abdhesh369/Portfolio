@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
     FileText, Trash2, Sparkles, Eye, EyeOff,
-    ChevronRight, Layout, Plus
+    ChevronRight, Layout, Plus, Loader2
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
-import { EmptyState } from "@/components/admin/AdminShared";
+import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
 import { cn } from "@/lib/utils";
 
 interface CaseStudyData {
@@ -87,15 +87,16 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
 
                 <div className="flex flex-wrap gap-4">
                     {(projects as ProjectData[]).map((p) => (
-                        <button
+                        <AdminButton
                             key={p.id}
                             onClick={() => generateMutation.mutate(p.id)}
-                            disabled={generateMutation.isPending}
-                            className="nm-button nm-button-primary h-12 px-6 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 disabled:opacity-50"
+                            isLoading={generateMutation.isPending}
+                            icon={Sparkles}
+                            variant="primary"
+                            className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest"
                         >
-                            <Sparkles size={14} className={generateMutation.isPending ? "animate-spin" : ""} />
                             {p.title}
-                        </button>
+                        </AdminButton>
                     ))}
                     {projects.length === 0 && (
                         <p className="text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest italic py-2 px-4 nm-inset rounded-xl">
@@ -165,37 +166,37 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
                             </div>
 
                             <div className="flex gap-4 shrink-0">
-                                <button
+                                <AdminButton
                                     onClick={() => toggleStatusMutation.mutate({
                                         id: study.id,
                                         status: study.status === 'published' ? 'draft' : 'published'
                                     })}
+                                    variant="secondary"
+                                    icon={study.status === 'published' ? Eye : EyeOff}
                                     className={cn(
-                                        "w-12 h-12 nm-button rounded-2xl flex items-center justify-center hover:scale-110 transition-all",
+                                        "w-12 h-12 nm-button rounded-2xl",
                                         study.status === 'published' ? "text-emerald-500" : "text-amber-500"
                                     )}
                                     title={study.status === 'published' ? 'Unpublish' : 'Publish'}
                                 >
-                                    {study.status === 'published' ? <Eye size={18} /> : <EyeOff size={18} />}
-                                </button>
-                                <button
+                                </AdminButton>
+                                <AdminButton
                                     onClick={() => deleteMutation.mutate(study.id)}
-                                    className="w-12 h-12 nm-button rounded-2xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                    variant="secondary"
+                                    icon={Trash2}
+                                    className="w-12 h-12 nm-button rounded-2xl text-rose-500 transition-transform"
                                     title="Terminate Entry"
                                 >
-                                    <Trash2 size={18} />
-                                </button>
+                                </AdminButton>
                             </div>
                         </motion.div>
                     ))}
 
                     {(studies as CaseStudyData[]).length === 0 && (
-                        <div className="nm-flat p-24 text-center">
-                            <EmptyState
-                                icon={<FileText size={48} className="opacity-20" />}
-                                text="No distilled case studies indexed. Use the generator above."
-                            />
-                        </div>
+                        <EmptyState
+                            icon={<FileText size={48} className="opacity-20" />}
+                            text="No distilled case studies indexed. Use the generator above."
+                        />
                     )}
                 </div>
             )}

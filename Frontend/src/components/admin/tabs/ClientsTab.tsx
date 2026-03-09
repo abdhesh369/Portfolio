@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield } from 'lucide-react';
+import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
 
@@ -58,15 +59,17 @@ export const ClientsTab: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                <button
-                    onClick={() => setShowForm(!showForm)}
+                <AdminButton
+                    onClick={() => setShowForm(prev => !prev)}
+                    variant={showForm ? "secondary" : "primary"}
+                    icon={showForm ? X : Plus}
                     className={cn(
                         "nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300",
                         showForm ? "text-rose-500" : "text-primary"
                     )}
                 >
-                    {showForm ? <><X size={14} className="mr-2" /> Cancel</> : <><Plus size={14} className="mr-2" /> New_Client</>}
-                </button>
+                    {showForm ? "Cancel" : "New_Client"}
+                </AdminButton>
             </div>
 
             {/* Create Form */}
@@ -87,7 +90,7 @@ export const ClientsTab: React.FC = () => {
                             <input
                                 placeholder="Client name"
                                 value={form.name}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
                                 required
                                 className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             />
@@ -98,7 +101,7 @@ export const ClientsTab: React.FC = () => {
                                 placeholder="client@company.com"
                                 type="email"
                                 value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                                 required
                                 className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             />
@@ -108,39 +111,31 @@ export const ClientsTab: React.FC = () => {
                             <input
                                 placeholder="Organization (optional)"
                                 value={form.company}
-                                onChange={(e) => setForm({ ...form, company: e.target.value })}
+                                onChange={(e) => setForm(prev => ({ ...prev, company: e.target.value }))}
                                 className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                         </div>
                     </div>
                     <div className="mt-6 flex justify-end">
-                        <button
+                        <AdminButton
                             type="submit"
-                            disabled={createMutation.isPending}
-                            className="nm-button px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 hover:nm-convex transition-all duration-300 disabled:opacity-50"
+                            isLoading={createMutation.isPending}
+                            loadingText="Registering..."
+                            className="nm-button px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 hover:nm-convex transition-all duration-300"
                         >
-                            {createMutation.isPending ? "Registering..." : "Register_Client"}
-                        </button>
+                            Register_Client
+                        </AdminButton>
                     </div>
                 </form>
             )}
 
-            {/* Client List */}
             {isLoading ? (
-                <div className="flex items-center justify-center py-24">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                        <span className="font-bold tracking-[0.3em] text-[10px] text-muted-foreground animate-pulse uppercase">Loading_Clients...</span>
-                    </div>
-                </div>
+                <LoadingSkeleton />
             ) : (clients as ClientData[]).length === 0 ? (
-                <div className="nm-inset rounded-[3rem] p-16 flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 rounded-full nm-flat flex items-center justify-center mb-6">
-                        <Users className="w-8 h-8 opacity-20" />
-                    </div>
-                    <h4 className="font-black uppercase tracking-[0.3em] text-sm opacity-30">No Clients Registered</h4>
-                    <p className="text-xs text-muted-foreground mt-3 max-w-xs opacity-50">Click "New_Client" to register your first portal user.</p>
-                </div>
+                <EmptyState
+                    icon={<Users size={48} />}
+                    text="No Clients Registered. Click 'New_Client' to register your first portal user."
+                />
             ) : (
                 <div className="space-y-4">
                     {(clients as ClientData[]).map((client, idx) => (
@@ -169,20 +164,23 @@ export const ClientsTab: React.FC = () => {
                             </div>
 
                             <div className="flex items-center gap-2 shrink-0">
-                                <button
+                                <AdminButton
                                     onClick={() => copyToken(client)}
-                                    title="Copy portal token"
+                                    variant="secondary"
+                                    icon={copiedId === client.id ? Check : Copy}
+                                    iconClassName={copiedId === client.id ? "text-emerald-500" : ""}
                                     className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+                                    title="Copy portal token"
                                 >
-                                    {copiedId === client.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                                </button>
-                                <button
+                                </AdminButton>
+                                <AdminButton
                                     onClick={() => deleteMutation.mutate(client.id)}
-                                    title="Delete client"
+                                    variant="secondary"
+                                    icon={Trash2}
                                     className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-rose-500 transition-colors"
+                                    title="Delete client"
                                 >
-                                    <Trash2 size={14} />
-                                </button>
+                                </AdminButton>
                             </div>
                         </div>
                     ))}

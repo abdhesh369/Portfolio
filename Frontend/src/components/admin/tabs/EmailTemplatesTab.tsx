@@ -2,7 +2,7 @@ import React, { useState, type FormEvent } from "react";
 import DOMPurify from "dompurify";
 import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import type { EmailTemplate } from "@portfolio/shared/schema";
 import { useEmailTemplates } from "@/hooks/portfolio/use-email-templates";
 import { FileText, Plus, Trash2, Edit3, X, Check, Mail } from "lucide-react";
@@ -83,13 +83,14 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                             </p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
-                        className="nm-button h-12 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-rose-500 transition-colors"
+                        variant="secondary"
+                        icon={X}
+                        className="nm-button h-12 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-rose-500 transition-colors flex items-center justify-center"
                     >
-                        <X size={16} className="mr-2" />
                         Cancel
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <form onSubmit={save} className="nm-flat p-10 space-y-8 max-w-4xl mx-auto rounded-[2.5rem]">
@@ -97,14 +98,14 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                         <FormField
                             label="Template Name *"
                             value={editing.name}
-                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, name: v }) : null)}
                             required
                             placeholder="e.g. Inquiry Auto-reply"
                         />
                         <FormField
                             label="Email Subject *"
                             value={editing.subject}
-                            onChange={(v) => setEditing({ ...editing, subject: v })}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, subject: v }) : null)}
                             required
                             placeholder='e.g. Re: Your inquiry'
                         />
@@ -114,20 +115,20 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Template Body *</label>
                         <RichTextEditor
                             value={editing.body}
-                            onChange={(v) => setEditing({ ...editing, body: v })}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, body: v }) : null)}
                         />
                         <p className="text-[10px] text-muted-foreground italic">Use {"{name}"} to insert the sender's name automatically.</p>
                     </div>
 
                     <div className="flex items-center gap-4 pt-4">
-                        <button
+                        <AdminButton
                             type="submit"
-                            disabled={isSaving}
-                            className="nm-button h-14 px-10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:nm-convex transition-all duration-300 disabled:opacity-50"
+                            isLoading={isSaving}
+                            icon={Check}
+                            className="nm-button h-14 px-10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:nm-convex transition-all duration-300"
                         >
-                            <Check size={16} className="mr-2" />
-                            {isSaving ? "Saving..." : (editing.id ? "Update_Template" : "Create_Template")}
-                        </button>
+                            {editing.id ? "Update_Template" : "Create_Template"}
+                        </AdminButton>
                     </div>
                 </form>
             </div>
@@ -151,13 +152,13 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                         </p>
                     </div>
                 </div>
-                <button
+                <AdminButton
                     onClick={() => setEditing({ ...emptyTemplate })}
+                    icon={Plus}
                     className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:nm-convex transition-all duration-300"
                 >
-                    <Plus size={14} className="mr-2" />
                     New_Template
-                </button>
+                </AdminButton>
             </div>
 
             {templates.length === 0 ? (
@@ -188,18 +189,22 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
                             />
 
                             <div className="flex gap-3 pt-2 border-t border-black/5">
-                                <button
+                                <AdminButton
                                     onClick={() => setEditing(tpl as Partial<EmailTemplate> & typeof emptyTemplate)}
-                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors"
+                                    variant="secondary"
+                                    icon={Edit3}
+                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors flex items-center justify-center"
                                 >
-                                    <Edit3 size={12} className="mr-1.5" /> Edit
-                                </button>
-                                <button
+                                    Edit
+                                </AdminButton>
+                                <AdminButton
                                     onClick={() => deleteTemplate(tpl.id)}
-                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-rose-500 opacity-60 group-hover:opacity-100 transition-all"
+                                    variant="secondary"
+                                    icon={Trash2}
+                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-rose-500 opacity-60 group-hover:opacity-100 transition-all flex items-center justify-center"
                                 >
-                                    <Trash2 size={12} className="mr-1.5" /> Delete
-                                </button>
+                                    Delete
+                                </AdminButton>
                             </div>
                         </div>
                     ))}

@@ -14,6 +14,8 @@ export function AdminButton({
     isSuccess,
     disabled,
     icon: Icon,
+    iconClassName,
+    loadingText = "SYNCING...",
     className,
     title,
     type = "button"
@@ -27,6 +29,8 @@ export function AdminButton({
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
     icon?: any;
+    iconClassName?: string;
+    loadingText?: string;
     className?: string;
     title?: string;
 }) {
@@ -69,7 +73,7 @@ export function AdminButton({
                         className="flex items-center gap-2"
                     >
                         <Loader2 size={16} className="animate-spin text-purple-400" />
-                        <span className="tracking-[0.2em]">SYNCING...</span>
+                        <span className="tracking-[0.2em]">{loadingText.toUpperCase()}</span>
                     </motion.div>
                 ) : isSuccess ? (
                     <motion.div
@@ -89,7 +93,7 @@ export function AdminButton({
                         animate={{ opacity: 1 }}
                         className="flex items-center gap-3"
                     >
-                        {Icon && <Icon size={size === 'sm' ? 14 : 18} />}
+                        {Icon && <Icon size={size === 'sm' ? 14 : 18} className={iconClassName} />}
                         <span className="tracking-[0.15em] font-black uppercase">{children}</span>
                     </motion.div>
                 )}

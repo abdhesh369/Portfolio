@@ -97,21 +97,17 @@ function ArticleItem({ article, onEdit, onDelete }: {
             <div className="flex gap-4 shrink-0">
                 <AdminButton
                     onClick={() => onEdit(article)}
-                    className="w-12 h-12 rounded-2xl"
+                    className="w-12 h-12 rounded-2xl p-0 flex items-center justify-center"
                     title="Edit Protocol"
                     icon={Edit3}
-                >
-                    {""}
-                </AdminButton>
+                />
                 <AdminButton
                     variant="danger"
                     onClick={() => onDelete(article.id)}
-                    className="w-12 h-12 rounded-2xl"
+                    className="w-12 h-12 rounded-2xl p-0 flex items-center justify-center"
                     title="Terminate Entry"
                     icon={Trash2}
-                >
-                    {""}
-                </AdminButton>
+                />
             </div>
         </div>
     );
@@ -294,7 +290,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                                         type="text"
                                         placeholder="JS, TECH, DESIGN..."
                                         value={tagInput}
-                                        onChange={(e) => setTagInput(prev => (e.target.value))}
+                                        onChange={(e) => setTagInput(e.target.value)}
                                         className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-full transition-all"
                                     />
                                     <Tag size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
@@ -307,25 +303,26 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Meta_Title"
                                 value={editing.metaTitle ?? ""}
-                                onChange={(v) => setEditing({ ...editing, metaTitle: v })}
+                                onChange={(v) => setEditing(prev => ({ ...prev, metaTitle: v } as any))}
                                 placeholder="SEARCH ENGINE TITLE"
                             />
                             <FormTextarea
                                 label="Meta_Description"
                                 value={editing.metaDescription ?? ""}
-                                onChange={(v) => setEditing({ ...editing, metaDescription: v })}
+                                onChange={(v) => setEditing(prev => ({ ...prev, metaDescription: v } as any))}
                                 placeholder="SEARCH EXCERPT..."
                             />
                         </div>
 
-                        <button
+                        <AdminButton
                             type="submit"
-                            disabled={saving}
-                            className="nm-button nm-button-primary w-full h-16 text-[12px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
+                            isLoading={saving}
+                            variant="primary"
+                            className="w-full h-16"
+                            icon={Save}
                         >
-                            <Save size={20} />
-                            {saving ? "EXECUTING..." : (editing.id ? "SYNC_PROTOCOL" : "INIT_PROTOCOL")}
-                        </button>
+                            {editing.id ? "SYNC_PROTOCOL" : "INIT_PROTOCOL"}
+                        </AdminButton>
                     </div>
                 </form >
             </div >
@@ -366,25 +363,30 @@ export function ArticlesTab(_props: AdminTabProps) {
                         />
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
-                    <button
+                    <AdminButton
                         onClick={openNew}
-                        className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                        variant="primary"
+                        icon={Plus}
+                        className="h-14 px-10"
                     >
-                        <Plus size={20} strokeWidth={3} className="mr-3" />
                         New_Article
-                    </button>
+                    </AdminButton>
                 </div>
             </div>
 
             {isLoading ? (
                 <div className="grid gap-8">
                     {[1, 2, 3].map(i => (
-                        <div key={i} className="h-32 nm-flat rounded-3xl animate-pulse" />
+                        <LoadingSkeleton key={i} className="h-32 w-full" />
                     ))}
                 </div>
             ) : !filtered.length ? (
                 <div className="nm-flat p-24 text-center">
-                    <EmptyState icon={<FileText size={48} className="opacity-20" />} text={searchQuery ? "No matching protocols found" : "No articles yet indexed"} />
+                    <EmptyState
+                        icon={FileText}
+                        text={searchQuery ? "No matching protocols found" : "No articles yet indexed"}
+                        className="opacity-20"
+                    />
                 </div>
             ) : (
                 <div className="grid gap-8">
@@ -401,3 +403,4 @@ export function ArticlesTab(_props: AdminTabProps) {
         </div>
     );
 }
+

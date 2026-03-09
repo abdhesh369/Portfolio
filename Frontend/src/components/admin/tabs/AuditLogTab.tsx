@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import { toast } from "react-hot-toast";
-import { LoadingSkeleton, EmptyState } from "@/components/admin/AdminShared";
-import { ChevronDown, ChevronRight, Filter, RefreshCw, Shield } from "lucide-react";
+import { LoadingSkeleton, EmptyState, AdminButton, FormSelect } from "@/components/admin/AdminShared";
+import { ChevronDown, ChevronRight, Filter, RefreshCw, Shield, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AuditEntry {
@@ -78,29 +78,25 @@ export function AuditLogTab() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Entity filter */}
-            <div className="nm-inset px-4 py-2.5 rounded-2xl flex items-center gap-3">
-              <Filter size={14} className="text-muted-foreground" />
-              <select
-                value={filter}
-                onChange={(e) => { setFilter(e.target.value); setOffset(0); }}
-                className="bg-transparent text-xs font-bold text-foreground outline-none cursor-pointer uppercase tracking-wider"
-              >
-                {ENTITY_FILTERS.map((f) => (
-                  <option key={f} value={f}>
-                    {f === "all" ? "All Entities" : f.replace(/_/g, " ")}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
+          <div className="flex items-center gap-4">
+            <FormSelect
+              label=""
+              value={filter}
+              onChange={(val) => { setFilter(val); setOffset(0); }}
+              options={ENTITY_FILTERS.map(f => ({
+                label: f === "all" ? "All Entities" : f.replace(/_/g, " "),
+                value: f
+              }))}
+              icon={<Filter size={14} />}
+              className="!space-y-0 min-w-[180px]"
+            />
+            <AdminButton
               onClick={fetchEntries}
-              className="nm-button p-3 rounded-2xl text-muted-foreground hover:text-primary transition-colors"
-              title="Refresh"
-            >
-              <RefreshCw size={16} />
-            </button>
+              variant="secondary"
+              icon={RefreshCw}
+              className="w-12 h-12 rounded-2xl"
+              title="Refresh Logs"
+            />
           </div>
         </div>
       </div>
@@ -190,26 +186,32 @@ export function AuditLogTab() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 pt-4">
-          <button
-            onClick={() => setOffset(Math.max(0, offset - limit))}
+        <div className="flex items-center justify-center gap-6 pt-8">
+          <AdminButton
+            onClick={() => setOffset(prev => Math.max(0, prev - limit))}
             disabled={offset === 0}
-            className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors"
+            variant="secondary"
+            icon={ChevronLeft}
+            className="nm-button pl-4 pr-6 py-3 rounded-2xl"
           >
             Previous
-          </button>
-          <div className="nm-inset px-5 py-2.5 rounded-xl">
-            <span className="text-xs font-bold tracking-wider">
-              {currentPage} <span className="text-muted-foreground mx-1">of</span> {totalPages}
-            </span>
+          </AdminButton>
+
+          <div className="nm-inset px-6 py-3 rounded-2xl">
+            <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground">
+              PHASE <span className="text-primary">{currentPage}</span> / {totalPages}
+            </p>
           </div>
-          <button
-            onClick={() => setOffset(offset + limit)}
+
+          <AdminButton
+            onClick={() => setOffset(prev => prev + limit)}
             disabled={currentPage >= totalPages}
-            className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors"
+            variant="secondary"
+            icon={ChevronRight}
+            className="nm-button pl-6 pr-4 py-3 rounded-2xl"
           >
             Next
-          </button>
+          </AdminButton>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, type FormEvent } from "react";
 import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState, FormSelect } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton } from "@/components/admin/AdminShared";
 import { Plus, Trash2, Edit3, X, Check, Zap, Cpu, Code, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Skill } from "@portfolio/shared/schema";
@@ -61,13 +61,14 @@ export function SkillsTab(_props: AdminTabProps) {
                             </p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
+                        variant="secondary"
+                        icon={X}
                         className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
                     >
-                        <X size={16} className="mr-2" />
                         Cancel_Task
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <form onSubmit={save} className="nm-flat p-10 space-y-10 max-w-4xl mx-auto">
@@ -134,13 +135,14 @@ export function SkillsTab(_props: AdminTabProps) {
                     />
 
                     <div className="flex gap-6 pt-6 border-t border-black/5">
-                        <button
+                        <AdminButton
                             type="submit"
-                            disabled={isPending}
+                            isLoading={isPending}
+                            variant="primary"
                             className="nm-button nm-button-primary h-14 px-12 text-[12px] font-black uppercase tracking-[0.2em] flex-1"
                         >
                             {isPending ? "Executing..." : (editing.id ? "Update_Protocol" : "Initialize_Skill")}
-                        </button>
+                        </AdminButton>
                     </div>
                 </form>
             </div>
@@ -188,13 +190,14 @@ export function SkillsTab(_props: AdminTabProps) {
                         />
                         <Code size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing({ ...emptySkill })}
+                        variant="primary"
+                        icon={Plus}
                         className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
                     >
-                        <Plus size={20} strokeWidth={3} className="mr-3" />
                         New_Skill
-                    </button>
+                    </AdminButton>
                 </div>
             </div>
 
@@ -236,18 +239,24 @@ export function SkillsTab(_props: AdminTabProps) {
                                                 </div>
                                             </div>
                                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                                                <button
+                                                <AdminButton
                                                     onClick={() => setEditing({ ...s })}
-                                                    className="w-8 h-8 nm-button rounded-lg text-indigo-500 hover:scale-110"
+                                                    variant="secondary"
+                                                    icon={Edit3}
+                                                    size="sm"
+                                                    className="w-8 h-8 nm-button rounded-lg text-indigo-500 hover:scale-110 flex items-center justify-center"
+                                                    title="Edit"
                                                 >
-                                                    <Edit3 size={14} />
-                                                </button>
-                                                <button
+                                                </AdminButton>
+                                                <AdminButton
                                                     onClick={() => deleteSkill(s.id)}
-                                                    className="w-8 h-8 nm-button rounded-lg text-rose-500 hover:scale-110"
+                                                    variant="secondary"
+                                                    icon={Trash2}
+                                                    size="sm"
+                                                    className="w-8 h-8 nm-button rounded-lg text-rose-500 hover:scale-110 flex items-center justify-center"
+                                                    title="Delete"
                                                 >
-                                                    <Trash2 size={14} />
-                                                </button>
+                                                </AdminButton>
                                             </div>
                                         </div>
 
@@ -293,19 +302,21 @@ export function SkillsTab(_props: AdminTabProps) {
                         <div className="w-px h-8 nm-inset opacity-20" />
 
                         <div className="flex items-center gap-4">
-                            <button
+                            <AdminButton
                                 onClick={handleBulkDelete}
+                                variant="secondary"
+                                icon={Trash2}
                                 className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/10"
                             >
-                                <Trash2 size={16} className="mr-2" />
                                 DELETE_ALL
-                            </button>
-                            <button
+                            </AdminButton>
+                            <AdminButton
                                 onClick={() => setSelectedIds([])}
-                                className="nm-button h-12 w-12 text-[var(--admin-text-secondary)]"
+                                variant="secondary"
+                                icon={X}
+                                className="nm-button h-12 w-12 text-[var(--admin-text-secondary)] flex items-center justify-center"
                             >
-                                <X size={18} />
-                            </button>
+                            </AdminButton>
                         </div>
                     </div>
                 </div>

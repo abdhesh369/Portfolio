@@ -205,18 +205,24 @@ export function ServicesTab(_props: AdminTabProps) {
                 </div>
               </div>
               <div className="flex gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                <button
+                <AdminButton
                   onClick={() => openEdit(svc)}
+                  variant="secondary"
+                  icon={Edit3}
+                  size="sm"
                   className="w-10 h-10 nm-button rounded-xl text-indigo-500 hover:scale-110 flex items-center justify-center transition-all"
+                  title="Edit"
                 >
-                  <Edit3 size={16} />
-                </button>
-                <button
+                </AdminButton>
+                <AdminButton
                   onClick={() => deleteService(svc.id)}
+                  variant="secondary"
+                  icon={Trash2}
+                  size="sm"
                   className="w-10 h-10 nm-button rounded-xl text-rose-500 hover:scale-110 flex items-center justify-center transition-all"
+                  title="Delete"
                 >
-                  <Trash2 size={16} />
-                </button>
+                </AdminButton>
               </div>
             </div>
           ))}

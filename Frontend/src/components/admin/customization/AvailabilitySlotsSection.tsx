@@ -189,13 +189,15 @@ export function AvailabilitySlotsSection({
                                         </div>
                                     </div>
 
-                                    <button
+                                    <AdminButton
                                         type="button"
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => handleRemoveSlot(slot.id)}
-                                        className="p-3 rounded-xl bg-pink-500/5 text-pink-500 hover:bg-pink-500/10 transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+                                        className="h-10 w-10 p-0 text-pink-500 hover:text-pink-400 hover:bg-pink-500/10 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
                                     >
                                         <Trash2 size={16} />
-                                    </button>
+                                    </AdminButton>
                                 </div>
                             ))}
                         </div>

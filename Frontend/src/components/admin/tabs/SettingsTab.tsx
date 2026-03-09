@@ -1,6 +1,6 @@
 import React from "react";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/portfolio";
-import { LoadingSkeleton } from "@/components/admin/AdminShared";
+import { LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch } from "@/lib/api-helpers";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
     DndContext,
@@ -291,24 +290,15 @@ export function SettingsTab() {
                                             Synchronize external media with Cloudinary and inject neural optimization parameters for lightning speed.
                                         </p>
                                     </div>
-                                    <Button
+                                    <AdminButton
                                         onClick={handleOptimizeImages}
-                                        disabled={isOptimizing}
-                                        className={cn(
-                                            "nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300",
-                                            "text-[10px] font-black uppercase tracking-[0.2em] group/btn",
-                                            isOptimizing && "opacity-50"
-                                        )}
+                                        isLoading={isOptimizing}
+                                        variant={isOptimizing ? "secondary" : "primary"}
+                                        loadingText="Optimizing..."
+                                        className="nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em] group/btn"
                                     >
-                                        {isOptimizing ? (
-                                            <>
-                                                <RefreshCcw className="w-4 h-4 mr-3 animate-spin text-primary" />
-                                                Optimizing...
-                                            </>
-                                        ) : (
-                                            "Execute Optimizer"
-                                        )}
-                                    </Button>
+                                        Execute Optimizer
+                                    </AdminButton>
                                 </div>
 
                                 {stats && (
@@ -339,27 +329,16 @@ export function SettingsTab() {
                                         Transmit code manifests to the production cluster for a fresh deployment sequence.
                                     </p>
                                 </div>
-                                <Button
+                                <AdminButton
                                     onClick={handleDeploy}
-                                    disabled={isDeploying}
-                                    className={cn(
-                                        "nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300",
-                                        "text-[10px] font-black uppercase tracking-[0.2em] text-blue-500",
-                                        isDeploying && "opacity-50"
-                                    )}
+                                    isLoading={isDeploying}
+                                    variant={isDeploying ? "secondary" : "primary"}
+                                    loadingText="Syncing..."
+                                    icon={isDeploying ? undefined : Rocket}
+                                    className="nm-flat hover:nm-convex active:nm-inset h-14 px-8 rounded-2xl transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em] text-blue-500"
                                 >
-                                    {isDeploying ? (
-                                        <>
-                                            <RefreshCcw className="w-4 h-4 mr-3 animate-spin" />
-                                            Syncing...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Rocket className="w-4 h-4 mr-3" />
-                                            Initialize Uplink
-                                        </>
-                                    )}
-                                </Button>
+                                    Initialize Uplink
+                                </AdminButton>
                             </div>
                         </div>
                     </div>
