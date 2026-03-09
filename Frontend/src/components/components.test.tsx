@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ClientPortal } from "./ClientPortal";
@@ -9,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 vi.mock("@tanstack/react-query", async (importOriginal) => {
     const actual = await importOriginal();
     return {
-        ...actual as any,
+        ...actual as Record<string, unknown>,
         useQuery: vi.fn(() => ({ data: null, isLoading: true })),
         useMutation: vi.fn(() => ({ mutate: vi.fn() })),
     };
@@ -18,14 +19,14 @@ vi.mock("@tanstack/react-query", async (importOriginal) => {
 // Mock Framer Motion to avoid issues in test environment
 vi.mock("framer-motion", () => ({
     motion: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
+        button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <button {...props}>{children}</button>,
     },
     m: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
+        button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <button {...props}>{children}</button>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => <>{children}</>,
 }));
 
 // Mock Canvas context
@@ -38,7 +39,7 @@ HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
     scale: vi.fn(),
     arc: vi.fn(),
     strokeRect: vi.fn(),
-})) as any;
+})) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
 const queryClient = new QueryClient();
 

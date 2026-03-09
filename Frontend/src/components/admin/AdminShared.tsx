@@ -1,6 +1,7 @@
 
 
 import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 export function FormField({ label, name, defaultValue, value, onChange, placeholder, required, type = "text", min, max, className }: {
     label: string; name?: string; defaultValue?: string; value?: string; onChange?: (v: string) => void; placeholder?: string; required?: boolean; type?: string; min?: string | number; max?: string | number; className?: string;

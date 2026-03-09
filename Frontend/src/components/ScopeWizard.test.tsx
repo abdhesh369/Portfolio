@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ScopeWizard } from "./ScopeWizard";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -16,11 +17,11 @@ vi.mock("@/lib/api-helpers", () => ({
 // Mock framer-motion to avoid animation issues in tests
 vi.mock("framer-motion", () => ({
     motion: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => <>{children}</>,
     m: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
     }
 }));
 
@@ -33,7 +34,7 @@ describe("ScopeWizard", () => {
             message: "",
             estimation: null,
             error: null,
-        } as any);
+        } as ReturnType<typeof useScopeStream>);
     });
 
     it("should render initial step", () => {

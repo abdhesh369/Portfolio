@@ -1,9 +1,8 @@
 import React, { useState, type FormEvent } from "react";
 import { useArticles } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
+
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { apiFetch } from "@/lib/api-helpers";
@@ -38,7 +37,7 @@ function ArticleItem({ article, onEdit, onDelete }: {
     onEdit: (a: Article) => void,
     onDelete: (id: number) => void
 }) {
-    const statusConfig: Record<string, { label: string, color: string, icon: any }> = {
+    const statusConfig: Record<string, { label: string, color: string, icon: React.ComponentType<{ className?: string }> }> = {
         "draft": { label: "DRAFT", color: "text-amber-500", icon: FileText },
         "published": { label: "PUBLISHED", color: "text-emerald-500", icon: Globe },
         "archived": { label: "ARCHIVED", color: "text-slate-400", icon: X },
@@ -173,9 +172,9 @@ export function ArticlesTab(_props: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err) {
+        } catch (_err) {
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
-            toast({ title: "Execution failed", description: err instanceof Error ? err.message : "Internal error", variant: "destructive" });
+            toast({ title: "Execution failed", description: _err instanceof Error ? _err.message : "Internal error", variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -194,7 +193,7 @@ export function ArticlesTab(_props: AdminTabProps) {
             toast({ title: "Protocol deleted" });
             clearQueryCache();
             refetch();
-        } catch (err) {
+        } catch (_err) {
             if (previousArticles) queryClient.setQueryData(["articles"], previousArticles);
             toast({ title: "Termination failed", variant: "destructive" });
         }

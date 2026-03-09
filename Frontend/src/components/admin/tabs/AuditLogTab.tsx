@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import { toast } from "react-hot-toast";
 import { LoadingSkeleton, EmptyState } from "@/components/admin/AdminShared";
-import { ChevronDown, ChevronRight, Filter, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronRight, Filter, RefreshCw, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AuditEntry {
   id: number;
@@ -19,10 +20,10 @@ interface AuditResponse {
   total: number;
 }
 
-const ACTION_COLORS: Record<string, string> = {
-  CREATE: "var(--color-cyan)",
-  UPDATE: "var(--color-purple-light)",
-  DELETE: "var(--color-destructive, #f87171)",
+const ACTION_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
+  CREATE: { color: "text-emerald-500", bg: "bg-emerald-500/5", border: "border-emerald-500/20" },
+  UPDATE: { color: "text-indigo-500", bg: "bg-indigo-500/5", border: "border-indigo-500/20" },
+  DELETE: { color: "text-rose-500", bg: "bg-rose-500/5", border: "border-rose-500/20" },
 };
 
 const ENTITY_FILTERS = ["all", "project", "article", "skill", "experience", "service", "testimonial", "guestbook_entry", "message", "seo_settings", "email_template", "upload"];
@@ -44,9 +45,8 @@ export function AuditLogTab() {
       const data: AuditResponse = await apiFetch(`/api/v1/admin/audit-log?${params}`);
       setEntries(data.entries);
       setTotal(data.total);
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       toast.error("Failed to load audit logs");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -60,51 +60,48 @@ export function AuditLogTab() {
   const currentPage = Math.floor(offset / limit) + 1;
 
   return (
-    <div className="space-y-6">
+    <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-10 pb-24">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-slate-100" style={{ letterSpacing: "0.04em" }}>
-            Audit Log
-          </h2>
-          <p className="text-xs text-slate-400 mt-1" style={{ letterSpacing: "0.06em" }}>
-            Append-only record of all admin actions ({total} total)
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Entity filter */}
-          <div className="flex items-center gap-2">
-            <Filter size={13} className="text-slate-400" />
-            <select
-              value={filter}
-              onChange={(e) => { setFilter(e.target.value); setOffset(0); }}
-              className="text-xs rounded-md px-3 py-1.5"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                color: 'var(--foreground-hex, #e2e8f0)',
-                fontFamily: "inherit",
-              }}
-            >
-              {ENTITY_FILTERS.map((f) => (
-                <option key={f} value={f} style={{ background: "#0a0a12" }}>
-                  {f === "all" ? "All Entities" : f.charAt(0).toUpperCase() + f.slice(1) + "s"}
-                </option>
-              ))}
-            </select>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 nm-flat rounded-2xl text-primary">
+              <Shield className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-black tracking-tighter" style={{ fontFamily: "var(--font-display)" }}>
+                Audit_Log
+              </h2>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">
+                Immutable Record &bull; {total} Entries
+              </p>
+            </div>
           </div>
-          <button
-            onClick={fetchEntries}
-            className="rounded-md p-2 cursor-pointer"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#94a3b8",
-            }}
-            title="Refresh"
-          >
-            <RefreshCw size={13} />
-          </button>
+
+          <div className="flex items-center gap-3">
+            {/* Entity filter */}
+            <div className="nm-inset px-4 py-2.5 rounded-2xl flex items-center gap-3">
+              <Filter size={14} className="text-muted-foreground" />
+              <select
+                value={filter}
+                onChange={(e) => { setFilter(e.target.value); setOffset(0); }}
+                className="bg-transparent text-xs font-bold text-foreground outline-none cursor-pointer uppercase tracking-wider"
+              >
+                {ENTITY_FILTERS.map((f) => (
+                  <option key={f} value={f}>
+                    {f === "all" ? "All Entities" : f.replace(/_/g, " ")}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={fetchEntries}
+              className="nm-button p-3 rounded-2xl text-muted-foreground hover:text-primary transition-colors"
+              title="Refresh"
+            >
+              <RefreshCw size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -114,18 +111,9 @@ export function AuditLogTab() {
       ) : entries.length === 0 ? (
         <EmptyState icon="📋" text="No audit log entries found" />
       ) : (
-        <div
-          className="rounded-lg overflow-hidden"
-          style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
+        <div className="nm-flat rounded-[2.5rem] overflow-hidden">
           {/* Header row */}
-          <div
-            className="grid grid-cols-[40px_80px_100px_80px_1fr] gap-3 px-4 py-2.5 text-[10px] text-slate-400 uppercase"
-            style={{ letterSpacing: "0.1em", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-          >
+          <div className="grid grid-cols-[40px_90px_120px_80px_1fr] gap-4 px-8 py-4 text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] border-b border-black/5">
             <span />
             <span>Action</span>
             <span>Entity</span>
@@ -133,132 +121,92 @@ export function AuditLogTab() {
             <span>Timestamp</span>
           </div>
 
-          {entries.map((entry) => (
-            <div key={entry.id}>
-              <button
-                onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
-                className="w-full grid grid-cols-[40px_80px_100px_80px_1fr] gap-3 px-4 py-3 text-xs text-left items-center cursor-pointer"
-                style={{
-                  borderBottom: "1px solid rgba(255,255,255,0.03)",
-                  transition: "background 0.15s ease",
-                  fontFamily: "inherit",
-                  background: expandedId === entry.id ? "rgba(34,211,238,0.04)" : "transparent",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(34,211,238,0.04)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = expandedId === entry.id ? "rgba(34,211,238,0.04)" : "transparent")}
-              >
-                {expandedId === entry.id ? (
-                  <ChevronDown size={13} className="text-cyan-400" />
-                ) : (
-                  <ChevronRight size={13} className="text-slate-500" />
-                )}
-                <span
-                  className="rounded text-[10px] font-bold px-2 py-0.5 text-center"
-                  style={{
-                    background: `${ACTION_COLORS[entry.action]}20`,
-                    color: ACTION_COLORS[entry.action],
-                    border: `1px solid ${ACTION_COLORS[entry.action]}40`,
-                    letterSpacing: "0.06em",
-                  }}
+          {entries.map((entry, idx) => {
+            const config = ACTION_CONFIG[entry.action] || ACTION_CONFIG.UPDATE;
+            return (
+              <div key={entry.id}>
+                <button
+                  onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
+                  className={cn(
+                    "w-full grid grid-cols-[40px_90px_120px_80px_1fr] gap-4 px-8 py-4 text-left items-center cursor-pointer transition-all duration-300 border-b border-black/[0.03]",
+                    expandedId === entry.id ? "nm-inset" : "hover:bg-black/[0.02]"
+                  )}
+                  style={{ animationDelay: `${idx * 30}ms` }}
                 >
-                  {entry.action}
-                </span>
-                <span className="text-slate-300">{entry.entity}</span>
-                <span className="text-slate-400 font-mono">
-                  {entry.entity_id ?? "—"}
-                </span>
-                <span className="text-slate-400">
-                  {new Date(entry.created_at).toLocaleString()}
-                </span>
-              </button>
+                  <div className="w-7 h-7 nm-inset rounded-lg flex items-center justify-center">
+                    {expandedId === entry.id ? (
+                      <ChevronDown size={12} className="text-primary" />
+                    ) : (
+                      <ChevronRight size={12} className="text-muted-foreground" />
+                    )}
+                  </div>
+                  <span className={cn(
+                    "text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-xl text-center border",
+                    config.color, config.bg, config.border
+                  )}>
+                    {entry.action}
+                  </span>
+                  <span className="text-sm font-bold tracking-tight capitalize">{entry.entity.replace(/_/g, " ")}</span>
+                  <span className="text-xs text-muted-foreground font-mono nm-inset px-2 py-1 rounded-lg text-center">
+                    {entry.entity_id ?? "—"}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">
+                    {new Date(entry.created_at).toLocaleString()}
+                  </span>
+                </button>
 
-              {/* Expandable diff view */}
-              {expandedId === entry.id && (
-                <div
-                  className="px-8 py-4 grid grid-cols-2 gap-4"
-                  style={{
-                    borderBottom: "1px solid rgba(255,255,255,0.06)",
-                    background: "rgba(0,0,0,0.2)",
-                  }}
-                >
-                  <div>
-                    <div
-                      className="text-[10px] text-red-400 mb-2 uppercase font-bold"
-                      style={{ letterSpacing: "0.1em" }}
-                    >
-                      Old Values
+                {/* Expandable diff view */}
+                {expandedId === entry.id && (
+                  <div className="px-8 py-6 grid grid-cols-2 gap-6 nm-inset mx-4 mb-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-2 h-2 rounded-full bg-rose-500" />
+                        <span className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em]">Previous State</span>
+                      </div>
+                      <pre className="text-[11px] text-muted-foreground overflow-x-auto nm-flat p-4 rounded-2xl max-h-[300px] font-mono leading-relaxed">
+                        {entry.old_values
+                          ? JSON.stringify(entry.old_values, null, 2)
+                          : "null"}
+                      </pre>
                     </div>
-                    <pre
-                      className="text-[11px] text-slate-400 overflow-x-auto rounded p-3"
-                      style={{
-                        background: "rgba(248,113,113,0.05)",
-                        border: "1px solid rgba(248,113,113,0.1)",
-                        maxHeight: 300,
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {entry.old_values
-                        ? JSON.stringify(entry.old_values, null, 2)
-                        : "null"}
-                    </pre>
-                  </div>
-                  <div>
-                    <div
-                      className="text-[10px] text-green-400 mb-2 uppercase font-bold"
-                      style={{ letterSpacing: "0.1em" }}
-                    >
-                      New Values
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">New State</span>
+                      </div>
+                      <pre className="text-[11px] text-muted-foreground overflow-x-auto nm-flat p-4 rounded-2xl max-h-[300px] font-mono leading-relaxed">
+                        {entry.new_values
+                          ? JSON.stringify(entry.new_values, null, 2)
+                          : "null"}
+                      </pre>
                     </div>
-                    <pre
-                      className="text-[11px] text-slate-400 overflow-x-auto rounded p-3"
-                      style={{
-                        background: "rgba(34,211,238,0.05)",
-                        border: "1px solid rgba(34,211,238,0.1)",
-                        maxHeight: 300,
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {entry.new_values
-                        ? JSON.stringify(entry.new_values, null, 2)
-                        : "null"}
-                    </pre>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3 pt-2">
+        <div className="flex items-center justify-center gap-4 pt-4">
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="text-xs px-3 py-1.5 rounded-md cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#94a3b8",
-              fontFamily: "inherit",
-            }}
+            className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors"
           >
             Previous
           </button>
-          <span className="text-xs text-slate-400" style={{ letterSpacing: "0.06em" }}>
-            Page {currentPage} of {totalPages}
-          </span>
+          <div className="nm-inset px-5 py-2.5 rounded-xl">
+            <span className="text-xs font-bold tracking-wider">
+              {currentPage} <span className="text-muted-foreground mx-1">of</span> {totalPages}
+            </span>
+          </div>
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={currentPage >= totalPages}
-            className="text-xs px-3 py-1.5 rounded-md cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#94a3b8",
-              fontFamily: "inherit",
-            }}
+            className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-30 disabled:cursor-not-allowed hover:text-primary transition-colors"
           >
             Next
           </button>

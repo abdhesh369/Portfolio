@@ -35,7 +35,7 @@ describe("ClientPortal", () => {
                     projects: [{ id: 1, title: "Test Project", status: "in_progress" }]
                 }
             })
-        } as any);
+        } as unknown as Response);
 
         render(<ClientPortal />);
 
@@ -56,7 +56,7 @@ describe("ClientPortal", () => {
         vi.mocked(global.fetch).mockResolvedValue({
             ok: false,
             status: 401
-        } as any);
+        } as unknown as Response);
 
         render(<ClientPortal />);
 

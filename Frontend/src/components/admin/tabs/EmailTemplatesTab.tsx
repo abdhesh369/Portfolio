@@ -1,12 +1,11 @@
 import React, { useState, type FormEvent } from "react";
 import DOMPurify from "dompurify";
 import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { EmailTemplate } from "@portfolio/shared/schema";
 import { useEmailTemplates } from "@/hooks/portfolio/use-email-templates";
+import { FileText, Plus, Trash2, Edit3, X, Check, Mail } from "lucide-react";
 
 const emptyTemplate = { name: "", subject: "", body: "" };
 
@@ -69,40 +68,66 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
 
     if (editing) {
         return (
-            <div className="animate-fade-in">
-                <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
-                    {editing.id ? "Edit Template" : "New Template"}
-                </h2>
-                <form onSubmit={save} className="space-y-4 max-w-3xl">
-                    <FormField
-                        label="Template Name *"
-                        value={editing.name}
-                        onChange={(v) => setEditing({ ...editing, name: v })}
-                        required
-                        placeholder="e.g. Inquiry Auto-reply"
-                    />
-                    <FormField
-                        label="Email Subject *"
-                        value={editing.subject}
-                        onChange={(v) => setEditing({ ...editing, subject: v })}
-                        required
-                        placeholder="e.g. Re: Contacting concerning your portfolio"
-                    />
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
+                <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 nm-inset rounded-2xl flex items-center justify-center text-primary">
+                            {editing.id ? <Edit3 size={24} /> : <Plus size={24} />}
+                        </div>
+                        <div>
+                            <h2 className="text-3xl font-black tracking-tighter uppercase" style={{ fontFamily: "var(--font-display)" }}>
+                                {editing.id ? "Edit_Template" : "New_Template"}
+                            </h2>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.3em]">
+                                Protocol: {editing.id ? `ID_${editing.id}` : "Allocation"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setEditing(null)}
+                        className="nm-button h-12 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-rose-500 transition-colors"
+                    >
+                        <X size={16} className="mr-2" />
+                        Cancel
+                    </button>
+                </div>
 
-                    <div className="space-y-2">
-                        <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-1.5">Template Body *</label>
+                <form onSubmit={save} className="nm-flat p-10 space-y-8 max-w-4xl mx-auto rounded-[2.5rem]">
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <FormField
+                            label="Template Name *"
+                            value={editing.name}
+                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            required
+                            placeholder="e.g. Inquiry Auto-reply"
+                        />
+                        <FormField
+                            label="Email Subject *"
+                            value={editing.subject}
+                            onChange={(v) => setEditing({ ...editing, subject: v })}
+                            required
+                            placeholder='e.g. Re: Your inquiry'
+                        />
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Template Body *</label>
                         <RichTextEditor
                             value={editing.body}
                             onChange={(v) => setEditing({ ...editing, body: v })}
                         />
-                        <p className="text-[10px] text-white/30 italic">Use {"{name}"} to insert the sender's name automatically.</p>
+                        <p className="text-[10px] text-muted-foreground italic">Use {"{name}"} to insert the sender's name automatically.</p>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={isSaving}>
-                            {isSaving ? "Saving..." : (editing.id ? "Update" : "Create")}
-                        </Button>
-                        <Button type="button" variant="ghost" onClick={() => setEditing(null)} className="text-white/50">Cancel</Button>
+                    <div className="flex items-center gap-4 pt-4">
+                        <button
+                            type="submit"
+                            disabled={isSaving}
+                            className="nm-button h-14 px-10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:nm-convex transition-all duration-300 disabled:opacity-50"
+                        >
+                            <Check size={16} className="mr-2" />
+                            {isSaving ? "Saving..." : (editing.id ? "Update_Template" : "Create_Template")}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -110,30 +135,71 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
     }
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    Email Templates <Badge variant="secondary" className="ml-2">{templates.length}</Badge>
-                </h2>
-                <Button size="sm" onClick={() => setEditing({ ...emptyTemplate })}>+ Add Template</Button>
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-10 pb-24">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="p-3 nm-flat rounded-2xl text-primary">
+                        <Mail className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black tracking-tighter" style={{ fontFamily: "var(--font-display)" }}>
+                            Email_Templates
+                        </h2>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">
+                            Auto-Response System &bull; {templates.length} Templates
+                        </p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => setEditing({ ...emptyTemplate })}
+                    className="nm-button px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:nm-convex transition-all duration-300"
+                >
+                    <Plus size={14} className="mr-2" />
+                    New_Template
+                </button>
             </div>
 
             {templates.length === 0 ? (
                 <EmptyState icon="📄" text="No templates created yet" />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {templates.map((tpl) => (
-                        <div key={tpl.id} className="rounded-xl border border-white/10 p-5 flex flex-col gap-4 group hover:border-white/20 transition-colors"
-                            style={{ background: "hsl(222 47% 11% / 0.5)" }}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {templates.map((tpl, idx) => (
+                        <div
+                            key={tpl.id}
+                            className="nm-flat p-8 space-y-5 group transition-all duration-300 hover:scale-[1.005] animate-in fade-in"
+                            style={{ animationDelay: `${idx * 80}ms` }}
                         >
-                            <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-white text-base mb-1">{tpl.name}</h3>
-                                <p className="text-xs text-purple-400 mb-2 truncate">{tpl.subject}</p>
-                                <div className="text-sm text-white/40 line-clamp-3 prose prose-invert prose-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tpl.body) }} />
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-primary shrink-0">
+                                        <FileText size={18} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold tracking-tight text-base">{tpl.name}</h3>
+                                        <p className="text-xs text-primary/60 truncate mt-0.5 font-medium">{tpl.subject}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex gap-2 pt-2 border-t border-white/5">
-                                <Button variant="outline" size="sm" onClick={() => setEditing(tpl as Partial<EmailTemplate> & typeof emptyTemplate)} className="text-white/60">Edit</Button>
-                                <Button variant="destructive" size="sm" onClick={() => deleteTemplate(tpl.id)} className="opacity-60 group-hover:opacity-100">Delete</Button>
+
+                            <div
+                                className="nm-inset p-4 rounded-2xl text-xs text-muted-foreground line-clamp-3 leading-relaxed prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tpl.body) }}
+                            />
+
+                            <div className="flex gap-3 pt-2 border-t border-black/5">
+                                <button
+                                    onClick={() => setEditing(tpl as Partial<EmailTemplate> & typeof emptyTemplate)}
+                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors"
+                                >
+                                    <Edit3 size={12} className="mr-1.5" /> Edit
+                                </button>
+                                <button
+                                    onClick={() => deleteTemplate(tpl.id)}
+                                    className="nm-button px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground hover:text-rose-500 opacity-60 group-hover:opacity-100 transition-all"
+                                >
+                                    <Trash2 size={12} className="mr-1.5" /> Delete
+                                </button>
                             </div>
                         </div>
                     ))}

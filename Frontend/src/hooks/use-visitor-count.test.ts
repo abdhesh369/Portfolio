@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, waitFor } from "@testing-library/react";
 import { useVisitorCount } from "./use-visitor-count";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // Mock EventSource
 class MockEventSource {
-    onopen: any = null;
-    onerror: any = null;
+    onopen: ((ev: Event) => void) | null = null;
+    onerror: ((ev: Event) => void) | null = null;
     addEventListener = vi.fn();
     close = vi.fn();
-    constructor(url: string, options?: any) { }
+    constructor(_url: string | URL, _options?: Record<string, unknown>) { }
 }
 global.EventSource = MockEventSource as any;
 
@@ -33,8 +34,8 @@ describe("useVisitorCount", () => {
 
     it("should update count when receiving SSE message", async () => {
         let countListener: any;
-        vi.mocked(global.EventSource).mockImplementation((url: string) => {
-            const instance = new MockEventSource(url);
+        vi.mocked(global.EventSource).mockImplementation((_url: string | URL) => {
+            const instance = new MockEventSource(_url);
             instance.addEventListener.mockImplementation((event: string, cb: any) => {
                 if (event === "count") countListener = cb;
             });
@@ -52,11 +53,10 @@ describe("useVisitorCount", () => {
     });
 
     it("should fallback to polling on SSE error", async () => {
-        let errorListener: any;
-        vi.mocked(global.EventSource).mockImplementation((url: string) => {
-            const instance = new MockEventSource(url);
+        vi.mocked(global.EventSource).mockImplementation((_url: string | URL) => {
+            const instance = new MockEventSource(_url);
             // In the hook, onerror is assigned directly
-            setTimeout(() => { if (instance.onerror) instance.onerror(); }, 0);
+            setTimeout(() => { if (instance.onerror) instance.onerror(new Event("error")); }, 0);
             return instance as any;
         });
 

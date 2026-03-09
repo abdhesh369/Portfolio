@@ -1,5 +1,5 @@
 export const AUTHOR = {
-    name: "Abdhesh Nayak",
+    name: "Abdhesh SAh",
     bio: "Full Stack Developer & AI Enthusiast",
     socials: {
         github: "https://github.com/abdhesh369",

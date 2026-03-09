@@ -79,7 +79,7 @@ export function TestimonialsTab(_props: AdminTabProps) {
             setEditing(null);
             clearQueryCache();
             refetch();
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast({ title: "Registration failed", variant: "destructive" });
         }
     }
@@ -91,7 +91,7 @@ export function TestimonialsTab(_props: AdminTabProps) {
             toast({ title: "Endorsement removed" });
             clearQueryCache();
             refetch();
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast({ title: "Purge failed", variant: "destructive" });
         }
     }
