@@ -45,7 +45,7 @@ export function ThemeSection({ register, isOpen, onToggle }: ThemeSectionProps) 
                     <FormTextarea
                         label="Custom CSS Injector"
                         placeholder=".my-class { color: red; }"
-                        {...register("customCss")}
+                        {...(({ onChange, ...rest }) => ({ ...rest, onChange: (v: string) => onChange({ target: { value: v, name: rest.name } }) }))(register("customCss"))}
                         className="font-mono text-[10px]"
                     />
                     <p className="text-[9px] text-admin-text-muted mt-3 flex items-center gap-2">

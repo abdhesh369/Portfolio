@@ -33,7 +33,7 @@ export function PersonalBrandingSection({ register, isOpen, onToggle }: Personal
                     <FormTextarea
                         label="Entity Narrative"
                         placeholder="Detail your technical journey..."
-                        {...register("personalBio")}
+                        {...(({ onChange, ...rest }) => ({ ...rest, onChange: (v: string) => onChange({ target: { value: v, name: rest.name } }) }))(register("personalBio"))}
                     />
                 </div>
                 <div className="md:col-span-2">

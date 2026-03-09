@@ -198,6 +198,7 @@ export function FloatingLabelInput({
 interface FormFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     label: string;
     onChange?: (value: string) => void;
+    icon?: any;
 }
 
 export function FormField({ label, onChange, ...props }: FormFieldProps) {
@@ -218,7 +219,7 @@ interface FormTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAr
     onChange?: (value: string) => void;
 }
 
-export function FormTextarea({ label, onChange, ...props }: FormTextareaProps) {
+export function FormTextarea({ label, onChange, ...props }: FormTextareaProps & Record<string, any>) {
     return (
         <div className="space-y-4">
             <label className="label-technical ml-1">{label}</label>
@@ -263,9 +264,9 @@ export function FormSelect({ label, options, icon: Icon, onChange, ...props }: F
     );
 }
 
-export function EmptyState({ icon: Icon, text }: { icon: any; text: string }) {
+export function EmptyState({ icon: Icon, text, className }: { icon: any; text: string; className?: string }) {
     return (
-        <div className="text-center py-24 nm-flat border-white/5 relative overflow-hidden">
+        <div className={cn("text-center py-24 nm-flat border-white/5 relative overflow-hidden", className)}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-purple-600/30 to-transparent" />
             <div className="nm-inset w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 text-purple-500/20 group hover:text-purple-500/40 transition-colors">
                 {Icon ? Icon : <div className="w-4 h-4 bg-current rounded-sm rotate-45" />}
@@ -300,9 +301,9 @@ export function FormCheckbox({ label, onChange, checked, activeColor, ...props }
     );
 }
 
-export function LoadingSkeleton() {
+export function LoadingSkeleton({ className }: { className?: string } = {}) {
     return (
-        <div className="space-y-8 animate-pulse p-2">
+        <div className={cn("space-y-8 animate-pulse p-2", className)}>
             {[1, 2, 3].map((i) => (
                 <div key={i} className="nm-flat rounded-[2rem] p-10 h-40 relative overflow-hidden bg-white/5">
                     <div className="flex gap-6 items-center">

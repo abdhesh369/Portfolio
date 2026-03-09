@@ -120,8 +120,8 @@ export const SketchpadTab: React.FC = () => {
                                             <Badge
                                                 variant="outline"
                                                 className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 border-2 rounded-md ${session.status === 'active'
-                                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-                                                        : "bg-white/5 text-slate-500 border-white/5"
+                                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                                                    : "bg-white/5 text-slate-500 border-white/5"
                                                     }`}
                                             >
                                                 {session.status}
