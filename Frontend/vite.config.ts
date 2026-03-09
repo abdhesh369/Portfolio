@@ -42,10 +42,10 @@ export default defineConfig(({ mode }) => ({
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
-          // Public API routes: StaleWhileRevalidate, 7-day TTL
+          // Public API routes: NetworkFirst, 7-day TTL
           {
-            urlPattern: /\/api\/v1\/(projects|skills|articles|experiences)(\/|$|\?)/i,
-            handler: 'StaleWhileRevalidate',
+            urlPattern: /\/api\/v1\/(projects|skills|articles|experiences|settings)(\/|$|\?)/i,
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'api-public-cache',
               expiration: {
