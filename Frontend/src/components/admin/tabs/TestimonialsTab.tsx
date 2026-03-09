@@ -10,7 +10,7 @@ import {
     Save, Hash, Users, MessageSquareQuote
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
 
 const empty = {
     name: "",
@@ -96,6 +96,12 @@ export function TestimonialsTab(_props: AdminTabProps) {
         }
     }
 
+    if (!testimonials) return (
+        <div className="space-y-10">
+            {[1, 2].map(i => <LoadingSkeleton key={i} />)}
+        </div>
+    );
+
     if (editing) {
         return (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
@@ -113,13 +119,14 @@ export function TestimonialsTab(_props: AdminTabProps) {
                             </p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
+                        variant="secondary"
+                        icon={X}
                         className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
                     >
-                        <X size={16} className="mr-2" />
                         Abort_Entry
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <form onSubmit={(e) => { e.preventDefault(); save(); }} className="space-y-10">
@@ -127,49 +134,43 @@ export function TestimonialsTab(_props: AdminTabProps) {
                         <FormField
                             label="Contact_Name *"
                             value={editing.name}
-                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, name: v } : null)}
                             required
                             placeholder="FULL IDENTITY"
                         />
                         <FormField
                             label="Professional_Role *"
                             value={editing.role}
-                            onChange={(v) => setEditing({ ...editing, role: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, role: v } : null)}
                             required
                             placeholder="E.G. SENIOR ENGINEER"
                         />
                         <FormField
                             label="Organization"
                             value={editing.company}
-                            onChange={(v) => setEditing({ ...editing, company: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, company: v } : null)}
                             placeholder="COMPANY_NAME"
                         />
-                        <div className="space-y-4">
-                            <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Association_Type</label>
-                            <div className="relative">
-                                <select
-                                    value={editing.relationship}
-                                    onChange={(e) => setEditing({ ...editing, relationship: e.target.value })}
-                                    className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
-                                >
-                                    <option value="Colleague">COLLEAGUE</option>
-                                    <option value="Mentor">MENTOR</option>
-                                    <option value="Client">CLIENT</option>
-                                    <option value="Manager">MANAGER</option>
-                                    <option value="Friend">SOCIAL_CONN</option>
-                                </select>
-                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
-                                    <Users size={14} />
-                                </div>
-                            </div>
-                        </div>
+                        <FormSelect
+                            label="Association_Type"
+                            value={editing.relationship}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, relationship: v } : null)}
+                            options={[
+                                { label: "COLLEAGUE", value: "Colleague" },
+                                { label: "MENTOR", value: "Mentor" },
+                                { label: "CLIENT", value: "Client" },
+                                { label: "MANAGER", value: "Manager" },
+                                { label: "SOCIAL_CONN", value: "Friend" }
+                            ]}
+                            icon={Users}
+                        />
                     </div>
 
                     <div className="nm-flat p-8 rounded-3xl space-y-8">
                         <FormTextarea
                             label="Endorsement_Payload *"
                             value={editing.quote}
-                            onChange={(v) => setEditing({ ...editing, quote: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, quote: v } : null)}
                             required
                             placeholder="VERBATIM QUOTE..."
                         />
@@ -179,13 +180,13 @@ export function TestimonialsTab(_props: AdminTabProps) {
                         <FormField
                             label="Identity_Asset_URL"
                             value={editing.avatarUrl}
-                            onChange={(v) => setEditing({ ...editing, avatarUrl: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, avatarUrl: v } : null)}
                             placeholder="HTTPS://..."
                         />
                         <FormField
                             label="LinkedIn_Access"
                             value={editing.linkedinUrl}
-                            onChange={(v) => setEditing({ ...editing, linkedinUrl: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, linkedinUrl: v } : null)}
                             placeholder="HTTPS://LINKEDIN.COM/..."
                         />
                         <div className="md:col-span-2">
@@ -193,20 +194,21 @@ export function TestimonialsTab(_props: AdminTabProps) {
                                 label="Priority_Index"
                                 type="number"
                                 value={editing.displayOrder.toString()}
-                                onChange={(v) => setEditing({ ...editing, displayOrder: parseInt(v) || 0 })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, displayOrder: parseInt(v) || 0 } : null)}
                                 placeholder="0"
                             />
                         </div>
                     </div>
 
-                    <button
+                    <AdminButton
                         type="submit"
+                        variant="primary"
+                        icon={Save}
                         disabled={!editing.name || !editing.quote || !editing.role}
                         className="nm-button nm-button-primary w-full h-16 text-[12px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-40"
                     >
-                        <Save size={20} />
                         {editing.id ? "SYNC_ENDORSEMENT" : "COMMIT_ENTRY"}
-                    </button>
+                    </AdminButton>
                 </form>
             </div>
         );
@@ -231,13 +233,14 @@ export function TestimonialsTab(_props: AdminTabProps) {
                     </p>
                 </div>
 
-                <button
+                <AdminButton
                     onClick={startCreate}
+                    variant="primary"
+                    icon={Plus}
                     className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
                 >
-                    <Plus size={20} strokeWidth={3} className="mr-3" />
                     New_Entry
-                </button>
+                </AdminButton>
             </div>
 
             {/* List */}
@@ -289,18 +292,24 @@ export function TestimonialsTab(_props: AdminTabProps) {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <button
+                                    <AdminButton
                                         onClick={() => startEdit(t)}
+                                        variant="secondary"
+                                        icon={Edit3}
+                                        size="sm"
                                         className="w-10 h-10 nm-button rounded-xl text-indigo-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                        title="Edit"
                                     >
-                                        <Edit3 size={16} />
-                                    </button>
-                                    <button
+                                    </AdminButton>
+                                    <AdminButton
                                         onClick={() => remove(t.id)}
+                                        variant="secondary"
+                                        icon={Trash2}
+                                        size="sm"
                                         className="w-10 h-10 nm-button rounded-xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                                        title="Purge"
                                     >
-                                        <Trash2 size={16} />
-                                    </button>
+                                    </AdminButton>
                                 </div>
                             </div>
 

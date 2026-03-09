@@ -8,7 +8,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
 import { clearQueryCache } from "@/lib/query-cache-persister";
-import { FormField, FormTextarea, EmptyState, FormSelect } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton, LoadingSkeleton } from "@/components/admin/AdminShared";
 import {
     FileText, Plus, Trash2, Edit3, X, Eye, Calendar,
     Tag, Globe, Search, ChevronRight, Save, Image as ImageIcon,
@@ -95,20 +95,23 @@ function ArticleItem({ article, onEdit, onDelete }: {
             </div>
 
             <div className="flex gap-4 shrink-0">
-                <button
+                <AdminButton
                     onClick={() => onEdit(article)}
-                    className="w-12 h-12 nm-button rounded-2xl text-indigo-500 flex items-center justify-center hover:scale-110 transition-transform"
+                    className="w-12 h-12 rounded-2xl"
                     title="Edit Protocol"
+                    icon={Edit3}
                 >
-                    <Edit3 size={18} />
-                </button>
-                <button
+                    {""}
+                </AdminButton>
+                <AdminButton
+                    variant="danger"
                     onClick={() => onDelete(article.id)}
-                    className="w-12 h-12 nm-button rounded-2xl text-rose-500 flex items-center justify-center hover:scale-110 transition-transform"
+                    className="w-12 h-12 rounded-2xl"
                     title="Terminate Entry"
+                    icon={Trash2}
                 >
-                    <Trash2 size={18} />
-                </button>
+                    {""}
+                </AdminButton>
             </div>
         </div>
     );
@@ -216,13 +219,14 @@ export function ArticlesTab(_props: AdminTabProps) {
                             </p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
+                        variant="secondary"
                         onClick={() => setEditing(null)}
-                        className="nm-button h-12 px-6 text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] hover:text-rose-500"
+                        className="h-12 px-6"
+                        icon={X}
                     >
-                        <X size={16} className="mr-2" />
                         Abort_Changes
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <form onSubmit={save} className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -231,7 +235,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Protocol Title *"
                                 value={editing.title}
-                                onChange={(v) => setEditing({ ...editing, title: v })}
+                                onChange={(v) => setEditing(prev => ({ ...prev, title: v } as any))}
                                 required
                                 placeholder="E.G. THE NEUMORPHIC REVOLUTION"
                             />
@@ -240,13 +244,13 @@ export function ArticlesTab(_props: AdminTabProps) {
                                 <FormField
                                     label="Access_Slug"
                                     value={editing.slug}
-                                    onChange={(v) => setEditing({ ...editing, slug: v })}
+                                    onChange={(v) => setEditing(prev => ({ ...prev, slug: v } as any))}
                                     placeholder="auto-generated-id"
                                 />
                                 <FormSelect
                                     label="Index_Status"
                                     value={editing.status}
-                                    onChange={(v) => setEditing({ ...editing, status: v as "draft" | "published" | "archived" })}
+                                    onChange={(v) => setEditing(prev => ({ ...prev, status: v as any } as any))}
                                     options={[
                                         { label: "DRAFT_MODE", value: "draft" },
                                         { label: "LIVE_SYNC", value: "published" },
@@ -258,7 +262,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Rich_Text_Payload</label>
                                 <div className="nm-inset rounded-3xl p-4 min-h-[400px]">
-                                    <RichTextEditor value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} />
+                                    <RichTextEditor value={editing.content} onChange={(v) => setEditing(prev => ({ ...prev, content: v } as any))} />
                                 </div>
                             </div>
                         </div>
@@ -268,7 +272,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormTextarea
                                 label="Excerpt_Summary"
                                 value={editing.excerpt ?? ""}
-                                onChange={(v) => setEditing({ ...editing, excerpt: v })}
+                                onChange={(v) => setEditing(prev => ({ ...prev, excerpt: v } as any))}
                                 placeholder="BRIEF CONTENT OVERVIEW..."
                             />
                         </div>
@@ -279,7 +283,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Visual_Asset</label>
                                 <div className="nm-inset rounded-2xl p-4">
-                                    <ImageUpload value={editing.featuredImage ?? ""} onChange={(v) => setEditing({ ...editing, featuredImage: v })} />
+                                    <ImageUpload value={editing.featuredImage ?? ""} onChange={(v) => setEditing(prev => ({ ...prev, featuredImage: v } as any))} />
                                 </div>
                             </div>
 
@@ -290,7 +294,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                                         type="text"
                                         placeholder="JS, TECH, DESIGN..."
                                         value={tagInput}
-                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onChange={(e) => setTagInput(prev => (e.target.value))}
                                         className="h-14 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-widest focus:outline-none w-full transition-all"
                                     />
                                     <Tag size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />

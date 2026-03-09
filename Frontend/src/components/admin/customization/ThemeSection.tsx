@@ -2,6 +2,7 @@ import React from "react";
 import { UseFormRegister } from "react-hook-form";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
+import { FloatingLabelInput, FormTextarea } from "../AdminShared";
 
 interface ThemeSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
@@ -12,31 +13,45 @@ interface ThemeSectionProps {
 export function ThemeSection({ register, isOpen, onToggle }: ThemeSectionProps) {
     return (
         <CollapsibleSection
-            title="Theme & Typography"
+            title="VISUAL_KERNEL_CONFIG"
             isOpen={isOpen}
             onToggle={onToggle}
+            description="Manage the visual kernel and typographic engine of the portfolio."
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <label htmlFor="colorBackground" className="text-xs font-medium text-admin-text-secondary uppercase">Background (HSL)</label>
-                    <input id="colorBackground" {...register("colorBackground")} className="admin-input font-mono" placeholder="hsl(224, 71%, 4%)" />
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="colorSurface" className="text-xs font-medium text-admin-text-secondary uppercase">Surface (HSL)</label>
-                    <input id="colorSurface" {...register("colorSurface")} className="admin-input font-mono" placeholder="hsl(224, 71%, 10%)" />
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="fontDisplay" className="text-xs font-medium text-admin-text-secondary uppercase">Display Font (Google Fonts)</label>
-                    <input id="fontDisplay" {...register("fontDisplay")} className="admin-input" placeholder="Inter" />
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="fontBody" className="text-xs font-medium text-admin-text-secondary uppercase">Body Font (Google Fonts)</label>
-                    <input id="fontBody" {...register("fontBody")} className="admin-input" placeholder="Inter" />
-                </div>
-                <div className="md:col-span-2 space-y-2">
-                    <label htmlFor="customCss" className="text-xs font-medium text-admin-text-secondary uppercase">Custom CSS Injector</label>
-                    <textarea id="customCss" {...register("customCss")} rows={4} className="admin-input font-mono text-xs" placeholder=".my-class { color: red; }" />
-                    <p className="text-[10px] text-admin-text-muted italic">Unsafe constructs like url() and @import will be stripped server-side.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 p-2">
+                <FloatingLabelInput
+                    label="Background (HSL)"
+                    placeholder="hsl(224, 71%, 4%)"
+                    {...register("colorBackground")}
+                    className="font-mono"
+                />
+                <FloatingLabelInput
+                    label="Surface (HSL)"
+                    placeholder="hsl(224, 71%, 10%)"
+                    {...register("colorSurface")}
+                    className="font-mono"
+                />
+                <FloatingLabelInput
+                    label="Display Font"
+                    placeholder="Inter"
+                    {...register("fontDisplay")}
+                />
+                <FloatingLabelInput
+                    label="Body Font"
+                    placeholder="Inter"
+                    {...register("fontBody")}
+                />
+                <div className="md:col-span-2">
+                    <FormTextarea
+                        label="Custom CSS Injector"
+                        placeholder=".my-class { color: red; }"
+                        {...register("customCss")}
+                        className="font-mono text-[10px]"
+                    />
+                    <p className="text-[9px] text-admin-text-muted mt-3 flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-pink-500/50" />
+                        Unsafe constructs like url() and @import will be stripped server-side.
+                    </p>
                 </div>
             </div>
         </CollapsibleSection>

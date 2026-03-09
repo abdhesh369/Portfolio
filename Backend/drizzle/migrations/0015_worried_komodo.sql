@@ -1,0 +1,1 @@
+ALTER TABLE "guestbook" ADD COLUMN "reactions" jsonb DEFAULT '{}'::jsonb;

@@ -6,6 +6,7 @@ type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
+  disableGlobalClass?: boolean;
 };
 
 type ThemeProviderState = {
@@ -16,6 +17,7 @@ type ThemeProviderState = {
   setPerformanceMode: (mode: "high" | "low") => void;
   treePerformanceMode: "normal" | "power";
   setTreePerformanceMode: (mode: "normal" | "power") => void;
+  disableGlobalClass?: boolean;
 };
 
 const initialState: ThemeProviderState = {
@@ -34,6 +36,7 @@ export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
+  disableGlobalClass = false,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
@@ -44,6 +47,8 @@ export function ThemeProvider({
   );
 
   useEffect(() => {
+    if (disableGlobalClass) return;
+
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");
@@ -58,7 +63,7 @@ export function ThemeProvider({
     } else {
       root.classList.add(theme);
     }
-  }, [theme]);
+  }, [theme, disableGlobalClass]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -91,7 +96,8 @@ export function ThemeProvider({
     setTreePerformanceMode: (mode: "normal" | "power") => {
       localStorage.setItem("tree-performance-mode", mode);
       setTreePerformanceMode(mode);
-    }
+    },
+    disableGlobalClass
   };
 
   return (

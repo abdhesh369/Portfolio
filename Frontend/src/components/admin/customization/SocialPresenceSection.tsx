@@ -2,6 +2,7 @@ import React from "react";
 import { UseFormRegister } from "react-hook-form";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
+import { FloatingLabelInput } from "../AdminShared";
 
 interface SocialPresenceSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
@@ -26,16 +27,20 @@ const SOCIAL_FIELDS = [
 export function SocialPresenceSection({ register, isOpen, onToggle }: SocialPresenceSectionProps) {
     return (
         <CollapsibleSection
-            title="Social Presence"
+            title="COMMUNICATION_PROTOCOL_MATRIX"
+            description="Manage external links and protocol access points for the entity."
             isOpen={isOpen}
             onToggle={onToggle}
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 p-2">
                 {SOCIAL_FIELDS.map((social) => (
-                    <div key={social.id} className="space-y-2">
-                        <label htmlFor={social.id} className="text-xs font-medium text-admin-text-secondary uppercase">{social.label}</label>
-                        <input id={social.id} {...register(social.id as keyof InsertSiteSettings)} type="url" className="admin-input" placeholder="https://..." />
-                    </div>
+                    <FloatingLabelInput
+                        key={social.id}
+                        label={social.label}
+                        placeholder="https://..."
+                        type={social.id === 'socialEmail' ? 'email' : 'url'}
+                        {...register(social.id as keyof InsertSiteSettings)}
+                    />
                 ))}
             </div>
         </CollapsibleSection>

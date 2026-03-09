@@ -1,6 +1,6 @@
 import React, { useState, type FormEvent } from "react";
 import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, FormSelect } from "@/components/admin/AdminShared";
 import { Plus, Trash2, Edit3, X, Check, Zap, Cpu, Code, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Skill } from "@portfolio/shared/schema";
@@ -75,42 +75,36 @@ export function SkillsTab(_props: AdminTabProps) {
                         <FormField
                             label="Skill Name"
                             value={editing.name}
-                            onChange={(v) => setEditing({ ...editing, name: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, name: v } : null)}
                             placeholder="e.g. React.js"
                             required
                         />
                         <FormField
                             label="Category"
                             value={editing.category}
-                            onChange={(v) => setEditing({ ...editing, category: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, category: v } : null)}
                             placeholder="Frontend, Backend, Tools..."
                             required
                         />
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-10">
-                        <div className="space-y-4">
-                            <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Class_Status</label>
-                            <div className="relative">
-                                <select
-                                    value={editing.status}
-                                    onChange={(e) => setEditing({ ...editing, status: e.target.value as "Core" | "Advanced" | "Learning" })}
-                                    className="nm-inset w-full h-14 rounded-xl px-5 text-sm font-bold appearance-none cursor-pointer focus:outline-none"
-                                >
-                                    <option value="Core">CORE_TECH</option>
-                                    <option value="Advanced">ADVANCED</option>
-                                    <option value="Learning">RESEARCHING</option>
-                                </select>
-                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-500">
-                                    <Layers size={14} />
-                                </div>
-                            </div>
-                        </div>
+                        <FormSelect
+                            label="Class_Status"
+                            value={editing.status}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, status: v as any } : null)}
+                            options={[
+                                { label: "CORE_TECH", value: "Core" },
+                                { label: "ADVANCED", value: "Advanced" },
+                                { label: "RESEARCHING", value: "Learning" }
+                            ]}
+                            icon={<Layers size={14} />}
+                        />
                         <div className="md:col-span-2">
                             <FormField
                                 label="Mastery_Level (0-100)"
                                 value={editing.mastery?.toString() || "0"}
-                                onChange={(v) => setEditing({ ...editing, mastery: parseInt(v) || 0 })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, mastery: parseInt(v) || 0 } : null)}
                                 type="number"
                                 min="0"
                                 max="100"
@@ -121,21 +115,21 @@ export function SkillsTab(_props: AdminTabProps) {
                     <FormField
                         label="System_Icon"
                         value={editing.icon}
-                        onChange={(v) => setEditing({ ...editing, icon: v })}
+                        onChange={(v) => setEditing(prev => prev ? { ...prev, icon: v } : null)}
                         placeholder="Lucide icon name (e.g. Code, Zap, Cpu)"
                     />
 
                     <FormTextarea
                         label="Capability_Description"
                         value={editing.description}
-                        onChange={(v) => setEditing({ ...editing, description: v })}
+                        onChange={(v) => setEditing(prev => prev ? { ...prev, description: v } : null)}
                         placeholder="Detail Technical Proficiency..."
                     />
 
                     <FormTextarea
                         label="Validation_Link (Proof/Project)"
                         value={editing.proof}
-                        onChange={(v) => setEditing({ ...editing, proof: v })}
+                        onChange={(v) => setEditing(prev => prev ? { ...prev, proof: v } : null)}
                         placeholder="https://..."
                     />
 

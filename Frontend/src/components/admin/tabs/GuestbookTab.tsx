@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "@/hooks/portfolio/use-guestbook";
 
-import { EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import {
     Trash2, Clock, MessageSquare,
     Search, RefreshCw, User, Mail, Calendar,
@@ -72,12 +72,13 @@ export function GuestbookTab() {
                         />
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] })}
-                        className="w-14 h-14 nm-button flex items-center justify-center text-[var(--admin-text-secondary)]"
+                        variant="secondary"
+                        icon={RefreshCw}
+                        className="w-14 h-14 rounded-2xl nm-button flex items-center justify-center text-[var(--admin-text-secondary)]"
                     >
-                        <RefreshCw size={20} />
-                    </button>
+                    </AdminButton>
                 </div>
             </div>
 
@@ -160,40 +161,44 @@ export function GuestbookTab() {
 
                                 <div className="flex gap-4 shrink-0 md:pt-1">
                                     {!entry.isApproved && (
-                                        <button
+                                        <AdminButton
                                             onClick={() => handleApprove(entry.id)}
-                                            disabled={approveMutation.isPending}
+                                            isLoading={approveMutation.isPending}
+                                            variant="secondary"
+                                            icon={Check}
                                             className="w-12 h-12 nm-button rounded-2xl text-emerald-500 flex items-center justify-center hover:scale-110 transition-transform"
                                             title="Authorize Transmission"
                                         >
-                                            <Check size={20} strokeWidth={3} />
-                                        </button>
+                                        </AdminButton>
                                     )}
 
                                     {isDeletingId === entry.id ? (
                                         <div className="flex items-center gap-2 animate-in slide-in-from-right-2">
-                                            <button
+                                            <AdminButton
                                                 onClick={() => handleDeleteConfirm(entry.id)}
-                                                disabled={deleteMutation.isPending}
+                                                isLoading={deleteMutation.isPending}
+                                                variant="secondary"
                                                 className="h-12 px-4 nm-button bg-rose-500/10 text-rose-500 text-[10px] font-black uppercase tracking-widest"
                                             >
                                                 CONFIRM
-                                            </button>
-                                            <button
+                                            </AdminButton>
+                                            <AdminButton
                                                 onClick={() => setIsDeletingId(null)}
+                                                variant="secondary"
+                                                icon={X}
                                                 className="w-12 h-12 nm-button text-[var(--admin-text-muted)] flex items-center justify-center"
                                             >
-                                                <X size={18} />
-                                            </button>
+                                            </AdminButton>
                                         </div>
                                     ) : (
-                                        <button
+                                        <AdminButton
                                             onClick={() => setIsDeletingId(entry.id)}
+                                            variant="secondary"
+                                            icon={Trash2}
                                             className="w-12 h-12 nm-button rounded-2xl text-rose-500/70 flex items-center justify-center hover:scale-110 hover:text-rose-500 transition-all"
                                             title="Purge Record"
                                         >
-                                            <Trash2 size={18} />
-                                        </button>
+                                        </AdminButton>
                                     )}
                                 </div>
 

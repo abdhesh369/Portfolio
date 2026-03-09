@@ -1,6 +1,6 @@
 import React, { useState, type FormEvent } from "react";
 import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton } from "@/components/admin/AdminShared";
 import type { Experience } from "@portfolio/shared/schema";
 import { Briefcase, Calendar, Building2, Trash2, Edit2, Plus, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -78,12 +78,13 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             </p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
+                        variant="secondary"
+                        icon={X}
                         className="w-10 h-10 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
                     >
-                        <X size={20} />
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <div className="nm-flat p-8 rounded-3xl border border-white/5">
@@ -99,7 +100,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Organization *"
                                 value={editing.organization || ""}
-                                onChange={(v) => setEditing({ ...editing, organization: v })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, organization: v } : null)}
                                 required
                                 placeholder="e.g. Google, Amazon, etc."
                             />
@@ -109,7 +110,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Period * (Label only)"
                                 value={editing.period || ""}
-                                onChange={(v) => setEditing({ ...editing, period: v })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, period: v } : null)}
                                 required
                                 placeholder="e.g. Jan 2020 - Present"
                                 className="nm-flat border-0 shadow-none bg-transparent"
@@ -135,7 +136,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                         <FormTextarea
                             label="Description *"
                             value={editing.description || ""}
-                            onChange={(v) => setEditing({ ...editing, description: v })}
+                            onChange={(v) => setEditing(prev => prev ? { ...prev, description: v } : null)}
                             required
                             placeholder="Describe your key responsibilities and achievements..."
                         />
@@ -164,26 +165,28 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Custom Type"
                                 value={editing.type !== "Experience" && editing.type !== "Education" ? editing.type || "" : ""}
-                                onChange={(v) => setEditing({ ...editing, type: v })}
+                                onChange={(v) => setEditing(prev => prev ? { ...prev, type: v } : null)}
                                 placeholder="Or enter custom type..."
                             />
                         </div>
 
                         <div className="flex gap-4 pt-6 justify-end">
-                            <button
+                            <AdminButton
                                 type="button"
                                 onClick={() => setEditing(null)}
+                                variant="secondary"
                                 className="px-8 h-12 rounded-xl nm-button text-admin-text-secondary font-bold text-sm"
                             >
                                 Discard
-                            </button>
-                            <button
+                            </AdminButton>
+                            <AdminButton
                                 type="submit"
-                                disabled={isPending}
+                                isLoading={isPending}
+                                variant="primary"
                                 className="px-10 h-12 rounded-xl nm-button bg-admin-accent text-white font-bold text-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_10px_20px_-5px_rgba(var(--nm-accent-rgb),0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                             >
-                                {isPending ? "Saving..." : (editing.id ? "Update Changes" : "Create Milestone")}
-                            </button>
+                                {editing.id ? "Update Changes" : "Create Milestone"}
+                            </AdminButton>
                         </div>
                     </form>
                 </div>
@@ -213,18 +216,21 @@ export function ExperiencesTab(_props: AdminTabProps) {
                         </div>
                     </div>
                 </div>
-                <button
+                <AdminButton
                     onClick={() => setEditing({ ...emptyExperience })}
+                    variant="primary"
+                    icon={Plus}
                     className="group flex items-center gap-3 px-8 h-14 rounded-2xl nm-button bg-admin-accent text-white font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                    <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center group-hover:rotate-90 transition-transform">
-                        <Plus size={16} />
-                    </div>
                     <span>Add Milestone</span>
-                </button>
+                </AdminButton>
             </div>
 
-            {!experiences?.length ? (
+            {!experiences ? (
+                <div className="space-y-10">
+                    {[1, 2, 3].map(i => <LoadingSkeleton key={i} />)}
+                </div>
+            ) : !experiences.length ? (
                 <div className="nm-flat p-20 rounded-[3rem] text-center border border-white/5 overflow-hidden relative">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <Briefcase size={200} />
@@ -299,25 +305,29 @@ export function ExperiencesTab(_props: AdminTabProps) {
 
                                 {/* Actions */}
                                 <div className="flex md:flex-col gap-3 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 md:ml-4 translate-x-2 group-hover:translate-x-0">
-                                    <button
+                                    <AdminButton
                                         onClick={() => setEditing({
                                             ...exp,
                                             period: exp.period ?? "",
                                             startDate: exp.startDate ? (exp.startDate instanceof Date ? exp.startDate.toISOString().split('T')[0] : String(exp.startDate).split('T')[0]) : "",
                                             endDate: exp.endDate ? (exp.endDate instanceof Date ? exp.endDate.toISOString().split('T')[0] : String(exp.endDate).split('T')[0]) : null
                                         })}
+                                        variant="secondary"
+                                        icon={Edit2}
+                                        size="sm"
                                         className="w-11 h-11 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-nm-accent transition-colors"
                                         title="Edit"
                                     >
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button
+                                    </AdminButton>
+                                    <AdminButton
                                         onClick={() => deleteExp(exp.id)}
+                                        variant="secondary"
+                                        icon={Trash2}
+                                        size="sm"
                                         className="w-11 h-11 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
                                         title="Delete"
                                     >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    </AdminButton>
                                 </div>
                             </div>
                         </div>
@@ -341,18 +351,20 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     <div className="h-10 w-px nm-inset" />
 
                     <div className="flex items-center gap-4">
-                        <button
+                        <AdminButton
+                            variant="secondary"
                             className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                             onClick={handleBulkDelete}
                         >
                             Delete Selected
-                        </button>
-                        <button
+                        </AdminButton>
+                        <AdminButton
+                            variant="secondary"
                             className="w-12 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-admin-text-primary transition-colors flex items-center justify-center"
                             onClick={() => setSelectedIds([])}
+                            icon={X}
                         >
-                            <X size={20} />
-                        </button>
+                        </AdminButton>
                     </div>
                 </div>
             )}

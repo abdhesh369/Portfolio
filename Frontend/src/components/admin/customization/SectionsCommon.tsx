@@ -3,14 +3,9 @@ import { ChevronDown } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableAttributes } from "@dnd-kit/core";
-type SyntheticListenerMap = ReturnType<typeof useSortable>['listeners'];
+import { cn } from "@/lib/utils";
 
-export interface CollapsibleSectionProps {
-    title: string;
-    isOpen: boolean;
-    onToggle: () => void;
-    children: React.ReactNode;
-}
+type SyntheticListenerMap = ReturnType<typeof useSortable>['listeners'];
 
 export interface SortableItemProps {
     id: string;
@@ -44,25 +39,45 @@ export function SortableItem({ id, children }: SortableItemProps) {
     );
 }
 
-export function CollapsibleSection({ title, isOpen, onToggle, children }: CollapsibleSectionProps) {
+export interface CollapsibleSectionProps {
+    title: string;
+    description?: string;
+    isOpen: boolean;
+    onToggle: () => void;
+    icon?: React.ReactNode;
+    children: React.ReactNode;
+}
+
+export function CollapsibleSection({ title, description, isOpen, onToggle, icon, children }: CollapsibleSectionProps) {
     return (
-        <div className="border border-transparent rounded-lg overflow-hidden transition-all duration-200">
+        <div className="border border-white/5 rounded-[1.5rem] overflow-hidden transition-all duration-300 nm-flat bg-[#0d0d1a]">
             <button
                 type="button"
                 onClick={onToggle}
                 aria-expanded={isOpen}
-                className="w-full flex items-center justify-between p-4 nm-inset hover:nm-inset transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                className="w-full flex items-center justify-between px-8 py-7 hover:bg-white/[0.02] transition-colors focus:outline-none"
             >
-                <h3 className="text-lg font-semibold text-admin-text-primary">{title}</h3>
-                <ChevronDown
-                    size={20}
-                    className={`text-admin-text-secondary transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                />
+                <div className="flex items-center gap-4 text-left">
+                    {icon && <div className="text-purple-500 opacity-80">{icon}</div>}
+                    <div className="space-y-1">
+                        <h3 className="text-[11px] font-black text-white tracking-[0.25em] uppercase">{title}</h3>
+                        {description && <p className="text-[9px] text-admin-text-muted font-medium tracking-wide">{description}</p>}
+                    </div>
+                </div>
+                <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500",
+                    isOpen ? "bg-purple-500/20 text-purple-400 rotate-180" : "bg-black/20 text-slate-500 nm-inset"
+                )}>
+                    <ChevronDown size={14} />
+                </div>
             </button>
             <div
-                className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? "max-h-[3000px]" : "max-h-0"}`}
+                className={cn(
+                    "overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                    isOpen ? "max-h-[3000px] opacity-100" : "max-h-0 opacity-0"
+                )}
             >
-                <div className="p-4 space-y-4 bg-white/[0.02] border-t border-transparent">
+                <div className="px-8 pb-8 space-y-6 pt-2 border-t border-white/[0.03]">
                     {children}
                 </div>
             </div>

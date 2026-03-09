@@ -3,7 +3,7 @@ import { useProjects, useAdminProjects } from "@/hooks/use-portfolio";
 import type { Project } from "@portfolio/shared";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Layers, Zap } from "lucide-react";
-import { FormField, EmptyState, FormSelect, FormCheckbox } from "../AdminShared";
+import { FormField, EmptyState, FormSelect, FormCheckbox, AdminButton, LoadingSkeleton } from "../AdminShared";
 import { ImageUpload } from "../ImageUpload";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import {
@@ -127,20 +127,24 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
             </div>
 
             <div className="flex items-center gap-3 shrink-0 sm:self-center">
-                <button
+                <AdminButton
+                    variant="secondary"
+                    size="sm"
                     onClick={() => onEdit(project)}
-                    className="nm-button p-3 text-nm-accent hover:text-nm-accent transition-colors"
+                    icon={Edit3}
+                    className="nm-button p-3"
                     title="Edit Protocol"
                 >
-                    <Edit3 size={18} />
-                </button>
-                <button
+                </AdminButton>
+                <AdminButton
+                    variant="secondary"
+                    size="sm"
                     onClick={() => onDelete(project.id)}
-                    className="nm-button p-3 text-rose-500 hover:text-rose-600 transition-colors"
+                    icon={Trash2}
+                    className="nm-button p-3 text-rose-500 hover:text-rose-600"
                     title="Terminate Entity"
                 >
-                    <Trash2 size={18} />
-                </button>
+                </AdminButton>
             </div>
         </div>
     );
@@ -265,26 +269,27 @@ export function ProjectsTab(_props: AdminTabProps) {
                         </div>
                         <p className="text-xs text-admin-text-muted font-bold tracking-[0.3em] uppercase ml-12">Project Protocol Design</p>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setEditing(null)}
+                        variant="secondary"
                         className="nm-button px-6 py-3 text-xs font-black uppercase tracking-widest text-admin-text-secondary hover:text-admin-text-primary transition-all"
                     >
                         Cancel Release
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <form onSubmit={save} className="space-y-10 max-w-6xl pb-32">
                     <div className="grid lg:grid-cols-12 gap-10">
                         <div className="lg:col-span-7 space-y-10">
                             <div className="nm-flat p-8 space-y-8">
-                                <FormField label="Artifact Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v })} required placeholder="Enter primary designation..." />
-                                <FormField label="Primary Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required placeholder="Classification (e.g. Web3, AI, Fintech)..." />
+                                <FormField label="Artifact Title" value={editing.title} onChange={(v) => setEditing(prev => prev ? { ...prev, title: v } : null)} required placeholder="Enter primary designation..." />
+                                <FormField label="Primary Category" value={editing.category} onChange={(v) => setEditing(prev => prev ? { ...prev, category: v } : null)} required placeholder="Classification (e.g. Web3, AI, Fintech)..." />
 
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <FormSelect
                                         label="Lifecycle Status"
                                         value={editing.status || "Completed"}
-                                        onChange={(v) => setEditing({ ...editing, status: v as "In Progress" | "Completed" | "Archived" })}
+                                        onChange={(v) => setEditing(prev => prev ? { ...prev, status: v as "In Progress" | "Completed" | "Archived" } : null)}
                                         options={[
                                             { label: "ACTIVE DEVELOPMENT", value: "In Progress" },
                                             { label: "DEPLOYED / STABLE", value: "Completed" },
@@ -297,13 +302,13 @@ export function ProjectsTab(_props: AdminTabProps) {
                                         <FormCheckbox
                                             label="Flagship Status"
                                             checked={Boolean(editing.isFlagship)}
-                                            onChange={(checked) => setEditing({ ...editing, isFlagship: checked })}
+                                            onChange={(checked) => setEditing(prev => prev ? { ...prev, isFlagship: checked } : null)}
                                             activeColor="bg-amber-500"
                                         />
                                         <FormCheckbox
                                             label="Stealth Mode"
                                             checked={Boolean(editing.isHidden)}
-                                            onChange={(checked) => setEditing({ ...editing, isHidden: checked })}
+                                            onChange={(checked) => setEditing(prev => prev ? { ...prev, isHidden: checked } : null)}
                                             activeColor="bg-rose-500"
                                         />
                                     </div>
@@ -318,7 +323,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                                             <Github className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-text-muted" size={16} />
                                             <input
                                                 value={editing.githubUrl ?? ""}
-                                                onChange={(e) => setEditing({ ...editing, githubUrl: e.target.value })}
+                                                onChange={(e) => setEditing(prev => prev ? { ...prev, githubUrl: e.target.value } : null)}
                                                 placeholder="https://github.com/..."
                                                 className="nm-inset w-full pl-12 pr-5 py-3 rounded-xl text-admin-text-primary text-sm transition-all outline-none focus:ring-2 focus:ring-nm-accent/20"
                                             />
@@ -330,7 +335,10 @@ export function ProjectsTab(_props: AdminTabProps) {
                                             <ExternalLink className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-text-muted" size={16} />
                                             <input
                                                 value={editing.liveUrl ?? ""}
-                                                onChange={(e) => setEditing({ ...editing, liveUrl: e.target.value })}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    setEditing(prev => prev ? { ...prev, liveUrl: val } : null);
+                                                }}
                                                 placeholder="https://..."
                                                 className="nm-inset w-full pl-12 pr-5 py-3 rounded-xl text-admin-text-primary text-sm transition-all outline-none focus:ring-2 focus:ring-nm-accent/20"
                                             />
@@ -342,8 +350,8 @@ export function ProjectsTab(_props: AdminTabProps) {
 
                         <div className="lg:col-span-5 space-y-10">
                             <div className="nm-flat p-8 space-y-8">
-                                <ImageUpload label="Hero Media Asset" value={editing.imageUrl} onChange={(v) => setEditing({ ...editing, imageUrl: v })} className="h-[280px] rounded-2xl overflow-hidden nm-inset border-none" />
-                                <RichTextEditor label="Executive Architecture Summary" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} className="min-h-[260px]" />
+                                <ImageUpload label="Hero Media Asset" value={editing.imageUrl} onChange={(v) => setEditing(prev => prev ? { ...prev, imageUrl: v } : null)} className="h-[280px] rounded-2xl overflow-hidden nm-inset border-none" />
+                                <RichTextEditor label="Executive Architecture Summary" value={editing.description} onChange={(v) => setEditing(prev => prev ? { ...prev, description: v } : null)} className="min-h-[260px]" />
                             </div>
                         </div>
                     </div>
@@ -356,28 +364,38 @@ export function ProjectsTab(_props: AdminTabProps) {
 
                         <div className="grid md:grid-cols-2 gap-16">
                             <div className="space-y-10">
-                                <RichTextEditor label="Problem Vector" value={editing.problemStatement ?? ""} onChange={(v) => setEditing({ ...editing, problemStatement: v })} />
-                                <RichTextEditor label="Innovation Motivation" value={editing.motivation ?? ""} onChange={(v) => setEditing({ ...editing, motivation: v })} />
-                                <RichTextEditor label="Engineering Challenges" value={editing.challenges ?? ""} onChange={(v) => setEditing({ ...editing, challenges: v })} />
+                                <RichTextEditor label="Problem Vector" value={editing.problemStatement ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, problemStatement: v } : null)} />
+                                <RichTextEditor label="Innovation Motivation" value={editing.motivation ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, motivation: v } : null)} />
+                                <RichTextEditor label="Engineering Challenges" value={editing.challenges ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, challenges: v } : null)} />
                             </div>
                             <div className="space-y-10">
-                                <RichTextEditor label="System Architecture" value={editing.systemDesign ?? ""} onChange={(v) => setEditing({ ...editing, systemDesign: v })} />
-                                <RichTextEditor label="Knowledge Acquisition" value={editing.learnings ?? ""} onChange={(v) => setEditing({ ...editing, learnings: v })} />
-                                <RichTextEditor label="Strategic Impact" value={editing.impact ?? ""} onChange={(v) => setEditing({ ...editing, impact: v })} />
+                                <RichTextEditor label="System Architecture" value={editing.systemDesign ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, systemDesign: v } : null)} />
+                                <RichTextEditor label="Knowledge Acquisition" value={editing.learnings ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, learnings: v } : null)} />
+                                <RichTextEditor label="Strategic Impact" value={editing.impact ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, impact: v } : null)} />
                             </div>
                         </div>
                         <div className="pt-10 border-t border-nm-shadow/30">
-                            <RichTextEditor label="Personal Contribution / Lead Role" value={editing.role ?? ""} onChange={(v) => setEditing({ ...editing, role: v })} />
+                            <RichTextEditor label="Personal Contribution / Lead Role" value={editing.role ?? ""} onChange={(v) => setEditing(prev => prev ? { ...prev, role: v } : null)} />
                         </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-6 pt-10">
-                        <button type="submit" disabled={saving} className="nm-button-primary px-12 py-4 h-auto font-black uppercase tracking-widest text-sm flex-1 sm:flex-none">
-                            {saving ? "Deploying..." : (editing.id ? "Sync Changes" : "Commit Artifact")}
-                        </button>
-                        <button type="button" onClick={() => setEditing(null)} className="nm-button px-12 py-4 h-auto font-black uppercase tracking-widest text-sm text-admin-text-secondary hover:text-rose-500 flex-1 sm:flex-none">
+                        <AdminButton
+                            type="submit"
+                            isLoading={saving}
+                            variant="primary"
+                            className="nm-button-primary px-12 py-4 h-auto font-black uppercase tracking-widest text-sm flex-1 sm:flex-none"
+                        >
+                            {editing.id ? "Sync Changes" : "Commit Artifact"}
+                        </AdminButton>
+                        <AdminButton
+                            type="button"
+                            onClick={() => setEditing(null)}
+                            variant="secondary"
+                            className="nm-button px-12 py-4 h-auto font-black uppercase tracking-widest text-sm text-admin-text-secondary hover:text-rose-500 flex-1 sm:flex-none"
+                        >
                             Discard
-                        </button>
+                        </AdminButton>
                     </div>
                 </form>
             </div>
@@ -400,7 +418,9 @@ export function ProjectsTab(_props: AdminTabProps) {
                     <div className="flex items-center gap-3">
                         <span className="text-[10px] text-nm-accent font-black uppercase tracking-[0.3em]">Project Repository</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-nm-accent shadow-[0_0_8px_var(--nm-accent)]" />
-                        <span className="text-[10px] text-admin-text-muted font-bold tracking-widest">{projects?.length ?? 0} ITEMS LOGGED</span>
+                        <span className="text-[10px] text-admin-text-muted font-bold tracking-widest">
+                            {projects ? `${projects.length} ITEMS LOGGED` : "SCANNING..."}
+                        </span>
                     </div>
                 </div>
 
@@ -411,30 +431,38 @@ export function ProjectsTab(_props: AdminTabProps) {
                             type="text"
                             placeholder="FILTER PROTOCOLS..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setSearchQuery(val);
+                            }}
                             className="nm-inset w-full py-4 pl-14 pr-6 text-sm font-bold text-admin-text-primary placeholder:text-admin-text-muted outline-none transition-all focus:ring-2 focus:ring-nm-accent/10"
                         />
                     </div>
-                    <button
+                    <AdminButton
                         onClick={openNew}
+                        variant="primary"
                         className="nm-button-primary p-4 rounded-2xl transition-all hover:rotate-90 active:rotate-180"
                         title="Initialize New Artifact"
+                        icon={Plus}
                     >
-                        <Plus size={24} strokeWidth={3} />
-                    </button>
+                    </AdminButton>
                 </div>
             </div>
 
-            {!filtered.length ? (
+            {!projects ? (
+                <div className="grid gap-6">
+                    {[1, 2, 3].map(i => <LoadingSkeleton key={i} />)}
+                </div>
+            ) : !filtered.length ? (
                 <div className="nm-flat p-24 text-center border-none">
                     <EmptyState
                         icon="🗂️"
                         text={searchQuery ? "No matching project archetypes found in current sector." : "Project database currently contains zero logged artifacts."}
                     />
                     {!searchQuery && (
-                        <button onClick={openNew} className="mt-10 nm-button px-10 py-4 font-black uppercase tracking-widest text-sm text-nm-accent">
+                        <AdminButton onClick={openNew} variant="secondary" className="mt-10 nm-button px-10 py-4 font-black uppercase tracking-widest text-sm text-nm-accent">
                             Initialize Repository
-                        </button>
+                        </AdminButton>
                     )}
                 </div>
             ) : (
@@ -467,12 +495,24 @@ export function ProjectsTab(_props: AdminTabProps) {
                         <span className="text-[9px] text-nm-accent font-black uppercase tracking-[0.4em] mt-1">Batch Protocol Active</span>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-indigo-500" onClick={() => handleBulkStatus("In Progress")}>Development</button>
-                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-emerald-500" onClick={() => handleBulkStatus("Completed")}>Production</button>
-                        <button className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-slate-500" onClick={() => handleBulkStatus("Archived")}>Legacy</button>
+                        <AdminButton variant="secondary" className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-indigo-500" onClick={() => handleBulkStatus("In Progress")}>Development</AdminButton>
+                        <AdminButton variant="secondary" className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-emerald-500" onClick={() => handleBulkStatus("Completed")}>Production</AdminButton>
+                        <AdminButton variant="secondary" className="nm-button px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-secondary hover:text-slate-500" onClick={() => handleBulkStatus("Archived")}>Legacy</AdminButton>
                     </div>
-                    <button className="nm-button px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/5 hover:bg-rose-500 hover:text-white border-none" onClick={handleBulkDelete}>Terminate Selection</button>
-                    <button onClick={() => setSelectedIds([])} className="nm-button w-10 h-10 rounded-full text-admin-text-muted hover:text-admin-text-primary transition-colors">✕</button>
+                    <AdminButton
+                        variant="secondary"
+                        className="nm-button px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/5 hover:bg-rose-500 hover:text-white border-none"
+                        onClick={handleBulkDelete}
+                    >
+                        Terminate Selection
+                    </AdminButton>
+                    <AdminButton
+                        variant="secondary"
+                        onClick={() => setSelectedIds([])}
+                        className="nm-button w-10 h-10 rounded-full text-admin-text-muted hover:text-admin-text-primary transition-colors flex items-center justify-center"
+                    >
+                        ✕
+                    </AdminButton>
                 </div>
             )}
         </div>

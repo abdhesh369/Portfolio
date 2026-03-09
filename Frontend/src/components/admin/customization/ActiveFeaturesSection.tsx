@@ -1,35 +1,47 @@
 import React from "react";
-import { UseFormRegister } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
+import { SpringToggle } from "../AdminShared";
 
 interface ActiveFeaturesSectionProps {
-    register: UseFormRegister<InsertSiteSettings>;
+    control: Control<InsertSiteSettings>;
     isOpen: boolean;
     onToggle: () => void;
 }
 
 const FEATURE_TOGGLES = [
-    { id: "featureBlog", label: "Enable Blog Section" },
-    { id: "featureGuestbook", label: "Enable Guestbook" },
-    { id: "featureServices", label: "Enable Services" },
-    { id: "featureTestimonials", label: "Enable Testimonials" },
-    { id: "featurePlayground", label: "Enable Lab/Playground" },
+    { id: "featureBlog", label: "Kernel Blog", desc: "Enable the centralized technical log." },
+    { id: "featureGuestbook", label: "Public Signal", desc: "Open the encrypted visitor feedback loop." },
+    { id: "featureServices", label: "Task Engine", desc: "Display available modular service units." },
+    { id: "featureTestimonials", label: "Validation Grid", desc: "Showcase verified peer feedback." },
+    { id: "featurePlayground", label: "Sandbox Lab", desc: "Expose experimental UI components." },
 ] as const;
 
-export function ActiveFeaturesSection({ register, isOpen, onToggle }: ActiveFeaturesSectionProps) {
+export function ActiveFeaturesSection({ control, isOpen, onToggle }: ActiveFeaturesSectionProps) {
     return (
         <CollapsibleSection
-            title="Active Features"
+            title="MODULAR_FEATURE_GRID"
+            description="Toggle active operational modules within the current deployment."
             isOpen={isOpen}
             onToggle={onToggle}
         >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {FEATURE_TOGGLES.map((feature) => (
-                    <label key={feature.id} htmlFor={feature.id} className="flex items-center p-3 rounded-lg nm-inset border border-transparent hover:border-purple-500/30 cursor-pointer transition-colors">
-                        <input id={feature.id} {...register(feature.id as keyof InsertSiteSettings)} type="checkbox" className="w-4 h-4 rounded border-admin-text-muted/30 bg-transparent text-purple-600 focus:ring-purple-500" />
-                        <span className="ml-3 text-sm text-admin-text-primary">{feature.label}</span>
-                    </label>
+                    <Controller
+                        key={feature.id}
+                        name={feature.id as keyof InsertSiteSettings}
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                            <SpringToggle
+                                label={feature.label}
+                                description={feature.desc}
+                                checked={!!value}
+                                onChange={onChange}
+                                className="rounded-2xl"
+                            />
+                        )}
+                    />
                 ))}
             </div>
         </CollapsibleSection>

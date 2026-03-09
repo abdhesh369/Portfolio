@@ -1,15 +1,16 @@
 import React from "react";
-import { UseFormRegister, UseFieldArrayMove, Path } from "react-hook-form";
-import { GripVertical, ChevronDown } from "lucide-react";
+import { UseFormRegister, UseFieldArrayMove, Path, Control, Controller } from "react-hook-form";
+import { GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent, SensorDescriptor, SensorOptions, DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Button } from "@/components/ui/button";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
+import { SpringToggle } from "../AdminShared";
 
 interface SectionLayoutSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
+    control: Control<InsertSiteSettings>;
     sectionOrderFields: { id: string }[];
     moveSection: UseFieldArrayMove;
     sensors: SensorDescriptor<SensorOptions>[];
@@ -21,7 +22,7 @@ interface SectionLayoutSectionProps {
 }
 
 export function SectionLayoutSection({
-    register,
+    control,
     sectionOrderFields,
     moveSection,
     sensors,
@@ -33,15 +34,12 @@ export function SectionLayoutSection({
 }: SectionLayoutSectionProps) {
     return (
         <CollapsibleSection
-            title="Section Layout & Visibility"
+            title="HIERARCHY_ACTIVATION_STACK"
+            description="Reorder the activation stack and manage modular visibility states."
             isOpen={isOpen}
             onToggle={onToggle}
         >
-            <div className="space-y-4">
-                <p className="text-xs text-admin-text-muted italic">
-                    Drag sections to reorder how they appear on your homepage. Use the toggle to hide/show sections.
-                </p>
-
+            <div className="space-y-6 p-2">
                 <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -51,7 +49,7 @@ export function SectionLayoutSection({
                         items={sectionOrderFields.map(f => f.id)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             {sectionOrderFields.map((field, index) => {
                                 const sectionId = (settings?.sectionOrder?.[index] || field.id) as string;
                                 const label = sectionLabels[sectionId] || sectionId;
@@ -59,48 +57,58 @@ export function SectionLayoutSection({
                                 return (
                                     <SortableItem key={field.id} id={field.id}>
                                         {({ attributes, listeners, isDragging }: { attributes: DraggableAttributes; listeners: SyntheticListenerMap | undefined; isDragging: boolean }) => (
-                                            <div className={`flex items-center gap-3 p-3 rounded-lg nm-inset border transition-colors group ${isDragging ? "border-purple-500/50 nm-inset shadow-xl" : "border-transparent hover:border-purple-500/30"}`}>
+                                            <div className={`
+                                                flex items-center gap-4 p-4 rounded-[1.5rem] nm-inset border transition-all duration-300 group
+                                                ${isDragging ? "border-purple-500/50 scale-[1.02] shadow-[0_20px_50px_rgba(124,58,237,0.2)] z-50" : "border-transparent hover:border-white/5"}
+                                            `}>
                                                 <div
-                                                    className="text-admin-text-muted group-hover:text-admin-text-muted cursor-grab px-1 active:cursor-grabbing"
+                                                    className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 text-admin-text-muted cursor-grab active:cursor-grabbing hover:text-white transition-colors"
                                                     {...attributes}
                                                     {...listeners}
                                                 >
-                                                    <GripVertical className="w-4 h-4" />
+                                                    <GripVertical size={16} />
                                                 </div>
 
-                                                <span className="text-sm font-medium text-admin-text-primary grow">{label}</span>
+                                                <div className="flex flex-col grow min-w-0">
+                                                    <span className="text-[10px] font-black text-admin-text-muted tracking-[0.2em] uppercase mb-1">Module {String(index).padStart(2, '0')}</span>
+                                                    <span className="text-sm font-bold text-white truncate">{label}</span>
+                                                </div>
 
-                                                <div className="flex items-center gap-4">
-                                                    <label className="flex items-center cursor-pointer">
-                                                        <input
-                                                            type="checkbox"
-                                                            {...register(`sectionVisibility.${sectionId}` as Path<InsertSiteSettings>)}
-                                                            className="sr-only peer"
+                                                <div className="flex items-center gap-6">
+                                                    <div className="flex flex-col items-end gap-1">
+                                                        <span className="text-[9px] font-bold text-admin-text-muted uppercase tracking-wider">Visibility</span>
+                                                        <Controller
+                                                            name={`sectionVisibility.${sectionId}` as Path<InsertSiteSettings>}
+                                                            control={control}
+                                                            render={({ field }) => (
+                                                                <SpringToggle
+                                                                    label="VISIBILITY"
+                                                                    checked={!!field.value}
+                                                                    onChange={field.onChange}
+                                                                />
+                                                            )}
                                                         />
-                                                        <div className="relative w-9 h-5 nm-inset peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-admin-text-primary/10 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white/40 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
-                                                    </label>
+                                                    </div>
 
-                                                    <div className="flex gap-1">
-                                                        <Button
+                                                    <div className="h-10 w-px bg-white/5" />
+
+                                                    <div className="flex gap-2">
+                                                        <button
                                                             type="button"
-                                                            variant="ghost"
-                                                            size="icon"
                                                             disabled={index === 0}
                                                             onClick={() => moveSection(index, index - 1)}
-                                                            className="text-admin-text-muted h-7 w-7"
+                                                            className="p-2 rounded-lg bg-white/5 text-admin-text-muted hover:text-white disabled:opacity-20 transition-all hover:bg-white/10"
                                                         >
-                                                            <ChevronDown className="w-3 h-3 rotate-180" />
-                                                        </Button>
-                                                        <Button
+                                                            <ChevronUp size={16} />
+                                                        </button>
+                                                        <button
                                                             type="button"
-                                                            variant="ghost"
-                                                            size="icon"
                                                             disabled={index === sectionOrderFields.length - 1}
                                                             onClick={() => moveSection(index, index + 1)}
-                                                            className="text-admin-text-muted h-7 w-7"
+                                                            className="p-2 rounded-lg bg-white/5 text-admin-text-muted hover:text-white disabled:opacity-20 transition-all hover:bg-white/10"
                                                         >
-                                                            <ChevronDown className="w-3 h-3" />
-                                                        </Button>
+                                                            <ChevronDown size={16} />
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>

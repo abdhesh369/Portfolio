@@ -1,8 +1,8 @@
 import { UseFormRegister } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
+import { FloatingLabelInput, AdminButton } from "../AdminShared";
 
 interface HeroSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
@@ -17,43 +17,52 @@ interface HeroSectionProps {
 export function HeroSection({ register, taglineFields, appendTagline, removeTagline, isOpen, onToggle }: HeroSectionProps) {
     return (
         <CollapsibleSection
-            title="Hero Section"
+            title="CORE_MESSAGING_V1"
+            description="Manage the primary entry-point messaging and dynamic tagline array."
             isOpen={isOpen}
             onToggle={onToggle}
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <label htmlFor="heroGreeting" className="text-xs font-medium text-admin-text-secondary uppercase">Greeting Text</label>
-                    <input id="heroGreeting" {...register("heroGreeting")} className="admin-input" />
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="heroBadgeText" className="text-xs font-medium text-admin-text-secondary uppercase">Badge Text</label>
-                    <input id="heroBadgeText" {...register("heroBadgeText")} className="admin-input" />
-                </div>
-                <div className="md:col-span-2 space-y-3">
-                    <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-admin-text-secondary uppercase">Dynamic Taglines</label>
-                        <Button type="button" variant="outline" size="sm" onClick={() => appendTagline("")} className="h-7 text-[10px]">
-                            <Plus className="w-3 h-3 mr-1" /> Add Tagline
-                        </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 p-2">
+                <FloatingLabelInput
+                    label="Initialization Message"
+                    placeholder="Hey, I am"
+                    {...register("heroGreeting")}
+                />
+                <FloatingLabelInput
+                    label="Status Badge"
+                    placeholder="Available for work"
+                    {...register("heroBadgeText")}
+                />
+
+                <div className="md:col-span-2 space-y-6 pt-4">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                        <label className="text-[10px] font-black text-white tracking-[0.2em] uppercase">Dynamic Taglines</label>
+                        <AdminButton
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => appendTagline("")}
+                            icon={Plus}
+                        >
+                            Append
+                        </AdminButton>
                     </div>
-                    <div className="space-y-2">
+
+                    <div className="space-y-4">
                         {taglineFields.map((field, index) => (
-                            <div key={field.id} className="flex gap-2">
-                                <input
-                                    {...register(`heroTaglines.${index}` as const)}
-                                    className="admin-input"
+                            <div key={field.id} className="flex gap-4 items-center animate-in slide-in-from-right-4 duration-300">
+                                <span className="text-[9px] font-mono text-purple-500/50 w-4">{String(index + 1).padStart(2, '0')}</span>
+                                <FloatingLabelInput
+                                    label={`Tagline Array [${index}]`}
                                     placeholder="e.g. Building high-performance apps"
+                                    {...register(`heroTaglines.${index}` as const)}
                                 />
-                                <Button
+                                <button
                                     type="button"
-                                    variant="ghost"
-                                    size="icon"
                                     onClick={() => removeTagline(index)}
-                                    className="text-admin-text-muted hover:text-red-400 hover:bg-red-400/10 shrink-0"
+                                    className="p-3 rounded-xl bg-pink-500/5 text-pink-500 hover:bg-pink-500/10 transition-colors"
                                 >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
                         ))}
                     </div>

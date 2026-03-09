@@ -2,6 +2,7 @@ import React from "react";
 import { UseFormRegister } from "react-hook-form";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
+import { FloatingLabelInput } from "../AdminShared";
 
 interface FooterSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
@@ -12,19 +13,22 @@ interface FooterSectionProps {
 export function FooterSection({ register, isOpen, onToggle }: FooterSectionProps) {
     return (
         <CollapsibleSection
-            title="Footer Configuration"
+            title="TERMINAL_DATA_BASE"
+            description="Operationalize the persistent data at the base of the interface."
             isOpen={isOpen}
             onToggle={onToggle}
         >
-            <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                    <label htmlFor="footerCopyright" className="text-xs font-medium text-admin-text-secondary uppercase">Copyright Text</label>
-                    <input id="footerCopyright" {...register("footerCopyright")} className="admin-input" />
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="footerTagline" className="text-xs font-medium text-admin-text-secondary uppercase">Footer Tagline</label>
-                    <input id="footerTagline" {...register("footerTagline")} className="admin-input" />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-2">
+                <FloatingLabelInput
+                    label="Terminal Copyright"
+                    placeholder="© 2026 Your Name"
+                    {...register("footerCopyright")}
+                />
+                <FloatingLabelInput
+                    label="Footer Descriptor"
+                    placeholder="Built with React & Framer Motion"
+                    {...register("footerTagline")}
+                />
             </div>
         </CollapsibleSection>
     );

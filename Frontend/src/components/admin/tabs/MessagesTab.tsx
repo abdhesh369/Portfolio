@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
-import { FormField, EmptyState, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,13 +90,14 @@ export function MessagesTab() {
                         />
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-nm-accent/50" />
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => queryClient.invalidateQueries({ queryKey: ["messages"] })}
+                        variant="secondary"
+                        icon={RefreshCw}
                         className="w-14 h-14 rounded-2xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-nm-accent"
                         title="Refresh Messages"
                     >
-                        <RefreshCw size={20} />
-                    </button>
+                    </AdminButton>
                 </div>
             </div>
 
@@ -120,7 +121,10 @@ export function MessagesTab() {
                         >
                             {/* Selector */}
                             <div className="flex items-center self-start pt-1">
-                                <button
+                                <AdminButton
+                                    variant={selectedIds.includes(msg.id) ? "primary" : "secondary"}
+                                    icon={Check}
+                                    size="sm"
                                     className={cn(
                                         "w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0",
                                         selectedIds.includes(msg.id)
@@ -129,8 +133,7 @@ export function MessagesTab() {
                                     )}
                                     onClick={() => toggleSelect(msg.id)}
                                 >
-                                    <Check size={16} />
-                                </button>
+                                </AdminButton>
                             </div>
 
                             <div className="flex-1 min-w-0 space-y-4">
@@ -168,13 +171,14 @@ export function MessagesTab() {
                             {/* Actions */}
                             <div className="flex md:flex-col gap-3 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 md:ml-4 translate-x-2 group-hover:translate-x-0 self-center">
                                 <ReplyDialog message={msg} />
-                                <button
+                                <AdminButton
                                     onClick={() => deleteMessage(msg.id)}
+                                    variant="secondary"
+                                    icon={Trash2}
                                     className="w-12 h-12 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
                                     title="Discard Transmission"
                                 >
-                                    <Trash2 size={20} />
-                                </button>
+                                </AdminButton>
                             </div>
                         </div>
                     ))}
@@ -197,18 +201,20 @@ export function MessagesTab() {
                     <div className="h-10 w-px nm-inset" />
 
                     <div className="flex items-center gap-4">
-                        <button
+                        <AdminButton
+                            variant="secondary"
                             className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                             onClick={handleBulkDelete}
                         >
                             Delete Transmissions
-                        </button>
-                        <button
+                        </AdminButton>
+                        <AdminButton
+                            variant="secondary"
+                            icon={X}
                             className="w-12 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-admin-text-primary transition-colors flex items-center justify-center"
                             onClick={() => setSelectedIds([])}
                         >
-                            <X size={20} />
-                        </button>
+                        </AdminButton>
                     </div>
                 </div>
             )}
@@ -256,13 +262,14 @@ function ReplyDialog({ message }: { message: Message }) {
     };
 
     if (!open) return (
-        <button
+        <AdminButton
             onClick={() => setOpen(true)}
+            variant="secondary"
+            icon={Reply}
             className="w-12 h-12 rounded-xl nm-button flex items-center justify-center text-nm-accent transition-all hover:scale-110 active:scale-95"
             title="Reply"
         >
-            <Reply size={20} />
-        </button>
+        </AdminButton>
     );
 
     return (
@@ -280,12 +287,13 @@ function ReplyDialog({ message }: { message: Message }) {
                             <p className="text-xs text-admin-text-secondary font-medium mt-1">Responding to <span className="text-nm-accent font-bold">{message.name}</span></p>
                         </div>
                     </div>
-                    <button
+                    <AdminButton
                         onClick={() => setOpen(false)}
+                        variant="secondary"
+                        icon={X}
                         className="w-12 h-12 rounded-2xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
                     >
-                        <X size={24} />
-                    </button>
+                    </AdminButton>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 h-[600px]">
@@ -332,24 +340,23 @@ function ReplyDialog({ message }: { message: Message }) {
                         </div>
 
                         <div className="flex justify-end gap-6 pt-4">
-                            <button
+                            <AdminButton
                                 onClick={() => setOpen(false)}
+                                variant="secondary"
                                 className="px-10 h-14 rounded-2xl nm-button text-admin-text-secondary font-black text-[12px] uppercase tracking-[0.2em]"
                             >
                                 Discard_Draft
-                            </button>
-                            <button
+                            </AdminButton>
+                            <AdminButton
                                 onClick={handleSend}
-                                disabled={sending || !body}
+                                isLoading={sending}
+                                variant="primary"
+                                icon={!sending ? Send : undefined}
+                                disabled={!body}
                                 className="nm-button nm-button-primary px-12 h-14 font-black text-[12px] uppercase tracking-[0.25em] flex items-center gap-3 disabled:opacity-50 disabled:grayscale transition-all hover:scale-[1.02] active:scale-[0.98]"
                             >
-                                {sending ? (
-                                    <RefreshCw size={18} className="animate-spin" />
-                                ) : (
-                                    <Send size={18} />
-                                )}
                                 <span>{sending ? "TRANSMITTING..." : "SEND_PROTOCOL"}</span>
-                            </button>
+                            </AdminButton>
                         </div>
                     </div>
                 </div>

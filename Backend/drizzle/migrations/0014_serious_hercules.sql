@@ -1,0 +1,1 @@
+ALTER TABLE "guestbook" DROP COLUMN "reactions";

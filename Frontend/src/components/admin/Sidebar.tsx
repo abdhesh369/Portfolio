@@ -66,35 +66,40 @@ export default function Sidebar({
             )}
 
             <aside className={cn(
-                "fixed lg:sticky top-0 left-0 h-screen z-50 transition-all duration-500 ease-out",
+                "fixed lg:sticky top-0 left-0 h-screen z-50 transition-all duration-500 var(--nm-timing)",
                 "sidebar-container flex flex-col",
                 collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-width)]",
                 mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
             )}>
-                {/* Brand Section */}
-                <div className="h-[72px] flex items-center shrink-0 justify-center relative">
+                {/* Brand Section: Technical Gear */}
+                <div className="h-[var(--admin-topbar-height)] flex items-center shrink-0 justify-center relative">
                     <div
-                        className="icon-container-inset group cursor-pointer"
+                        className="group cursor-pointer relative"
                         onClick={() => setCollapsed(!collapsed)}
                     >
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-rose-500 flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform duration-500">
+                        <div className="w-12 h-12 rounded-2xl bg-var(--nm-card) shadow-float flex items-center justify-center relative overflow-hidden nm-flat group-hover:scale-110 transition-all duration-500">
+                            <div className="absolute inset-0 bg-var(--nm-accent-gradient) opacity-10 group-hover:opacity-20 transition-opacity" />
                             {settings?.personalAvatar && !avatarError ? (
                                 <img
                                     src={settings.personalAvatar}
-                                    className="w-full h-full object-cover rounded-lg"
+                                    className="w-10 h-10 object-cover rounded-xl z-10"
                                     onError={() => setAvatarError(true)}
                                     alt="Logo"
                                 />
                             ) : (
-                                <span className="font-bold text-lg">{brandInitial}</span>
+                                <span className="font-black text-xl text-purple-500 z-10 tracking-tighter">{brandInitial}</span>
                             )}
+                        </div>
+                        {/* Status Ring */}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-var(--nm-bg) flex items-center justify-center">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                         </div>
                     </div>
                 </div>
 
-                {/* Navigation Items */}
-                <nav className="flex-1 py-6 px-3 flex flex-col gap-3 overflow-y-auto overflow-x-hidden custom-scrollbar">
-                    {NAV_ITEMS.map((item) => {
+                {/* Navigation Items: technical spacing */}
+                <nav className="flex-1 py-8 px-4 flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar">
+                    {NAV_ITEMS.map((item, idx) => {
                         const isActive = activeTab === item.key;
                         const Icon = item.icon;
 
@@ -108,44 +113,48 @@ export default function Sidebar({
                                 className={cn(
                                     "nm-nav-item group relative",
                                     isActive && "active",
-                                    collapsed && "justify-center p-0 h-[48px] w-[48px] mx-auto shrink-0"
+                                    collapsed && "justify-center p-0 h-[56px] w-[56px] mx-auto shrink-0"
                                 )}
+                                style={{
+                                    transitionDelay: `${idx * 40}ms`,
+                                    animation: `fadeInRight 0.5s var(--nm-timing) forwards ${idx * 0.05}s`
+                                }}
                                 title={collapsed ? item.label : undefined}
                             >
                                 <div className={cn(
                                     "flex items-center justify-center transition-all duration-500 shrink-0",
-                                    isActive ? "text-indigo-500" : "group-hover:text-indigo-400 group-hover:rotate-12"
+                                    isActive ? "text-[var(--nm-accent-purple)] scale-110" : "group-hover:text-purple-400 group-hover:rotate-12"
                                 )}>
-                                    <Icon size={20} strokeWidth={2.5} />
+                                    <Icon size={isActive ? 22 : 20} strokeWidth={isActive ? 2.5 : 2} />
                                 </div>
 
                                 {!collapsed && (
-                                    <span className="font-bold text-xs tracking-tight whitespace-nowrap opacity-100 transition-opacity duration-300 uppercase">
+                                    <span className="font-bold text-[10px] tracking-[0.25em] whitespace-nowrap opacity-100 transition-all duration-300 uppercase">
                                         {item.label}
                                     </span>
                                 )}
 
                                 {isActive && (
-                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full shadow-[0_0_12px_rgba(99,102,241,0.5)]" />
+                                    <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[var(--nm-accent-purple)] rounded-r-full shadow-[0_0_15px_rgba(124,58,237,0.6)]" />
                                 )}
                             </button>
                         );
                     })}
                 </nav>
 
-                {/* Footer Action */}
-                <div className="p-4 border-t border-black/5 bg-black/[0.01]">
+                {/* Footer Action: Context Sync */}
+                <div className="p-6 border-t border-white/5">
                     <div className={cn(
-                        "nm-inset p-2.5 transition-all duration-500",
-                        collapsed ? "w-10 h-10 p-0 flex items-center justify-center mx-auto" : "flex items-center gap-3"
+                        "nm-inset p-3 transition-all duration-500",
+                        collapsed ? "w-12 h-12 p-0 flex items-center justify-center mx-auto" : "flex items-center gap-4"
                     )}>
-                        <div className="w-7 h-7 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 animate-pulse">
-                            <Globe size={14} />
+                        <div className="w-8 h-8 rounded-xl bg-purple-500/5 flex items-center justify-center text-purple-500 group">
+                            <Globe size={16} className="group-hover:rotate-180 transition-transform duration-[2s]" />
                         </div>
                         {!collapsed && (
                             <div className="flex flex-col min-w-0">
-                                <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">Context</span>
-                                <span className="text-[10px] font-bold truncate uppercase">{brandName}</span>
+                                <span className="text-[8px] uppercase tracking-[0.4em] font-black text-slate-500">Kernel_Link</span>
+                                <span className="text-[10px] font-bold truncate uppercase text-slate-300">{brandName}</span>
                             </div>
                         )}
                     </div>

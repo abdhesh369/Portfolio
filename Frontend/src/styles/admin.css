@@ -1,327 +1,222 @@
-/* ==================== PREMIUM NEUMORPHIC DASHBOARD v4.0 ==================== */
+/* ==================== CONFIGURATION ENGINE v5.0 (DEEP DARK) ==================== */
 
 @import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&f[]=general-sans@600,500,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
-  /* Neumorphic Tokens - Light Mode (Default) */
-  --nm-bg: #e0e5ec;
-  --nm-light: #ffffff;
-  --nm-shadow: #a3b1c6;
-  --nm-accent: #6366f1;
-  --nm-accent-glow: rgba(99, 102, 241, 0.4);
+  /* Configuration Engine Tokens - Deep Dark */
+  --nm-bg: #050509;
+  --nm-panel: #0d0d1a;
+  --nm-card: #121225;
 
-  --admin-text-primary: #2d3436;
-  --admin-text-secondary: #636e72;
-  --admin-text-muted: #b2bec3;
+  --nm-light: rgba(255, 255, 255, 0.03);
+  --nm-shadow: rgba(0, 0, 0, 0.6);
+
+  --nm-accent-pink: #db2777;
+  --nm-accent-purple: #7c3aed;
+  --nm-accent-gradient: linear-gradient(135deg, var(--nm-accent-purple), var(--nm-accent-pink));
+
+  --admin-text-primary: #ffffff;
+  --admin-text-secondary: #94a3b8;
+  --admin-text-muted: #475569;
 
   --nm-timing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Custom Spring Easing */
+
   --font-heading: 'General Sans', sans-serif;
   --font-body: 'Satoshi', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Layout */
+  /* Layout Constants */
   --admin-sidebar-width: 280px;
-  --admin-sidebar-collapsed: 72px;
-  --admin-topbar-height: 72px;
+  --admin-sidebar-collapsed: 88px;
+  --admin-topbar-height: 80px;
 }
 
-.dark {
-  /* Neumorphic Tokens - Dark Mode */
-  --nm-bg: #1e2030;
-  --nm-light: #2a2d42;
-  --nm-shadow: #14152a;
-
-  --admin-text-primary: #f8fafc;
-  --admin-text-secondary: #94a3b8;
-  --admin-text-muted: #64748b;
-}
-
-/* Base Neumorphic Body */
-body.admin-mode {
+/* Base Scoping */
+.admin-mode {
   background-color: var(--nm-bg);
   color: var(--admin-text-primary);
   font-family: var(--font-body);
-  transition: background-color 0.5s ease;
+  transition: background-color 0.4s ease;
   margin: 0;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* --- Neumorphic Core Utility Classes --- */
+/* --- Premium Neumorphic Core --- */
 
-/* Convex (Flat/Convex) */
+/* Standard Card (Flat Convex) */
 .nm-flat {
-  background: var(--nm-bg);
-  box-shadow: 6px 6px 12px var(--nm-shadow),
-    -6px -6px 12px var(--nm-light);
-  border-radius: 20px;
-  border: none;
-}
-
-/* Deep Convex (Floating) */
-.nm-float {
-  background: var(--nm-bg);
-  box-shadow: 10px 10px 20px var(--nm-shadow),
-    -10px -10px 20px var(--nm-light);
+  background: var(--nm-card);
+  box-shadow:
+    8px 8px 16px var(--nm-shadow),
+    -4px -4px 12px var(--nm-light);
   border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-/* Concave (Recessed/Inset) */
+/* Elevated (Floating) */
+.nm-float {
+  background: var(--nm-card);
+  box-shadow:
+    12px 12px 24px var(--nm-shadow),
+    -6px -6px 16px var(--nm-light);
+  border-radius: 32px;
+}
+
+/* Recessed (Inset Focus) */
 .nm-inset {
   background: var(--nm-bg);
-  box-shadow: inset 4px 4px 8px var(--nm-shadow),
-    inset -4px -4px 8px var(--nm-light);
-  border-radius: 20px;
-  border: none;
+  box-shadow:
+    inset 6px 6px 12px var(--nm-shadow),
+    inset -3px -3px 8px var(--nm-light);
+  border-radius: 16px;
 }
 
-/* Customization Inputs */
+/* Glassmorphism Utility */
+.glass-panel {
+  background: rgba(13, 13, 26, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Technical Inputs */
 .admin-input {
   width: 100%;
   background: var(--nm-bg);
-  box-shadow: inset 4px 4px 8px var(--nm-shadow),
-    inset -4px -4px 8px var(--nm-light);
-  border-radius: 12px;
-  border: none;
-  padding: 12px 20px;
+  box-shadow:
+    inset 4px 4px 8px var(--nm-shadow),
+    inset -2px -2px 6px var(--nm-light);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 14px 24px;
   color: var(--admin-text-primary);
   font-size: 14px;
+  letter-spacing: 0.02em;
   transition: all 0.3s var(--nm-timing);
   outline: none;
 }
 
 .admin-input:focus {
-  box-shadow: inset 5px 5px 10px var(--nm-shadow),
-    inset -5px -5px 10px var(--nm-light),
-    0 0 0 2px rgba(99, 102, 241, 0.2);
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow:
+    inset 5px 5px 10px var(--nm-shadow),
+    inset -2px -2px 8px var(--nm-light),
+    0 0 15px rgba(124, 58, 237, 0.1);
 }
 
-.admin-input::placeholder {
-  color: var(--admin-text-muted);
-}
-
-/* Interactive Soft Button */
+/* Action Buttons */
 .nm-button {
-  background: var(--nm-bg);
-  box-shadow: 4px 4px 8px var(--nm-shadow),
-    -4px -4px 8px var(--nm-light);
-  border-radius: 12px;
-  color: var(--admin-text-primary);
-  font-weight: 600;
+  background: var(--nm-card);
+  box-shadow:
+    4px 4px 8px var(--nm-shadow),
+    -2px -2px 6px var(--nm-light);
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.3s var(--nm-timing);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: none;
 }
 
 .nm-button:hover {
   transform: translateY(-2px);
-  box-shadow: 7px 7px 14px var(--nm-shadow),
-    -7px -7px 14px var(--nm-light);
+  background: var(--nm-panel);
+  box-shadow: 6px 6px 12px var(--nm-shadow), -3px -3px 8px var(--nm-light);
 }
 
 .nm-button:active {
-  transform: translateY(0);
-  box-shadow: inset 3px 3px 6px var(--nm-shadow),
-    inset -3px -3px 6px var(--nm-light);
+  transform: translateY(1px);
+  box-shadow: inset 3px 3px 6px var(--nm-shadow), inset -1px -1px 4px var(--nm-light);
 }
 
 .nm-button-primary {
-  background: var(--nm-accent);
+  background: var(--nm-accent-gradient);
   color: white;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2),
-    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  border: none;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
 }
 
 .nm-button-primary:hover {
-  box-shadow: 6px 6px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+  filter: brightness(1.1);
 }
 
 /* Navigation Items */
 .nm-nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 16px;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 18px;
   color: var(--admin-text-secondary);
-  transition: all 0.3s var(--nm-timing);
+  transition: all 0.4s var(--nm-timing);
   cursor: pointer;
+  border: 1px solid transparent;
 }
 
 .nm-nav-item:hover {
   color: var(--admin-text-primary);
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateX(6px);
 }
 
 .nm-nav-item.active {
   background: var(--nm-bg);
-  box-shadow: inset 4px 4px 8px var(--nm-shadow),
-    inset -4px -4px 8px var(--nm-light);
-  color: var(--nm-accent);
+  box-shadow:
+    inset 5px 5px 10px var(--nm-shadow),
+    inset -2px -2px 8px var(--nm-light);
+  color: var(--nm-accent-purple);
+  border: 1px solid rgba(124, 58, 237, 0.1);
 }
 
-/* --- Component Specifics --- */
+/* --- Layout Components --- */
 
 .sidebar-container {
-  background: var(--nm-bg);
+  background: var(--nm-panel);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  /* Very subtle separator */
 }
 
 .topbar-container {
-  background: var(--nm-bg);
-  border-radius: 0 0 28px 28px;
-  box-shadow: 0 10px 20px var(--nm-shadow);
+  background: rgba(5, 5, 9, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   z-index: 50;
 }
 
+/* Stat Cards */
 .stat-card {
-  padding: 24px;
-  transition: all 0.3s var(--nm-timing);
+  padding: 32px;
+  transition: all 0.4s var(--nm-timing);
 }
 
 .stat-card:hover {
-  transform: scale(1.015);
-  box-shadow: 12px 12px 24px var(--nm-shadow),
-    -12px -12px 24px var(--nm-light);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 15px 15px 30px var(--nm-shadow), -8px -8px 20px var(--nm-light);
 }
 
 .icon-container-inset {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 18px;
   background: var(--nm-bg);
-  box-shadow: inset 3px 3px 6px var(--nm-shadow),
-    inset -3px -3px 6px var(--nm-light);
-}
-
-/* Progress Bars */
-.progress-track {
-  background: var(--nm-bg);
-  box-shadow: inset 2px 2px 4px var(--nm-shadow),
-    inset -2px -2px 4px var(--nm-light);
-  height: 10px;
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #6366f1, #818cf8, #a78bfa);
-  border-radius: 5px;
-  position: relative;
-  transition: width 0.8s var(--nm-timing);
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  animation: waveShimmer 2.5s infinite;
-}
-
-/* Animations */
-@keyframes waveShimmer {
-  from {
-    left: -100%;
-  }
-
-  to {
-    left: 150%;
-  }
-}
-
-@keyframes float-icon {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.animate-float-icon {
-  animation: float-icon 3s ease-in-out infinite;
-}
-
-@keyframes countPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.12);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.animate-count-pulse {
-  animation: countPulse 0.4s var(--nm-timing);
-}
-
-@keyframes ripple-animation {
-  0% {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-.ripple-dot {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
-  transform: scale(0);
-  animation: ripple-animation 0.7s var(--nm-timing);
-  pointer-events: none;
-}
-
-/* Terminal Soft UI */
-.terminal-inset {
-  background: var(--nm-bg);
-  box-shadow: inset 5px 5px 10px var(--nm-shadow),
-    inset -5px -5px 10px var(--nm-light);
-  border-radius: 16px;
-  padding: 20px;
-  font-family: var(--font-mono);
-}
-
-.cursor-blink {
-  animation: cursor-blink 1s step-end infinite;
-}
-
-@keyframes cursor-blink {
-
-  from,
-  to {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0;
-  }
+  box-shadow:
+    inset 4px 4px 10px var(--nm-shadow),
+    inset -2px -2px 6px var(--nm-light);
+  color: var(--nm-accent-purple);
 }
 
 /* Typography Overrides */
@@ -332,40 +227,83 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  /* Extreme Technical Spacing */
+  color: var(--admin-text-primary);
 }
 
 .text-satoshi {
   font-family: var(--font-body);
 }
 
-/* Responsive Grid Adjustments */
-.nm-grid {
-  display: grid;
-  gap: 24px;
-}
+/* Animations */
+@keyframes float-technical {
 
-@media (min-width: 1024px) {
-  .nm-grid-4 {
-    grid-template-columns: repeat(4, 1fr);
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
   }
 
-  .nm-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
+  50% {
+    transform: translateY(-8px) rotate(2deg);
   }
 }
 
-/* Custom Scrollbar - Soft */
+.animate-technical {
+  animation: float-technical 4s var(--nm-timing) infinite;
+}
+
+/* Custom Scrollbar - Cyber Style */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--nm-shadow);
+  background: linear-gradient(to bottom, var(--nm-accent-purple), var(--nm-accent-pink));
   border-radius: 10px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--admin-text-muted);
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--nm-bg);
+}
+
+/* --- Technical Details --- */
+.terminal-inset {
+  background: #000000;
+  box-shadow: inset 0 0 20px rgba(124, 58, 237, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  font-family: var(--font-mono);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  color: #10b981;
+  /* Emerald Green for Terminal */
+}
+
+.label-technical {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--admin-text-muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Progress System */
+.progress-track {
+  background: var(--nm-bg);
+  box-shadow: inset 2px 2px 5px var(--nm-shadow);
+  height: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--nm-accent-gradient);
+  border-radius: 10px;
+  transition: width 1s var(--nm-timing);
+  box-shadow: 0 0 10px var(--nm-accent-purple);
 }

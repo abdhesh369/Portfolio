@@ -1,127 +1,315 @@
-
-
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { Check, Loader2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export function FormField({ label, name, defaultValue, value, onChange, placeholder, required, type = "text", min, max, className }: {
-    label: string; name?: string; defaultValue?: string; value?: string; onChange?: (v: string) => void; placeholder?: string; required?: boolean; type?: string; min?: string | number; max?: string | number; className?: string;
+/* --- Premium Technical Components --- */
+
+export function AdminButton({
+    children,
+    onClick,
+    variant = "secondary",
+    size = "md",
+    isLoading,
+    isSuccess,
+    disabled,
+    icon: Icon,
+    className,
+    title,
+    type = "button"
+}: {
+    children?: React.ReactNode;
+    onClick?: () => void;
+    variant?: "primary" | "secondary" | "danger" | "ghost";
+    size?: "sm" | "md" | "lg";
+    isLoading?: boolean;
+    isSuccess?: boolean;
+    disabled?: boolean;
+    type?: "button" | "submit" | "reset";
+    icon?: any;
+    className?: string;
+    title?: string;
+}) {
+    const variants = {
+        primary: "nm-button-primary",
+        secondary: "nm-button text-admin-text-primary",
+        danger: "nm-button text-pink-500 hover:text-pink-400",
+        ghost: "bg-transparent text-admin-text-secondary hover:text-white transition-colors"
+    };
+
+    const sizes = {
+        sm: "px-4 py-2 text-[9px]",
+        md: "px-6 py-3 text-[11px]",
+        lg: "px-8 py-4 text-[12px]"
+    };
+
+    return (
+        <motion.button
+            whileHover={!disabled && !isLoading ? { scale: 1.02, translateY: -2 } : {}}
+            whileTap={!disabled && !isLoading ? { scale: 0.98, translateY: 0 } : {}}
+            onClick={onClick}
+            type={type}
+            title={title}
+            disabled={disabled || isLoading}
+            className={cn(
+                "relative overflow-hidden flex items-center justify-center gap-3 transition-all",
+                variants[variant],
+                sizes[size],
+                (disabled || isLoading) && "opacity-50 cursor-not-allowed grayscale",
+                className
+            )}
+        >
+            <AnimatePresence mode="wait">
+                {isLoading ? (
+                    <motion.div
+                        key="loading"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                    >
+                        <Loader2 size={16} className="animate-spin text-purple-400" />
+                        <span className="tracking-[0.2em]">SYNCING...</span>
+                    </motion.div>
+                ) : isSuccess ? (
+                    <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        className="flex items-center gap-2 text-emerald-400 font-black"
+                    >
+                        <Check size={16} strokeWidth={3} />
+                        <span className="tracking-[0.2em]">EXECUTED</span>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="content"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-3"
+                    >
+                        {Icon && <Icon size={size === 'sm' ? 14 : 18} />}
+                        <span className="tracking-[0.15em] font-black uppercase">{children}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.button>
+    );
+}
+
+export function SpringToggle({
+    label,
+    checked,
+    onChange,
+    description,
+    className
+}: {
+    label: string;
+    checked: boolean;
+    onChange: (v: boolean) => void;
+    description?: string;
+    className?: string;
 }) {
     return (
-        <div className="space-y-2">
-            <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">{label}</label>
+        <div className={cn("flex items-center justify-between p-6 nm-flat border-white/5", className)}>
+            <div className="space-y-1">
+                <label className="text-[10px] font-black text-white tracking-[0.2em] uppercase block">{label}</label>
+                {description && <p className="text-[9px] text-admin-text-muted tracking-wide font-medium">{description}</p>}
+            </div>
+            <motion.button
+                onClick={() => onChange(!checked)}
+                className={cn(
+                    "w-16 h-8 rounded-full p-1.5 transition-colors relative",
+                    checked ? "bg-purple-600/20" : "bg-black/40 nm-inset"
+                )}
+            >
+                <motion.div
+                    animate={{ x: checked ? 32 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    className={cn(
+                        "w-5 h-5 rounded-full shadow-lg flex items-center justify-center",
+                        checked ? "bg-gradient-to-br from-purple-400 to-purple-600" : "bg-slate-700"
+                    )}
+                >
+                    {checked && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                </motion.div>
+            </motion.button>
+        </div>
+    );
+}
+
+export function FloatingLabelInput({
+    label,
+    error,
+    className,
+    placeholder,
+    ...props
+}: any) {
+    const [isFocused, setIsFocused] = useState(false);
+    // Support both controlled (value) and uncontrolled (defaultValue/ref)
+    const hasValue = props.value !== undefined ? props.value?.length > 0 : props.defaultValue?.length > 0;
+    const active = isFocused || hasValue;
+
+    return (
+        <div className={cn("relative group w-full", className)}>
+            <motion.label
+                initial={false}
+                animate={{
+                    y: active ? -28 : 0,
+                    x: active ? 0 : 4,
+                    scale: active ? 0.8 : 1,
+                    color: isFocused ? "#7c3aed" : "rgba(255,255,255,0.4)"
+                }}
+                className="absolute left-6 top-4 z-10 pointer-events-none text-[10px] font-black tracking-[0.2em] uppercase"
+            >
+                {label}
+            </motion.label>
             <input
-                type={type}
-                name={name}
-                defaultValue={defaultValue}
-                value={value}
-                onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-                placeholder={placeholder}
-                required={required}
-                min={min}
-                max={max}
-                aria-label={label}
-                className={cn("nm-inset w-full px-5 py-3 rounded-xl text-admin-text-primary text-sm shadow-inner transition-all outline-none focus:ring-2 focus:ring-nm-accent/20 placeholder:text-admin-text-muted", className)}
+                {...props}
+                onFocus={(e) => {
+                    setIsFocused(true);
+                    props.onFocus?.(e);
+                }}
+                onBlur={(e) => {
+                    setIsFocused(false);
+                    props.onBlur?.(e);
+                }}
+                className={cn(
+                    "admin-input pt-6",
+                    error && "border-pink-500/50 focus:ring-pink-500/20"
+                )}
+                placeholder={active ? placeholder : ""}
+            />
+            {error && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-pink-500">
+                    <AlertCircle size={14} />
+                    <span className="text-[8px] font-black tracking-widest">{error.toUpperCase()}</span>
+                </div>
+            )}
+        </div>
+    );
+}
+
+interface FormFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+    label: string;
+    onChange?: (value: string) => void;
+}
+
+export function FormField({ label, onChange, ...props }: FormFieldProps) {
+    return (
+        <div className="space-y-4">
+            <label className="label-technical ml-1">{label}</label>
+            <input
+                {...props}
+                onChange={(e) => onChange?.(e.target.value)}
+                className={cn("admin-input", props.className)}
             />
         </div>
     );
 }
 
-export function FormTextarea({ label, name, defaultValue, value, onChange, placeholder, required, className }: {
-    label: string; name?: string; defaultValue?: string; value?: string; onChange?: (v: string) => void; placeholder?: string; required?: boolean; className?: string;
-}) {
+interface FormTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
+    label: string;
+    onChange?: (value: string) => void;
+}
+
+export function FormTextarea({ label, onChange, ...props }: FormTextareaProps) {
     return (
-        <div className="space-y-2">
-            <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">{label}</label>
+        <div className="space-y-4">
+            <label className="label-technical ml-1">{label}</label>
             <textarea
-                name={name}
-                defaultValue={defaultValue}
-                value={value}
-                onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-                placeholder={placeholder}
-                required={required}
-                rows={4}
-                aria-label={label}
-                className={cn("nm-inset w-full px-5 py-3 rounded-xl text-admin-text-primary text-sm shadow-inner transition-all outline-none focus:ring-2 focus:ring-nm-accent/20 resize-y placeholder:text-admin-text-muted", className)}
+                {...props}
+                rows={props.rows || 4}
+                onChange={(e) => onChange?.(e.target.value)}
+                className={cn("admin-input resize-none", props.className)}
             />
         </div>
     );
 }
 
-export function FormSelect({ label, name, defaultValue, value, onChange, options, icon, className }: {
-    label: string; name?: string; defaultValue?: string; value?: string; onChange?: (v: string) => void; options: { label: string, value: string }[], icon?: React.ReactNode, className?: string;
-}) {
+interface FormSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+    label: string;
+    options: { label: string; value: string }[];
+    icon?: any;
+    onChange?: (value: string) => void;
+}
+
+export function FormSelect({ label, options, icon: Icon, onChange, ...props }: FormSelectProps) {
     return (
-        <div className="space-y-2">
-            <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] ml-1">{label}</label>
+        <div className="space-y-4">
+            <label className="label-technical ml-1">{label}</label>
             <div className="relative">
                 <select
-                    name={name}
-                    defaultValue={defaultValue}
-                    value={value}
-                    onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-                    aria-label={label}
-                    className={cn("nm-inset w-full px-5 py-3 rounded-xl text-admin-text-primary text-sm shadow-inner transition-all outline-none focus:ring-2 focus:ring-nm-accent/20 bg-transparent appearance-none", className)}
+                    {...props}
+                    onChange={(e) => onChange?.(e.target.value)}
+                    className={cn("admin-input appearance-none cursor-pointer", props.className)}
                 >
-                    {options.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    {options.map((opt) => (
+                        <option key={opt.value} value={opt.value} className="bg-[var(--nm-card)] text-white">
+                            {opt.label.toUpperCase()}
+                        </option>
                     ))}
                 </select>
-                {icon && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-admin-text-muted">
-                        {icon}
-                    </div>
-                )}
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                    {Icon ? Icon : <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />}
+                </div>
             </div>
         </div>
     );
 }
 
-export function FormCheckbox({ label, name, defaultChecked, checked, onChange, activeColor, className }: {
-    label: string; name?: string; defaultChecked?: boolean; checked?: boolean; onChange?: (v: boolean) => void; activeColor?: string, className?: string;
-}) {
+export function EmptyState({ icon: Icon, text }: { icon: any; text: string }) {
     return (
-        <label className={cn("flex items-center gap-4 cursor-pointer group select-none py-1", className)}>
-            <div className={cn(
-                "w-5 h-5 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
-                checked ? (activeColor || "bg-nm-accent text-white") : "group-hover:nm-flat"
-            )}>
-                {checked && <Check size={12} strokeWidth={4} color="white" />}
+        <div className="text-center py-24 nm-flat border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-purple-600/30 to-transparent" />
+            <div className="nm-inset w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 text-purple-500/20 group hover:text-purple-500/40 transition-colors">
+                {Icon ? Icon : <div className="w-4 h-4 bg-current rounded-sm rotate-45" />}
             </div>
-            <input
-                type="checkbox"
-                className="hidden"
-                name={name}
-                defaultChecked={defaultChecked}
-                checked={checked}
-                onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
-            />
-            <span className="text-[11px] font-black uppercase tracking-widest text-admin-text-secondary group-hover:text-admin-text-primary">
-                {label}
-            </span>
-        </label>
+            <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] uppercase max-w-xs mx-auto leading-relaxed">{text}</p>
+        </div>
     );
 }
 
-export function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
+interface FormCheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+    label: string;
+    onChange?: (checked: boolean) => void;
+    activeColor?: string;
+}
+
+export function FormCheckbox({ label, onChange, checked, activeColor, ...props }: FormCheckboxProps) {
     return (
-        <div className="text-center py-20 nm-flat border-none mx-auto max-w-lg animate-in fade-in zoom-in duration-500 rounded-[2rem]">
-            <div className="nm-inset w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-nm-accent/40">
-                {icon}
+        <div
+            className="flex items-center gap-3 py-2 cursor-pointer group"
+            onClick={() => onChange?.(!checked)}
+        >
+            <div className={cn(
+                "w-6 h-6 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
+                checked && (activeColor || "bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)]")
+            )}>
+                {checked && <Check size={14} strokeWidth={4} className="text-white" />}
             </div>
-            <p className="text-sm font-medium text-admin-text-secondary tracking-tight px-10 leading-relaxed">{text}</p>
+            <span className="text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] group-hover:text-white transition-colors">
+                {label}
+            </span>
         </div>
     );
 }
 
 export function LoadingSkeleton() {
     return (
-        <div className="space-y-6 animate-pulse">
+        <div className="space-y-8 animate-pulse p-2">
             {[1, 2, 3].map((i) => (
-                <div key={i} className="nm-flat rounded-2xl p-6 h-28 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                <div key={i} className="nm-flat rounded-[2rem] p-10 h-40 relative overflow-hidden bg-white/5">
+                    <div className="flex gap-6 items-center">
+                        <div className="w-16 h-16 rounded-2xl bg-white/10" />
+                        <div className="space-y-3 flex-1">
+                            <div className="h-4 w-1/3 bg-white/10 rounded" />
+                            <div className="h-3 w-1/2 bg-white/5 rounded" />
+                        </div>
+                    </div>
                 </div>
             ))}
         </div>
     );
 }
-
