@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, BookOpen, Users, Globe
+    Brain, Sliders, BookOpen, Users, Globe, Palette
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -34,6 +34,7 @@ const NAV_ITEMS = [
     { key: "clients", label: "Clients", icon: Users },
     { key: "sketchpad", label: "Sketchpad", icon: PenTool },
     { key: "mindset", label: "Mindset", icon: Brain },
+    { key: "customization", label: "Appearance", icon: Palette },
     { key: "settings", label: "Site Settings", icon: Sliders },
 ];
 
