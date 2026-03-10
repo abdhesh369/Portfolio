@@ -306,7 +306,21 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "articles_authorId_authors_id_fk": {
+          "name": "articles_authorId_authors_id_fk",
+          "tableFrom": "articles",
+          "tableTo": "authors",
+          "columnsFrom": [
+            "authorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "articles_slug_unique": {
@@ -343,26 +357,26 @@
           "primaryKey": false,
           "notNull": true
         },
-        "entity_id": {
-          "name": "entity_id",
+        "entityId": {
+          "name": "entityId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "old_values": {
-          "name": "old_values",
+        "oldValues": {
+          "name": "oldValues",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
-        "new_values": {
-          "name": "new_values",
+        "newValues": {
+          "name": "newValues",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -389,7 +403,7 @@
           "name": "audit_log_created_at_idx",
           "columns": [
             {
-              "expression": "created_at",
+              "expression": "createdAt",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -839,7 +853,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "email_templates_name_unique": {
+          "name": "email_templates_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -866,18 +888,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "period": {
-          "name": "period",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "startDate": {
           "name": "startDate",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         },
         "endDate": {
           "name": "endDate",
@@ -1067,7 +1082,8 @@
           "name": "tags",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'[]'::jsonb"
         }
       },
       "indexes": {},
@@ -1098,8 +1114,7 @@
           "name": "slug",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
-          "default": "''"
+          "notNull": true
         },
         "description": {
           "name": "description",
@@ -1290,7 +1305,15 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "projects_slug_unique": {
+          "name": "projects_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1394,51 +1417,9 @@
           "primaryKey": true,
           "notNull": true
         },
-        "page_slug": {
-          "name": "page_slug",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "meta_title": {
-          "name": "meta_title",
-          "type": "varchar(60)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "meta_description": {
-          "name": "meta_description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "og_title": {
-          "name": "og_title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "og_description": {
-          "name": "og_description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "og_image": {
-          "name": "og_image",
-          "type": "varchar(500)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "keywords": {
           "name": "keywords",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "canonical_url": {
-          "name": "canonical_url",
-          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": false
         },
@@ -1449,22 +1430,64 @@
           "notNull": false,
           "default": false
         },
-        "twitter_card": {
-          "name": "twitter_card",
+        "pageSlug": {
+          "name": "pageSlug",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metaTitle": {
+          "name": "metaTitle",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metaDescription": {
+          "name": "metaDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ogTitle": {
+          "name": "ogTitle",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ogDescription": {
+          "name": "ogDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ogImage": {
+          "name": "ogImage",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "canonicalUrl": {
+          "name": "canonicalUrl",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twitterCard": {
+          "name": "twitterCard",
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false,
           "default": "'summary_large_image'"
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -1479,7 +1502,7 @@
           "name": "seo_settings_page_slug_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "page_slug"
+            "pageSlug"
           ]
         }
       },
@@ -1973,14 +1996,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "from_skill_id": {
-          "name": "from_skill_id",
+        "fromSkillId": {
+          "name": "fromSkillId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "to_skill_id": {
-          "name": "to_skill_id",
+        "toSkillId": {
+          "name": "toSkillId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -1993,12 +2016,12 @@
           "tableFrom": "skill_connections",
           "tableTo": "skills",
           "columnsFrom": [
-            "from_skill_id"
+            "fromSkillId"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "skill_connections_to_skill_id_skills_id_fk": {
@@ -2006,17 +2029,26 @@
           "tableFrom": "skill_connections",
           "tableTo": "skills",
           "columnsFrom": [
-            "to_skill_id"
+            "toSkillId"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "skill_connections_from_to_unique": {
+          "name": "skill_connections_from_to_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "fromSkillId",
+            "toSkillId"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

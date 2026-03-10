@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/utils/date";
 
 type GitHubEvent = {
   type: string;
-  created_at: string;
+  createdAt: string;
   repo: { name: string };
   payload: {
     commits?: { message: string }[];
@@ -38,7 +38,7 @@ export default function CodeAndPractice() {
 
         const filtered = data
           .map(e => {
-            const date = formatDate(e.created_at, { month: 'short', day: 'numeric' });
+            const date = formatDate(e.createdAt, { month: 'short', day: 'numeric' });
 
             // Handle different event types
             if (e.type === "PushEvent") {

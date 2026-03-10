@@ -1,5 +1,6 @@
 import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { sql } from "drizzle-orm";
 import { z } from "zod";
 
 // ================= CONSTANTS =================
@@ -13,7 +14,7 @@ export const DEFAULT_SECTION_ORDER = [
 export const projectsTable = pgTable("projects", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
-  slug: varchar("slug", { length: 255 }).notNull().default(""),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
   description: text("description").notNull(),
   longDescription: text("longDescription"),
   techStack: jsonb("techStack").$type<string[]>().notNull(),
@@ -59,15 +60,14 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: integer("from_skill_id").notNull().references(() => skillsTable.id),
-  toSkillId: integer("to_skill_id").notNull().references(() => skillsTable.id),
+  fromSkillId: integer("fromSkillId").notNull().references(() => skillsTable.id),
+  toSkillId: integer("toSkillId").notNull().references(() => skillsTable.id),
 });
 
 export const experiencesTable = pgTable("experiences", {
   id: serial("id").primaryKey(),
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
-  period: varchar("period", { length: 100 }), // Deprecated in favor of start/end dates
   startDate: timestamp("startDate").notNull().defaultNow(),
   endDate: timestamp("endDate"), // Nullable for current roles
   description: text("description").notNull(),
@@ -91,7 +91,7 @@ export const mindsetTable = pgTable("mindset", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   icon: varchar("icon", { length: 100 }).notNull().default("Brain"),
-  tags: jsonb("tags").$type<string[]>().notNull(),
+  tags: jsonb("tags").$type<string[]>().notNull().default([]),
 });
 
 export const analyticsTable = pgTable("analytics", {
@@ -124,7 +124,7 @@ export const guestbookTable = pgTable("guestbook", {
 
 export const emailTemplatesTable = pgTable("email_templates", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   subject: varchar("subject", { length: 500 }).notNull(),
   body: text("body").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -133,18 +133,18 @@ export const emailTemplatesTable = pgTable("email_templates", {
 
 export const seoSettingsTable = pgTable("seo_settings", {
   id: serial("id").primaryKey(),
-  pageSlug: varchar("page_slug", { length: 100 }).notNull().unique(),
-  metaTitle: varchar("meta_title", { length: 60 }).notNull(),
-  metaDescription: text("meta_description").notNull(),
-  ogTitle: varchar("og_title", { length: 255 }),
-  ogDescription: text("og_description"),
-  ogImage: varchar("og_image", { length: 500 }),
+  pageSlug: varchar("pageSlug", { length: 100 }).notNull().unique(),
+  metaTitle: varchar("metaTitle", { length: 60 }).notNull(),
+  metaDescription: text("metaDescription").notNull(),
+  ogTitle: varchar("ogTitle", { length: 255 }),
+  ogDescription: text("ogDescription"),
+  ogImage: varchar("ogImage", { length: 500 }),
   keywords: text("keywords"),
-  canonicalUrl: varchar("canonical_url", { length: 500 }),
+  canonicalUrl: varchar("canonicalUrl", { length: 500 }),
   noindex: boolean("noindex").default(false),
-  twitterCard: varchar("twitter_card", { length: 50 }).default("summary_large_image"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(), // onUpdateNow is not directly supported in PG same way
+  twitterCard: varchar("twitterCard", { length: 50 }).default("summary_large_image"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(), // onUpdateNow is not directly supported in PG same way
 });
 
 export const articlesTable = pgTable("articles", {
@@ -222,6 +222,10 @@ export const codeReviewsTable = pgTable("code_reviews", {
   status: varchar("status", { length: 50 }).$type<"pending" | "processing" | "completed" | "failed">().notNull().default("pending"),
   error: text("error"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    processingIdx: index("code_reviews_processing_idx").on(table.projectId).where(sql`status = 'processing'`),
+  };
 });
 
 // ================= MF-3: AUTO CASE STUDIES =================
@@ -300,10 +304,10 @@ export const auditLogTable = pgTable("audit_log", {
   id: serial("id").primaryKey(),
   action: varchar("action", { length: 20 }).notNull(),
   entity: varchar("entity", { length: 50 }).notNull(),
-  entityId: integer("entity_id"),
-  oldValues: jsonb("old_values"),
-  newValues: jsonb("new_values"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  entityId: integer("entityId"),
+  oldValues: jsonb("oldValues"),
+  newValues: jsonb("newValues"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => {
   return {
     entityIdx: index("audit_log_entity_idx").on(table.entity),
@@ -512,7 +516,7 @@ export const projectSchema = z.object({
   description: z.string(),
   longDescription: z.string().nullable(),
   techStack: z.array(z.string()),
-  imageUrl: z.string().url("Invalid image URL").nullable().default(null),
+  imageUrl: z.string().url("Invalid image URL"),
   githubUrl: z.string().url().nullable().default(null),
   liveUrl: z.string().max(500).nullable().default(null),
   category: z.string().min(1).max(100),
@@ -534,7 +538,7 @@ export const projectSchema = z.object({
 
 export const insertProjectApiSchema = z.object({
   title: z.string().min(1).max(255),
-  slug: z.string().min(1).max(255),
+  slug: z.string().min(3).max(100).regex(/^[a-z0-9-]+$/, "invalid slug: only lowercase letters, numbers and hyphens allowed"),
   description: z.string().min(1).max(5000),
   longDescription: z.string().nullable().optional(),
   techStack: z.array(z.string().max(100)).default([]),

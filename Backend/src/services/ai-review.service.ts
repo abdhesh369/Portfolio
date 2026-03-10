@@ -23,33 +23,33 @@ export class AIReviewService {
         const project = await projectService.getById(projectId);
         if (!project) throw new Error("Project not found");
 
-        // Create a pending review
-        const existingReview = await db.query.codeReviewsTable.findFirst({
-            where: and(
-                eq(codeReviewsTable.projectId, projectId),
-                eq(codeReviewsTable.status, "processing")
-            ),
-        });
+        try {
+            const [review] = await db.insert(codeReviewsTable).values({
+                projectId,
+                content: "",
+                badges: [],
+                status: "processing",
+            }).returning();
 
-        if (existingReview) {
-            console.log(`[AIReviewService] Review already processing for project ${projectId}`);
-            return existingReview as CodeReview;
+            // Run review in background (fire-and-forget)
+            this.runReview(review.id, project).catch((err) => {
+                logger.error({ err, projectId }, "AI review failed");
+            });
+
+            return review;
+        } catch (error: any) {
+            if (error.code === '23505') {
+                logger.info(`[AIReviewService] Review already processing for project ${projectId}`);
+                const existingReview = await db.query.codeReviewsTable.findFirst({
+                    where: and(
+                        eq(codeReviewsTable.projectId, projectId),
+                        eq(codeReviewsTable.status, "processing")
+                    ),
+                });
+                if (existingReview) return existingReview as CodeReview;
+            }
+            throw error;
         }
-
-        const [review] = await db.insert(codeReviewsTable).values({
-            projectId,
-            content: "",
-            badges: [],
-            status: "processing",
-        }).returning();
-
-
-        // Run review in background (fire-and-forget)
-        this.runReview(review.id, project).catch((err) => {
-            logger.error({ err, projectId }, "AI review failed");
-        });
-
-        return review;
     }
 
     private async runReview(reviewId: number, project: { title: string; description: string; techStack: string[]; githubUrl: string | null }): Promise<void> {

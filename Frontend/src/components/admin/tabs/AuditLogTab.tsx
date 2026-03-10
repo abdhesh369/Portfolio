@@ -10,10 +10,10 @@ interface AuditEntry {
   id: number;
   action: "CREATE" | "UPDATE" | "DELETE";
   entity: string;
-  entity_id: number | null;
-  old_values: Record<string, unknown> | null;
-  new_values: Record<string, unknown> | null;
-  created_at: string;
+  entityId: number | null;
+  oldValues: Record<string, unknown> | null;
+  newValues: Record<string, unknown> | null;
+  createdAt: string;
 }
 
 interface AuditResponse {
@@ -145,10 +145,10 @@ export function AuditLogTab() {
                   </span>
                   <span className="text-sm font-bold tracking-tight capitalize">{entry.entity.replace(/_/g, " ")}</span>
                   <span className="text-xs text-muted-foreground font-mono nm-inset px-2 py-1 rounded-lg text-center">
-                    {entry.entity_id ?? "—"}
+                    {entry.entityId ?? "—"}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
-                    {formatDate(entry.created_at, { month: 'short', day: 'numeric', year: 'numeric', includeTime: true })}
+                    {formatDate(entry.createdAt, { month: 'short', day: 'numeric', year: 'numeric', includeTime: true })}
                   </span>
                 </button>
 
@@ -161,8 +161,8 @@ export function AuditLogTab() {
                         <span className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em]">Previous State</span>
                       </div>
                       <pre className="text-[11px] text-muted-foreground overflow-x-auto nm-flat p-4 rounded-2xl max-h-[300px] font-mono leading-relaxed">
-                        {entry.old_values
-                          ? JSON.stringify(entry.old_values, null, 2)
+                        {entry.oldValues
+                          ? JSON.stringify(entry.oldValues, null, 2)
                           : "null"}
                       </pre>
                     </div>
@@ -172,8 +172,8 @@ export function AuditLogTab() {
                         <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">New State</span>
                       </div>
                       <pre className="text-[11px] text-muted-foreground overflow-x-auto nm-flat p-4 rounded-2xl max-h-[300px] font-mono leading-relaxed">
-                        {entry.new_values
-                          ? JSON.stringify(entry.new_values, null, 2)
+                        {entry.newValues
+                          ? JSON.stringify(entry.newValues, null, 2)
                           : "null"}
                       </pre>
                     </div>

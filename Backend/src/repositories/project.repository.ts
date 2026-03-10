@@ -80,16 +80,16 @@ export class ProjectRepository {
     async update(id: number, data: Partial<InsertProject>): Promise<Project> {
         const articleData: Partial<DbInsertProject> = {
             ...data,
-            githubUrl: data.githubUrl,
-            liveUrl: data.liveUrl,
-            problemStatement: data.problemStatement,
-            motivation: data.motivation,
-            systemDesign: data.systemDesign,
-            challenges: data.challenges,
-            learnings: data.learnings,
-            impact: data.impact,
-            role: data.role,
-            imageAlt: data.imageAlt,
+            ...(data.githubUrl !== undefined && { githubUrl: data.githubUrl }),
+            ...(data.liveUrl !== undefined && { liveUrl: data.liveUrl }),
+            ...(data.problemStatement !== undefined && { problemStatement: data.problemStatement }),
+            ...(data.motivation !== undefined && { motivation: data.motivation }),
+            ...(data.systemDesign !== undefined && { systemDesign: data.systemDesign }),
+            ...(data.challenges !== undefined && { challenges: data.challenges }),
+            ...(data.learnings !== undefined && { learnings: data.learnings }),
+            ...(data.impact !== undefined && { impact: data.impact }),
+            ...(data.role !== undefined && { role: data.role }),
+            ...(data.imageAlt !== undefined && { imageAlt: data.imageAlt }),
         };
 
         const [updated] = await db

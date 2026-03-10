@@ -1,5 +1,9 @@
 ALTER TABLE "projects" ADD COLUMN "slug" varchar(255) DEFAULT '' NOT NULL;--> statement-breakpoint
 ALTER TABLE "projects" ADD COLUMN "longDescription" text;--> statement-breakpoint
-ALTER TABLE "projects" ADD COLUMN "createdAt" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
+ALTER TABLE "projects" ADD COLUMN "createdAt" timestamp;--> statement-breakpoint
+UPDATE "projects" SET "createdAt" = now() WHERE "createdAt" IS NULL;--> statement-breakpoint
+ALTER TABLE "projects" ALTER COLUMN "createdAt" SET NOT NULL;--> statement-breakpoint
+ALTER TABLE "projects" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
 ALTER TABLE "projects" ADD COLUMN "updatedAt" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
-CREATE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");
+CREATE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");--> statement-breakpoint
+ALTER TABLE "articles" ADD CONSTRAINT "articles_authorId_authors_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."authors"("id") ON DELETE set null ON UPDATE no action;

@@ -138,9 +138,14 @@ export class BulkImageService {
     private static async processTestimonials(stats: OptimizationStats) {
         const testimonials = await testimonialRepository.findAll();
         await this.mapConcurrent(testimonials, 5, async (t) => {
-            const newUrl = await this.handleImage(t.avatarUrl, stats);
-            if (newUrl && newUrl !== t.avatarUrl) {
-                await testimonialRepository.update(t.id, { avatarUrl: newUrl });
+            try {
+                const newUrl = await this.handleImage(t.avatarUrl, stats);
+                if (newUrl && newUrl !== t.avatarUrl) {
+                    await testimonialRepository.update(t.id, { avatarUrl: newUrl });
+                }
+            } catch (error) {
+                logger.error({ context: "bulk-optimization", testimonialId: t.id, error }, "Failed to process testimonial");
+                stats.failed++;
             }
         });
     }
@@ -148,9 +153,14 @@ export class BulkImageService {
     private static async processArticles(stats: OptimizationStats) {
         const articles = await articleRepository.findAll();
         await this.mapConcurrent(articles, 5, async (article) => {
-            const newUrl = await this.handleImage(article.featuredImage, stats);
-            if (newUrl && newUrl !== article.featuredImage) {
-                await articleRepository.update(article.id, { featuredImage: newUrl });
+            try {
+                const newUrl = await this.handleImage(article.featuredImage, stats);
+                if (newUrl && newUrl !== article.featuredImage) {
+                    await articleRepository.update(article.id, { featuredImage: newUrl });
+                }
+            } catch (error) {
+                logger.error({ context: "bulk-optimization", articleId: article.id, error }, "Failed to process article");
+                stats.failed++;
             }
         });
     }
@@ -171,9 +181,14 @@ export class BulkImageService {
     private static async processSeoSettings(stats: OptimizationStats) {
         const allSeo = await seoSettingsRepository.getAll();
         await this.mapConcurrent(allSeo, 5, async (seo) => {
-            const newUrl = await this.handleImage(seo.ogImage, stats);
-            if (newUrl && newUrl !== seo.ogImage) {
-                await seoSettingsRepository.update(seo.id, { ogImage: newUrl });
+            try {
+                const newUrl = await this.handleImage(seo.ogImage, stats);
+                if (newUrl && newUrl !== seo.ogImage) {
+                    await seoSettingsRepository.update(seo.id, { ogImage: newUrl });
+                }
+            } catch (error) {
+                logger.error({ context: "bulk-optimization", seoId: seo.id, error }, "Failed to process SEO setting");
+                stats.failed++;
             }
         });
     }
