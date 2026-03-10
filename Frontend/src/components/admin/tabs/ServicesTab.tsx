@@ -169,7 +169,7 @@ export function ServicesTab(_props: AdminTabProps) {
       </div>
 
       {!services?.length ? (
-        <EmptyState icon={<Zap size={24} />} text="No services defined yet" />
+        <EmptyState icon={Zap} text="No services defined yet" />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {services.map((svc) => (

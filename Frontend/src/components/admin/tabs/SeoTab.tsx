@@ -352,7 +352,7 @@ export function SeoTab(_props: AdminTabProps) {
                     {seoSettingsList?.length === 0 && (
                         <div className="col-span-full">
                             <EmptyState
-                                icon={<Globe className="w-12 h-12" />}
+                                icon={Globe}
                                 text="No SEO configurations found. Secure your search engine dominance by creating your first entry."
                             />
                         </div>

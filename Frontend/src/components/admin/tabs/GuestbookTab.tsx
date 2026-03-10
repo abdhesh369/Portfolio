@@ -85,7 +85,7 @@ export function GuestbookTab() {
             {filtered.length === 0 ? (
                 <div className="nm-flat p-24 text-center">
                     <EmptyState
-                        icon={<MessageSquare size={48} className="opacity-20" />}
+                        icon={MessageSquare}
                         text={searchQuery ? "No matching communication records" : "No guestbook transmissions received"}
                     />
                 </div>

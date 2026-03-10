@@ -627,7 +627,7 @@ export default function ProjectDetail() {
                         >
                           <div className="aspect-video rounded-xl overflow-hidden mb-4">
                             <OptimizedImage
-                              src={p.imageUrl}
+                              src={p.imageUrl ?? undefined}
                               alt={`Thumbnail of ${p.title}`}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />

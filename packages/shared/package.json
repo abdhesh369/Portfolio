@@ -31,9 +31,11 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsc --project tsconfig.json",
+        "build": "tsc",
+        "dev": "tsc -w",
         "lint": "eslint src --ext .ts",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "clean": "rimraf dist"
     },
     "dependencies": {
         "drizzle-zod": "^0.8.3",
@@ -41,6 +43,8 @@
         "drizzle-orm": "^0.45.1"
     },
     "devDependencies": {
-        "typescript": "^5.7.3"
+        "typescript": "^5.7.3",
+        "eslint": "^8.56.0",
+        "rimraf": "^5.0.5"
     }
 }

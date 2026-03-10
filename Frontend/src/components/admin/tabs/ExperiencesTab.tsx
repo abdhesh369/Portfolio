@@ -235,7 +235,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <Briefcase size={200} />
                     </div>
-                    <EmptyState icon="💼" text="Your professional story begins here. Add your first experience." />
+                    <EmptyState icon={Briefcase} text="Your professional story begins here. Add your first experience." />
                 </div>
             ) : (
                 <div className="space-y-10 relative before:content-[''] before:absolute before:left-[2.125rem] before:top-4 before:bottom-4 before:w-0.5 before:nm-inset before:opacity-50">

@@ -19,6 +19,7 @@
     "db:test": "tsc --noEmit",
     "db:validate": "node scripts/validate-migrations.js",
     "db:status": "echo 'Check Neon Dashboard'",
+    "db:reset": "npx tsx src/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

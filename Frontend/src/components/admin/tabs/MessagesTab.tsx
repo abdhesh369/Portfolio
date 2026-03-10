@@ -106,7 +106,7 @@ export function MessagesTab() {
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <MessageSquare size={200} />
                     </div>
-                    <EmptyState icon={<Mail size={48} className="text-admin-text-secondary/20 mb-4" />} text={searchQuery ? "No matches found in your archives." : "Inbox clean. No incoming transmissions yet."} />
+                    <EmptyState icon={Mail} text={searchQuery ? "No matches found in your archives." : "Inbox clean. No incoming transmissions yet."} />
                 </div>
             ) : (
                 <div className="space-y-6">

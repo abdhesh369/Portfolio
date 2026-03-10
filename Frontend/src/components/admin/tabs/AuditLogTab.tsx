@@ -105,7 +105,7 @@ export function AuditLogTab() {
       {loading ? (
         <LoadingSkeleton />
       ) : entries.length === 0 ? (
-        <EmptyState icon="📋" text="No audit log entries found" />
+        <EmptyState icon={Shield} text="No audit log entries found" />
       ) : (
         <div className="nm-flat rounded-[2.5rem] overflow-hidden">
           {/* Header row */}

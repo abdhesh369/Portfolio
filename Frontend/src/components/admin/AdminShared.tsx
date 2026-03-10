@@ -157,7 +157,9 @@ export function FloatingLabelInput({
 }: FloatingLabelInputProps) {
     const [isFocused, setIsFocused] = useState(false);
     // Support both controlled (value) and uncontrolled (defaultValue/ref)
-    const hasValue = props.value !== undefined ? props.value?.length > 0 : props.defaultValue?.length > 0;
+    const hasValue = props.value !== undefined
+        ? String(props.value).length > 0
+        : String(props.defaultValue ?? "").length > 0;
     const active = isFocused || hasValue;
 
     return (
@@ -206,15 +208,26 @@ interface FormFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
     icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-export function FormField({ label, onChange, ...props }: FormFieldProps) {
+export function FormField({ label, icon: Icon, onChange, ...props }: FormFieldProps) {
     return (
         <div className="space-y-4">
             <label className="label-technical ml-1">{label}</label>
-            <input
-                {...props}
-                onChange={(e) => onChange?.(e.target.value)}
-                className={cn("admin-input", props.className)}
-            />
+            <div className="relative">
+                <input
+                    {...props}
+                    onChange={(e) => onChange?.(e.target.value)}
+                    className={cn(
+                        "admin-input",
+                        Icon && "pl-12",
+                        props.className
+                    )}
+                />
+                {Icon && (
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-500/40 pointer-events-none group-focus-within:text-purple-500 transition-colors">
+                        <Icon size={18} />
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
@@ -274,7 +287,7 @@ export function EmptyState({ icon: Icon, text, className }: { icon: React.Compon
         <div className={cn("text-center py-24 nm-flat border-white/5 relative overflow-hidden", className)}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-purple-600/30 to-transparent" />
             <div className="nm-inset w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 text-purple-500/20 group hover:text-purple-500/40 transition-colors">
-                {Icon ? Icon : <div className="w-4 h-4 bg-current rounded-sm rotate-45" />}
+                {Icon ? <Icon size={32} /> : <div className="w-4 h-4 bg-current rounded-sm rotate-45" />}
             </div>
             <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] uppercase max-w-xs mx-auto leading-relaxed">{text}</p>
         </div>

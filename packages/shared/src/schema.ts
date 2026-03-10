@@ -13,7 +13,9 @@ export const DEFAULT_SECTION_ORDER = [
 export const projectsTable = pgTable("projects", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().default(""),
   description: text("description").notNull(),
+  longDescription: text("longDescription"),
   techStack: jsonb("techStack").$type<string[]>().notNull(),
   imageUrl: varchar("imageUrl", { length: 500 }).notNull(),
   githubUrl: varchar("githubUrl", { length: 500 }),
@@ -32,10 +34,13 @@ export const projectsTable = pgTable("projects", {
   role: text("role"),
   imageAlt: text("imageAlt"),
   viewCount: integer("viewCount").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),
     orderIdx: index("projects_order_idx").on(table.displayOrder),
+    slugIdx: index("projects_slug_idx").on(table.slug),
   };
 });
 
@@ -508,7 +513,7 @@ export const projectSchema = z.object({
   longDescription: z.string().nullable(),
   techStack: z.array(z.string()),
   imageUrl: z.string().url().nullable().default(null),
-  demoUrl: z.string().url().nullable().default(null),
+  githubUrl: z.string().url().nullable().default(null),
   liveUrl: z.string().max(500).nullable().default(null),
   category: z.string().min(1).max(100),
   displayOrder: z.number().default(0),
@@ -523,12 +528,15 @@ export const projectSchema = z.object({
   impact: z.string().max(5000).nullable().default(null),
   role: z.string().max(5000).nullable().default(null),
   imageAlt: z.string().max(500).nullable().default(null),
-  viewCount: z.number().default(0),
+  viewCount: z.number().int().default(0),
 });
+
 
 export const insertProjectApiSchema = z.object({
   title: z.string().min(1).max(255),
+  slug: z.string().min(1).max(255),
   description: z.string().min(1).max(5000),
+  longDescription: z.string().nullable().optional(),
   techStack: z.array(z.string().max(100)).default([]),
   imageUrl: z.string().url().max(500),
   githubUrl: z.string().max(500).nullable().optional(),

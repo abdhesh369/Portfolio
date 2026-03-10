@@ -162,7 +162,7 @@ export function TestimonialsTab(_props: AdminTabProps) {
                                 { label: "MANAGER", value: "Manager" },
                                 { label: "SOCIAL_CONN", value: "Friend" }
                             ]}
-                            icon={Users}
+                            icon={<Users size={18} />}
                         />
                     </div>
 
@@ -248,7 +248,7 @@ export function TestimonialsTab(_props: AdminTabProps) {
                 {(!testimonials || testimonials.length === 0) && (
                     <div className="xl:col-span-2 nm-flat p-24 text-center">
                         <EmptyState
-                            icon={<Quote size={48} className="opacity-20" />}
+                            icon={Quote}
                             text="No endorsement packets detected. Initialize new entry record."
                         />
                     </div>

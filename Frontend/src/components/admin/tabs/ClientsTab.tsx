@@ -133,7 +133,7 @@ export const ClientsTab: React.FC = () => {
                 <LoadingSkeleton />
             ) : (clients as ClientData[]).length === 0 ? (
                 <EmptyState
-                    icon={<Users size={48} />}
+                    icon={Users}
                     text="No Clients Registered. Click 'New_Client' to register your first portal user."
                 />
             ) : (

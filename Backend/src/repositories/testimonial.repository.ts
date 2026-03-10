@@ -46,8 +46,8 @@ export class TestimonialRepository {
     async update(id: number, data: Partial<InsertTestimonial>): Promise<Testimonial> {
         const testimonialData: Partial<DbInsertTestimonial> = {
             ...data,
-            avatarUrl: data.avatarUrl ?? undefined,
-            linkedinUrl: data.linkedinUrl ?? undefined,
+            avatarUrl: data.avatarUrl,
+            linkedinUrl: data.linkedinUrl,
         };
 
         const [updated] = await db

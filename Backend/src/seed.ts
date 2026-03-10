@@ -42,6 +42,7 @@ export async function seedDatabase() {
     const projectList: InsertProject[] = [
       {
         title: "Portfolio Website",
+        slug: "portfolio-website",
         description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
         techStack: ["React", "TypeScript", "Express", "PostgreSQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
         imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
@@ -57,6 +58,7 @@ export async function seedDatabase() {
       },
       {
         title: "AI Study Buddy",
+        slug: "ai-study-buddy",
         description: "A Monolithic Flask application integrated with OpenRouter API (GPT-4o-mini) to provide AI-powered study assistance. Features a modern glassmorphic UI.",
         techStack: ["Python", "Flask", "OpenRouter API", "Jinja2", "JavaScript", "Glassmorphism", "CSS3"],
         imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
@@ -72,6 +74,7 @@ export async function seedDatabase() {
       },
       {
         title: "Assistant (Edith)",
+        slug: "edith-assistant",
         description: "A modular Python-based desktop automation assistant with voice recognition and text-to-speech capabilities, designed to streamline daily tasks.",
         techStack: ["Python", "pyttsx3", "SpeechRecognition", "pyautogui", "pywhatkit", "psutil"],
         imageUrl: "https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=800&auto=format&fit=crop",
@@ -87,6 +90,7 @@ export async function seedDatabase() {
       },
       {
         title: "Finance Tracker",
+        slug: "finance-tracker",
         description: "A secure personal finance management web application featuring user authentication and database persistence for transaction tracking.",
         techStack: ["Flask", "Flask-Login", "SQLAlchemy", "SQLite", "Flask-Migrate", "Flask-WTF", "Python"],
         imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
@@ -102,6 +106,7 @@ export async function seedDatabase() {
       },
       {
         title: "Calculator Application",
+        slug: "calculator-app",
         description: "A polished scientific calculator featuring a detailed dark-theme UI with ripple effects and comprehensive keyboard support.",
         techStack: ["HTML5", "CSS3", "JavaScript", "Vanilla JS", "Regex"],
         imageUrl: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=800&auto=format&fit=crop",
@@ -117,6 +122,7 @@ export async function seedDatabase() {
       },
       {
         title: "Flappy Bird",
+        slug: "flappy-bird",
         description: "A Python-based desktop game prototype using Pygame, demonstrating game loop fundamentals and collision detection concepts.",
         techStack: ["Python", "Pygame"],
         imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",

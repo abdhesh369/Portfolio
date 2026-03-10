@@ -90,7 +90,7 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
             <div className="relative shrink-0 group/img">
                 <div className="nm-inset p-1 rounded-xl overflow-hidden bg-nm-bg">
                     <OptimizedImage
-                        src={project.imageUrl}
+                        src={project.imageUrl || ""}
                         alt={project.title}
                         width={120}
                         height={120}
@@ -216,7 +216,7 @@ export function ProjectsTab(_props: AdminTabProps) {
     const openEdit = (p: Project) => {
         setEditing({
             ...p,
-            status: p.status || "Completed",
+            imageUrl: p.imageUrl ?? "",
             githubUrl: p.githubUrl ?? "",
             liveUrl: p.liveUrl ?? "",
             problemStatement: p.problemStatement ?? "",
@@ -456,7 +456,7 @@ export function ProjectsTab(_props: AdminTabProps) {
             ) : !filtered.length ? (
                 <div className="nm-flat p-24 text-center border-none">
                     <EmptyState
-                        icon="🗂️"
+                        icon={Layers}
                         text={searchQuery ? "No matching project archetypes found in current sector." : "Project database currently contains zero logged artifacts."}
                     />
                     {!searchQuery && (

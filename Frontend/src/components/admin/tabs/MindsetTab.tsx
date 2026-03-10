@@ -186,7 +186,7 @@ export function MindsetTab() {
             </div>
 
             {!mindset?.length ? (
-                <EmptyState icon={<Brain size={48} />} text="No mindset entries found. Click 'New Insight' to share your philosophy." />
+                <EmptyState icon={Brain} text="No mindset entries found. Click 'New Insight' to share your philosophy." />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {mindset.map((item, index) => {

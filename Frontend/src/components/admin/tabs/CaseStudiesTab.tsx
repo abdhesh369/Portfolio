@@ -194,7 +194,7 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
 
                     {(studies as CaseStudyData[]).length === 0 && (
                         <EmptyState
-                            icon={<FileText size={48} className="opacity-20" />}
+                            icon={FileText}
                             text="No distilled case studies indexed. Use the generator above."
                         />
                     )}

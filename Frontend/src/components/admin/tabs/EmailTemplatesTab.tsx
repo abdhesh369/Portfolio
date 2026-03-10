@@ -162,7 +162,7 @@ export function EmailTemplatesTab(_props: AdminTabProps) {
             </div>
 
             {templates.length === 0 ? (
-                <EmptyState icon="📄" text="No templates created yet" />
+                <EmptyState icon={FileText} text="No templates created yet" />
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {templates.map((tpl, idx) => (
