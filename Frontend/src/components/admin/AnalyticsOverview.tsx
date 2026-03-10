@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useAnalyticsSummary, useVitalsSummary } from "../../hooks/use-portfolio";
+import { formatDate } from "@/lib/utils/date";
 import {
     Eye,
     Activity,
@@ -174,7 +175,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                         fontSize: 12,
                                         color: 'var(--foreground-hex, #e2e8f0)',
                                     }}
-                                    labelFormatter={(v: ReactNode) => `Date: ${v}`}
+                                    labelFormatter={(v: ReactNode) => `Date: ${formatDate(v as string)}`}
                                     formatter={(value: number | undefined) => [value != null ? value.toLocaleString() : '0', "Views"]}
                                 />
                                 <Area

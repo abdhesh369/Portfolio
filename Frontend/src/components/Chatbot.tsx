@@ -4,6 +4,7 @@ import { Send, Minimize2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/api-helpers";
+import { formatTime } from "@/lib/utils/date";
 
 type Role = "user" | "model";
 
@@ -271,7 +272,7 @@ export function Chatbot() {
                                         </div>
                                         {/* Timestamp/Status subtle text on hover */}
                                         <div className={`absolute -bottom-5 ${msg.role === 'user' ? 'right-0' : 'left-0'} opacity-0 group-hover/msg:opacity-100 transition-opacity font-mono text-[8px] text-gray-500 uppercase tracking-widest`}>
-                                            {msg.role === 'user' ? 'PACKET_SENT' : 'DATA_RECEIVED'} // {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {msg.role === 'user' ? 'PACKET_SENT' : 'DATA_RECEIVED'} // {formatTime(msg.timestamp)}
                                         </div>
                                     </div>
                                 </m.div>

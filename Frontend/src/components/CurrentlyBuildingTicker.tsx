@@ -3,6 +3,8 @@ import { useLatestCommit } from "../hooks/use-latest-commit";
 import { Github, ExternalLink, Cpu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { formatDate } from "@/lib/utils/date";
+
 export const CurrentlyBuildingTicker: React.FC = () => {
     const { data, isLoading } = useLatestCommit();
 
@@ -39,7 +41,7 @@ export const CurrentlyBuildingTicker: React.FC = () => {
                         <div className="flex items-center gap-2 mb-1">
                             <span className="text-sm font-semibold text-white/90 truncate">{data.repo}</span>
                             <span className="text-[10px] text-gray-500 px-1.5 py-0.5 rounded-full bg-white/5 border border-white/10 uppercase tracking-tighter">
-                                {new Date(data.date).toLocaleDateString()}
+                                {formatDate(data.date)}
                             </span>
                         </div>
                         <AnimatePresence mode="wait">

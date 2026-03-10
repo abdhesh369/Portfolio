@@ -98,14 +98,15 @@ export class BulkImageService {
 
                 const arrayBuffer = await response.arrayBuffer();
                 const buffer = Buffer.from(arrayBuffer);
-                const fileName = url.split('/').pop()?.split('?')[0] || 'external_image';
+                const cleanUrl = url.replace(/\/$/, "");
+                const fileName = cleanUrl.split('/').pop()?.split('?')[0] || 'external_image';
 
                 const uploadResult = await UploadService.uploadImage(buffer, fileName);
                 stats.migratedToCloudinary++;
 
                 return this.injectOptimization(uploadResult.url);
             } catch (error) {
-                logger.warn({ context: "bulk-optimization", url, error: (error as Error).message }, "Failed to migrate external image");
+                logger.warn({ context: "bulk-optimization", url, error }, "Failed to migrate external image");
                 stats.failed++;
                 return url;
             }
@@ -122,9 +123,14 @@ export class BulkImageService {
     private static async processProjects(stats: OptimizationStats) {
         const projects = await projectRepository.findAllAdmin();
         await this.mapConcurrent(projects, 5, async (project) => {
-            const newUrl = await this.handleImage(project.imageUrl, stats);
-            if (newUrl && newUrl !== project.imageUrl) {
-                await projectRepository.update(project.id, { imageUrl: newUrl });
+            try {
+                const newUrl = await this.handleImage(project.imageUrl, stats);
+                if (newUrl && newUrl !== project.imageUrl) {
+                    await projectRepository.update(project.id, { imageUrl: newUrl });
+                }
+            } catch (error) {
+                logger.warn({ context: "bulk-optimization", projectId: project.id, error }, "Failed to update project image");
+                stats.failed++;
             }
         });
     }

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { BookOpen, Calendar, ArrowLeft } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
+import { formatDate } from '@/lib/utils/date';
 
 interface CaseStudyData {
     id: number;
@@ -53,7 +54,7 @@ export const CaseStudyList: React.FC = () => {
                         <h3 style={{ color: 'var(--text-primary)', margin: '0 0 0.5rem' }}>{study.title}</h3>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-tertiary, #666)', fontSize: '0.8rem' }}>
                             <Calendar size={14} />
-                            {new Date(study.createdAt).toLocaleDateString()}
+                            {formatDate(study.createdAt)}
                         </div>
                     </motion.a>
                 ))}
@@ -81,7 +82,7 @@ export const CaseStudyViewer: React.FC<{ slug: string }> = ({ slug }) => {
             </a>
             <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{data.title}</h1>
             <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', marginBottom: '2rem' }}>
-                Generated on {data.generatedAt ? new Date(data.generatedAt).toLocaleDateString() : 'N/A'}
+                Generated on {data.generatedAt ? formatDate(data.generatedAt) : 'N/A'}
             </p>
             <div
                 style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1rem' }}

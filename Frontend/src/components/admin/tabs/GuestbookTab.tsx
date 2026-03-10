@@ -11,6 +11,8 @@ import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { formatDate } from "@/lib/utils/date";
+
 export function GuestbookTab() {
     const { data: entriesData, isLoading } = useAdminGuestbook();
     const approveMutation = useApproveGuestbook();
@@ -150,11 +152,11 @@ export function GuestbookTab() {
                                     <div className="flex items-center gap-4 text-[9px] font-black text-[var(--admin-text-muted)] uppercase tracking-[0.2em]">
                                         <span className="flex items-center gap-1.5">
                                             <Calendar size={12} />
-                                            {new Date(entry.createdAt).toLocaleDateString()}
+                                            {formatDate(entry.createdAt)}
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <Clock size={12} />
-                                            {new Date(entry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {formatDate(entry.createdAt, { hour: '2-digit', minute: '2-digit', includeTime: true })}
                                         </span>
                                     </div>
                                 </div>

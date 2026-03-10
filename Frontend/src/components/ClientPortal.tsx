@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Clock, MessageSquare, Send, CheckCircle2, Circle, Loader2, ArrowRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { formatDate } from '@/lib/utils/date';
 
 interface ClientProject {
     id: number;
@@ -211,7 +212,7 @@ export const ClientPortal: React.FC = () => {
                                         <div className="mt-6 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/50 pt-4">
                                             <div className="flex items-center gap-2 lowercase font-mono">
                                                 <Clock className="w-3.5 h-3.5 opacity-40 text-indigo-400" />
-                                                deadline: {new Date(project.deadline).toLocaleDateString()}
+                                                deadline: {formatDate(project.deadline)}
                                             </div>
                                             {isSelected && <ArrowRight className="w-4 h-4 text-indigo-500" />}
                                         </div>

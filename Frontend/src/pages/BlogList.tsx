@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Eye, Clock } from "lucide-react";
 
+import { formatDate } from "@/lib/utils/date";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
 function BlogCard({ article }: { article: Article }) {
@@ -44,7 +45,7 @@ function BlogCard({ article }: { article: Article }) {
                     <CardContent className="p-6 flex-1 flex flex-col">
                         <div className="flex items-center gap-2 mb-3">
                             <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-primary/20">
-                                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Draft"}
+                                {article.publishedAt ? formatDate(article.publishedAt) : "Draft"}
                             </Badge>
                             <span className="text-[10px] text-white/30">•</span>
                             <span className="text-[10px] text-white/40 flex items-center gap-1">

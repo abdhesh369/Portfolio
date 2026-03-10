@@ -1,3 +1,4 @@
+import { formatDate } from "../../../lib/utils/date";
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import { toast } from "react-hot-toast";
@@ -147,7 +148,7 @@ export function AuditLogTab() {
                     {entry.entity_id ?? "—"}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
-                    {new Date(entry.created_at).toLocaleString()}
+                    {formatDate(entry.created_at, { month: 'short', day: 'numeric', year: 'numeric', includeTime: true })}
                   </span>
                 </button>
 

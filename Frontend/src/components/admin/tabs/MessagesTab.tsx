@@ -9,6 +9,7 @@ import { FormField, EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/date";
 
 export function MessagesTab() {
     const { data: messagesData, isLoading } = useMessages();
@@ -149,9 +150,7 @@ export function MessagesTab() {
                                     </div>
                                     <div className="flex items-center gap-3 text-[10px] text-admin-text-secondary/40 font-black uppercase tracking-widest">
                                         <Clock size={12} />
-                                        {new Date(msg.createdAt).toLocaleString('en-US', {
-                                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                                        })}
+                                        {formatDate(msg.createdAt, { includeTime: true, month: 'short', day: 'numeric' })}
                                     </div>
                                 </div>
 

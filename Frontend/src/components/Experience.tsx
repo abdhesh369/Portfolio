@@ -5,6 +5,8 @@ import { useExperiences } from "@/hooks/use-portfolio";
 import type { Experience as ExperienceType } from "@portfolio/shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin } from "lucide-react";
 
+import { formatDate as standardFormatDate } from "@/lib/utils/date";
+
 // Animated Timeline Line
 const TimelineLine = ({ isActive }: { isActive: boolean }) => (
   <div className="absolute left-0 top-0 h-full w-1 overflow-hidden">
@@ -76,7 +78,7 @@ const TimelineItem = ({
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return standardFormatDate(date, { month: 'short', year: 'numeric' });
   };
 
   const displayPeriod = period || (startDate ? `${formatDate(startDate)} - ${endDate ? formatDate(endDate) : 'Present'}` : '');

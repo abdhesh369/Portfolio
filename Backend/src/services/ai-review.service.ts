@@ -1,8 +1,10 @@
+import { db } from "../db.js";
+import { and, eq } from "drizzle-orm";
+import { codeReviewsTable, type CodeReview } from "@portfolio/shared";
 import { codeReviewRepository } from "../repositories/code-review.repository.js";
 import { projectService } from "./project.service.js";
 import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
-import type { CodeReview } from "@portfolio/shared";
 
 /** Strip HTML/XML tags and control chars to prevent prompt injection */
 function sanitizeForPrompt(text: string): string {
@@ -22,12 +24,25 @@ export class AIReviewService {
         if (!project) throw new Error("Project not found");
 
         // Create a pending review
-        const review = await codeReviewRepository.create({
+        const existingReview = await db.query.codeReviewsTable.findFirst({
+            where: and(
+                eq(codeReviewsTable.projectId, projectId),
+                eq(codeReviewsTable.status, "processing")
+            ),
+        });
+
+        if (existingReview) {
+            console.log(`[AIReviewService] Review already processing for project ${projectId}`);
+            return existingReview as CodeReview;
+        }
+
+        const [review] = await db.insert(codeReviewsTable).values({
             projectId,
             content: "",
             badges: [],
             status: "processing",
-        });
+        }).returning();
+
 
         // Run review in background (fire-and-forget)
         this.runReview(review.id, project).catch((err) => {

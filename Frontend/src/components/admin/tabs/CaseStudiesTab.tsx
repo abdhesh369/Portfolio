@@ -8,6 +8,7 @@ import {
 import { apiFetch } from '@/lib/api-helpers';
 import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/date";
 
 interface CaseStudyData {
     id: number;
@@ -160,7 +161,7 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                         <FileText size={12} />
-                                        {new Date(study.createdAt).toLocaleDateString()}
+                                        {formatDate(study.createdAt)}
                                     </span>
                                 </div>
                             </div>

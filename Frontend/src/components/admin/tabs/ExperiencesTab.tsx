@@ -20,6 +20,7 @@ const emptyExperience: ExperienceFormState = {
     type: "Experience"
 };
 
+import { formatDate } from "@/lib/utils/date";
 import type { AdminTabProps } from "./types";
 
 export function ExperiencesTab(_props: AdminTabProps) {
@@ -289,9 +290,9 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                         <div className="flex items-center gap-2 text-admin-text-secondary font-medium">
                                             <Calendar size={16} />
                                             <span className="uppercase text-[11px] tracking-wider font-black">
-                                                {new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                                {formatDate(exp.startDate, { month: 'short', year: 'numeric' })}
                                                 <span className="mx-2 text-admin-text-secondary/30">—</span>
-                                                {exp.endDate ? new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "Present"}
+                                                {exp.endDate ? formatDate(exp.endDate, { month: 'short', year: 'numeric' }) : "Present"}
                                             </span>
                                         </div>
                                     </div>
@@ -317,8 +318,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                         size="sm"
                                         className="w-11 h-11 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-nm-accent transition-colors"
                                         title="Edit"
-                                    >
-                                    </AdminButton>
+                                    />
                                     <AdminButton
                                         onClick={() => deleteExp(exp.id)}
                                         variant="secondary"
@@ -326,8 +326,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                         size="sm"
                                         className="w-11 h-11 rounded-xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-rose-500 transition-colors"
                                         title="Delete"
-                                    >
-                                    </AdminButton>
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -336,38 +335,40 @@ export function ExperiencesTab(_props: AdminTabProps) {
             )}
 
             {/* Bulk Selection Bar */}
-            {selectedIds.length > 0 && (
-                <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-white/10 rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl border-t-white/20">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-rose-500 animate-pulse">
-                            <Trash2 size={24} />
+            {
+                selectedIds.length > 0 && (
+                    <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-white/10 rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl border-t-white/20">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-rose-500 animate-pulse">
+                                <Trash2 size={24} />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-lg font-black text-admin-text-primary tracking-tighter leading-none">{selectedIds.length} Selected</span>
+                                <span className="text-[10px] text-admin-text-secondary uppercase tracking-[0.2em] font-black mt-1">Bulk Management</span>
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-lg font-black text-admin-text-primary tracking-tighter leading-none">{selectedIds.length} Selected</span>
-                            <span className="text-[10px] text-admin-text-secondary uppercase tracking-[0.2em] font-black mt-1">Bulk Management</span>
+
+                        <div className="h-10 w-px nm-inset" />
+
+                        <div className="flex items-center gap-4">
+                            <AdminButton
+                                variant="secondary"
+                                className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                onClick={handleBulkDelete}
+                            >
+                                Delete Selected
+                            </AdminButton>
+                            <AdminButton
+                                variant="secondary"
+                                className="w-12 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-admin-text-primary transition-colors flex items-center justify-center"
+                                onClick={() => setSelectedIds([])}
+                                icon={X}
+                            >
+                            </AdminButton>
                         </div>
                     </div>
-
-                    <div className="h-10 w-px nm-inset" />
-
-                    <div className="flex items-center gap-4">
-                        <AdminButton
-                            variant="secondary"
-                            className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
-                            onClick={handleBulkDelete}
-                        >
-                            Delete Selected
-                        </AdminButton>
-                        <AdminButton
-                            variant="secondary"
-                            className="w-12 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-admin-text-primary transition-colors flex items-center justify-center"
-                            onClick={() => setSelectedIds([])}
-                            icon={X}
-                        >
-                        </AdminButton>
-                    </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

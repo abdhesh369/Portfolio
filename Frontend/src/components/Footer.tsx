@@ -13,6 +13,8 @@ const defaultFooterNavItems = [
   { name: "Contact", href: "#contact" },
 ];
 
+import { formatDate } from "@/lib/utils/date";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [location, setLocation] = useLocation();
@@ -140,7 +142,7 @@ export default function Footer() {
                 </div>
               </div>
               <p className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-0.5">
-                Updated: {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"}
+                Updated: {settings?.updatedAt ? formatDate(settings.updatedAt, { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"}
               </p>
             </div>
           </div>

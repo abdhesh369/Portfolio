@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Article } from "@portfolio/shared/schema";
 import type { AdminTabProps } from "./types";
+import { formatDate } from "@/lib/utils/date";
 
 type ArticleWithTags = Article & { tags: string[] };
 
@@ -88,7 +89,7 @@ function ArticleItem({ article, onEdit, onDelete }: {
                     {article.publishedAt && (
                         <span className="flex items-center gap-1.5">
                             <Calendar size={12} />
-                            {new Date(article.publishedAt).toLocaleDateString()}
+                            {formatDate(article.publishedAt)}
                         </span>
                     )}
                 </div>

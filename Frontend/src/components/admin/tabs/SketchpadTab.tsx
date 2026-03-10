@@ -5,6 +5,7 @@ import { PenTool, Plus, Trash2, Archive, Calendar } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
 import { Badge } from "@/components/ui/badge";
 import { AdminButton, LoadingSkeleton, EmptyState, FormField } from "@/components/admin/AdminShared";
+import { formatDate } from '@/lib/utils/date';
 
 interface SketchpadSessionData {
     id: number;
@@ -129,7 +130,7 @@ export const SketchpadTab: React.FC = () => {
                                         </div>
                                         <div className="text-[10px] text-[var(--admin-text-secondary)] font-bold uppercase tracking-widest flex items-center gap-2">
                                             <Calendar size={12} strokeWidth={3} className="text-indigo-500/50" />
-                                            {new Date(session.updatedAt).toLocaleDateString()}
+                                            {formatDate(session.updatedAt)}
                                             {session.createdBy && (
                                                 <span className="flex items-center gap-2 text-slate-500">
                                                     <span className="w-1 h-1 rounded-full bg-slate-700" />

@@ -212,7 +212,7 @@ export function FormField({ label, icon: Icon, onChange, ...props }: FormFieldPr
     return (
         <div className="space-y-4">
             <label className="label-technical ml-1">{label}</label>
-            <div className="relative">
+            <div className="relative group">
                 <input
                     {...props}
                     onChange={(e) => onChange?.(e.target.value)}
@@ -226,8 +226,7 @@ export function FormField({ label, icon: Icon, onChange, ...props }: FormFieldPr
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-500/40 pointer-events-none group-focus-within:text-purple-500 transition-colors">
                         <Icon size={18} />
                     </div>
-                )}
-            </div>
+                )}            </div>
         </div>
     );
 }

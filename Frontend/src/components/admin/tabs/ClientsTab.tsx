@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield } from 'lucide-react';
-import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
+import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
 
@@ -85,36 +85,27 @@ export const ClientsTab: React.FC = () => {
                         <h3 className="text-sm font-black uppercase tracking-[0.2em]">Register New Client</h3>
                     </div>
                     <div className="grid md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Name *</label>
-                            <input
-                                placeholder="Client name"
-                                value={form.name}
-                                onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
-                                required
-                                className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Email *</label>
-                            <input
-                                placeholder="client@company.com"
-                                type="email"
-                                value={form.email}
-                                onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
-                                required
-                                className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Company</label>
-                            <input
-                                placeholder="Organization (optional)"
-                                value={form.company}
-                                onChange={(e) => setForm(prev => ({ ...prev, company: e.target.value }))}
-                                className="w-full nm-flat px-5 py-3.5 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                        </div>
+                        <FormField
+                            label="NAME"
+                            value={form.name}
+                            onChange={(val: string) => setForm(prev => ({ ...prev, name: val }))}
+                            placeholder="Client name"
+                            required
+                        />
+                        <FormField
+                            label="EMAIL"
+                            type="email"
+                            value={form.email}
+                            onChange={(val: string) => setForm(prev => ({ ...prev, email: val }))}
+                            placeholder="client@company.com"
+                            required
+                        />
+                        <FormField
+                            label="COMPANY"
+                            value={form.company || ''}
+                            onChange={(val: string) => setForm(prev => ({ ...prev, company: val }))}
+                            placeholder="Organization (optional)"
+                        />
                     </div>
                     <div className="mt-6 flex justify-end">
                         <AdminButton

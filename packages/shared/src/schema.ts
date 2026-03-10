@@ -508,11 +508,11 @@ export const scopeRequestSchema = z.object({
 export const projectSchema = z.object({
   id: z.number().int().positive(),
   title: z.string().min(1),
-  slug: z.string().min(1),
+  slug: z.string().min(3).max(100).regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   description: z.string(),
   longDescription: z.string().nullable(),
   techStack: z.array(z.string()),
-  imageUrl: z.string().url().nullable().default(null),
+  imageUrl: z.string().url("Invalid image URL").nullable().default(null),
   githubUrl: z.string().url().nullable().default(null),
   liveUrl: z.string().max(500).nullable().default(null),
   category: z.string().min(1).max(100),
