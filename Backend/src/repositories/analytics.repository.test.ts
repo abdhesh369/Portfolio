@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { db } from "../db.js";
 
 // ---- helpers for building mock chains ----
 function mockChain(resolved: any) {
@@ -58,7 +59,9 @@ vi.mock("drizzle-orm", () => {
     };
 });
 
-import { AnalyticsRepository } from "../repositories/analytics.repository.js";
+vi.mock("../db.js");
+
+import { AnalyticsRepository } from "./analytics.repository.js";
 
 describe("AnalyticsRepository", () => {
     let repo: AnalyticsRepository;
@@ -79,7 +82,6 @@ describe("AnalyticsRepository", () => {
             };
             const mockInserted = { id: 1, ...mockEvent, createdAt: new Date() };
 
-            const { db } = await import("../db.js");
             (db.insert as any).mockReturnValueOnce({
                 values: vi.fn().mockReturnValue({
                     returning: vi.fn().mockResolvedValue([mockInserted]),
@@ -91,7 +93,6 @@ describe("AnalyticsRepository", () => {
         });
 
         it("throws if insert fails", async () => {
-            const { db } = await import("../db.js");
             (db.insert as any).mockReturnValueOnce({
                 values: vi.fn().mockReturnValue({
                     returning: vi.fn().mockResolvedValue([]),
@@ -104,7 +105,6 @@ describe("AnalyticsRepository", () => {
 
     describe("getSummary", () => {
         it("returns full analytics summary with all aggregations", async () => {
-            const { db } = await import("../db.js");
             (db.select as any)
                 // 1. totalEvents
                 .mockReturnValueOnce(mockChain([{ value: 200 }]))
@@ -154,7 +154,6 @@ describe("AnalyticsRepository", () => {
         });
 
         it("returns empty arrays and zeros when no data", async () => {
-            const { db } = await import("../db.js");
             (db.select as any)
                 .mockReturnValueOnce(mockChain([undefined]))
                 .mockReturnValueOnce(mockChain([undefined]))
@@ -174,7 +173,6 @@ describe("AnalyticsRepository", () => {
         });
 
         it("calculates device percentages correctly with single device", async () => {
-            const { db } = await import("../db.js");
             (db.select as any)
                 .mockReturnValueOnce(mockChain([{ value: 50 }]))
                 .mockReturnValueOnce(mockChain([{ value: 50 }]))
@@ -191,7 +189,6 @@ describe("AnalyticsRepository", () => {
         });
 
         it("handles null device/country gracefully", async () => {
-            const { db } = await import("../db.js");
             (db.select as any)
                 .mockReturnValueOnce(mockChain([{ value: 10 }]))
                 .mockReturnValueOnce(mockChain([{ value: 5 }]))

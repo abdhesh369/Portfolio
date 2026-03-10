@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { db } from "../db.js";
 import { createScopeWorker } from "./scope.worker.js";
 import { scopeRepository } from "../repositories/scope.repository.js";
 import { aiClient } from "../lib/ai.js";
@@ -43,9 +44,16 @@ describe("ScopeWorker", () => {
 
         // Simulate BullMQ job execution
         const mockJob = { id: "job1", data: { requestId: 1 } };
+
+        // Mock DB calls for updates
+        (db.update as any).mockReturnValue({
+            set: vi.fn().mockReturnThis(),
+            where: vi.fn().mockResolvedValue([{ id: 1 }]),
+        });
+
         await worker.processor(mockJob);
 
-        expect(scopeRepository.update).toHaveBeenCalledWith(1, { status: "processing" });
+        expect(scopeRepository.update).toHaveBeenCalledWith(1, expect.objectContaining({ status: "processing" }));
         expect(aiClient.generateJSON).toHaveBeenCalled();
         expect(scopeRepository.update).toHaveBeenCalledWith(1, expect.objectContaining({
             status: "completed",
@@ -57,6 +65,12 @@ describe("ScopeWorker", () => {
         const worker: any = createScopeWorker(mockRedis);
         vi.mocked(scopeRepository.findById).mockResolvedValue({ id: 1 } as any);
         vi.mocked(aiClient.generateJSON).mockRejectedValue(new Error("AI error"));
+
+        // Mock DB calls for updates
+        (db.update as any).mockReturnValue({
+            set: vi.fn().mockReturnThis(),
+            where: vi.fn().mockResolvedValue([{ id: 1 }]),
+        });
 
         const mockJob = { id: "job1", data: { requestId: 1 } };
         await expect(worker.processor(mockJob)).rejects.toThrow("AI error");

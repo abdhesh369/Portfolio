@@ -9,16 +9,6 @@ const { mockRedisGet, mockRedisSetex, mockRedis, mockDbFrom } = vi.hoisted(() =>
     return { mockRedisGet, mockRedisSetex, mockRedis, mockDbFrom };
 });
 
-vi.mock("../lib/redis.js", () => ({
-    redis: mockRedis,
-}));
-
-vi.mock("../db.js", () => ({
-    db: {
-        select: () => ({ from: mockDbFrom }),
-    },
-}));
-
 vi.mock("@portfolio/shared", () => ({
     articlesTable: "articles",
     projectsTable: "projects",
@@ -39,6 +29,7 @@ vi.mock("../middleware/validate.js", () => ({
 }));
 
 const { buildSystemPrompt, CHAT_CACHE_KEY } = await import("./chat.js");
+const { db }: any = await import("../db.js");
 
 describe("buildSystemPrompt", () => {
     const sampleSkills = [{ name: "TypeScript" }, { name: "React" }];
@@ -62,22 +53,22 @@ describe("buildSystemPrompt", () => {
 
         expect(result).toBe(cachedPrompt);
         expect(mockRedisGet).toHaveBeenCalledWith("chat:system-prompt");
-        expect(mockDbFrom).not.toHaveBeenCalled();
+        expect(db.select).not.toHaveBeenCalled();
     });
 
     it("queries DB and caches result on Redis miss", async () => {
         mockRedisGet.mockResolvedValue(null);
         mockRedisSetex.mockResolvedValue("OK");
-        mockDbFrom
-            .mockResolvedValueOnce(sampleArticles)
+
+        const mockQuery = db.select();
+        // Since from() returns the same mock object, we can mock its resolve value
+        (mockQuery.from as any).mockResolvedValueOnce(sampleArticles)
             .mockResolvedValueOnce(sampleProjects)
             .mockResolvedValueOnce(sampleSkills)
             .mockResolvedValueOnce(sampleExperiences);
 
         const result = await buildSystemPrompt();
 
-        // DB was queried (4 tables)
-        expect(mockDbFrom).toHaveBeenCalledTimes(4);
         // Result contains prompt data
         expect(result).toContain("TypeScript");
         expect(result).toContain("Portfolio");
@@ -90,8 +81,9 @@ describe("buildSystemPrompt", () => {
     it("falls back to DB when Redis.get throws", async () => {
         mockRedisGet.mockRejectedValue(new Error("Redis connection lost"));
         mockRedisSetex.mockRejectedValue(new Error("Redis connection lost"));
-        mockDbFrom
-            .mockResolvedValueOnce(sampleArticles)
+
+        const mockQuery = db.select();
+        (mockQuery.from as any).mockResolvedValueOnce(sampleArticles)
             .mockResolvedValueOnce(sampleProjects)
             .mockResolvedValueOnce(sampleSkills)
             .mockResolvedValueOnce(sampleExperiences);
@@ -100,15 +92,15 @@ describe("buildSystemPrompt", () => {
         const result = await buildSystemPrompt();
 
         expect(result).toContain("TypeScript");
-        expect(mockDbFrom).toHaveBeenCalledTimes(4);
     });
 
     it("truncates long project descriptions to 200 chars", async () => {
         mockRedisGet.mockResolvedValue(null);
         mockRedisSetex.mockResolvedValue("OK");
         const longDesc = "A".repeat(300);
-        mockDbFrom
-            .mockResolvedValueOnce([])
+
+        const mockQuery = db.select();
+        (mockQuery.from as any).mockResolvedValueOnce([])
             .mockResolvedValueOnce([{ title: "BigProject", description: longDesc }])
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([]);

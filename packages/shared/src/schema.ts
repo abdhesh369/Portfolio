@@ -448,6 +448,7 @@ function isValidUrl(url: string | null | undefined): boolean {
   }
 
   try {
+    /* eslint-disable-next-line no-undef */
     const parsed = new URL(url);
     // Only allow safe protocols
     return ["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol);
@@ -500,12 +501,14 @@ export const scopeRequestSchema = z.object({
 });
 
 export const projectSchema = z.object({
-  id: z.number(),
-  title: z.string().min(1).max(255),
-  description: z.string().min(1).max(5000),
-  techStack: z.array(z.string().max(100)).default([]),
-  imageUrl: z.string().url().max(500),
-  githubUrl: z.string().max(500).nullable().default(null),
+  id: z.number().int().positive(),
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  description: z.string(),
+  longDescription: z.string().nullable(),
+  techStack: z.array(z.string()),
+  imageUrl: z.string().url().nullable().default(null),
+  demoUrl: z.string().url().nullable().default(null),
   liveUrl: z.string().max(500).nullable().default(null),
   category: z.string().min(1).max(100),
   displayOrder: z.number().default(0),

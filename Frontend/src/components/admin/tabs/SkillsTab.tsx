@@ -76,14 +76,14 @@ export function SkillsTab(_props: AdminTabProps) {
                         <FormField
                             label="Skill Name"
                             value={editing.name}
-                            onChange={(v) => setEditing(prev => prev ? { ...prev, name: v } : null)}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, name: v }) : null)}
                             placeholder="e.g. React.js"
                             required
                         />
                         <FormField
                             label="Category"
                             value={editing.category}
-                            onChange={(v) => setEditing(prev => prev ? { ...prev, category: v } : null)}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, category: v }) : null)}
                             placeholder="Frontend, Backend, Tools..."
                             required
                         />
@@ -93,7 +93,7 @@ export function SkillsTab(_props: AdminTabProps) {
                         <FormSelect
                             label="Class_Status"
                             value={editing.status}
-                            onChange={(v) => setEditing(prev => prev ? { ...prev, status: v as any } : null)}
+                            onChange={(v) => setEditing(prev => prev ? ({ ...prev, status: v as "Core" | "Advanced" | "Learning" }) : null)}
                             options={[
                                 { label: "CORE_TECH", value: "Core" },
                                 { label: "ADVANCED", value: "Advanced" },
@@ -105,7 +105,7 @@ export function SkillsTab(_props: AdminTabProps) {
                             <FormField
                                 label="Mastery_Level (0-100)"
                                 value={editing.mastery?.toString() || "0"}
-                                onChange={(v) => setEditing(prev => prev ? { ...prev, mastery: parseInt(v) || 0 } : null)}
+                                onChange={(v) => setEditing(prev => prev ? ({ ...prev, mastery: parseInt(v) || 0 }) : null)}
                                 type="number"
                                 min="0"
                                 max="100"
@@ -116,21 +116,21 @@ export function SkillsTab(_props: AdminTabProps) {
                     <FormField
                         label="System_Icon"
                         value={editing.icon}
-                        onChange={(v) => setEditing(prev => prev ? { ...prev, icon: v } : null)}
+                        onChange={(v) => setEditing(prev => prev ? ({ ...prev, icon: v }) : null)}
                         placeholder="Lucide icon name (e.g. Code, Zap, Cpu)"
                     />
 
                     <FormTextarea
                         label="Capability_Description"
                         value={editing.description}
-                        onChange={(v) => setEditing(prev => prev ? { ...prev, description: v } : null)}
+                        onChange={(v) => setEditing(prev => prev ? ({ ...prev, description: v }) : null)}
                         placeholder="Detail Technical Proficiency..."
                     />
 
                     <FormTextarea
                         label="Validation_Link (Proof/Project)"
                         value={editing.proof}
-                        onChange={(v) => setEditing(prev => prev ? { ...prev, proof: v } : null)}
+                        onChange={(v) => setEditing(prev => prev ? ({ ...prev, proof: v }) : null)}
                         placeholder="https://..."
                     />
 
@@ -203,7 +203,7 @@ export function SkillsTab(_props: AdminTabProps) {
 
             {!skills?.length ? (
                 <div className="nm-flat p-24 text-center">
-                    <EmptyState icon="⚡" text="No technical protocols indexed" />
+                    <EmptyState icon={Zap} text="No technical protocols indexed" />
                 </div>
             ) : (
                 <div className="space-y-12">

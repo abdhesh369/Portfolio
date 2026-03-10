@@ -13,3 +13,45 @@ process.env.JWT_REFRESH_SECRET = "test-jwt-refresh-secret-at-least-64-characters
 process.env.ADMIN_PASSWORD = "test-admin-password";
 process.env.ADMIN_EMAIL = "admin@test.com";
 process.env.CONTACT_EMAIL = "contact@test.com";
+
+import { vi } from "vitest";
+
+// Global Drizzle Mock
+vi.mock("../db.js", () => {
+    const mockQuery = {
+        from: vi.fn(),
+        where: vi.fn(),
+        limit: vi.fn(),
+        orderBy: vi.fn(),
+        delete: vi.fn(),
+        update: vi.fn(),
+        set: vi.fn(),
+        insert: vi.fn(),
+        values: vi.fn(),
+        returning: vi.fn(),
+        execute: vi.fn(),
+        then: vi.fn((onFulfilled) => Promise.resolve([]).then(onFulfilled)),
+        catch: vi.fn(),
+        finally: vi.fn(),
+    };
+
+    mockQuery.from.mockReturnValue(mockQuery);
+    mockQuery.where.mockReturnValue(mockQuery);
+    mockQuery.limit.mockReturnValue(mockQuery);
+    mockQuery.orderBy.mockReturnValue(mockQuery);
+    mockQuery.delete.mockReturnValue(mockQuery);
+    mockQuery.update.mockReturnValue(mockQuery);
+    mockQuery.set.mockReturnValue(mockQuery);
+    mockQuery.insert.mockReturnValue(mockQuery);
+    mockQuery.values.mockReturnValue(mockQuery);
+    mockQuery.returning.mockReturnValue(mockQuery);
+
+    return {
+        db: {
+            select: vi.fn().mockReturnValue(mockQuery),
+            delete: vi.fn().mockReturnValue(mockQuery),
+            update: vi.fn().mockReturnValue(mockQuery),
+            insert: vi.fn().mockReturnValue(mockQuery),
+        },
+    };
+});

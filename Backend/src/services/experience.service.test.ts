@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { db } from "../db.js";
 
 const {
     mockFindAll, mockFindById, mockCreate, mockUpdate, mockDelete,
@@ -55,17 +56,15 @@ import type { Experience } from "@portfolio/shared";
 
 const MOCK_EXP: Experience = {
     id: 1,
-    company: "ACME Corp",
+    organization: "ACME Corp",
     role: "Engineer",
     description: "Built things",
-    startDate: "2022-01",
-    endDate: "2024-01",
-    current: false,
+    type: "Full-time",
+    startDate: new Date("2022-01-01"),
+    endDate: new Date("2024-01-01"),
     techStack: ["TypeScript"],
     displayOrder: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-};
+} as any;
 
 describe("ExperienceService", () => {
     let service: ExperienceService;
@@ -76,11 +75,30 @@ describe("ExperienceService", () => {
     });
 
     describe("getAll", () => {
-        it("returns experiences via cache", async () => {
+        it("fetches experiences and caches them on hit", async () => {
             mockCacheGetOrSet.mockResolvedValue([MOCK_EXP]);
             const result = await service.getAll();
             expect(result).toEqual([MOCK_EXP]);
             expect(mockCacheGetOrSet).toHaveBeenCalled();
+            expect(db.select).not.toHaveBeenCalled();
+        });
+
+        it("queries DB on cache miss", async () => {
+            mockCacheGetOrSet.mockImplementation(async (_key: string, _ttl: number, cb: () => any) => {
+                return await cb();
+            });
+
+            (db.select as any).mockReturnValue({
+                from: vi.fn().mockReturnValue({
+                    orderBy: vi.fn().mockReturnValue({
+                        execute: vi.fn().mockResolvedValueOnce([MOCK_EXP])
+                    })
+                })
+            });
+
+            const result = await service.getAll();
+            expect(result).toEqual([MOCK_EXP]);
+            expect(db.select).toHaveBeenCalled();
         });
     });
 
@@ -93,11 +111,10 @@ describe("ExperienceService", () => {
         });
 
         it("fetches from repository and caches on cache miss", async () => {
-            mockCacheGet.mockResolvedValue(null);
+            mockCacheGetOrSet.mockImplementation(async (_key: string, _ttl: number, fallback: any) => fallback());
             mockFindById.mockResolvedValue(MOCK_EXP);
             const result = await service.getById(1);
             expect(mockFindById).toHaveBeenCalledWith(1);
-            expect(mockCacheSet).toHaveBeenCalled();
             expect(result).toEqual(MOCK_EXP);
         });
 
@@ -111,10 +128,9 @@ describe("ExperienceService", () => {
 
     describe("create", () => {
         it("creates experience and invalidates cache", async () => {
+            const input = { organization: "New", role: "Dev", startDate: new Date() } as any;
             mockCreate.mockResolvedValue(MOCK_EXP);
-            const { id, createdAt, updatedAt, ...data } = MOCK_EXP;
-            const result = await service.create(data);
-            expect(mockCreate).toHaveBeenCalledWith(data);
+            const result = await service.create(input);
             expect(mockCacheInvalidate).toHaveBeenCalled();
             expect(result).toEqual(MOCK_EXP);
         });

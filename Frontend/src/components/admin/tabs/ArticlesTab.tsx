@@ -231,7 +231,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Protocol Title *"
                                 value={editing.title}
-                                onChange={(v) => setEditing(prev => ({ ...prev, title: v } as any))}
+                                onChange={(v) => setEditing(prev => prev ? ({ ...prev, title: v }) : null)}
                                 required
                                 placeholder="E.G. THE NEUMORPHIC REVOLUTION"
                             />
@@ -240,13 +240,13 @@ export function ArticlesTab(_props: AdminTabProps) {
                                 <FormField
                                     label="Access_Slug"
                                     value={editing.slug}
-                                    onChange={(v) => setEditing(prev => ({ ...prev, slug: v } as any))}
+                                    onChange={(v) => setEditing(prev => prev ? ({ ...prev, slug: v }) : null)}
                                     placeholder="auto-generated-id"
                                 />
                                 <FormSelect
                                     label="Index_Status"
                                     value={editing.status}
-                                    onChange={(v) => setEditing(prev => ({ ...prev, status: v as any } as any))}
+                                    onChange={(v) => setEditing(prev => prev ? ({ ...prev, status: v as "draft" | "published" | "archived" }) : null)}
                                     options={[
                                         { label: "DRAFT_MODE", value: "draft" },
                                         { label: "LIVE_SYNC", value: "published" },
@@ -258,7 +258,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Rich_Text_Payload</label>
                                 <div className="nm-inset rounded-3xl p-4 min-h-[400px]">
-                                    <RichTextEditor value={editing.content} onChange={(v) => setEditing(prev => ({ ...prev, content: v } as any))} />
+                                    <RichTextEditor value={editing.content} onChange={(v) => setEditing(prev => prev ? ({ ...prev, content: v }) : null)} />
                                 </div>
                             </div>
                         </div>
@@ -268,7 +268,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormTextarea
                                 label="Excerpt_Summary"
                                 value={editing.excerpt ?? ""}
-                                onChange={(v) => setEditing(prev => ({ ...prev, excerpt: v } as any))}
+                                onChange={(v) => setEditing(prev => prev ? ({ ...prev, excerpt: v }) : null)}
                                 placeholder="BRIEF CONTENT OVERVIEW..."
                             />
                         </div>
@@ -279,7 +279,7 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[var(--admin-text-secondary)] uppercase tracking-[0.2em] ml-1">Visual_Asset</label>
                                 <div className="nm-inset rounded-2xl p-4">
-                                    <ImageUpload value={editing.featuredImage ?? ""} onChange={(v) => setEditing(prev => ({ ...prev, featuredImage: v } as any))} />
+                                    <ImageUpload value={editing.featuredImage ?? ""} onChange={(v) => setEditing(prev => prev ? ({ ...prev, featuredImage: v }) : null)} />
                                 </div>
                             </div>
 
@@ -303,13 +303,13 @@ export function ArticlesTab(_props: AdminTabProps) {
                             <FormField
                                 label="Meta_Title"
                                 value={editing.metaTitle ?? ""}
-                                onChange={(v) => setEditing(prev => ({ ...prev, metaTitle: v } as any))}
+                                onChange={(v) => setEditing(prev => prev ? ({ ...prev, metaTitle: v }) : null)}
                                 placeholder="SEARCH ENGINE TITLE"
                             />
                             <FormTextarea
                                 label="Meta_Description"
                                 value={editing.metaDescription ?? ""}
-                                onChange={(v) => setEditing(prev => ({ ...prev, metaDescription: v } as any))}
+                                onChange={(v) => setEditing(prev => prev ? ({ ...prev, metaDescription: v }) : null)}
                                 placeholder="SEARCH EXCERPT..."
                             />
                         </div>

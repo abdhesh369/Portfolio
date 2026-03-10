@@ -28,7 +28,7 @@ export function AdminButton({
     isSuccess?: boolean;
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
-    icon?: any;
+    icon?: React.ComponentType<{ size?: number; className?: string }>;
     iconClassName?: string;
     loadingText?: string;
     className?: string;
@@ -143,13 +143,18 @@ export function SpringToggle({
     );
 }
 
+interface FloatingLabelInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+    error?: string;
+}
+
 export function FloatingLabelInput({
     label,
     error,
     className,
     placeholder,
     ...props
-}: any) {
+}: FloatingLabelInputProps) {
     const [isFocused, setIsFocused] = useState(false);
     // Support both controlled (value) and uncontrolled (defaultValue/ref)
     const hasValue = props.value !== undefined ? props.value?.length > 0 : props.defaultValue?.length > 0;
@@ -198,7 +203,7 @@ export function FloatingLabelInput({
 interface FormFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     label: string;
     onChange?: (value: string) => void;
-    icon?: any;
+    icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
 export function FormField({ label, onChange, ...props }: FormFieldProps) {
@@ -219,7 +224,7 @@ interface FormTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAr
     onChange?: (value: string) => void;
 }
 
-export function FormTextarea({ label, onChange, ...props }: FormTextareaProps & Record<string, any>) {
+export function FormTextarea({ label, onChange, ...props }: FormTextareaProps) {
     return (
         <div className="space-y-4">
             <label className="label-technical ml-1">{label}</label>
@@ -236,7 +241,7 @@ export function FormTextarea({ label, onChange, ...props }: FormTextareaProps & 
 interface FormSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
     label: string;
     options: { label: string; value: string }[];
-    icon?: any;
+    icon?: React.ReactNode;
     onChange?: (value: string) => void;
 }
 
@@ -264,7 +269,7 @@ export function FormSelect({ label, options, icon: Icon, onChange, ...props }: F
     );
 }
 
-export function EmptyState({ icon: Icon, text, className }: { icon: any; text: string; className?: string }) {
+export function EmptyState({ icon: Icon, text, className }: { icon: React.ComponentType<{ size?: number; className?: string }>; text: string; className?: string }) {
     return (
         <div className={cn("text-center py-24 nm-flat border-white/5 relative overflow-hidden", className)}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-purple-600/30 to-transparent" />

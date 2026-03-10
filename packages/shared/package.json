@@ -31,7 +31,9 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsc --project tsconfig.json"
+        "build": "tsc --project tsconfig.json",
+        "lint": "eslint src --ext .ts",
+        "type-check": "tsc --noEmit"
     },
     "dependencies": {
         "drizzle-zod": "^0.8.3",
