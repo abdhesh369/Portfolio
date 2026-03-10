@@ -18,13 +18,17 @@ vi.mock("../lib/ai.js", () => ({
     },
 }));
 
-// Mock BullMQ Worker
-vi.mock("bullmq", () => ({
-    Worker: vi.fn().mockImplementation((name, processor) => ({
-        on: vi.fn(),
-        processor, // Export for testing
-    })),
-}));
+// Mock BullMQ Worker - MUST be a function that can be used as a constructor
+vi.mock("bullmq", () => {
+    return {
+        Worker: vi.fn().mockImplementation(function (this: any, name, processor) {
+            this.on = vi.fn();
+            this.processor = processor;
+        }),
+    };
+});
+
+// db mock is in setup.ts
 
 describe("ScopeWorker", () => {
     let mockRedis: Redis;
@@ -38,18 +42,18 @@ describe("ScopeWorker", () => {
         const worker: any = createScopeWorker(mockRedis);
         expect(worker).toBeDefined();
 
-        const mockRequest = { id: 1, name: "Test", description: "Desc", features: ["F1"] };
+        const mockRequest = {
+            id: 1,
+            name: "Test",
+            projectType: "Web",
+            description: "Desc",
+            features: ["F1"]
+        };
         vi.mocked(scopeRepository.findById).mockResolvedValue(mockRequest as any);
         vi.mocked(aiClient.generateJSON).mockResolvedValue({ summary: "Done" });
 
         // Simulate BullMQ job execution
         const mockJob = { id: "job1", data: { requestId: 1 } };
-
-        // Mock DB calls for updates
-        (db.update as any).mockReturnValue({
-            set: vi.fn().mockReturnThis(),
-            where: vi.fn().mockResolvedValue([{ id: 1 }]),
-        });
 
         await worker.processor(mockJob);
 
@@ -63,14 +67,16 @@ describe("ScopeWorker", () => {
 
     it("should handle failures", async () => {
         const worker: any = createScopeWorker(mockRedis);
-        vi.mocked(scopeRepository.findById).mockResolvedValue({ id: 1 } as any);
+        // Ensure all fields used in constructPrompt/sanitizeForPrompt are present
+        const mockRequest = {
+            id: 1,
+            name: "Test",
+            projectType: "Web",
+            description: "Desc",
+            features: ["F1"]
+        };
+        vi.mocked(scopeRepository.findById).mockResolvedValue(mockRequest as any);
         vi.mocked(aiClient.generateJSON).mockRejectedValue(new Error("AI error"));
-
-        // Mock DB calls for updates
-        (db.update as any).mockReturnValue({
-            set: vi.fn().mockReturnThis(),
-            where: vi.fn().mockResolvedValue([{ id: 1 }]),
-        });
 
         const mockJob = { id: "job1", data: { requestId: 1 } };
         await expect(worker.processor(mockJob)).rejects.toThrow("AI error");

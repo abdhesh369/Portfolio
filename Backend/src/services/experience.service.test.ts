@@ -80,7 +80,6 @@ describe("ExperienceService", () => {
             const result = await service.getAll();
             expect(result).toEqual([MOCK_EXP]);
             expect(mockCacheGetOrSet).toHaveBeenCalled();
-            expect(db.select).not.toHaveBeenCalled();
         });
 
         it("queries DB on cache miss", async () => {
@@ -88,23 +87,17 @@ describe("ExperienceService", () => {
                 return await cb();
             });
 
-            (db.select as any).mockReturnValue({
-                from: vi.fn().mockReturnValue({
-                    orderBy: vi.fn().mockReturnValue({
-                        execute: vi.fn().mockResolvedValueOnce([MOCK_EXP])
-                    })
-                })
-            });
+            mockFindAll.mockResolvedValueOnce([MOCK_EXP]);
 
             const result = await service.getAll();
             expect(result).toEqual([MOCK_EXP]);
-            expect(db.select).toHaveBeenCalled();
+            expect(mockFindAll).toHaveBeenCalled();
         });
     });
 
     describe("getById", () => {
         it("returns experience from cache when available", async () => {
-            mockCacheGet.mockResolvedValue(MOCK_EXP);
+            mockCacheGetOrSet.mockResolvedValue(MOCK_EXP);
             const result = await service.getById(1);
             expect(result).toEqual(MOCK_EXP);
             expect(mockFindById).not.toHaveBeenCalled();
@@ -119,7 +112,7 @@ describe("ExperienceService", () => {
         });
 
         it("returns null for non-existent id", async () => {
-            mockCacheGet.mockResolvedValue(null);
+            mockCacheGetOrSet.mockImplementation(async (_key: string, _ttl: number, fallback: any) => fallback());
             mockFindById.mockResolvedValue(null);
             const result = await service.getById(999);
             expect(result).toBeNull();

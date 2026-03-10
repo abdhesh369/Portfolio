@@ -19,39 +19,40 @@ import { vi } from "vitest";
 // Global Drizzle Mock
 vi.mock("../db.js", () => {
     const mockQuery = {
-        from: vi.fn(),
-        where: vi.fn(),
-        limit: vi.fn(),
-        orderBy: vi.fn(),
-        delete: vi.fn(),
-        update: vi.fn(),
-        set: vi.fn(),
-        insert: vi.fn(),
-        values: vi.fn(),
-        returning: vi.fn(),
-        execute: vi.fn(),
-        then: vi.fn((onFulfilled) => Promise.resolve([]).then(onFulfilled)),
-        catch: vi.fn(),
-        finally: vi.fn(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
+        offset: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        groupBy: vi.fn().mockReturnThis(),
+        delete: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        set: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockReturnThis(),
+        values: vi.fn().mockReturnThis(),
+        returning: vi.fn().mockReturnThis(),
+        execute: vi.fn().mockImplementation(function (this: any) {
+            return Promise.resolve(this.__mockValue || []);
+        }),
+        then: vi.fn(function (this: any, onFulfilled) {
+            const p = Promise.resolve(this.__mockValue || []);
+            return onFulfilled ? p.then(onFulfilled) : p;
+        }),
+        catch: vi.fn().mockReturnThis(),
+        finally: vi.fn().mockReturnThis(),
     };
-
-    mockQuery.from.mockReturnValue(mockQuery);
-    mockQuery.where.mockReturnValue(mockQuery);
-    mockQuery.limit.mockReturnValue(mockQuery);
-    mockQuery.orderBy.mockReturnValue(mockQuery);
-    mockQuery.delete.mockReturnValue(mockQuery);
-    mockQuery.update.mockReturnValue(mockQuery);
-    mockQuery.set.mockReturnValue(mockQuery);
-    mockQuery.insert.mockReturnValue(mockQuery);
-    mockQuery.values.mockReturnValue(mockQuery);
-    mockQuery.returning.mockReturnValue(mockQuery);
 
     return {
         db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-            delete: vi.fn().mockReturnValue(mockQuery),
-            update: vi.fn().mockReturnValue(mockQuery),
-            insert: vi.fn().mockReturnValue(mockQuery),
+            select: vi.fn().mockImplementation(() => {
+                // Return a NEW proxy/object for each select() call to allow sequential mocking
+                return { ...mockQuery };
+            }),
+            delete: vi.fn().mockReturnValue({ ...mockQuery }),
+            update: vi.fn().mockReturnValue({ ...mockQuery }),
+            insert: vi.fn().mockReturnValue({ ...mockQuery }),
+            transaction: vi.fn().mockImplementation(async (cb) => cb({ ...mockQuery })),
+            execute: vi.fn().mockResolvedValue({ rows: [] }),
         },
     };
 });

@@ -55,7 +55,7 @@ export async function buildSystemPrompt(): Promise<string> {
     ]);
 
 
-    const truncate = (text: string, maxLen = 500) =>
+    const truncate = (text: string, maxLen = 200) =>
         text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
 
     const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.

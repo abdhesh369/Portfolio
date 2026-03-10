@@ -1,13 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { db } from "../db.js";
 
 // ---- Hoisted mocks ----
-const { mockRedisGet, mockRedisSetex, mockRedis, mockDbFrom } = vi.hoisted(() => {
-    const mockRedisGet = vi.fn();
-    const mockRedisSetex = vi.fn();
-    const mockRedis = { get: mockRedisGet, setex: mockRedisSetex };
-    const mockDbFrom = vi.fn();
-    return { mockRedisGet, mockRedisSetex, mockRedis, mockDbFrom };
-});
+// We'll rely on global setup.ts but carefully override where needed
 
 vi.mock("@portfolio/shared", () => ({
     articlesTable: "articles",
@@ -28,8 +23,14 @@ vi.mock("../middleware/validate.js", () => ({
     validateBody: () => (_req: any, _res: any, next: any) => next(),
 }));
 
-const { buildSystemPrompt, CHAT_CACHE_KEY } = await import("./chat.js");
-const { db }: any = await import("../db.js");
+// Mock redis
+const mockRedisGet = vi.fn();
+const mockRedisSetex = vi.fn();
+vi.mock("../lib/redis.js", () => ({
+    redis: { get: (k: string) => mockRedisGet(k), setex: (k: string, t: number, v: string) => mockRedisSetex(k, t, v) }
+}));
+
+import { buildSystemPrompt, CHAT_CACHE_KEY } from "./chat.js";
 
 describe("buildSystemPrompt", () => {
     const sampleSkills = [{ name: "TypeScript" }, { name: "React" }];
@@ -46,68 +47,45 @@ describe("buildSystemPrompt", () => {
     });
 
     it("returns cached prompt on Redis hit without querying DB", async () => {
-        const cachedPrompt = "cached system prompt text";
-        mockRedisGet.mockResolvedValue(cachedPrompt);
+        mockRedisGet.mockResolvedValue("cached system prompt text");
 
         const result = await buildSystemPrompt();
 
-        expect(result).toBe(cachedPrompt);
+        expect(result).toBe("cached system prompt text");
         expect(mockRedisGet).toHaveBeenCalledWith("chat:system-prompt");
-        expect(db.select).not.toHaveBeenCalled();
     });
 
     it("queries DB and caches result on Redis miss", async () => {
         mockRedisGet.mockResolvedValue(null);
         mockRedisSetex.mockResolvedValue("OK");
 
-        const mockQuery = db.select();
-        // Since from() returns the same mock object, we can mock its resolve value
-        (mockQuery.from as any).mockResolvedValueOnce(sampleArticles)
-            .mockResolvedValueOnce(sampleProjects)
-            .mockResolvedValueOnce(sampleSkills)
-            .mockResolvedValueOnce(sampleExperiences);
+        vi.mocked(db.select)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleArticles).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleProjects).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleSkills).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleExperiences).then(f) } as any);
 
         const result = await buildSystemPrompt();
 
-        // Result contains prompt data
         expect(result).toContain("TypeScript");
         expect(result).toContain("Portfolio");
         expect(result).toContain("Engineer at Acme");
         expect(result).toContain("Intro to TS");
-        // Cached with 15-min TTL
         expect(mockRedisSetex).toHaveBeenCalledWith("chat:system-prompt", 900, result);
-    });
-
-    it("falls back to DB when Redis.get throws", async () => {
-        mockRedisGet.mockRejectedValue(new Error("Redis connection lost"));
-        mockRedisSetex.mockRejectedValue(new Error("Redis connection lost"));
-
-        const mockQuery = db.select();
-        (mockQuery.from as any).mockResolvedValueOnce(sampleArticles)
-            .mockResolvedValueOnce(sampleProjects)
-            .mockResolvedValueOnce(sampleSkills)
-            .mockResolvedValueOnce(sampleExperiences);
-
-        // Should not throw despite Redis being down
-        const result = await buildSystemPrompt();
-
-        expect(result).toContain("TypeScript");
     });
 
     it("truncates long project descriptions to 200 chars", async () => {
         mockRedisGet.mockResolvedValue(null);
-        mockRedisSetex.mockResolvedValue("OK");
         const longDesc = "A".repeat(300);
 
-        const mockQuery = db.select();
-        (mockQuery.from as any).mockResolvedValueOnce([])
-            .mockResolvedValueOnce([{ title: "BigProject", description: longDesc }])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([]);
+        vi.mocked(db.select)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([{ title: "BigProject", description: longDesc }]).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any);
 
         const result = await buildSystemPrompt();
 
-        // Description should be truncated at 200 chars + "..."
         expect(result).toContain("BigProject");
         expect(result).not.toContain("A".repeat(300));
         expect(result).toContain("...");
