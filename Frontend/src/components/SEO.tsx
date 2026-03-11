@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { apiFetch } from "@/lib/api-helpers";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 interface SeoProps {
     slug?: string;
@@ -35,11 +36,14 @@ export function SEO({
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
-    const title = seoSettings?.metaTitle || propTitle || "Abdhesh Sah | Portfolio";
+    const { data: settings } = useSiteSettings();
+    const displayName = settings?.personalName || "Abdhesh Sah";
+
+    const title = seoSettings?.metaTitle || propTitle || `${displayName} | Portfolio`;
     const description =
         seoSettings?.metaDescription ||
         propDescription ||
-        "Portfolio of Abdhesh Sah, a Full Stack Developer.";
+        `Portfolio of ${displayName}, a Full Stack Developer.`;
     const image = seoSettings?.ogImage || propImage || "/og-image.jpg";
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
