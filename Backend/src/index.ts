@@ -66,7 +66,14 @@ app.use(
       const secFetch = req.header("sec-fetch-site");
       // Allow if it's not a browser request or if it's a same-origin request (proxy)
       if (secFetch && secFetch !== 'none' && secFetch !== 'same-origin') {
-        return callback(new Error("Origin required for browser requests"));
+        logger.warn({
+          path: req.path,
+          secFetch,
+          userAgent: req.header("user-agent"),
+          requestId: (req as any).id
+        }, "Browser-like request missing Origin header");
+
+        return callback(null, { origin: false });
       }
       return callback(null, { origin: true, credentials: true });
     }
