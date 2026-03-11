@@ -153,10 +153,14 @@ export function CustomizationTab() {
       await updateMutation.mutateAsync(data);
       toast({ title: "Success", description: "Settings updated successfully" });
       reset(data);
-    } catch (err) {
+    } catch (err: any) {
+      let description = err instanceof Error ? err.message : "An error occurred";
+      if (err.data && Array.isArray(err.data.errors)) {
+        description += " - " + err.data.errors.map((e: any) => `${e.path}: ${e.message}`).join(", ");
+      }
       toast({
         title: "Update Failed",
-        description: err instanceof Error ? err.message : "An error occurred",
+        description,
         variant: "destructive"
       });
     }
