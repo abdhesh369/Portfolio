@@ -339,6 +339,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialDevto: varchar("socialDevto", { length: 500 }),
   socialMedium: varchar("socialMedium", { length: 500 }),
   socialEmail: varchar("socialEmail", { length: 255 }),
+  locationText: varchar("locationText", { length: 255 }).default("Kathmandu, Nepal"),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -810,6 +811,7 @@ const siteSettingsBaseSchema = z.object({
   socialDevto: z.string().url().max(500).nullable().optional(),
   socialMedium: z.string().url().max(500).nullable().optional(),
   socialEmail: z.string().email().max(255).nullable().optional(),
+  locationText: z.string().max(255).nullable().optional(),
 
   // Hero Section
   heroGreeting: z.string().max(255).optional(),

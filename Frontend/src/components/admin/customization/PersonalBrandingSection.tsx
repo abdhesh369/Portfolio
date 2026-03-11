@@ -40,6 +40,13 @@ export function PersonalBrandingSection({ register, isOpen, onToggle }: Personal
                 />
                 <div className="md:col-span-2">
                     <FloatingLabelInput
+                        label="Location (e.g., Kathmandu, Nepal)"
+                        placeholder="Kathmandu, Nepal"
+                        {...register("locationText")}
+                    />
+                </div>
+                <div className="md:col-span-2">
+                    <FloatingLabelInput
                         label="Personal Avatar URL"
                         placeholder="https://..."
                         type="url"

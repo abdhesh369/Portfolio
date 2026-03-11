@@ -1,0 +1,1 @@
+ALTER TABLE "site_settings" ADD COLUMN "locationText" varchar(255) DEFAULT 'Kathmandu, Nepal';

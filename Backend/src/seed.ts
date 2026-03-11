@@ -10,7 +10,8 @@ import { experienceService } from "./services/experience.service.js";
 import { messageService } from "./services/message.service.js";
 import { emailTemplateService } from "./services/email-template.service.js";
 import { seoSettingsService } from "./services/seo-settings.service.js";
-import type { Project, InsertProject, InsertSeoSettings } from "@portfolio/shared";
+import { settingsService } from "./services/settings.service.js";
+import type { Project, InsertProject, InsertSeoSettings, InsertSiteSettings } from "@portfolio/shared";
 
 import { logger } from "./lib/logger.js";
 
@@ -38,6 +39,31 @@ export async function seedDatabase() {
     }
 
     logSeed("Starting database seed...");
+
+    const currentYear = new Date().getFullYear();
+    const siteSettingsSeed: InsertSiteSettings = {
+      personalName: "Abdhesh Sah",
+      personalTitle: "Full Stack Developer",
+      personalBio: "Passionate about building robust digital systems with a focus on performance, scalability, and intuitive user experiences. Currently pursuing Electronics & Communication Engineering.",
+      logoText: "Abdhesh.Sah",
+      heroHeadingLine1: "Crafting the",
+      heroHeadingLine2: "Digital Future",
+      heroTaglines: ["Engineering scalable systems.", "Crafting intuitive interfaces.", "Solving complex problems."],
+      socialEmail: "abdheshshah111@gmail.com",
+      socialGithub: "https://github.com/abdhesh369",
+      socialLinkedin: "https://linkedin.com/in/abdhesh369",
+      footerTagline: "Building the future, one line of code at a time.",
+      footerCopyright: `© ${currentYear} Abdhesh Sah. All rights reserved.`,
+      locationText: "Kathmandu, Nepal",
+      isOpenToWork: true,
+    };
+
+    try {
+      await settingsService.updateSettings(siteSettingsSeed);
+      logSeed("Seeded site settings");
+    } catch (err) {
+      logSeed(`Failed to seed site settings: ${err}`, "error");
+    }
 
     const projectList: InsertProject[] = [
       {
@@ -413,6 +439,12 @@ export async function seedDatabase() {
       } catch (err) {
         logSeed(`Failed to seed SEO settings for: ${settings.pageSlug} - ${err}`, "error");
       }
+    }
+
+    try {
+      await settingsService.getSettings(); // Just to trigger default creation if service handles it
+    } catch (err) {
+      logSeed(`Failed to trigger settings service: ${err}`, "error");
     }
 
     logSeed("Database seeding completed successfully! 🎉");

@@ -37,17 +37,16 @@ export default function Footer() {
 
   // Contact info data
   const contactInfo = [
-    {
+    settings?.socialEmail && {
       icon: <Mail size={18} className="text-[#3ca2fa]" />,
-      text: settings?.socialEmail || "contact@example.com",
-      href: `mailto:${settings?.socialEmail || "contact@example.com"}`,
+      text: settings.socialEmail,
+      href: `mailto:${settings.socialEmail}`,
     },
-    // We don't have phone/location in settings natively, but keeping the structure for future or static use
-    {
+    settings?.locationText && {
       icon: <MapPin size={18} className="text-[#3ca2fa]" />,
-      text: "Remote, Global",
+      text: settings.locationText,
     },
-  ];
+  ].filter(Boolean) as Array<{ icon: React.ReactNode; text: string; href?: string }>;
 
   const handleNavClick = (href: string) => {
     if (href.startsWith("#")) {
@@ -88,20 +87,35 @@ export default function Footer() {
                 )}
               </span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              {settings?.footerTagline || "Crafting robust digital systems with a focus on performance, scalability, and intuitive user experiences."}
+            <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+              {settings?.footerTagline || "Building the future, one line of code at a time."}
             </p>
+            {/* Social icons */}
+            <div className="flex flex-wrap gap-3 pt-2">
+              {socialLinks.map(({ icon, label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="p-2.5 bg-white/5 rounded-xl border border-white/10 text-gray-400 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Navigation Links */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-6">Navigation</h4>
+            <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Explore</h4>
             <ul className="space-y-3">
               {defaultFooterNavItems.map((item) => (
                 <li key={item.name} className="relative w-fit">
                   <button
                     onClick={() => handleNavClick(item.href)}
-                    className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base"
+                    className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
                   >
                     {item.name}
                   </button>
@@ -111,103 +125,94 @@ export default function Footer() {
           </div>
 
           {/* Quick Links (Footer) */}
-          {settings?.navbarLinks && settings.navbarLinks.length > 0 && (
+          {settings?.navbarLinks && settings.navbarLinks.length > 0 && 
+           settings.navbarLinks.some(link => link.label !== "New Link" && link.label.trim() !== "") && (
             <div>
-              <h4 className="text-white text-lg font-semibold mb-6">Quick Links</h4>
+              <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Quick Links</h4>
               <ul className="space-y-3">
-                {settings.navbarLinks.map((item, index) => (
-                  <li key={`${item.label}-${index}`} className="relative w-fit">
-                    <button
-                      onClick={() => handleNavClick(item.href)}
-                      className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base"
-                    >
-                      {item.label}
-                    </button>
-                  </li>
-                ))}
+                {settings.navbarLinks
+                  .filter(link => link.label !== "New Link" && link.label.trim() !== "")
+                  .map((item, index) => (
+                    <li key={`${item.label}-${index}`} className="relative w-fit">
+                      <button
+                        onClick={() => handleNavClick(item.href)}
+                        className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
+                      >
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
               </ul>
             </div>
           )}
 
-          {/* Connect section */}
+          {/* Contact section */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-6">Contact Us</h4>
+            <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Get in Touch</h4>
             <ul className="space-y-4">
               {contactInfo.map((item, i) => (
                 <li key={i} className="flex items-center space-x-3 text-gray-400">
-                  {item.icon}
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/10">{item.icon}</div>
                   {item.href ? (
                     <a
                       href={item.href}
-                      className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base break-all"
+                      className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base break-all font-medium"
                     >
                       {item.text}
                     </a>
                   ) : (
-                    <span className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base">
+                    <span className="text-sm sm:text-base font-medium">
                       {item.text}
                     </span>
                   )}
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Live Status section */}
-          <div>
-            <h4 className="text-white text-lg font-semibold mb-6">System Status</h4>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm w-fit">
-                <div className="relative flex items-center justify-center w-2 h-2">
-                  <div className={`absolute inset-0 rounded-full blur-[2px] animate-pulse ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
-                  <div className={`relative w-1.5 h-1.5 rounded-full ${visitorCount.isPolling ? 'bg-orange-500' : 'bg-emerald-500'}`} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-white leading-none">
-                    {visitorCount.count} Live Visitors
-                  </span>
-                </div>
-              </div>
-              <p className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-0.5">
-                Updated: {settings?.updatedAt ? formatDate(settings.updatedAt, { month: 'short', day: '2-digit', year: 'numeric' }) : "Mar 05, 2026"}
-              </p>
+            <div className="mt-8">
+              <button
+                onClick={() => handleNavClick("#contact")}
+                className="w-full py-3 px-6 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-xl transition-all font-bold text-sm"
+              >
+                Send a Message
+              </button>
             </div>
           </div>
         </div>
 
-        <hr className="border-t border-white/10 my-8" />
-
-        {/* Footer bottom */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
-          {/* Social icons */}
-          <div className="flex flex-wrap justify-center gap-4 text-gray-400">
-            {socialLinks.map(({ icon, label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="p-2 bg-white/5 rounded-full hover:bg-white/10 hover:text-[#3ca2fa] transition-colors"
-              >
-                {icon}
-              </a>
-            ))}
+        {/* Footer bottom bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm pt-8 border-t border-white/5 gap-6">
+          {/* Status Pill (New placement) */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+            <div className="relative flex h-2 w-2">
+              <div className={`absolute inset-0 rounded-full animate-ping opacity-75 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
+              <div className={`relative rounded-full h-2 w-2 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
+            </div>
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
+              {visitorCount.count} live visitors
+            </span>
           </div>
 
-          {/* Copyright */}
-          <div className="text-center md:text-right text-gray-500">
-            <p>{settings?.footerCopyright || `© ${currentYear} ${settings?.personalName || 'Portfolio'}. All rights reserved.`}</p>
+          {/* Copyright (Centralized) */}
+          <div className="text-center text-gray-500 font-medium">
+            <p>{settings?.footerCopyright ? settings.footerCopyright.replace('{year}', currentYear.toString()) : `© ${currentYear} Abdhesh Sah. All rights reserved.`}</p>
+          </div>
+
+          {/* Tech Credit (Right) */}
+          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+            <span>Powered by</span>
+            <span className="text-white/40">React & TS</span>
           </div>
         </div>
       </div>
 
-      {/* Text hover effect */}
-      <div className="flex h-[20rem] sm:h-[25rem] md:h-[30rem] -mt-32 sm:-mt-40 md:-mt-52 mb-[-80px] sm:-mb-36 pointer-events-auto">
-        <TextHoverEffect
-          text={settings?.personalName ? settings.personalName.split(' ')[0].toUpperCase() : "PORTFOLIO"}
-          className="z-50"
-        />
+      {/* Background Watermark Section - Strictly Clipped */}
+      <div className="relative h-[20rem] sm:h-[25rem] md:h-[30rem] overflow-hidden pointer-events-none -mt-40 select-none opacity-20 transition-opacity hover:opacity-30">
+        <div className="absolute inset-0 flex items-end justify-center">
+          <TextHoverEffect
+            text={settings?.personalName ? settings.personalName.split(' ')[0].toUpperCase() : "PORTFOLIO"}
+            className="z-0 transform translate-y-1/2"
+          />
+        </div>
       </div>
 
       <FooterBackgroundGradient />
