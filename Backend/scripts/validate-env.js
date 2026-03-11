@@ -9,15 +9,36 @@ if (!fs.existsSync(envExamplePath)) {
     process.exit(0);
 }
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true' || process.env.CI === 'true';
+
+// Keys that are absolutely required for the app to start/function correctly
+const REQUIRED_KEYS = [
+    'DATABASE_URL',
+    'JWT_SECRET',
+    'JWT_REFRESH_SECRET',
+    'ADMIN_PASSWORD',
+    'ADMIN_EMAIL',
+    'CONTACT_EMAIL'
+];
 
 if (!fs.existsSync(envPath)) {
-    if (isProduction) {
-        console.log('ℹ️ No .env file found in production. Relying on platform environment variables.');
-        process.exit(0);
+    console.log('ℹ️ No .env file found. Checking system environment variables.');
+    
+    const missingKeys = REQUIRED_KEYS.filter(key => !process.env[key]);
+
+    if (missingKeys.length > 0) {
+        if (isProduction) {
+            console.error(`❌ Missing required environment variables in production:\n  - ${missingKeys.join('\n  - ')}`);
+        } else {
+            console.error('❌ .env file is missing and required environment variables are not set!');
+            console.error(`Missing required keys:\n  - ${missingKeys.join('\n  - ')}`);
+            console.error('Please copy .env.example to .env and fill in the values or set them in your environment.');
+        }
+        process.exit(1);
     }
-    console.error('❌ .env file is missing! Please copy .env.example to .env and fill in the values.');
-    process.exit(1);
+    
+    console.log('✅ All required environment variables are present in the system environment.');
+    process.exit(0);
 }
 
 const parseEnv = (filePath) => {
@@ -38,10 +59,19 @@ const parseEnv = (filePath) => {
 const requiredKeys = parseEnv(envExamplePath);
 const actualKeys = parseEnv(envPath);
 
-const missingKeys = [...requiredKeys].filter(key => !actualKeys.has(key) && !process.env[key]);
+const missingKeys = [...requiredKeys].filter(key => {
+    // If it's in the .env file, it's not missing
+    if (actualKeys.has(key)) return false;
+    // If it's in process.env, it's not missing
+    if (process.env[key]) return false;
+    // If it's NOT a required key, it's not "missing" in the sense of causing a failure
+    if (!REQUIRED_KEYS.includes(key)) return false;
+    
+    return true;
+});
 
 if (missingKeys.length > 0) {
-    console.error(`❌ Your .env file is missing the following required keys:\n  - ${missingKeys.join('\n  - ')}`);
+    console.error(`❌ Your .env file (or system environment) is missing the following required keys:\n  - ${missingKeys.join('\n  - ')}`);
     process.exit(1);
 }
 
