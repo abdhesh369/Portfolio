@@ -51,10 +51,11 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Critical System Error</h1>
-              <p className="text-muted-foreground">
-                The application encountered an unexpected error. Our system protocols have been engaged to prevent data loss.
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Oops! Something went wrong.</h1>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                We've hit an unexpected snag while loading this page. 
+                Don't worry—try reloading the application or heading back to the homepage.
               </p>
             </div>
 

@@ -105,7 +105,7 @@ const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.Eleme
         <p className="text-[10px] uppercase tracking-widest text-gray-400 font-mono mb-0.5">{label}</p>
         <p className="text-sm font-medium text-gray-200 truncate font-mono">{value}</p>
       </div>
-      {href && <Copy className="w-4 h-4 text-gray-600 group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" />}
+      {href && <Copy className="w-4 h-4 text-gray-600 group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" aria-hidden="true" />}
     </a>
   </m.div>
 );
@@ -379,7 +379,13 @@ export default function Contact() {
                         {apiError && (
                           <div role="alert" aria-live="assertive" className="p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-mono flex items-start gap-2">
                             <span className="shrink-0 mt-0.5">! ERROR:</span>
-                            <span>{apiError instanceof Error ? apiError.message : "Transmission failed. Try again."}</span>
+                            <span>
+                              {apiError instanceof Error && apiError.message.includes("429")
+                                ? "Rate limit exceeded. Please wait a moment before sending another message."
+                                : apiError instanceof Error 
+                                  ? apiError.message 
+                                  : "Transmission failed. Try again."}
+                            </span>
                           </div>
                         )}
 

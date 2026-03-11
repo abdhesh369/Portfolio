@@ -5,6 +5,7 @@ import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/api-helpers";
 import { formatTime } from "@/lib/utils/date";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 type Role = "user" | "model";
 
@@ -19,9 +20,10 @@ interface ChatMessage {
 }
 
 export function Chatbot() {
+    const { data: settings } = useSiteSettings();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: crypto.randomUUID(), role: "model", parts: [{ text: "Hi there! I'm Abdhesh's AI assistant. How can I help you today?" }], timestamp: Date.now() }
+        { id: crypto.randomUUID(), role: "model", parts: [{ text: `Hi there! I'm ${settings?.personalName?.split(" ")[0] || "Abdhesh"}'s AI assistant. How can I help you today?` }], timestamp: Date.now() }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);

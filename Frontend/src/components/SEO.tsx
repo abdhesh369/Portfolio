@@ -44,7 +44,7 @@ export function SEO({
         seoSettings?.metaDescription ||
         propDescription ||
         `Portfolio of ${displayName}, a Full Stack Developer.`;
-    const image = seoSettings?.ogImage || propImage || "/og-image.jpg";
+    const image = seoSettings?.ogImage || propImage || settings?.personalAvatar || null;
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
@@ -74,14 +74,14 @@ export function SEO({
                 property="og:description"
                 content={seoSettings?.ogDescription || description}
             />
-            <meta property="og:image" content={image} />
+            {image && <meta property="og:image" content={image} />}
             <meta property="og:url" content={canonicalUrl} />
 
             {/* Twitter */}
             <meta name="twitter:card" content={twitterCard} />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content={image} />
+            {image && <meta name="twitter:image" content={image} />}
 
             {/* Structured Data (JSON-LD) */}
             {structuredData && (

@@ -229,8 +229,8 @@ app.get("/health", async (_req: Request, res: Response) => {
     database: dbHealth.healthy ? "connected" : "reconnecting",
     redis: redisHealth.healthy ? "connected" : "reconnecting",
     environment: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
     ...(process.env.NODE_ENV === "development" && {
+      timestamp: new Date().toISOString(),
       details: {
         database: dbHealth.message,
         redis: redisHealth.message
@@ -250,7 +250,9 @@ app.get("/api/v1/health", async (_req: Request, res: Response) => {
     status: isHealthy ? "healthy" : "degraded",
     database: dbHealth.healthy ? "connected" : "reconnecting",
     redis: redisHealth.healthy ? "connected" : "reconnecting",
-    timestamp: new Date().toISOString(),
+    ...(process.env.NODE_ENV === "development" && {
+      timestamp: new Date().toISOString()
+    })
   });
 });
 

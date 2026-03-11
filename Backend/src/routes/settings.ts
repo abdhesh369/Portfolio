@@ -16,6 +16,47 @@ export function registerSettingsRoutes(app: Router) {
             res.json(settings);
         })
     );
+    // GET /settings/manifest.json - Dynamic PWA manifest
+    app.get(
+        "/settings/manifest.json",
+        asyncHandler(async (_req, res) => {
+            const settings = await settingsService.getSettings();
+            
+            const name = settings.personalName ? `${settings.personalName} | Portfolio` : "Portfolio";
+            const shortName = settings.personalName ? settings.personalName.split(" ")[0] : "Portfolio";
+            const description = settings.personalBio || "Senior Full-Stack Engineer specializing in high-performance web systems.";
+            const themeColor = settings.colorBackground || "#00B4D8";
+            const bgColor = settings.colorBackground || "#050510";
+            
+            res.json({
+                name: name,
+                short_name: shortName,
+                description: description,
+                theme_color: themeColor,
+                background_color: bgColor,
+                display: "standalone",
+                start_url: "/",
+                icons: [
+                    {
+                        src: "/icons/pwa-192x192.png",
+                        sizes: "192x192",
+                        type: "image/png"
+                    },
+                    {
+                        src: "/icons/pwa-512x512.png",
+                        sizes: "512x512",
+                        type: "image/png"
+                    },
+                    {
+                        src: "/icons/pwa-512x512-maskable.png",
+                        sizes: "512x512",
+                        type: "image/png",
+                        purpose: "maskable"
+                    }
+                ]
+            });
+        })
+    );
 
     // PATCH /settings - Update site settings (Admin only)
     app.patch(

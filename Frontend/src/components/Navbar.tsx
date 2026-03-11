@@ -25,8 +25,23 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location, setLocation] = useLocation();
 
-  // Always use default nav items for the main navbar to prevent overwriting by admin links
-  const navItems = DEFAULT_NAV_ITEMS;
+  // Merge default nav items with admin links to prevent overwriting
+  const navItems = (() => {
+    if (!settings?.navbarLinks || !Array.isArray(settings.navbarLinks)) return DEFAULT_NAV_ITEMS;
+    
+    // Normalize admin links to handle both `url` and `href` properties (schema mismatch fix)
+    const adminLinks = settings.navbarLinks.map((link: any) => ({
+      name: link.label || "Link",
+      href: link.href || link.url || "#",
+    })).filter(link => link.name !== "New Link" && link.name.trim() !== "");
+
+    // Exclude custom links that clash with default ones
+    const newLinks = adminLinks.filter(adminLink => 
+      !DEFAULT_NAV_ITEMS.some(defaultLink => defaultLink.name === adminLink.name || defaultLink.href === adminLink.href)
+    );
+
+    return [...DEFAULT_NAV_ITEMS, ...newLinks];
+  })();
 
   const dynamicSectionIds = settings?.sectionOrder || SECTION_IDS;
   const activeSection = useScrollSpy(dynamicSectionIds, 80);

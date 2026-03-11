@@ -71,7 +71,6 @@ export function useVisitorCount() {
                     const delay = Math.min(1000 * Math.pow(2, retryCount), 10000);
                     reconnectTimeoutRef.current = setTimeout(connect, delay);
                 } else {
-                    console.log("Switching to polling fallback for visitor count");
                     setError(new Error("SSE failed after retries"));
                     if (!pollInterval) {
                         fetchPolling();

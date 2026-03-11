@@ -170,7 +170,8 @@ export default function ProjectDetail() {
   const [, params] = useRoute("/project/:id");
   const { data: projects, isLoading } = useProjects();
 
-  const project = projects?.find(p => p.id === parseInt(params?.id || "0"));
+  const projectId = parseInt(params?.id || "");
+  const project = projects?.find(p => p.id === projectId);
 
   // Calculate other projects for the recommendation section
   const otherProjects = useMemo(() => {

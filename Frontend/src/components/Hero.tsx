@@ -419,6 +419,7 @@ export default function Hero() {
                   }
                 }}
                 size="lg"
+                aria-label={settings?.heroCtaPrimary || "View My Work"}
                 className="w-full sm:w-auto bg-primary text-black hover:bg-primary/90 font-bold rounded-full px-8 shadow-[0_0_20px_var(--primary-glow)] hover:shadow-[0_0_30px_var(--primary-glow)] transition-all"
               >
                 {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
@@ -437,6 +438,7 @@ export default function Hero() {
                   }
                 }}
                 size="lg"
+                aria-label={settings?.heroCtaSecondary || "Contact for AI Project Scope"}
                 className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
               >
                 <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
@@ -452,6 +454,7 @@ export default function Hero() {
                 }}
                 variant="outline"
                 size="lg"
+                aria-label="Contact Me directly via form"
                 className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
               >
                 Contact Me <Mail className="ml-2 w-4 h-4" />

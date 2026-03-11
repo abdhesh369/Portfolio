@@ -327,6 +327,7 @@ const ProjectCard = ({ project, onPreview, index }: { project: Project; onPrevie
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
+                aria-label={`Built with ${tech}`}
                 className={`text-[10px] font-semibold px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${techColors[tech] || "bg-gray-500/15 text-gray-400 border-gray-500/30"}`}
               >
                 {techIcons[tech]}
@@ -627,6 +628,7 @@ const FilterButton = ({ label, isActive, onClick, count }: { label: string; isAc
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
       aria-pressed={isActive}
+      aria-label={`Show ${label} projects${count !== undefined ? ` (${count})` : ''}`}
       className="px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2"
       style={isActive ? activeStyle : inactiveStyle}
     >

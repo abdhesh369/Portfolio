@@ -11,32 +11,7 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
-      manifest: {
-        name: 'Abdhesh Sah | Portfolio',
-        short_name: 'Abdhesh',
-        description: 'Senior Full-Stack Engineer specializing in high-performance web systems.',
-        theme_color: '#00B4D8',
-        background_color: '#050510',
-        display: 'standalone',
-        icons: [
-          {
-            src: 'icons/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/pwa-512x512-maskable.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ]
-      },
+      manifest: false, // Served dynamically from backend via /api/v1/settings/manifest.json
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         navigateFallback: '/index.html',

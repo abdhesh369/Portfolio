@@ -14,7 +14,7 @@ export function useMessages() {
         api.messages.list.responses[200],
         "Failed to fetch messages"
       ),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 30, // 30 seconds for more frequent updates in admin
   });
 }
 
