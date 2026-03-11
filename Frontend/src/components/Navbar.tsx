@@ -25,10 +25,8 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location, setLocation] = useLocation();
 
-  // Use links from settings if available, otherwise fallback
-  const navItems = settings?.navbarLinks?.length
-    ? settings.navbarLinks.map(l => ({ name: l.label, href: l.href }))
-    : DEFAULT_NAV_ITEMS;
+  // Always use default nav items for the main navbar to prevent overwriting by admin links
+  const navItems = DEFAULT_NAV_ITEMS;
 
   const dynamicSectionIds = settings?.sectionOrder || SECTION_IDS;
   const activeSection = useScrollSpy(dynamicSectionIds, 80);

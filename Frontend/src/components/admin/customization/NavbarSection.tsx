@@ -32,7 +32,7 @@ export function NavbarSection({
 }: NavbarSectionProps) {
     return (
         <CollapsibleSection
-            title="NAVBAR_LINK_ENGINE_V1"
+            title="QUICK_LINKS_ENGINE_V1"
             isOpen={isOpen}
             onToggle={onToggle}
             icon={<LinkIcon className="w-4 h-4" />}
@@ -40,8 +40,8 @@ export function NavbarSection({
             <div className="space-y-6">
                 <div className="flex items-center justify-between bg-[#0d0d1a] p-3 rounded-lg border border-purple-500/20 nm-inset">
                     <div className="space-y-1">
-                        <h4 className="text-[10px] font-bold text-purple-400 tracking-[0.2em] uppercase">Navigation Inventory</h4>
-                        <p className="text-[9px] text-admin-text-muted leading-relaxed">Map core access points to systemic routes.</p>
+                        <h4 className="text-[10px] font-bold text-purple-400 tracking-[0.2em] uppercase">Quick Links Inventory (Footer)</h4>
+                        <p className="text-[9px] text-admin-text-muted leading-relaxed">Map core access points to systemic routes in the footer.</p>
                     </div>
                     <AdminButton
                         type="button"
@@ -49,7 +49,7 @@ export function NavbarSection({
                         onClick={() => appendNav({ label: "New Link", href: "#", icon: "link" })}
                         className="h-8 px-4"
                     >
-                        <Plus className="w-3 h-3 mr-2" /> <span className="text-[10px] tracking-widest">DEPLOY_LINK</span>
+                        <Plus className="w-3 h-3 mr-2" /> <span className="text-[10px] tracking-widest">ADD_QUICK_LINK</span>
                     </AdminButton>
                 </div>
 

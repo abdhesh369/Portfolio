@@ -350,7 +350,20 @@ async function startServer() {
     }
     logger.info({ context: "startup" }, "✓ Database is ready");
 
-    // ── 2.1. Ensure schema compatibility for production safety ──
+    // ── 2.1. Run database migrations ──
+    logger.info({ context: "startup" }, "📍 Running database migrations...");
+    try {
+      await bootstrapDatabaseSchema();
+      logger.info({ context: "startup" }, "✓ Migrations complete");
+    } catch (migErr) {
+      logger.error({ context: "startup", error: migErr }, "❌ Migration failed");
+      // Migration failure is critical in production
+      if (process.env.NODE_ENV === "production") {
+        process.exit(1);
+      }
+    }
+
+    // ── 2.2. Ensure schema compatibility for production safety ──
 
     // Controlled seeding: Skip in production unless explicitly forced
     const shouldSeed = process.env.NODE_ENV !== "production" || process.env.FORCE_SEED === "true";

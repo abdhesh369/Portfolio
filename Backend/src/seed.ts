@@ -99,7 +99,7 @@ export async function seedDatabase() {
         githubUrl: "https://github.com/abdhesh369/Projects",
         liveUrl: null,
         problemStatement: "Managing personal expenses and budgets manually is tedious and often results in lost data or lack of financial insight.",
-        motivation: "Demonstate secure development practices including password hashing, session management, and database migrations in a Flask environment.",
+        motivation: "Demonstrate secure development practices including password hashing, session management, and database migrations in a Flask environment.",
         systemDesign: "Application Factory pattern with Blueprints for authentication and main routes. Uses SQLAlchemy ORM for database abstraction and Flask-Login for session security.",
         challenges: "Implementing a clean authentication flow and setting up scalable database migrations for future feature expansions.",
         learnings: "Web security fundamentals, database design, and the Flask application factory pattern.",

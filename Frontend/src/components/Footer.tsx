@@ -102,6 +102,25 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Quick Links (Footer) */}
+          {settings?.navbarLinks && settings.navbarLinks.length > 0 && (
+            <div>
+              <h4 className="text-white text-lg font-semibold mb-6">Quick Links</h4>
+              <ul className="space-y-3">
+                {settings.navbarLinks.map((item, index) => (
+                  <li key={`${item.label}-${index}`} className="relative w-fit">
+                    <button
+                      onClick={() => handleNavClick(item.href)}
+                      className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base"
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Connect section */}
           <div>
             <h4 className="text-white text-lg font-semibold mb-6">Contact Us</h4>
