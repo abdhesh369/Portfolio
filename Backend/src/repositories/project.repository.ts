@@ -35,7 +35,7 @@ export class ProjectRepository {
         }
 
         const results = await query;
-        return results.map(p => this.transformProject(p));
+        return results.map(p => this.transformProject(p as any));
     }
 
     /** Admin: returns ALL projects including hidden ones */
@@ -51,7 +51,7 @@ export class ProjectRepository {
             .from(projectsTable)
             .where(eq(projectsTable.id, id))
             .limit(1);
-        return result ? this.transformProject(result) : null;
+        return result ? this.transformProject(result as any) : null;
     }
 
     async create(data: InsertProject): Promise<Project> {

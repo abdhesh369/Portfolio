@@ -396,7 +396,7 @@ async function startServer() {
     app.use(
       (err: Error & { status?: number; statusCode?: number }, req: Request, res: Response, _next: NextFunction) => {
         const status = err.status || err.statusCode || 500;
-        const message = status === 500 ? "Internal Server Error" : err.message;
+        const message = (status === 500 && process.env.NODE_ENV !== "development") ? "Internal Server Error" : err.message;
 
         logger.error({
           requestId: req.id,

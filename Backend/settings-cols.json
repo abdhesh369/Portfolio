@@ -1,0 +1,206 @@
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "isOpenToWork",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "updatedAt",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "personalName",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "personalTitle",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "personalBio",
+    "data_type": "text"
+  },
+  {
+    "column_name": "personalAvatar",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialGithub",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialLinkedin",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialTwitter",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialInstagram",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialFacebook",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialYoutube",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialDiscord",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialStackoverflow",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialDevto",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialMedium",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "socialEmail",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroGreeting",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroBadgeText",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroTaglines",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "heroCtaPrimary",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroCtaPrimaryUrl",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroCtaSecondary",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroCtaSecondaryUrl",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorBackground",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorSurface",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorPrimary",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorSecondary",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorAccent",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorBorder",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorText",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "colorMuted",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "fontDisplay",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "fontBody",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "customCss",
+    "data_type": "text"
+  },
+  {
+    "column_name": "navbarLinks",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "footerCopyright",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "footerTagline",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "sectionOrder",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "sectionVisibility",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "featureBlog",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "featureGuestbook",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "featureTestimonials",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "featureServices",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "featurePlayground",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "availabilitySlots",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "locationText",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "logoText",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroHeadingLine1",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "heroHeadingLine2",
+    "data_type": "character varying"
+  }
+]

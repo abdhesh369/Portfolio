@@ -29,14 +29,14 @@ export const projectsTable = pgTable("projects", {
   systemDesign: text("systemDesign"),
   challenges: text("challenges"),
   learnings: text("learnings"),
-  isFlagship: boolean("isFlagship").notNull().default(false),
-  isHidden: boolean("isHidden").notNull().default(false),
+  isFlagship: boolean("isflagship").notNull().default(false),
+  isHidden: boolean("ishidden").notNull().default(false),
   impact: text("impact"),
   role: text("role"),
   imageAlt: text("imageAlt"),
   viewCount: integer("viewCount").notNull().default(0),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),

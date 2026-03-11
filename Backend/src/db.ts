@@ -7,6 +7,7 @@ import { logger } from './lib/logger.js';
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL must be set. Did you forget to provision a database?');
 }
+logger.info({ context: "database" }, `Connecting to database: ${process.env.DATABASE_URL.substring(0, 15)}...`);
 
 // Configure Pool for Production
 // Neon free-tier databases hibernate after ~5 min of inactivity.

@@ -1,0 +1,94 @@
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "techStack",
+    "data_type": "jsonb"
+  },
+  {
+    "column_name": "displayOrder",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "isflagship",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "viewCount",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "ishidden",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "role",
+    "data_type": "text"
+  },
+  {
+    "column_name": "status",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "problemStatement",
+    "data_type": "text"
+  },
+  {
+    "column_name": "motivation",
+    "data_type": "text"
+  },
+  {
+    "column_name": "systemDesign",
+    "data_type": "text"
+  },
+  {
+    "column_name": "challenges",
+    "data_type": "text"
+  },
+  {
+    "column_name": "learnings",
+    "data_type": "text"
+  },
+  {
+    "column_name": "imageAlt",
+    "data_type": "text"
+  },
+  {
+    "column_name": "title",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "description",
+    "data_type": "text"
+  },
+  {
+    "column_name": "impact",
+    "data_type": "text"
+  },
+  {
+    "column_name": "imageUrl",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "githubUrl",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "liveUrl",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "category",
+    "data_type": "character varying"
+  }
+]
