@@ -68,6 +68,7 @@ export const experiencesTable = pgTable("experiences", {
   id: serial("id").primaryKey(),
   role: varchar("role", { length: 200 }).notNull(),
   organization: varchar("organization", { length: 200 }).notNull(),
+  period: varchar("period", { length: 100 }),
   startDate: timestamp("startDate").notNull().defaultNow(),
   endDate: timestamp("endDate"), // Nullable for current roles
   description: text("description").notNull(),
