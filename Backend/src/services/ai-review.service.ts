@@ -24,12 +24,12 @@ export class AIReviewService {
         if (!project) throw new Error("Project not found");
 
         try {
-            const [review] = await db.insert(codeReviewsTable).values({
+            const review = await codeReviewRepository.create({
                 projectId,
                 content: "",
                 badges: [],
                 status: "processing",
-            }).returning();
+            });
 
             // Run review in background (fire-and-forget)
             this.runReview(review.id, project).catch((err) => {
