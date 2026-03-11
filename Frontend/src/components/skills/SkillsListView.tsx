@@ -58,6 +58,16 @@ export function SkillsListView({ skillNodes }: SkillsListViewProps) {
     setExpandedSkill((prev) => (prev === id ? null : id));
   };
 
+  if (skillNodes.length === 0) {
+    return (
+      <div className="text-center py-12 px-4 rounded-2xl border border-white/5 bg-white/5">
+        <p className="text-4xl mb-3">🧩</p>
+        <h3 className="text-lg font-medium text-white mb-2">Capabilities syncing...</h3>
+        <p className="text-sm text-muted-foreground">Skill data is currently being calibrated.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3" role="list" aria-label="Skills by category">
       {dynamicCategories.map((category, catIdx) => {

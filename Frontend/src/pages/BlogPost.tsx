@@ -119,7 +119,7 @@ export default function BlogPost() {
                         "author": {
                             "@type": "Person",
                             "name": authorName,
-                            "url": "https://abdheshsah.com.np"
+                            "url": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
                         },
                         "publisher": {
                             "@type": "Person",
@@ -127,7 +127,7 @@ export default function BlogPost() {
                         },
                         "mainEntityOfPage": {
                             "@type": "WebPage",
-                            "@id": `https://abdheshsah.com.np/blog/${article.slug}`
+                            "@id": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article.slug}`
                         }
                     },
                     {
@@ -138,19 +138,19 @@ export default function BlogPost() {
                                 "@type": "ListItem",
                                 "position": 1,
                                 "name": "Home",
-                                "item": "https://abdheshsah.com.np"
+                                "item": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
                             },
                             {
                                 "@type": "ListItem",
                                 "position": 2,
                                 "name": "Blog",
-                                "item": "https://abdheshsah.com.np/blog"
+                                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog`
                             },
                             {
                                 "@type": "ListItem",
                                 "position": 3,
                                 "name": article.title,
-                                "item": `https://abdheshsah.com.np/blog/${article.slug}`
+                                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article.slug}`
                             }
                         ]
                     }

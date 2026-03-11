@@ -316,9 +316,36 @@ function DeferredAnalytics() {
   ) : null;
 }
 
+function useScrollRestoration() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    const onScroll = () => {
+      sessionStorage.setItem(`scrollPos:${location}`, window.scrollY.toString());
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [location]);
+
+  useEffect(() => {
+    const savedPos = sessionStorage.getItem(`scrollPos:${location}`);
+    if (savedPos !== null) {
+      requestAnimationFrame(() => window.scrollTo({ top: parseInt(savedPos, 10), behavior: 'instant' }));
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [location]);
+}
+
 // Router component
 function Router() {
   const [location] = useLocation();
+  useScrollRestoration();
   const { data: settings } = useSiteSettings();
   const { reducedMotion } = useTheme();
   const transition = withReducedMotion(pageTransition, reducedMotion);

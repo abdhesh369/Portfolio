@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle } from "@/lib/animation";
 import { GraduationCap, MapPin, Mail, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { OptimizedImage } from "@/components/OptimizedImage";
 // ...existing code... (profile image moved to public/images/hero.svg)
 
@@ -182,6 +183,7 @@ export default function About() {
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
   const { data: experiences } = useExperiences();
+  const { data: settings } = useSiteSettings();
   return (
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-16 md:py-24 relative">
       <div className="text-center mb-20 relative z-10">
@@ -242,7 +244,7 @@ export default function About() {
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-white font-display">Abdhesh Sah</h3>
+                    <h3 className="text-2xl font-bold text-white font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
                     <div className="flex items-center gap-2 text-sm text-gray-300">
                       <MapPin className="w-4 h-4 text-cyan-400" />
                       Kathmandu, Nepal
@@ -273,10 +275,10 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href="https://github.com/abdhesh369" target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                    <a href={settings?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
                       <Code className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
-                    <a href="mailto:abdheshshah111@gmail.com?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20Abdhesh," className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
+                    <a href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
                       <Mail className="w-4 h-4" /> <span className="text-xs">Email</span>
                     </a>
                   </div>

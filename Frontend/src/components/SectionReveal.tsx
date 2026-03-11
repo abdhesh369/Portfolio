@@ -13,7 +13,7 @@ export default function SectionReveal({ children, className = "", delay = 0, wid
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
-        <div ref={ref} className={className} style={{ width, overflow: "hidden" }}>
+        <div ref={ref} className={className} style={{ width }}>
             <m.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}

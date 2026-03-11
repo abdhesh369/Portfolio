@@ -105,6 +105,9 @@ articlesRouter.post(
     isAuthenticated,
     asyncHandler(async (req, res) => {
         const data = insertArticleApiSchema.parse(req.body);
+        if (data.content && (!data.readTimeMinutes || data.readTimeMinutes === 0)) {
+            data.readTimeMinutes = Math.max(1, Math.ceil(data.content.split(/\s+/).length / 200));
+        }
         const article = await articleService.create(data);
         recordAudit("CREATE", "article", article.id, null, data as Record<string, unknown>);
         res.status(201).json({
@@ -138,6 +141,9 @@ articlesRouter.patch(
             return;
         }
         const data = updateArticleApiSchema.parse(req.body);
+        if (data.content && (!data.readTimeMinutes || data.readTimeMinutes === 0)) {
+            data.readTimeMinutes = Math.max(1, Math.ceil(data.content.split(/\s+/).length / 200));
+        }
         const article = await articleService.update(id, data);
         recordAudit("UPDATE", "article", id, null, data as Record<string, unknown>);
         res.json({

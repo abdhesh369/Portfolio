@@ -27,12 +27,14 @@ type ActivityItem = {
 
 export default function CodeAndPractice() {
   const [events, setEvents] = useState<ActivityItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     apiFetch("/api/v1/github/activity")
       .then((data: GitHubEvent[]) => {
         if (!Array.isArray(data)) {
+          setIsLoading(false);
           return;
         }
 
@@ -95,8 +97,10 @@ export default function CodeAndPractice() {
           .slice(0, 4); // Show top 4 items
 
         setEvents(filtered);
+        setIsLoading(false);
       })
       .catch(err => {
+        setIsLoading(false);
         console.error("GitHub fetch failed:", err);
         toast({
           title: "Activity update failed",
@@ -182,7 +186,17 @@ export default function CodeAndPractice() {
               </div>
 
               <div className="space-y-6">
-                {
+                {isLoading ? (
+                  Array(4).fill(0).map((_, i) => (
+                    <div key={i} className="flex gap-4 items-start animate-pulse">
+                      <div className="mt-1 w-4 h-4 rounded-full bg-white/10" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-white/10 rounded w-3/4" />
+                        <div className="h-3 bg-white/5 rounded w-1/4" />
+                      </div>
+                    </div>
+                  ))
+                ) : (
                   events.length > 0 ? events.map((item, i) => (
                     <div key={i} className="flex gap-4 items-start">
                       <div className="mt-1">
@@ -203,7 +217,7 @@ export default function CodeAndPractice() {
                   )) : (
                     <div className="text-sm text-muted-foreground">No recent activity found.</div>
                   )
-                }
+                )}
               </div>
 
               <div className="mt-8 pt-8 border-t border-border/50">

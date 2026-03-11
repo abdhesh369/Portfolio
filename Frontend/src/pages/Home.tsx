@@ -164,7 +164,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "Person",
             name: settings?.personalName || "Abdhesh Sah",
-            url: "https://abdheshsah.com.np",
+            url: import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np",
             sameAs: [
               "https://github.com/abdhesh369",
               "https://www.linkedin.com/in/abdhesh369",
@@ -180,12 +180,12 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: `${settings?.personalName || "Abdhesh Sah"} Portfolio`,
-            url: "https://abdheshsah.com.np",
+            url: import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np",
             potentialAction: {
               "@type": "SearchAction",
               target: {
                 "@type": "EntryPoint",
-                urlTemplate: "https://abdheshsah.com.np/blog?q={search_term_string}"
+                urlTemplate: `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog?q={search_term_string}`
               },
               "query-input": "required name=search_term_string"
             }
@@ -199,15 +199,16 @@ export default function Home() {
         <Hero />
         <CurrentlyBuildingTicker />
 
-        {sectionOrder.map((sectionId: string) => {
-          const isVisible = sectionVisibility[sectionId] ?? true;
+        {sectionOrder
+          .filter((sectionId: string) => sectionVisibility[sectionId] ?? true)
+          .map((sectionId: string, index: number) => {
           const component = SECTION_MAP[sectionId];
 
-          if (!isVisible || !component) return null;
+          if (!component) return null;
 
           return (
             <React.Fragment key={sectionId}>
-              <SectionDivider />
+              {index > 0 && <SectionDivider />}
               <SectionReveal>{component}</SectionReveal>
             </React.Fragment>
           );

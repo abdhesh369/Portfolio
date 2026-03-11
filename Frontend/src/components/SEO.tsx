@@ -48,7 +48,7 @@ export function SEO({
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
-    const canonicalUrl = seoSettings?.canonicalUrl || `https://abdheshsah.com.np${location}`;
+    const canonicalUrl = seoSettings?.canonicalUrl || `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}${location}`;
 
     const safeJsonLd = (data: Record<string, unknown>) => {
         return JSON.stringify(data)

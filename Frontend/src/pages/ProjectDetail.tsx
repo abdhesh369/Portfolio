@@ -280,19 +280,19 @@ export default function ProjectDetail() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://abdheshsah.com.np"
+                "item": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Projects",
-                "item": "https://abdheshsah.com.np/#projects"
+                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/#projects`
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": project.title,
-                "item": `https://abdheshsah.com.np/project/${project.id}`
+                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/project/${project.id}`
               }
             ]
           }

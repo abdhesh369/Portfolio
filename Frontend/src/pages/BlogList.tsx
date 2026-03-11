@@ -51,10 +51,12 @@ function BlogCard({ article }: { article: Article }) {
                                 <Eye className="w-3 h-3" />
                                 {article.viewCount || 0} views
                             </Badge>
-                            <span className="text-[10px] text-white/40 flex items-center gap-1 ml-auto">
-                                <Clock className="w-3 h-3" />
-                                {article.readTimeMinutes || 5} min read
-                            </span>
+                            {article.readTimeMinutes && article.readTimeMinutes > 0 ? (
+                                <span className="text-[10px] text-white/40 flex items-center gap-1 ml-auto">
+                                    <Clock className="w-3 h-3" />
+                                    {article.readTimeMinutes} min read
+                                </span>
+                            ) : null}
                         </div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors mb-2 line-clamp-2" style={{ fontFamily: "var(--font-display)" }}>
                             {article.title}

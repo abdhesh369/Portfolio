@@ -18,7 +18,8 @@ const CyberInput = ({
   error,
   register,
   required,
-  isTextarea = false
+  isTextarea = false,
+  autoComplete
 }: {
   id: keyof InsertMessage;
   label: string;
@@ -27,6 +28,7 @@ const CyberInput = ({
   register: UseFormRegister<InsertMessage>;
   required?: boolean;
   isTextarea?: boolean;
+  autoComplete?: string;
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
@@ -47,6 +49,7 @@ const CyberInput = ({
         })}
         type={type}
         id={id}
+        autoComplete={autoComplete}
         rows={isTextarea ? 5 : undefined}
         onFocus={() => setIsFocused(true)}
         onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -343,11 +346,11 @@ export default function Contact() {
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
                         <div className="grid md:grid-cols-2 gap-6">
-                          <CyberInput id="name" label="Identity" register={form.register} error={form.formState.errors.name?.message} required />
-                          <CyberInput id="email" label="Return Address" type="email" register={form.register} error={form.formState.errors.email?.message} required />
+                          <CyberInput id="name" label="Identity" autoComplete="name" register={form.register} error={form.formState.errors.name?.message} required />
+                          <CyberInput id="email" label="Return Address" type="email" autoComplete="email" register={form.register} error={form.formState.errors.email?.message} required />
                         </div>
 
-                        <CyberInput id="subject" label={formMode === "project" ? "Project Name" : "Header / Subject"} register={form.register} error={form.formState.errors.subject?.message} required />
+                        <CyberInput id="subject" label={formMode === "project" ? "Project Name" : "Header / Subject"} autoComplete="subject" register={form.register} error={form.formState.errors.subject?.message} required />
 
                         <AnimatePresence mode="wait">
                           {formMode === "project" && (
