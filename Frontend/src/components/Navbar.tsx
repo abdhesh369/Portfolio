@@ -115,7 +115,7 @@ export default function Navbar() {
           <button
             className="flex-shrink-0 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl transition-all group"
             onClick={() => handleNavClick("/")}
-            aria-label={`${settings?.personalName || "Portfolio"} - Home`}
+            aria-label={`${settings?.logoText || "Portfolio"} - Home`}
           >
             <div className="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-xl border border-primary/30 overflow-hidden">
               <Code2 className="w-6 h-6 text-primary relative z-10 group-hover:scale-110 transition-transform" />
@@ -124,7 +124,15 @@ export default function Navbar() {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
             </div>
             <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
-              {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-primary">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
+              {settings?.logoText ? (
+                <>
+                  {settings.logoText.split('.')[0]}<span className="text-primary">.</span>{settings.logoText.split('.')[1] || "Dev"}
+                </>
+              ) : (
+                <>
+                  Portfolio<span className="text-primary">.</span>Dev
+                </>
+              )}
             </span>
           </button>
 
@@ -157,10 +165,10 @@ export default function Navbar() {
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
               <PerformanceToggle />
               <Button
-                onClick={() => handleNavClick("#contact")}
+                onClick={() => handleNavClick(settings?.heroCtaPrimaryUrl || "#contact")}
                 className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/50 rounded-full px-6 shadow-[0_0_15px_var(--primary-glow)] hover:shadow-[0_0_25px_var(--primary-glow)] transition-all"
               >
-                {settings?.heroCtaSecondary || "Hire Me"}
+                {settings?.heroCtaPrimary || "Hire Me"}
               </Button>
             </div>
           </div>
@@ -217,10 +225,10 @@ export default function Navbar() {
                 )
               })}
               <Button
-                onClick={() => handleNavClick("#contact")}
+                onClick={() => handleNavClick(settings?.heroCtaPrimaryUrl || "#contact")}
                 className="w-full mt-4 bg-primary text-black hover:bg-primary/90 font-bold"
               >
-                {settings?.heroCtaSecondary || "Hire Me"}
+                {settings?.heroCtaPrimary || "Hire Me"}
               </Button>
             </div>
           </m.div>

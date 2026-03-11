@@ -120,6 +120,13 @@
       "when": 1773170188364,
       "tag": "0016_steep_piledriver",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1773235784301,
+      "tag": "0017_perpetual_blindfold",
+      "breakpoints": true
     }
   ]
 }

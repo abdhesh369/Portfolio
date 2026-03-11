@@ -2,7 +2,7 @@ import { UseFormRegister } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import { InsertSiteSettings } from "@portfolio/shared";
 import { CollapsibleSection } from "./SectionsCommon";
-import { FloatingLabelInput, AdminButton } from "../AdminShared";
+import { FloatingLabelInput, AdminButton, FormTextarea } from "../AdminShared";
 
 interface HeroSectionProps {
     register: UseFormRegister<InsertSiteSettings>;
@@ -24,15 +24,45 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
         >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 p-2">
                 <FloatingLabelInput
-                    label="Initialization Message"
-                    placeholder="Hey, I am"
-                    {...register("heroGreeting")}
+                    label="Heading Line 1 (Plain)"
+                    placeholder="Start building"
+                    {...register("heroHeadingLine1")}
                 />
                 <FloatingLabelInput
-                    label="Status Badge"
+                    label="Heading Line 2 (Accent Color)"
+                    placeholder="The Future"
+                    {...register("heroHeadingLine2")}
+                />
+
+                <div className="md:col-span-2">
+                    <FormTextarea
+                        label="Bio Paragraph"
+                        placeholder="I'm Abdhesh Sah, a developer who..."
+                        {...(({ onChange, ...rest }) => ({ ...rest, onChange: (v: string) => onChange({ target: { value: v, name: rest.name } }) }))(register("personalBio"))}
+                    />
+                    <p className="text-[9px] text-admin-text-muted mt-2 px-1 italic">Displays below the rotating taglines in the Hero section.</p>
+                </div>
+
+                <FloatingLabelInput
+                    label="Status Badge (Top Left)"
                     placeholder="Available for work"
                     {...register("heroBadgeText")}
                 />
+
+                <div className="md:col-span-2 space-y-6 pt-4 border-t border-white/5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="p-6 rounded-2xl bg-white/5 space-y-4">
+                            <h4 className="text-[10px] font-black text-purple-400 tracking-[0.2em] uppercase">Primary CTA</h4>
+                            <FloatingLabelInput label="Action Label" {...register("heroCtaPrimary")} />
+                            <FloatingLabelInput label="Target URL / Anchor" {...register("heroCtaPrimaryUrl")} className="font-mono" />
+                        </div>
+                        <div className="p-6 rounded-2xl bg-white/5 space-y-4">
+                            <h4 className="text-[10px] font-black text-cyan-400 tracking-[0.2em] uppercase">Secondary CTA</h4>
+                            <FloatingLabelInput label="Action Label" {...register("heroCtaSecondary")} />
+                            <FloatingLabelInput label="Target URL / Anchor" {...register("heroCtaSecondaryUrl")} className="font-mono" />
+                        </div>
+                    </div>
+                </div>
 
                 <div className="md:col-span-2 space-y-6 pt-4">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4">

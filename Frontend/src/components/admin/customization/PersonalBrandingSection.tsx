@@ -13,32 +13,34 @@ interface PersonalBrandingSectionProps {
 export function PersonalBrandingSection({ register, isOpen, onToggle }: PersonalBrandingSectionProps) {
     return (
         <CollapsibleSection
-            title="IDENTITY_SYSTEM_V1"
-            description="Configure the primary identity parameters for the portfolio entity."
+            title="BRANDING_AND_IDENTITY"
+            description="Control your primary branding logo and personal identify details."
             isOpen={isOpen}
             onToggle={onToggle}
         >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 p-2">
+                <div className="md:col-span-2">
+                    <FloatingLabelInput
+                        label="Logo Text (controls navbar logo only)"
+                        placeholder="Portfolio.Dev"
+                        {...register("logoText")}
+                    />
+                    <p className="text-[9px] text-admin-text-muted mt-2 px-1 italic">Displays in the top-left of the site. Use a period (.) to match styling.</p>
+                </div>
+
                 <FloatingLabelInput
-                    label="Formal Designation"
-                    placeholder="John Doe"
+                    label="Personal Name (used in bio + page title)"
+                    placeholder="Abdhesh Sah"
                     {...register("personalName")}
                 />
                 <FloatingLabelInput
-                    label="Core Specialization"
-                    placeholder="Software Engineer"
+                    label="Professional Title / Role"
+                    placeholder="Full Stack Engineer"
                     {...register("personalTitle")}
                 />
                 <div className="md:col-span-2">
-                    <FormTextarea
-                        label="Entity Narrative"
-                        placeholder="Detail your technical journey..."
-                        {...(({ onChange, ...rest }) => ({ ...rest, onChange: (v: string) => onChange({ target: { value: v, name: rest.name } }) }))(register("personalBio"))}
-                    />
-                </div>
-                <div className="md:col-span-2">
                     <FloatingLabelInput
-                        label="Visualization URI (Avatar)"
+                        label="Personal Avatar URL"
                         placeholder="https://..."
                         type="url"
                         {...register("personalAvatar")}

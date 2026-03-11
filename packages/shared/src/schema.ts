@@ -364,6 +364,11 @@ export const siteSettingsTable = pgTable("site_settings", {
   fontBody: varchar("fontBody", { length: 255 }).default("Inter"),
   customCss: text("customCss"),
 
+  // Branding & Hero (Untangled)
+  logoText: varchar("logoText", { length: 255 }).default("Portfolio.Dev"),
+  heroHeadingLine1: varchar("heroHeadingLine1", { length: 255 }).default("Start building"),
+  heroHeadingLine2: varchar("heroHeadingLine2", { length: 255 }).default("The Future"),
+
   // Navbar Configuration
   navbarLinks: jsonb("navbarLinks").$type<{ label: string; href: string; icon?: string }[]>().default([]),
 
@@ -810,6 +815,11 @@ const siteSettingsBaseSchema = z.object({
   heroGreeting: z.string().max(255).optional(),
   heroBadgeText: z.string().max(255).optional(),
   heroTaglines: z.array(z.string()).optional(),
+
+  // Branding & Hero (Untangled)
+  logoText: z.string().max(255).optional(),
+  heroHeadingLine1: z.string().max(255).optional(),
+  heroHeadingLine2: z.string().max(255).optional(),
 
   // Hero CTAs
   heroCtaPrimary: z.string().max(255).optional(),

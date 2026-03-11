@@ -370,9 +370,9 @@ export default function Hero() {
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
                 <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
-                {settings?.heroGreeting || "Start building"} <br />
+                {settings?.heroHeadingLine1 || "Start building"} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
-                  {settings?.personalName || "The Future"}
+                  {settings?.heroHeadingLine2 || "The Future"}
                   <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
                 </span>
               </m.h1>
@@ -426,22 +426,6 @@ export default function Hero() {
 
               <Button
                 onClick={() => {
-                  const contactEl = document.getElementById("contact");
-                  if (contactEl) {
-                    contactEl.scrollIntoView({ behavior: 'smooth' });
-                    // Trigger a custom event to switch form mode if needed
-                    window.dispatchEvent(new CustomEvent("set-contact-mode", { detail: "wizard" }));
-                  }
-                }}
-                size="lg"
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
-              >
-                <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
-                AI Project Scope
-              </Button>
-
-              <Button
-                onClick={() => {
                   const url = settings?.heroCtaSecondaryUrl || "#contact";
                   if (url.startsWith("#")) {
                     const target = document.getElementById(url.slice(1));
@@ -452,11 +436,25 @@ export default function Hero() {
                     window.open(url, '_blank', 'noopener,noreferrer');
                   }
                 }}
+                size="lg"
+                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
+              >
+                <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
+                {settings?.heroCtaSecondary || "AI Project Scope"}
+              </Button>
+
+              <Button
+                onClick={() => {
+                  const target = document.getElementById("contact");
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
               >
-                {settings?.heroCtaSecondary || "Contact Me"} <Mail className="ml-2 w-4 h-4" />
+                Contact Me <Mail className="ml-2 w-4 h-4" />
               </Button>
             </m.div>
 

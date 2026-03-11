@@ -27,7 +27,7 @@ const SOCIAL_FIELDS = [
 export function SocialPresenceSection({ register, isOpen, onToggle }: SocialPresenceSectionProps) {
     return (
         <CollapsibleSection
-            title="COMMUNICATION_PROTOCOL_MATRIX"
+            title="SOCIAL_LINKS_MANAGEMENT"
             description="Manage external links and protocol access points for the entity."
             isOpen={isOpen}
             onToggle={onToggle}

@@ -77,7 +77,15 @@ export default function Footer() {
                 <Code2 className="w-5 h-5 text-primary" />
               </div>
               <span className="text-white text-2xl sm:text-3xl font-bold font-display tracking-tight">
-                {settings?.personalName?.split(' ')[0] || "Portfolio"}<span className="text-[#3ca2fa]">.</span>{settings?.personalName?.split(' ')[1] || "Dev"}
+                {settings?.logoText ? (
+                  <>
+                    {settings.logoText.split('.')[0]}<span className="text-[#3ca2fa]">.</span>{settings.logoText.split('.')[1] || "Dev"}
+                  </>
+                ) : (
+                  <>
+                    Portfolio<span className="text-[#3ca2fa]">.</span>Dev
+                  </>
+                )}
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">

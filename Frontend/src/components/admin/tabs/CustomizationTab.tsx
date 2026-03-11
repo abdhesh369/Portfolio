@@ -27,7 +27,6 @@ import { CustomizationHeader } from "../customization/CustomizationHeader";
 import { PersonalBrandingSection } from "../customization/PersonalBrandingSection";
 import { SocialPresenceSection } from "../customization/SocialPresenceSection";
 import { HeroSection } from "../customization/HeroSection";
-import { HeroCTASection } from "../customization/HeroCTASection";
 import { NavbarSection } from "../customization/NavbarSection";
 import { ThemeSection } from "../customization/ThemeSection";
 import { FooterSection } from "../customization/FooterSection";
@@ -52,6 +51,9 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
   colorSurface: "hsl(224, 71%, 10%)",
   fontDisplay: "Inter",
   fontBody: "Inter",
+  logoText: "Portfolio.Dev",
+  heroHeadingLine1: "Start building",
+  heroHeadingLine2: "The Future",
   footerCopyright: `© ${new Date().getFullYear()} Your Name. All rights reserved.`,
   footerTagline: "Building the future, one line of code at a time.",
   socialEmail: "abdheshshah111@gmail.com",
@@ -249,12 +251,6 @@ export function CustomizationTab() {
           removeTagline={removeTagline}
           isOpen={activeSection === "hero"}
           onToggle={() => toggleSection("hero")}
-        />
-
-        <HeroCTASection
-          register={register}
-          isOpen={activeSection === "ctas"}
-          onToggle={() => toggleSection("ctas")}
         />
 
         <NavbarSection
