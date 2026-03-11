@@ -21,6 +21,7 @@ export default function SkillsTree() {
 
   const { data: apiSkills } = useSkills();
   const { data: apiConnections } = useSkillConnections();
+  const [viewMode, setViewMode] = useState<'tree' | 'list'>('tree');
 
   const skillNodes = useMemo(() => {
     if (!apiSkills || apiSkills.length === 0) return DEFAULT_SKILL_NODES;
@@ -137,7 +138,7 @@ export default function SkillsTree() {
           transition={{ duration: 0.8 }}
         >
           <m.h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
+            className="text-white text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
             style={{
               background: 'linear-gradient(135deg, #00d4ff 0%, #a855f7 40%, #ec4899 80%, #00d4ff 100%)',
               backgroundSize: '200% 200%',
@@ -165,16 +166,38 @@ export default function SkillsTree() {
               </span>
             </button>
           </div>
+          
+          {/* View Mode Toggle */}
+          <div className="flex justify-center mt-6">
+            <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1">
+              <button
+                onClick={() => setViewMode('tree')}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  viewMode === 'tree' ? 'bg-primary/20 text-primary' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Hexagon Tree
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  viewMode === 'list' ? 'bg-primary/20 text-primary' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                List View
+              </button>
+            </div>
+          </div>
         </m.div>
 
-        {/* Mobile List View */}
-        <div className="block md:hidden">
+        {/* Mobile / List View */}
+        <div className={`md:${viewMode === 'list' ? 'block' : 'hidden'} ${viewMode === 'list' ? 'block' : 'hidden'}`}>
           <SkillsListView skillNodes={skillNodes} />
         </div>
 
-        {/* Tree Container (Desktop) */}
+        {/* Tree Container (Desktop / Tree mode) */}
         <m.div
-          className="hidden md:block relative w-full max-w-5xl mx-auto"
+          className={`relative w-full max-w-5xl mx-auto md:${viewMode === 'tree' ? 'block' : 'hidden'} ${viewMode === 'tree' ? 'hidden md:block' : 'hidden'}`}
           style={{
             aspectRatio: '16 / 12'
           }}

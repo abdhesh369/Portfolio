@@ -44,7 +44,7 @@ export function SEO({
         seoSettings?.metaDescription ||
         propDescription ||
         `Portfolio of ${displayName}, a Full Stack Developer.`;
-    const image = seoSettings?.ogImage || propImage || settings?.personalAvatar || null;
+    const image = seoSettings?.ogImage || propImage || settings?.personalAvatar || "/og-image.jpg";
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";

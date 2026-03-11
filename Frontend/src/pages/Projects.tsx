@@ -6,8 +6,10 @@ import { Search, Folder, Filter, SortAsc, LayoutGrid, Calendar, Eye } from "luci
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export default function ProjectsPage() {
+  const { data: settings } = useSiteSettings();
   const [sortBy, setSortBy] = useState("default");
   const { data: projects, isLoading, error } = useProjects(sortBy);
   const [filter, setFilter] = useState("All");
@@ -51,7 +53,7 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="All Projects | Abdhesh Sah" 
+        title={`All Projects | ${settings?.personalName || 'Portfolio'}`}
         description="Browse all my software engineering projects, system designs, and technical experiments."
         slug="projects"
       />
