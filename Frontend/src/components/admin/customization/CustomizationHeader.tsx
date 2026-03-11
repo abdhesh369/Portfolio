@@ -15,11 +15,11 @@ export function CustomizationHeader({ onExport, onImportClick, onReset }: Custom
                 <div className="flex items-center gap-2 mb-1">
                     <Box className="w-5 h-5 text-purple-400" />
                     <h2 className="text-3xl font-black text-admin-text-primary tracking-[-0.04em] uppercase italic">
-                        SITE_CONFIG_<span className="text-purple-500">ENGINE</span>
+                        APPEARANCE_&_<span className="text-purple-500">THEMES</span>
                     </h2>
                 </div>
                 <p className="text-admin-text-muted text-[10px] font-mono tracking-widest uppercase opacity-60">
-                    Active Environment: PRODUCTION_INSTANCE // Build: 1.0.4-STABLE
+                    Configure your brand aesthetic, themes, and global navigation links.
                 </p>
             </div>
             <div className="flex flex-wrap gap-3">

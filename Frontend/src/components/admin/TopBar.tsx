@@ -1,5 +1,5 @@
 import {
-    Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings
+    Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings, Globe
 } from "lucide-react";
 import { useAuth } from "@/hooks/auth-context";
 import { useTheme } from "@/components/theme-provider";
@@ -11,13 +11,23 @@ interface TopBarProps {
     setMobileMenuOpen: (open: boolean) => void;
     sidebarCollapsed: boolean;
     isRefreshing?: boolean;
+    unreadCount?: number;
+    onNavigate?: (tab: string) => void;
 }
 
-export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: TopBarProps) {
+export default function TopBar({ 
+    activeTab, 
+    setMobileMenuOpen, 
+    isRefreshing, 
+    unreadCount = 0,
+    onNavigate 
+}: TopBarProps) {
     const { user, logout } = useAuth();
     const { theme, setTheme } = useTheme();
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
+
+    const viewSiteUrl = typeof window !== 'undefined' ? window.location.origin : "";
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -42,13 +52,19 @@ export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: T
                     </button>
 
                     <div className="hidden sm:flex items-center gap-4 text-[var(--admin-text-secondary)] text-[10px] font-black uppercase tracking-[0.3em]">
-                        <div className="flex items-center gap-2 group cursor-pointer">
-                            <span className="opacity-40 group-hover:opacity-100 group-hover:text-purple-400 transition-all">CONFIG_ENGINE</span>
-                        </div>
+                        <button 
+                            onClick={() => onNavigate?.("overview")}
+                            className="flex items-center gap-2 group cursor-pointer hover:text-purple-400 transition-all"
+                        >
+                            <span className="opacity-40 group-hover:opacity-100">CONFIG_ENGINE</span>
+                        </button>
                         <ChevronRight size={14} className="opacity-20 translate-y-[1px]" />
-                        <span className="text-[var(--admin-text-primary)] tracking-[0.4em] font-black drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                        <button 
+                            onClick={() => onNavigate?.(activeTab)}
+                            className="text-[var(--admin-text-primary)] tracking-[0.4em] font-black drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] hover:text-purple-400 transition-all uppercase"
+                        >
                             {activeTab.replace(/-/g, "_")}
-                        </span>
+                        </button>
                         {isRefreshing && (
                             <div className="flex items-center gap-3 ml-6 px-3 py-1.5 nm-inset rounded-lg bg-purple-500/5 text-purple-500 border border-purple-500/10">
                                 <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
@@ -71,9 +87,25 @@ export default function TopBar({ activeTab, setMobileMenuOpen, isRefreshing }: T
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button className="w-12 h-12 nm-button relative group hover:text-purple-400">
+                        <button 
+                            onClick={() => window.open(viewSiteUrl, "_blank")}
+                            className="w-12 h-12 nm-button flex items-center justify-center hover:text-purple-400 group"
+                            title="View Site"
+                        >
+                            <Globe size={18} className="group-hover:rotate-12 transition-transform" />
+                        </button>
+
+                        <button 
+                            onClick={() => onNavigate?.("messages")}
+                            className="w-12 h-12 nm-button relative group hover:text-purple-400"
+                            title="Notifications"
+                        >
                             <Bell size={20} />
-                            <span className="absolute top-3 right-3 w-2 h-2 bg-pink-600 rounded-full shadow-[0_0_12px_rgba(219,39,119,0.7)] ring-2 ring-var(--nm-bg)" />
+                            {unreadCount > 0 && (
+                                <span className="absolute top-3 right-3 w-5 h-5 bg-pink-600 rounded-full shadow-[0_0_12px_rgba(219,39,119,0.7)] ring-2 ring-[var(--nm-bg)] flex items-center justify-center text-[10px] font-black pointer-events-none animate-in zoom-in duration-300">
+                                    {unreadCount}
+                                </span>
+                            )}
                         </button>
 
                         <button

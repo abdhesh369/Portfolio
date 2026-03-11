@@ -10,6 +10,7 @@ interface AdminLayoutProps {
     onNavigate: (tab: string) => void;
     sidebarCollapsed: boolean;
     setSidebarCollapsed: (collapsed: boolean) => void;
+    unreadCount?: number;
 }
 
 const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
@@ -17,7 +18,8 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
     activeTab,
     onNavigate,
     sidebarCollapsed,
-    setSidebarCollapsed
+    setSidebarCollapsed,
+    unreadCount = 0
 }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { isFetching: isRefreshing } = useSiteSettings();
@@ -56,6 +58,7 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
                     onNavigate={onNavigate}
                     mobileOpen={mobileMenuOpen}
                     setMobileOpen={setMobileMenuOpen}
+                    unreadCount={unreadCount}
                 />
 
                 {/* Content Area */}
@@ -65,6 +68,8 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
                         setMobileMenuOpen={setMobileMenuOpen}
                         sidebarCollapsed={sidebarCollapsed}
                         isRefreshing={isRefreshing}
+                        unreadCount={unreadCount}
+                        onNavigate={onNavigate}
                     />
 
                     <main className="flex-1 p-6 md:p-10 lg:p-12 max-w-[1700px] mx-auto w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">

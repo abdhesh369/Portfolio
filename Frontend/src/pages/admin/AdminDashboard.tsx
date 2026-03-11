@@ -61,12 +61,69 @@ export default function AdminDashboard() {
     }, [sidebarCollapsed]);
 
     // SSE real-time notifications
-    const { resetUnread } = useMessageStream(true);
+    const { unreadCount, resetUnread } = useMessageStream(true);
 
     // Reset unread count when switching to messages tab
     useEffect(() => {
         if (tab === "messages") resetUnread();
     }, [tab, resetUnread]);
+
+    // Keyboard Shortcuts: G + Key
+    const [gKeyPressed, setGKeyPressed] = useState(false);
+    const [shortcutHint, setShortcutHint] = useState<string | null>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if typing in an input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            if (e.key.toLowerCase() === 'g') {
+                setGKeyPressed(true);
+                // Reset G key after 2 seconds if no second key is pressed
+                setTimeout(() => setGKeyPressed(false), 2000);
+                return;
+            }
+
+            if (gKeyPressed) {
+                const key = e.key.toLowerCase();
+                let targetTab: Tab | null = null;
+                let label = "";
+
+                switch (key) {
+                    case 'o': targetTab = 'overview'; label = "Overview"; break;
+                    case 'm': targetTab = 'messages'; label = "Messages"; break;
+                    case 'p': targetTab = 'projects'; label = "Projects"; break;
+                    case 's': targetTab = 'skills'; label = "Skills"; break;
+                    case 'a': targetTab = 'articles'; label = "Articles"; break;
+                    case 'e': targetTab = 'experiences'; label = "Experiences"; break;
+                    case 'n': targetTab = 'analytics'; label = "Analytics"; break;
+                    case '?': setShortcutHint("SHORTCUTS: G+O (Overview), G+M (Messages), G+P (Projects), G+S (Skills), G+A (Articles), G+E (Experiences), G+N (Analytics)"); break;
+                }
+
+                if (targetTab) {
+                    setTab(targetTab);
+                    setShortcutHint(`Navigated to ${label}`);
+                    setGKeyPressed(false);
+                }
+            }
+
+            if (e.key === 'Escape') {
+                setGKeyPressed(false);
+                setShortcutHint(null);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [gKeyPressed]);
+
+    // Clear shortcut hint after 3 seconds
+    useEffect(() => {
+        if (shortcutHint) {
+            const timer = setTimeout(() => setShortcutHint(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [shortcutHint]);
 
     return (
         <AdminLayout
@@ -74,7 +131,22 @@ export default function AdminDashboard() {
             onNavigate={(newTab) => setTab(newTab as Tab)}
             sidebarCollapsed={sidebarCollapsed}
             setSidebarCollapsed={setSidebarCollapsed}
+            unreadCount={unreadCount}
         >
+            {/* Shortcut Hint Toast */}
+            {gKeyPressed && (
+                <div className="fixed bottom-24 right-10 z-[100] nm-float px-6 py-3 rounded-2xl border border-purple-500/30 flex items-center gap-4 bg-purple-500/10 backdrop-blur-md animate-in slide-in-from-bottom-4 duration-300">
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                    <span className="text-[10px] font-black tracking-[0.3em] uppercase text-purple-400">Shortcut Mode Active: Press key...</span>
+                </div>
+            )}
+
+            {shortcutHint && (
+                <div className="fixed bottom-36 right-10 z-[100] nm-inset px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-4 animate-in fade-in duration-300">
+                    <span className="text-[9px] font-bold tracking-widest text-slate-300 uppercase">{shortcutHint}</span>
+                </div>
+            )}
+
             <Suspense fallback={
                 <div className="flex justify-center py-20">
                     <div className="w-10 h-10 border-4 border-[var(--nm-accent)] border-t-transparent rounded-full animate-spin" />

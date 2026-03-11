@@ -3,8 +3,9 @@ import { formatTime, formatTimeAgo } from "@/lib/utils/date";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import {
-    Rocket, Mail, Zap, Briefcase, Plus, Activity
+    Rocket, Mail, Zap, Briefcase, Plus, Activity, ChevronRight, PenTool, FolderKanban, Palette
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import StatCard from "../StatCard";
 import ActivityFeed from "../ActivityFeed";
 import SystemStatus from "../SystemStatus";
@@ -117,14 +118,22 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                     label="Active Projects"
                     value={projects?.length ?? 0}
                     icon={Rocket}
-                    trend={{ value: "12%", isUp: true, label: "Growth" }}
+                    trend={{ 
+                        value: (projects?.length || 0) > 0 ? "Active" : "Empty", 
+                        isUp: (projects?.length || 0) > 0,
+                        label: "Status"
+                    }}
                     delay="100ms"
                 />
                 <StatCard
                     label="Inbox Requests"
                     value={messages.length}
                     icon={Mail}
-                    trend={{ value: messages.length > 0 ? "LIVE" : "0", isUp: messages.length > 0 }}
+                    trend={{ 
+                        value: messages.length > 0 ? "LIVE" : "0", 
+                        isUp: messages.length > 0,
+                        label: "Incoming"
+                    }}
                     delay="200ms"
                 />
                 <StatCard
@@ -139,6 +148,40 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                     icon={Briefcase}
                     delay="400ms"
                 />
+            </div>
+
+            {/* Quick Actions Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                    { label: "+ New Project", icon: FolderKanban, tab: "projects" as const, color: "text-blue-500" },
+                    { label: "+ New Article", icon: PenTool, tab: "articles" as const, color: "text-emerald-500" },
+                    { label: "View Messages", icon: Mail, tab: "messages" as const, color: "text-purple-500", badge: messages.length },
+                    { label: "Edit Appearance", icon: Palette, tab: "customization" as const, color: "text-pink-500" }
+                ].map((action, idx) => (
+                    <button
+                        key={action.label}
+                        onClick={() => onNavigate?.(action.tab)}
+                        className="nm-flat p-4 rounded-2xl flex items-center justify-between group hover:nm-inset transition-all duration-300 border border-white/5"
+                        style={{ animation: `fadeInUp 0.5s ease-out forwards ${0.5 + idx * 0.1}s`, opacity: 0 }}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className={cn("p-2 rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform", action.color)}>
+                                <action.icon size={18} />
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 group-hover:text-white transition-colors">
+                                    {action.label}
+                                </span>
+                                {action.badge !== undefined && action.badge > 0 && (
+                                    <span className="text-[8px] font-black text-pink-500 tracking-tighter uppercase mt-0.5">
+                                        {action.badge} UNREAD_TRACES
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                        <ChevronRight size={14} className="text-slate-600 group-hover:translate-x-1 group-hover:text-purple-400 transition-all" />
+                    </button>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -167,4 +210,3 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         </div>
     );
 }
-

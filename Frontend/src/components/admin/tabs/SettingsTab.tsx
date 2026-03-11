@@ -223,9 +223,9 @@ export function SettingsTab() {
                     </div>
                     <div>
                         <h2 className="text-3xl font-black tracking-tighter" style={{ fontFamily: "var(--font-display)" }}>
-                            Control Center
+                            Layout & Features
                         </h2>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Uplink & Global Parameters</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Manage homepage sections and core functionality</p>
                     </div>
                 </div>
             </div>
