@@ -66,7 +66,8 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     const refreshToken = createRefreshToken();
     await storeRefreshToken(refreshToken); // optional Redis revocation entry
 
-    const isProd = process.env.NODE_ENV === "production";
+    const origin = req.headers.origin || "";
+    const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || req.secure || req.headers["x-forwarded-proto"] === "https" || (origin.startsWith("https://") && !origin.includes("localhost"));
 
     // Set HttpOnly access token cookie (15 min)
     res.cookie("auth_token", token, {
@@ -110,7 +111,8 @@ router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Re
 
     if (!csrfToken) {
         csrfToken = generateCsrfToken();
-        const isProd = process.env.NODE_ENV === "production";
+        const origin = req.headers.origin || "";
+        const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || req.secure || req.headers["x-forwarded-proto"] === "https" || (origin.startsWith("https://") && !origin.includes("localhost"));
         res.cookie("csrf_token", csrfToken, {
             httpOnly: false,
             secure: isProd,
@@ -152,7 +154,8 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         { expiresIn: "15m" }
     );
 
-    const isProd = process.env.NODE_ENV === "production";
+    const origin = req.headers.origin || "";
+    const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || req.secure || req.headers["x-forwarded-proto"] === "https" || (origin.startsWith("https://") && !origin.includes("localhost"));
 
     res.cookie("auth_token", accessToken, {
         httpOnly: true,
@@ -198,7 +201,8 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
         try { await revokeRefreshToken(refreshToken); } catch { /* best-effort */ }
     }
 
-    const isProd = process.env.NODE_ENV === "production";
+    const origin = req.headers.origin || "";
+    const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || req.secure || req.headers["x-forwarded-proto"] === "https" || (origin.startsWith("https://") && !origin.includes("localhost"));
 
     // Always clear all cookies regardless of token validity
     res.clearCookie("auth_token", {
