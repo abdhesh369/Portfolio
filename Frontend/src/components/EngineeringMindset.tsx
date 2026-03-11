@@ -71,7 +71,7 @@ const PrincipleCard = ({
         </m.div>
 
         {/* Content */}
-        <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+        <h3 className={`text-xl font-bold mb-3 transition-colors ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>
           {principle.title}
         </h3>
         <p className="text-muted-foreground leading-relaxed text-sm">
@@ -107,7 +107,7 @@ const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon:
           })()}
         </div>
         <div className="flex-1">
-          <h4 className="text-2xl font-bold mb-3">{principle.title}</h4>
+          <h4 className="text-2xl font-bold mb-3 text-white">{principle.title}</h4>
           <p className="text-muted-foreground leading-relaxed mb-4">
             {principle.description}
           </p>
@@ -168,7 +168,8 @@ export default function EngineeringMindset() {
   }, [apiPrinciples]);
 
   return (
-    <section id="mindset" className="section-container bg-muted/30 overflow-hidden">
+    <section id="mindset" className="section-container bg-muted/30 relative overflow-hidden">
+      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
       {/* Header */}
       <div className="text-center mb-16">
         <m.div
@@ -184,7 +185,7 @@ export default function EngineeringMindset() {
           initial={fadeDown.initial}
           whileInView={fadeDown.animate}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold mb-4"
+          className="text-3xl md:text-5xl font-bold mb-4 text-white"
         >
           Engineering Mindset
         </m.h2>

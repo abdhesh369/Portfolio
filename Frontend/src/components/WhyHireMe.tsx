@@ -112,7 +112,7 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
         </m.div>
 
         {/* Content */}
-        <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">
           {point.title}
         </h3>
         <p className="text-muted-foreground leading-relaxed">
@@ -250,7 +250,7 @@ export default function WhyHireMe() {
         >
           {/* Soft Skills */}
           <div className="p-8 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
               <Target className="w-5 h-5 text-primary" />
               Core Strengths
             </h3>
@@ -261,7 +261,7 @@ export default function WhyHireMe() {
 
           {/* What Sets Me Apart */}
           <div className="p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl border border-primary/20">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
               <TrendingUp className="w-5 h-5 text-primary" />
               What Sets Me Apart
             </h3>
@@ -336,7 +336,7 @@ export default function WhyHireMe() {
               <Sparkles className="w-8 h-8 text-primary" />
             </m.div>
 
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to contribute to your team</h3>
+            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">Ready to contribute to your team</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
               {displayDescription}
             </p>
