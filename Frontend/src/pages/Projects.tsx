@@ -53,7 +53,7 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title={`All Projects | ${settings?.personalName || 'Portfolio'}`}
+        title={`All Projects | ${settings?.personalName || 'Abdhesh Sah'}`}
         description="Browse all my software engineering projects, system designs, and technical experiments."
         slug="projects"
       />

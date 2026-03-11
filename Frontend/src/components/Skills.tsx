@@ -138,14 +138,7 @@ export default function SkillsTree() {
           transition={{ duration: 0.8 }}
         >
           <m.h2
-            className="text-white text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
-            style={{
-              background: 'linear-gradient(135deg, #00d4ff 0%, #a855f7 40%, #ec4899 80%, #00d4ff 100%)',
-              backgroundSize: '200% 200%',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              animation: isLowPower ? 'none' : 'gradient-x 8s ease infinite'
-            }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white"
           >
             Skill Tree
           </m.h2>
@@ -168,8 +161,8 @@ export default function SkillsTree() {
           </div>
           
           {/* View Mode Toggle */}
-          <div className="flex justify-center mt-6">
-            <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1">
+          <div className="flex justify-center mt-6 relative z-50">
+            <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1 shadow-lg">
               <button
                 onClick={() => setViewMode('tree')}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
@@ -191,13 +184,13 @@ export default function SkillsTree() {
         </m.div>
 
         {/* Mobile / List View */}
-        <div className={`md:${viewMode === 'list' ? 'block' : 'hidden'} ${viewMode === 'list' ? 'block' : 'hidden'}`}>
+        <div className={viewMode === 'list' ? 'block' : 'hidden'}>
           <SkillsListView skillNodes={skillNodes} />
         </div>
 
         {/* Tree Container (Desktop / Tree mode) */}
         <m.div
-          className={`relative w-full max-w-5xl mx-auto md:${viewMode === 'tree' ? 'block' : 'hidden'} ${viewMode === 'tree' ? 'hidden md:block' : 'hidden'}`}
+          className={`relative w-full max-w-5xl mx-auto ${viewMode === 'tree' ? 'block' : 'hidden'}`}
           style={{
             aspectRatio: '16 / 12'
           }}
