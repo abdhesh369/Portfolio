@@ -43,6 +43,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
+  "https://abdheshsah.com.np",
   process.env.FRONTEND_URL,
   ...(process.env.NODE_ENV !== "production" ? [
     "http://localhost:3000",
@@ -91,10 +92,11 @@ app.use(
       });
     } else {
       logger.warn({ origin }, "CORS blocked origin");
-      callback(new Error("Not allowed by CORS"));
+      callback(null, { origin: false });
     }
   })
 );
+
 
 // Tighten Helmet CSP with Nonces
 app.use(
