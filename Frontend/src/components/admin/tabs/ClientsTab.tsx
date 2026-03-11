@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield } from 'lucide-react';
 import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
@@ -17,6 +18,7 @@ interface ClientData {
 
 export const ClientsTab: React.FC = () => {
     const queryClient = useQueryClient();
+    const { toast } = useToast();
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ name: '', email: '', company: '' });
     const [copiedId, setCopiedId] = useState<number | null>(null);
@@ -28,7 +30,19 @@ export const ClientsTab: React.FC = () => {
 
     const createMutation = useMutation({
         mutationFn: (data: typeof form) => apiFetch('/admin/clients', { method: 'POST', body: JSON.stringify(data) }),
-        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-clients'] }); setShowForm(false); setForm({ name: '', email: '', company: '' }); },
+        onSuccess: () => { 
+            queryClient.invalidateQueries({ queryKey: ['admin-clients'] }); 
+            setShowForm(false); 
+            setForm({ name: '', email: '', company: '' }); 
+            toast({ title: "Success", description: "Client created successfully." });
+        },
+        onError: (err: any) => {
+            let description = err instanceof Error ? err.message : "An error occurred";
+            if (err.data && Array.isArray(err.data.errors)) {
+                description += " - " + err.data.errors.map((e: any) => `${e.path}: ${e.message}`).join(", ");
+            }
+            toast({ title: "Creation Failed", description, variant: "destructive" });
+        }
     });
 
     const deleteMutation = useMutation({

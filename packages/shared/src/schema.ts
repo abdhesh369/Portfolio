@@ -1064,7 +1064,7 @@ export type Client = z.infer<typeof clientSchema>;
 export const insertClientApiSchema = z.object({
   name: z.string().min(1).max(255),
   email: z.string().email().max(255),
-  company: z.string().max(255).optional(),
+  company: z.string().max(255).optional().or(z.literal("").transform(() => null)),
 });
 
 export const clientProjectSchema = z.object({
