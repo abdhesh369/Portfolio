@@ -122,17 +122,64 @@ export function registerMessageRoutes(app: Router) {
                     data: message,
                 });
 
-                // Email Notification Integration (Fire-and-forget via Queue)
-                if (emailQueue) {
-                    emailQueue.add("send-contact-email", {
-                        type: "contact-notification",
-                        payload: {
-                            message,
-                            targetEmail: env.ADMIN_EMAIL,
+                // Direct fallback logic
+                const sendDirectFallback = async (jobType: string, payload: any) => {
+                    if (!env.RESEND_API_KEY) return;
+                    try {
+                        const resend = new Resend(env.RESEND_API_KEY);
+                        if (jobType === "contact-notification") {
+                            await resend.emails.send({
+                                from: env.CONTACT_EMAIL || "onboarding@resend.dev",
+                                to: payload.targetEmail,
+                                subject: `Portfolio Message: ${escapeHtml(payload.message.subject || "No Subject")}`,
+                                html: `
+                                <h3>New Message from Portfolio</h3>
+                                <p><strong>Name:</strong> ${escapeHtml(payload.message.name)}</p>
+                                <p><strong>Email:</strong> ${escapeHtml(payload.message.email)}</p>
+                                <hr/>
+                                <p><strong>Message:</strong></p>
+                                <p style="white-space: pre-wrap;">${escapeHtml(payload.message.message)}</p>
+                                `
+                            });
+                        } else if (jobType === "auto-reply") {
+                            await resend.emails.send({
+                                from: env.CONTACT_EMAIL || "onboarding@resend.dev",
+                                to: payload.message.email,
+                                subject: "Thank you for reaching out!",
+                                html: `
+                                <p>Hi ${escapeHtml(payload.message.name)},</p>
+                                <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
+                                <p>Best regards,<br/>Portfolio Admin</p>
+                                `
+                            });
                         }
-                    }).catch(err => logger.error({ context: "messages", error: err }, "Failed to queue email"));
+                    } catch (e) {
+                         logger.error({ context: "messages", error: e }, "Direct Resend fallback failed");
+                    }
+                };
+
+                if (emailQueue) {
+                    try {
+                        await emailQueue.add("send-contact-email", {
+                            type: "contact-notification",
+                            payload: {
+                                message,
+                                targetEmail: env.ADMIN_EMAIL,
+                            }
+                        });
+                        await emailQueue.add("send-auto-reply", {
+                            type: "auto-reply",
+                            payload: { message }
+                        });
+                    } catch (err) {
+                        logger.error({ context: "messages", error: err }, "Failed to queue email. Attempting direct fallback.");
+                        await sendDirectFallback("contact-notification", { message, targetEmail: env.ADMIN_EMAIL });
+                        await sendDirectFallback("auto-reply", { message });
+                    }
                 } else {
-                    logger.warn({ context: "messages" }, "Skipping email notification: Queue not initialized");
+                    logger.warn({ context: "messages" }, "Skipping queue - not initialized. Using direct Resend fallback.");
+                    await sendDirectFallback("contact-notification", { message, targetEmail: env.ADMIN_EMAIL });
+                    await sendDirectFallback("auto-reply", { message });
                 }
             } catch (error: unknown) {
                 if (error instanceof Error && error.message === "Message rejected") {

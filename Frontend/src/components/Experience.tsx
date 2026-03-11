@@ -97,12 +97,12 @@ const TimelineItem = ({
       <m.div
         whileHover={{ x: 5 }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="bg-card/80 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
+        className="bg-[#0d0d1a]/90 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-cyan-500/50 shadow-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all cursor-pointer group"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h4 className="text-base md:text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+            <h4 className="text-base md:text-lg font-bold text-white group-hover:text-primary transition-colors">
               {role}
             </h4>
             <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 mt-1">
@@ -133,7 +133,7 @@ const TimelineItem = ({
           className="overflow-hidden"
         >
           <div className="pt-4 mt-4 border-t border-border/50">
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-white/60 leading-relaxed">
               {desc}
             </p>
 
@@ -170,8 +170,8 @@ const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementTyp
       <Icon className="w-7 h-7" />
     </m.div>
     <div>
-      <h3 className="text-2xl font-bold">{title}</h3>
-      {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+      <h3 className="text-2xl font-bold text-white">{title}</h3>
+      {subtitle && <p className="text-sm text-white/60">{subtitle}</p>}
     </div>
   </m.div>
 );
@@ -200,14 +200,15 @@ export default function Experience() {
   const work = (experiences as ExperienceType[])?.filter(e => e.type === "Experience") || [];
 
   return (
-    <section id="experience" className="section-container overflow-hidden">
+    <section id="experience" className="section-container overflow-hidden relative">
+      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
       {/* Section Header */}
       <div className="text-center mb-16">
         <m.h2
           initial={fadeDown.initial}
           whileInView={fadeDown.animate}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold mb-4"
+          className="text-3xl md:text-5xl font-bold mb-4 text-white"
         >
           My Journey
         </m.h2>
@@ -342,7 +343,7 @@ export default function Experience() {
                   whileInView={fadeUp.animate}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className="mt-6 p-6 bg-card/80 backdrop-blur-sm rounded-2xl border border-white/10"
+                  className="mt-6 p-6 bg-[#0d0d1a]/90 backdrop-blur-md rounded-2xl border border-white/10"
                 >
                   <h5 className="font-semibold mb-4 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />

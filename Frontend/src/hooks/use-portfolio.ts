@@ -16,6 +16,7 @@ export {
   useMessages,
   useSendMessage,
   useLogin,
+  useAuth,
   useAnalyticsSummary,
   useVitalsSummary,
   useEmailTemplates,

@@ -2,7 +2,7 @@ import React, { useState, useEffect, type FormEvent } from "react";
 import { useProjects, useAdminProjects } from "@/hooks/use-portfolio";
 import type { Project } from "@portfolio/shared";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Layers, Zap } from "lucide-react";
+import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Layers, Zap, Pin } from "lucide-react";
 import { FormField, EmptyState, FormSelect, FormCheckbox, AdminButton, LoadingSkeleton } from "../AdminShared";
 import { ImageUpload } from "../ImageUpload";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -32,10 +32,11 @@ const emptyProject = {
     isFlagship: false, isHidden: false, impact: "", role: "",
 };
 
-function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSelect }: {
+function SortableProjectItem({ project, onEdit, onDelete, onTogglePin, isSelected, onToggleSelect }: {
     project: Project,
     onEdit: (p: Project) => void,
     onDelete: (id: number) => void,
+    onTogglePin: (id: number, current: boolean) => void,
     isSelected: boolean,
     onToggleSelect: (id: number) => void
 }) {
@@ -127,6 +128,18 @@ function SortableProjectItem({ project, onEdit, onDelete, isSelected, onToggleSe
             </div>
 
             <div className="flex items-center gap-3 shrink-0 sm:self-center">
+                <AdminButton
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => onTogglePin(project.id, !!project.isFlagship)}
+                    icon={Pin}
+                    className={cn(
+                        "nm-button p-3 transition-colors",
+                        project.isFlagship ? "text-amber-500 bg-amber-500/10" : "text-admin-text-muted hover:text-amber-500"
+                    )}
+                    title={project.isFlagship ? "Unpin from Homepage" : "Pin to Homepage"}
+                >
+                </AdminButton>
                 <AdminButton
                     variant="secondary"
                     size="sm"
@@ -424,6 +437,29 @@ export function ProjectsTab(_props: AdminTabProps) {
                     </div>
                 </div>
 
+                {projects && (
+                    <div className={cn(
+                        "nm-float px-6 py-3 rounded-2xl flex items-center gap-4 border-none",
+                        projects.filter(p => p.isFlagship).length > 6 ? "bg-rose-500/5 ring-1 ring-rose-500/50" : "bg-admin-card"
+                    )}>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <Pin size={12} className={cn(
+                                    projects.filter(p => p.isFlagship).length > 0 ? "text-amber-500" : "text-admin-text-muted"
+                                )} />
+                                <span className="text-xs font-black text-admin-text-primary uppercase tracking-tighter italic">
+                                    Pinned Count: {projects.filter(p => p.isFlagship).length}
+                                </span>
+                            </div>
+                            {projects.filter(p => p.isFlagship).length > 6 && (
+                                <span className="text-[9px] text-rose-500 font-bold uppercase tracking-widest mt-0.5 animate-pulse">
+                                    Max recommended (6) exceeded
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex flex-wrap items-center gap-4 flex-1 justify-end">
                     <div className="relative group max-w-md w-full">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-nm-accent transition-all group-focus-within:scale-110" size={16} />
@@ -478,6 +514,11 @@ export function ProjectsTab(_props: AdminTabProps) {
                                         if (confirm("Delete this project?")) {
                                             try { await remove(id); } catch (err) { console.error(err); }
                                         }
+                                    }}
+                                    onTogglePin={async (id, current) => {
+                                        try {
+                                            await update({ id, data: { isFlagship: !current } as any });
+                                        } catch (err) { console.error(err); }
                                     }}
                                     isSelected={selectedIds.includes(p.id)}
                                     onToggleSelect={toggleSelect}

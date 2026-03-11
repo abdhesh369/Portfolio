@@ -134,6 +134,13 @@
       "when": 1773236199949,
       "tag": "0018_first_obadiah_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1773239256582,
+      "tag": "0019_stormy_swordsman",
+      "breakpoints": true
     }
   ]
 }

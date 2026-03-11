@@ -4,6 +4,7 @@ import { fadeLeft, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, hoverSc
 import { CheckCircle2, Award, Zap, ShieldCheck, Download, ArrowRight, Sparkles, Target, TrendingUp, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useArticles, useExperiences } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { trackEvent } from "@/lib/analytics";
 
 // Animated Counter
@@ -166,6 +167,28 @@ export default function WhyHireMe() {
   const { data: allSkills } = useSkills();
   const { data: articles } = useArticles("published");
   const { data: experiences } = useExperiences();
+  
+  const { data: settings } = useSiteSettings();
+  
+  const resumeUrl = settings?.resumeUrl || "/Abdhesh_Sah_CV.docx";
+  const resumeFileName = resumeUrl.split('/').pop() || "Resume.docx";
+
+  // Use dynamic data if available, otherwise fall back to local constants
+  const dynamicPoints = settings?.whyHireMeData?.stats?.map(stat => ({
+    title: stat.label,
+    description: stat.value,
+    icon: CheckCircle2 // Fallback icon since we don't store icon names in DB yet
+  })) || points;
+
+  const dynamicSkills = settings?.whyHireMeData?.skills || [
+    "Blend of hardware and software knowledge",
+    "Strong foundation in data structures & algorithms",
+    "Passion for clean, maintainable code",
+    "Quick learner with adaptability",
+    "Proactive problem-solving approach"
+  ];
+  
+  const displayDescription = settings?.whyHireMeData?.description || "As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.";
 
   return (
     <section id="why-hire-me" className="section-container overflow-hidden">
@@ -213,7 +236,7 @@ export default function WhyHireMe() {
 
         {/* Points Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {points.map((point, index) => (
+          {dynamicPoints.map((point, index) => (
             <PointCard key={index} point={point} index={index} />
           ))}
         </div>
@@ -243,13 +266,7 @@ export default function WhyHireMe() {
               What Sets Me Apart
             </h3>
             <ul className="space-y-4">
-              {[
-                "Blend of hardware and software knowledge",
-                "Strong foundation in data structures & algorithms",
-                "Passion for clean, maintainable code",
-                "Quick learner with adaptability",
-                "Proactive problem-solving approach"
-              ].map((item, i) => (
+              {dynamicSkills.map((item, i) => (
                 <m.li
                   key={i}
                   initial={fadeLeft.initial}
@@ -321,7 +338,7 @@ export default function WhyHireMe() {
 
             <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to contribute to your team</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-              As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.
+              {displayDescription}
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -332,10 +349,10 @@ export default function WhyHireMe() {
                   size="lg"
                   className="h-14 px-8 gap-3 rounded-full font-bold shadow-lg shadow-primary/25 text-base"
                   onClick={async () => {
-                    await trackEvent({ type: "resume_download", fileName: "Abdhesh_Sah_CV.docx" });
+                    await trackEvent({ type: "resume_download", fileName: resumeFileName });
                     const link = document.createElement("a");
-                    link.href = "/Abdhesh_Sah_CV.docx";
-                    link.download = "Abdhesh_Sah_CV.docx";
+                    link.href = resumeUrl;
+                    link.download = resumeFileName;
                     link.click();
                   }}
                 >

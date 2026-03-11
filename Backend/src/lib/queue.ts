@@ -115,6 +115,33 @@ export function initQueues() {
                 throw new Error(`Failed to send email: ${error.message}`);
             }
             return data;
+        } else if (type === "auto-reply") {
+            const { message } = payload;
+            
+            function escapeHtml(text: string): string {
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            const { data, error } = await resend.emails.send({
+                from: env.CONTACT_EMAIL,
+                to: message.email,
+                subject: "Thank you for reaching out!",
+                html: `
+                <p>Hi ${escapeHtml(message.name)},</p>
+                <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
+                <p>Best regards,<br/>Portfolio Admin</p>
+                `
+            });
+
+            if (error) {
+                throw new Error(`Failed to send auto-reply email: ${error.message}`);
+            }
+            return data;
         } else {
             throw new Error(`Unknown job type: ${type}`);
         }

@@ -1,17 +1,46 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
   plugins: [
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
-      manifest: false, // Served dynamically from backend via /api/v1/settings/manifest.json
+      manifest: {
+        name: env.VITE_SITE_NAME || 'Abdhesh Sah | Portfolio',
+        short_name: env.VITE_SITE_NAME || 'Abdhesh',
+        description: env.VITE_SITE_DESCRIPTION || 'Professional portfolio showcasing full-stack engineering projects and skills.',
+        theme_color: '#020817',
+        background_color: '#020817',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: '/icons/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/maskable-icon.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      }, // Enabled static manifest fallback; overridden by dynamic /api/v1/settings/manifest.json if reachable
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         navigateFallback: '/index.html',
@@ -213,4 +242,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}))
+};
+});

@@ -47,15 +47,13 @@ function BlogCard({ article }: { article: Article }) {
                             <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-primary/20">
                                 {article.publishedAt ? formatDate(article.publishedAt) : "Draft"}
                             </Badge>
-                            <span className="text-[10px] text-white/30">•</span>
-                            <span className="text-[10px] text-white/40 flex items-center gap-1">
+                            <Badge variant="secondary" className="text-[10px] bg-white/5 text-white/60 border-white/10 flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                {article.viewCount || 0} views
+                            </Badge>
+                            <span className="text-[10px] text-white/40 flex items-center gap-1 ml-auto">
                                 <Clock className="w-3 h-3" />
                                 {article.readTimeMinutes || 5} min read
-                            </span>
-                            <span className="text-[10px] text-white/30">•</span>
-                            <span className="text-[10px] text-white/40 flex items-center gap-1">
-                                <Eye className="w-3 h-3" />
-                                {article.viewCount || 0}
                             </span>
                         </div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors mb-2 line-clamp-2" style={{ fontFamily: "var(--font-display)" }}>
@@ -99,6 +97,7 @@ export default function BlogList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [visibleCount, setVisibleCount] = useState(9);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     // Debounce search query by 300ms
@@ -215,11 +214,23 @@ export default function BlogList() {
                 {isLoading || isSearching ? (
                     <BlogSkeleton />
                 ) : filteredArticles.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredArticles.map((article) => (
-                            <BlogCard key={article.id} article={article} />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredArticles.slice(0, visibleCount).map((article) => (
+                                <BlogCard key={article.id} article={article} />
+                            ))}
+                        </div>
+                        {visibleCount < filteredArticles.length && (
+                            <div className="mt-12 text-center">
+                                <button
+                                    onClick={() => setVisibleCount(prev => prev + 9)}
+                                    className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-medium transition-colors"
+                                >
+                                    Load More Articles
+                                </button>
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <div className="text-center py-24 bg-white/5 rounded-3xl border border-white/5">
                         <p className="text-4xl mb-4">📭</p>

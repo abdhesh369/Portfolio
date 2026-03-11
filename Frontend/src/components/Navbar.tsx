@@ -4,6 +4,7 @@ import { Menu, X, Code2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PerformanceToggle } from "@/components/PerformanceToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -12,7 +13,7 @@ import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
 const DEFAULT_NAV_ITEMS = [
   { name: "Home", href: "/" },
   { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
+  { name: "Projects", href: "/projects" },
   { name: "Experience", href: "#experience" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "#contact" },
@@ -178,6 +179,7 @@ export default function Navbar() {
             })}
 
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
+              <ThemeToggle />
               <PerformanceToggle />
               <Button
                 onClick={() => handleNavClick(settings?.heroCtaPrimaryUrl || "#contact")}
@@ -239,6 +241,13 @@ export default function Navbar() {
                   </button>
                 )
               })}
+              <div className="flex items-center justify-between px-4 py-2 border-t border-white/5">
+                <span className="text-sm text-gray-400">Appearance</span>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                  <PerformanceToggle />
+                </div>
+              </div>
               <Button
                 onClick={() => handleNavClick(settings?.heroCtaPrimaryUrl || "#contact")}
                 className="w-full mt-4 bg-primary text-black hover:bg-primary/90 font-bold"

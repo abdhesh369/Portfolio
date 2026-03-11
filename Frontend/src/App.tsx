@@ -80,6 +80,7 @@ const Chatbot = lazy(() => import("@/components/Chatbot").then(m => ({ default: 
 // Eager-load Home for fast LCP — it no longer imports framer-motion directly
 import Home from "@/pages/Home";
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
+const ProjectsPage = lazy(() => import("@/pages/Projects"));
 const BlogList = lazy(() => import("@/pages/BlogList"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const ClientPortalPage = lazy(() => import("@/components/ClientPortal"));
@@ -337,6 +338,7 @@ function Router() {
           <Switch>
             {/* Public routes */}
             <Route path="/" component={Home} />
+            <Route path="/projects" component={ProjectsPage} />
             <Route path="/project/:id" component={ProjectDetail} />
 
             {/* Feature-guarded routes */}

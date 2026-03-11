@@ -326,6 +326,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   personalTitle: varchar("personalTitle", { length: 255 }).default("Full Stack Developer"),
   personalBio: text("personalBio").default("Passionate about building amazing products"),
   personalAvatar: varchar("personalAvatar", { length: 500 }),
+  resumeUrl: varchar("resumeUrl", { length: 500 }),
+  whyHireMeData: jsonb("whyHireMeData").$type<{ description: string; skills: string[]; stats: { label: string; value: string }[] }>(),
 
   // Social Links (10 platforms)
   socialGithub: varchar("socialGithub", { length: 500 }),
@@ -540,6 +542,8 @@ export const projectSchema = z.object({
   role: z.string().max(5000).nullable().default(null),
   imageAlt: z.string().max(500).nullable().default(null),
   viewCount: z.number().int().default(0),
+  createdAt: z.coerce.date().nullable().optional(),
+  updatedAt: z.coerce.date().nullable().optional(),
 });
 
 
@@ -798,6 +802,15 @@ const siteSettingsBaseSchema = z.object({
   personalTitle: z.string().max(255).optional(),
   personalBio: z.string().max(5000).optional(),
   personalAvatar: z.string().url().max(500).nullable().optional(),
+  resumeUrl: z.string().max(500).nullable().optional(),
+  whyHireMeData: z.object({
+    description: z.string(),
+    skills: z.array(z.string()),
+    stats: z.array(z.object({
+      label: z.string(),
+      value: z.string()
+    }))
+  }).nullable().optional(),
 
   // Social Links (10 platforms)
   socialGithub: z.string().url().max(500).nullable().optional(),
