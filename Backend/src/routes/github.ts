@@ -10,14 +10,26 @@ const githubRoutes = Router();
 githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) => {
     try {
         logger.info({ context: "github-proxy" }, "Fetching GitHub activity");
-        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, {
-            headers: {
-                "Accept": "application/vnd.github.v3+json",
-                "User-Agent": "Portfolio-Backend"
-            }
-        });
+        
+        const headers: Record<string, string> = {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "Portfolio-Backend"
+        };
+
+        if (env.GITHUB_TOKEN) {
+            headers["Authorization"] = `token ${env.GITHUB_TOKEN}`;
+        }
+
+        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, { headers });
 
         if (!response.ok) {
+            const errorBody = await response.text().catch(() => "No body");
+            logger.error({ 
+                context: "github-proxy", 
+                status: response.status, 
+                statusText: response.statusText,
+                body: errorBody
+            }, "GitHub API fetch failed");
             throw new Error(`GitHub API error: ${response.statusText}`);
         }
 
@@ -36,14 +48,26 @@ githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) 
 githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, res) => {
     try {
         logger.info({ context: "github-proxy" }, "Fetching latest GitHub commit");
-        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, {
-            headers: {
-                "Accept": "application/vnd.github.v3+json",
-                "User-Agent": "Portfolio-Backend"
-            }
-        });
+        
+        const headers: Record<string, string> = {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "Portfolio-Backend"
+        };
+
+        if (env.GITHUB_TOKEN) {
+            headers["Authorization"] = `token ${env.GITHUB_TOKEN}`;
+        }
+
+        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, { headers });
 
         if (!response.ok) {
+            const errorBody = await response.text().catch(() => "No body");
+            logger.error({ 
+                context: "github-proxy", 
+                status: response.status, 
+                statusText: response.statusText,
+                body: errorBody
+            }, "GitHub API latest-commit fetch failed");
             throw new Error(`GitHub API error: ${response.statusText}`);
         }
 

@@ -48,7 +48,9 @@ const envSchema = z.object({
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().optional(),
     RENDER_DEPLOY_HOOK_URL: z.string().url().optional(),
+    BACKEND_RENDER_URL: z.string().url().optional(),
     GITHUB_USERNAME: z.string().optional(),
+    GITHUB_TOKEN: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
