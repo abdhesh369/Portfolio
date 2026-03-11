@@ -151,12 +151,12 @@ export default function Footer() {
             <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Get in Touch</h4>
             <ul className="space-y-4">
               {contactInfo.map((item, i) => (
-                <li key={i} className="flex items-center space-x-3 text-gray-400">
+                <li key={i} className="flex items-center space-x-3 text-gray-400 max-w-full">
                   <div className="p-2 rounded-lg bg-white/5 border border-white/10">{item.icon}</div>
                   {item.href ? (
                     <a
                       href={item.href}
-                      className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base break-all font-medium"
+                      className="hover:text-[#3ca2fa] transition-colors text-sm sm:text-base break-words font-medium"
                     >
                       {item.text}
                     </a>

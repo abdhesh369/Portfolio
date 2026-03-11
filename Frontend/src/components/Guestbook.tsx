@@ -55,6 +55,7 @@ export const Guestbook = () => {
 
     return (
         <section id="guestbook" className="py-24 relative overflow-hidden">
+            <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col items-center mb-12 text-center">
@@ -65,7 +66,7 @@ export const Guestbook = () => {
                         >
                             <MessageSquare className="w-8 h-8 text-primary" />
                         </m.div>
-                        <h2 className="text-4xl font-bold mb-4 tracking-tighter">Guestbook</h2>
+                        <h2 className="text-4xl font-bold mb-4 tracking-tighter text-white">Guestbook</h2>
                         <p className="text-muted-foreground text-lg max-w-xl">
                             Leave a message, some feedback, or just say hello!
                         </p>

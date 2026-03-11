@@ -5,6 +5,7 @@ import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 import { formatDate } from "@/lib/utils/date";
 
@@ -29,6 +30,9 @@ export default function CodeAndPractice() {
   const [events, setEvents] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  const { data: settings } = useSiteSettings();
+  const githubUsername = settings?.socialGithub?.split("/").pop() || "abdhesh369";
 
   useEffect(() => {
     apiFetch("/api/v1/github/activity")
@@ -113,7 +117,7 @@ export default function CodeAndPractice() {
   return (
     <section id="code-practice" className="section-container">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold mb-4">Code & Practice</h2>
+        <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">Code & Practice</h2>
         <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
       </div>
 
@@ -125,7 +129,7 @@ export default function CodeAndPractice() {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <h3 className="text-2xl font-bold flex items-center gap-3">
+            <h3 className="text-2xl font-bold flex items-center gap-3 text-white">
               <Terminal className="w-6 h-6 text-primary" />
               Continuous Learning
             </h3>
@@ -149,7 +153,7 @@ export default function CodeAndPractice() {
 
             <div className="pt-4">
               <a
-                href="https://github.com/abdhesh369/"
+                href={settings?.socialGithub || "https://github.com/abdhesh369/"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -224,7 +228,7 @@ export default function CodeAndPractice() {
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                   <OptimizedImage
-                    src="https://ghchart.rshah.org/00d4ff/abdhesh369"
+                    src={`https://ghchart.rshah.org/00d4ff/${githubUsername}`}
                     alt="GitHub Contribution Graph"
                     width={800}
                     height={128}
