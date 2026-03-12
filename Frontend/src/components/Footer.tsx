@@ -65,7 +65,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#0F0F11]/10 relative h-fit rounded-[2rem] overflow-hidden m-4 sm:m-8 mt-20 border border-white/5">
+    <footer className="bg-card/10 relative h-fit rounded-[2rem] overflow-hidden m-4 sm:m-8 mt-20 border border-border/50">
       <div className="max-w-7xl mx-auto p-8 sm:p-14 z-40 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-16 pb-12">
 
@@ -75,7 +75,7 @@ export default function Footer() {
               <div className="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-xl border border-primary/30">
                 <Code2 className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-white text-2xl sm:text-3xl font-bold font-display tracking-tight">
+              <span className="text-foreground text-2xl sm:text-3xl font-bold font-display tracking-tight">
                 {settings?.logoText ? (
                   <>
                     {settings.logoText.split('.')[0]}<span className="text-[#3ca2fa]">.</span>{settings.logoText.split('.')[1] || "Dev"}
@@ -87,7 +87,7 @@ export default function Footer() {
                 )}
               </span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               {settings?.footerTagline || "Building the future, one line of code at a time."}
             </p>
             {/* Social icons */}
@@ -99,7 +99,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="p-2.5 bg-white/5 rounded-xl border border-white/10 text-gray-400 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all"
+                  className="p-2.5 bg-foreground/5 rounded-xl border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all"
                 >
                   {icon}
                 </a>
@@ -109,13 +109,13 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <div>
-            <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Explore</h4>
+            <h4 className="text-foreground/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Explore</h4>
             <ul className="space-y-3">
               {defaultFooterNavItems.map((item) => (
                 <li key={item.name} className="relative w-fit">
                   <button
                     onClick={() => handleNavClick(item.href)}
-                    className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
+                    className="text-muted-foreground hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
                   >
                     {item.name}
                   </button>
@@ -128,7 +128,7 @@ export default function Footer() {
           {settings?.navbarLinks && settings.navbarLinks.length > 0 && 
            settings.navbarLinks.some(link => link.label !== "New Link" && link.label.trim() !== "") && (
             <div>
-              <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Quick Links</h4>
+                <h4 className="text-foreground/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Quick Links</h4>
               <ul className="space-y-3">
                 {settings.navbarLinks
                   .filter(link => link.label !== "New Link" && link.label.trim() !== "")
@@ -136,7 +136,7 @@ export default function Footer() {
                     <li key={`${item.label}-${index}`} className="relative w-fit">
                       <button
                         onClick={() => handleNavClick(item.href)}
-                        className="text-gray-400 hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
+                        className="text-muted-foreground hover:text-[#3ca2fa] transition-colors flex items-center gap-2 group text-sm sm:text-base font-medium"
                       >
                         {item.label}
                       </button>
@@ -148,11 +148,11 @@ export default function Footer() {
 
           {/* Contact section */}
           <div>
-            <h4 className="text-white/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Get in Touch</h4>
+            <h4 className="text-foreground/60 text-sm font-black uppercase tracking-[0.2em] mb-6">Get in Touch</h4>
             <ul className="space-y-4">
               {contactInfo.map((item, i) => (
-                <li key={i} className="flex items-center space-x-3 text-gray-400 max-w-full">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10">{item.icon}</div>
+                <li key={i} className="flex items-center space-x-3 text-muted-foreground max-w-full">
+                  <div className="p-2 rounded-lg bg-foreground/5 border border-border">{item.icon}</div>
                   {item.href ? (
                     <a
                       href={item.href}
@@ -180,27 +180,27 @@ export default function Footer() {
         </div>
 
         {/* Footer bottom bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-sm pt-8 border-t border-white/5 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm pt-8 border-t border-border/50 gap-6">
           {/* Status Pill (New placement) */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/5 border border-border">
             <div className="relative flex h-2 w-2">
               <div className={`absolute inset-0 rounded-full animate-ping opacity-75 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
               <div className={`relative rounded-full h-2 w-2 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
             </div>
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
               {visitorCount.count} live visitors
             </span>
           </div>
 
           {/* Copyright (Centralized) */}
-          <div className="text-center text-gray-500 font-medium">
+          <div className="text-center text-muted-foreground font-medium">
             <p>{settings?.footerCopyright ? settings.footerCopyright.replace('{year}', currentYear.toString()) : `© ${currentYear} Abdhesh Sah. All rights reserved.`}</p>
           </div>
 
           {/* Tech Credit (Right) */}
-          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             <span>Powered by</span>
-            <span className="text-white/40">React & TS</span>
+            <span className="text-foreground/40">React & TS</span>
           </div>
         </div>
       </div>

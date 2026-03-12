@@ -108,10 +108,10 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
         <div className="p-3 rounded-full bg-white/5 group-hover:bg-cyan-500/20 group-hover:text-cyan-400 transition-colors shadow-lg group-hover:shadow-cyan-500/20">
           <Icon className="w-5 h-5" />
         </div>
-        <div className="text-3xl font-bold text-white font-display text-shadow-glow flex items-baseline gap-1">
+        <div className="text-3xl font-bold text-foreground font-display text-shadow-glow flex items-baseline gap-1">
           {count}<span className="text-cyan-400 text-lg">{suffix}</span>
         </div>
-        <span className="text-xs text-gray-400 font-mono tracking-wider uppercase">{label}</span>
+        <span className="text-xs text-muted-foreground font-mono tracking-wider uppercase">{label}</span>
       </div>
     </m.div>
   );
@@ -129,7 +129,7 @@ const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: R
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${color === "cyan" ? "from-cyan-500/20" : "from-purple-500/20"} to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-xl blur-lg`} />
 
-      <div className="h-full bg-white/5 border border-white/10 rounded-xl p-4 flex items-center gap-4 hover:border-white/20 transition-all relative overflow-hidden group-hover:translate-x-1">
+      <div className="h-full bg-foreground/5 border border-border rounded-xl p-4 flex items-center gap-4 hover:border-foreground/20 transition-all relative overflow-hidden group-hover:translate-x-1">
 
         {/* Scanline */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -138,8 +138,8 @@ const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: R
           <Icon className="w-5 h-5" />
         </div>
         <div>
-          <p className="text-xs text-gray-500 uppercase font-mono tracking-wide mb-0.5">{label}</p>
-          <p className="font-semibold text-gray-200 group-hover:text-white transition-colors">{value}</p>
+          <p className="text-xs text-muted-foreground uppercase font-mono tracking-wide mb-0.5">{label}</p>
+          <p className="font-semibold text-foreground/90 group-hover:text-foreground transition-colors">{value}</p>
         </div>
       </div>
     </m.div>
@@ -166,10 +166,10 @@ const TimelineItem = ({ year, title, description, delay }: { year: string; title
       {year}
     </div>
 
-    <div className="font-bold text-white text-lg mb-2 group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+    <div className="font-bold text-foreground text-lg mb-2 group-hover:text-cyan-300 transition-colors flex items-center gap-2">
       {title}
     </div>
-    <div className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">{description}</div>
+    <div className="text-sm text-muted-foreground leading-relaxed font-light group-hover:text-foreground/80 transition-colors">{description}</div>
   </m.div>
 );
 
@@ -215,7 +215,7 @@ export default function About() {
           <div className="lg:col-span-5 space-y-8 sticky top-24">
             <TiltCard>
               <div
-                className="relative rounded-3xl overflow-hidden border border-white/10 bg-card/80 backdrop-blur-xl group h-full shadow-2xl"
+                className="relative rounded-3xl overflow-hidden border border-border bg-card/80 backdrop-blur-xl group h-full shadow-2xl"
               >
                 {/* Profile Image Area */}
                 <div className="relative aspect-[4/5] overflow-hidden">
@@ -245,8 +245,8 @@ export default function About() {
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-white font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <h3 className="text-2xl font-bold text-foreground font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4 text-cyan-400" />
                       {(settings as any)?.locationText || "Kathmandu, Nepal"}
                     </div>
@@ -254,21 +254,21 @@ export default function About() {
                 </div>
 
                 {/* Card Footer */}
-                <div className="p-6 border-t border-white/10 bg-white/5 space-y-4 relative z-30">
+                <div className="p-6 border-t border-border bg-foreground/5 space-y-4 relative z-30">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Position</span>
+                    <span className="text-muted-foreground">Position</span>
                     <span className="text-white font-medium">{(settings as any)?.personalTitle || "Student Engineer"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Availability</span>
+                    <span className="text-muted-foreground">Availability</span>
                     <span className="text-green-400 font-medium">{(settings as any)?.aboutAvailability || "Open to Work"}</span>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10 space-y-3">
-                    <span className="text-sm text-gray-400">Core Tech Stack</span>
+                  <div className="pt-4 border-t border-border space-y-3">
+                    <span className="text-sm text-muted-foreground">Core Tech Stack</span>
                     <div className="flex flex-wrap gap-2">
                       {((settings as any)?.aboutTechStack || ["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]).map((tech: string) => (
-                        <span key={tech} className="px-2 py-1 bg-card/50 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-gray-300">
+                        <span key={tech} className="px-2 py-1 bg-card/50 border border-border hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-muted-foreground">
                           {tech}
                         </span>
                       ))}
@@ -276,10 +276,10 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href={(settings as any)?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                    <a href={(settings as any)?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-foreground/5 hover:bg-cyan-500/20 text-foreground hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
                       <Code className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
-                    <a href={`mailto:${(settings as any)?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${(settings as any)?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
+                    <a href={`mailto:${(settings as any)?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${(settings as any)?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-foreground/5 hover:bg-purple-500/20 text-foreground hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
                       <Mail className="w-4 h-4" /> <span className="text-xs">Email</span>
                     </a>
                   </div>
@@ -306,7 +306,7 @@ export default function About() {
                 <span className="font-mono text-lg text-cyan-500">./bio_init</span>
               </h3>
 
-              <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed font-light space-y-4">
+              <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed font-light space-y-4">
                 {(settings as any)?.aboutDescription ? (
                   (settings as any).aboutDescription.split('\n\n').map((para: string, i: number) => (
                     <p key={i} className="leading-relaxed text-[1.05rem]">
@@ -380,12 +380,12 @@ export default function About() {
           viewport={{ once: true }}
           className="mt-16 md:mt-20 max-w-4xl mx-auto"
         >
-          <div className="bg-card/50 p-6 md:p-12 rounded-3xl border border-white/5 relative overflow-hidden">
+          <div className="bg-card/50 p-6 md:p-12 rounded-3xl border border-border/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Calendar className="w-32 h-32 text-white" />
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-10 flex items-center gap-3 relative z-10">
+            <h3 className="text-2xl font-bold text-foreground mb-10 flex items-center gap-3 relative z-10">
               <Calendar className="w-6 h-6 text-purple-400" />
               Development Log
             </h3>

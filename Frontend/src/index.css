@@ -249,6 +249,16 @@
   /* Container */
   .section-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative;
+    background: hsl(var(--background) / 0.85);
+  }
+
+  /* In light mode, sections should be more opaque to stay readable */
+  :root .section-container {
+    background: hsl(var(--background) / 0.92);
+  }
+
+  /* In dark mode, keep the glass effect */
+  .dark .section-container {
     background: hsl(var(--background) / 0.6);
   }
 

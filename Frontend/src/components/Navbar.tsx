@@ -123,7 +123,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-500 ease-in-out ${scrolled
-        ? "bg-background/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-cyan-500/5"
+        ? "bg-background/80 backdrop-blur-md border-b border-border shadow-lg shadow-cyan-500/5"
         : "bg-transparent"
         } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
@@ -142,7 +142,7 @@ export default function Navbar() {
               {/* Scanline effect */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
+            <span className="font-display font-bold text-xl tracking-tight text-foreground group-hover:text-primary transition-colors">
               {settings?.logoText ? (
                 <>
                   {settings.logoText.split('.')[0]}<span className="text-primary">.</span>{settings.logoText.split('.')[1] || "Dev"}
@@ -166,13 +166,13 @@ export default function Navbar() {
                   onClick={() => handleNavClick(item.href)}
                   aria-current={isActive ? "page" : undefined}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full group overflow-hidden ${isActive
-                    ? "text-white"
-                    : "text-gray-300 hover:text-white"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   <span className="relative z-10">{item.name}</span>
                   {/* Hover Glow Background */}
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300" />
                   <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-primary transition-all duration-300 shadow-[0_0_10px_var(--primary)] ${isActive
                     ? "w-[60%]"
                     : "w-0 group-hover:w-[60%]"
@@ -181,14 +181,14 @@ export default function Navbar() {
               )
             })}
 
-            <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
+            <div className="ml-4 pl-4 border-l border-border flex items-center gap-2">
               <button
                 onClick={() => openSearch()}
-                className="p-2 text-white/50 hover:text-white hover:bg-white/5 rounded-full transition-colors flex items-center gap-2"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-full transition-colors flex items-center gap-2"
                 aria-label="Search"
               >
                 <Search className="w-5 h-5" />
-                <kbd className="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium text-white/50">
+                <kbd className="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-border bg-foreground/5 px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </button>
@@ -207,14 +207,14 @@ export default function Navbar() {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => openSearch()}
-              className="p-2 text-gray-300 hover:text-white transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-gray-300 hover:text-white transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={isOpen}
             >
@@ -240,11 +240,11 @@ export default function Navbar() {
                 setIsOpen(false);
               }
             }}
-            className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-white/10 overflow-hidden touch-none"
+            className="md:hidden bg-card/80 backdrop-blur-3xl shadow-2xl border-b border-border overflow-hidden touch-none"
           >
             {/* Grab handle for swipe */}
             <div className="flex justify-center pt-2 pb-1">
-              <div className="w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="w-12 h-1.5 rounded-full bg-foreground/10" />
             </div>
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navItems.map((item) => {
@@ -255,14 +255,14 @@ export default function Navbar() {
                     key={item.name}
                     onClick={() => handleNavClick(item.href)}
                     aria-current={isActive ? "page" : undefined}
-                    className={`block w-full text-left px-4 py-3 text-base font-medium transition-all border-l-2 rounded-lg ${isActive ? "text-white bg-white/5 border-primary" : "text-gray-300 border-transparent hover:text-white hover:bg-white/5 hover:border-primary"}`}
+                    className={`block w-full text-left px-4 py-3 text-base font-medium transition-all border-l-2 rounded-lg ${isActive ? "text-foreground bg-foreground/5 border-primary" : "text-muted-foreground border-transparent hover:text-foreground hover:bg-foreground/5 hover:border-primary"}`}
                   >
                     {item.name}
                   </button>
                 )
               })}
-              <div className="flex items-center justify-between px-4 py-2 border-t border-white/5">
-                <span className="text-sm text-gray-400">Appearance</span>
+              <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
+                <span className="text-sm text-muted-foreground">Appearance</span>
                 <div className="flex items-center gap-2">
                   <ThemeToggle />
                   <PerformanceToggle />

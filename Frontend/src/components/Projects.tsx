@@ -69,7 +69,7 @@ export default function Projects() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-gray-400 max-w-xl mx-auto"
+            className="text-muted-foreground max-w-xl mx-auto"
           >
             A curated selection of my most significant work and technical case studies.
           </m.p>
@@ -113,7 +113,7 @@ export default function Projects() {
         {error && (
           <div className="text-center py-16">
             <p className="text-red-400 mb-2">Failed to load projects.</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {error instanceof Error ? error.message : 'Please try again later.'}
             </p>
           </div>
@@ -125,8 +125,8 @@ export default function Projects() {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <Folder className="w-16 h-16 mx-auto text-gray-700 mb-4" />
-            <p className="text-gray-500">No projects available at the moment.</p>
+            <Folder className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+            <p className="text-muted-foreground">No projects available at the moment.</p>
           </m.div>
         )}
 
@@ -142,10 +142,10 @@ export default function Projects() {
               <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="group relative px-8 py-4 rounded-full font-bold text-white transition-all overflow-hidden"
+                className="group relative px-8 py-4 rounded-full font-bold text-foreground transition-all overflow-hidden"
               >
                 {/* Background effects */}
-                <div className="absolute inset-0 bg-slate-900 border border-white/10 group-hover:border-primary/50 transition-colors" />
+                <div className="absolute inset-0 bg-card border border-border group-hover:border-primary/50 transition-colors" />
                 <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 
                 <span className="relative z-10 flex items-center gap-3">

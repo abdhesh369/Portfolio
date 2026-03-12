@@ -507,11 +507,16 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
         };
     }, [createParticleCloud, createLineConnections, animate, config.parallaxIntensity]);
 
+    const resolvedTheme = theme === "system"
+        ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        : theme;
+    const fallbackBg = resolvedTheme === "light" ? "#f8fafc" : "#000000";
+
     return (
         <div
             ref={containerRef}
             className="fixed inset-0 z-[-1]"
-            style={{ background: '#000000' }}
+            style={{ background: fallbackBg }}
             aria-hidden="true"
             role="presentation"
         />

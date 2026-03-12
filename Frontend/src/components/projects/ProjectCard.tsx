@@ -113,7 +113,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
 
         {/* Card Body */}
         <div
-          className="relative rounded-2xl overflow-hidden flex flex-col h-full bg-slate-900/90 border border-white/10 transition-all duration-300 group-hover:border-primary/50"
+          className="relative rounded-2xl overflow-hidden flex flex-col h-full bg-card/90 border border-border transition-all duration-300 group-hover:border-primary/50"
           style={{
             boxShadow: isHovered
               ? `0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px ${catColor.glow}`
@@ -147,7 +147,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
             )}
 
             {/* View Count */}
-            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-black/40 border border-white/10 text-[10px] text-gray-300 backdrop-blur-md flex items-center gap-1">
+            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-background/40 border border-border text-[10px] text-muted-foreground backdrop-blur-md flex items-center gap-1">
               <Eye className="w-3 h-3" /> {project.viewCount || 0}
             </div>
           </div>
@@ -155,7 +155,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
           {/* Content */}
           <div className="p-5 flex flex-col flex-grow">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors flex items-center gap-2">
+              <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
                 {project.title}
                 <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </h3>
@@ -171,7 +171,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
               </span>
             </div>
 
-            <p className="text-gray-400 text-sm line-clamp-2 mb-4 flex-grow">
+            <p className="text-muted-foreground text-sm line-clamp-2 mb-4 flex-grow">
               {project.description}
             </p>
 
@@ -180,27 +180,27 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
               {project.techStack.slice(0, 4).map((tech) => (
                 <span
                   key={tech}
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded border border-white/5 bg-white/5 text-gray-300`}
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded border border-border bg-foreground/5 text-muted-foreground`}
                 >
                   {tech}
                 </span>
               ))}
               {project.techStack.length > 4 && (
-                <span className="text-[10px] font-medium text-gray-500 py-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground py-0.5">
                   +{project.techStack.length - 4} more
                 </span>
               )}
             </div>
 
             {/* Links */}
-            <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+            <div className="flex items-center gap-3 pt-4 border-t border-border">
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="GitHub Repository"
                 >
                   <Github className="w-4 h-4" />
@@ -212,7 +212,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="Live Demo"
                 >
                   <ExternalLink className="w-4 h-4" />

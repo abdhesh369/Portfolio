@@ -146,7 +146,7 @@ const ProfileCard = ({ settings }: { settings: SiteSettings | undefined | null }
       <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-primary via-secondary to-accent opacity-20 blur-2xl animate-pulse" />
 
       {/* Main Card Container */}
-      <div className="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-primary/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
+      <div className="relative z-10 rounded-3xl overflow-hidden border border-border shadow-2xl shadow-primary/10 aspect-square max-w-md mx-auto bg-card/80 backdrop-blur-sm">
         {/* Profile Image */}
         <OptimizedImage
           src={settings?.personalAvatar || "/images/Myphoto.webp"}
@@ -186,7 +186,7 @@ const ProfileCard = ({ settings }: { settings: SiteSettings | undefined | null }
           </div>
 
           {/* Bottom Details */}
-          <div className="bg-background/80 p-6 rounded-xl border border-white/10 backdrop-blur-md">
+          <div className="bg-background/80 p-6 rounded-xl border border-border backdrop-blur-md">
             <div className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
               Active Protocols
@@ -268,7 +268,7 @@ const OpenToWorkBanner = () => {
       <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-secondary/50 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
 
       {/* Banner Body */}
-      <div className="relative flex items-center gap-3 px-6 py-2 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)] group-hover:shadow-[0_0_25px_rgba(var(--primary-rgb),0.3)]">
+      <div className="relative flex items-center gap-3 px-6 py-2 bg-background/60 backdrop-blur-xl border border-border/50 rounded-full leading-none transition duration-200 shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)] group-hover:shadow-[0_0_25px_rgba(var(--primary-rgb),0.3)]">
         <span className="flex items-center gap-2">
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -279,7 +279,7 @@ const OpenToWorkBanner = () => {
           </span>
         </span>
 
-        <div className="h-4 w-[1px] bg-white/20 mx-1" />
+        <div className="h-4 w-[1px] bg-foreground/20 mx-1" />
 
         <span className="flex items-center gap-1.5 text-secondary font-display text-xs font-semibold group-hover:text-secondary/80 transition-colors">
           <Sparkles className="w-3.5 h-3.5" />
@@ -335,7 +335,7 @@ export default function Hero() {
                   width={120}
                   height={120}
                   loading="eager"
-                  className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-white/20 shadow-xl"
+                  className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-border shadow-xl"
                 />
               </div>
             </m.div>
@@ -370,7 +370,7 @@ export default function Hero() {
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
                 <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
-                <span className="text-white bg-clip-text">
+                <span className="text-foreground bg-clip-text">
                   {settings?.heroHeadingLine1 || "Start building"}
                 </span> <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
@@ -383,7 +383,7 @@ export default function Hero() {
                 initial={fadeIn.initial}
                 animate={fadeIn.animate}
                 transition={{ delay: 0.5 }}
-                className="text-xl md:text-2xl text-gray-400 font-light h-[60px] flex items-center justify-center lg:justify-start"
+                className="text-xl md:text-2xl text-muted-foreground font-light h-[60px] flex items-center justify-center lg:justify-start"
               >
                 <span className="text-primary mr-2">{">"}</span>
                 <RotatingText
@@ -398,8 +398,8 @@ export default function Hero() {
             </div>
 
             {/* LCP element — no animation delay so it paints immediately */}
-            <p className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              I'm <strong className="text-white">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
+            <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              I'm <strong className="text-foreground">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
             </p>
 
             <m.div
@@ -457,7 +457,7 @@ export default function Hero() {
                 variant="outline"
                 size="lg"
                 aria-label="Contact Me directly via form"
-                className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 rounded-full px-8 backdrop-blur-sm"
+                className="w-full sm:w-auto border-border text-foreground hover:bg-foreground/10 rounded-full px-8 backdrop-blur-sm"
               >
                 Contact Me <Mail className="ml-2 w-4 h-4" />
               </Button>
@@ -479,21 +479,21 @@ export default function Hero() {
                 {settings?.socialDevto && <SocialLink href={settings.socialDevto} icon={Code2} label="Dev.to" />}
                 {settings?.socialMedium && <SocialLink href={settings.socialMedium} icon={Globe} label="Medium" />}
               </div>
-              <div className="h-4 w-[1px] bg-white/10 hidden sm:block" />
+              <div className="h-4 w-[1px] bg-foreground/10 hidden sm:block" />
               <div className="flex items-center gap-4 py-2">
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">{(projects?.length ?? 0)}+</span>
-                  <p className="text-[10px] text-gray-500">Projects</p>
+                  <span className="text-sm font-bold text-foreground">{(projects?.length ?? 0)}+</span>
+                  <p className="text-[10px] text-muted-foreground">Projects</p>
                 </div>
-                <div className="h-4 w-[1px] bg-white/10" />
+                <div className="h-4 w-[1px] bg-foreground/10" />
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">{(skills?.length ?? 0)}+</span>
-                  <p className="text-[10px] text-gray-500">Technologies</p>
+                  <span className="text-sm font-bold text-foreground">{(skills?.length ?? 0)}+</span>
+                  <p className="text-[10px] text-muted-foreground">Technologies</p>
                 </div>
-                <div className="h-4 w-[1px] bg-white/10" />
+                <div className="h-4 w-[1px] bg-foreground/10" />
                 <div className="text-center">
-                  <span className="text-sm font-bold text-white">{(experiences?.length ?? 0)}+</span>
-                  <p className="text-[10px] text-gray-500">Experiences</p>
+                  <span className="text-sm font-bold text-foreground">{(experiences?.length ?? 0)}+</span>
+                  <p className="text-[10px] text-muted-foreground">Experiences</p>
                 </div>
               </div>
             </m.div>
@@ -524,7 +524,7 @@ function SocialLink({ href, icon: Icon, label }: { href: string, icon: React.Ele
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-gray-400 hover:text-white transition-colors"
+      className="text-muted-foreground hover:text-foreground transition-colors"
       aria-label={label}
     >
       <Icon className="w-5 h-5" />

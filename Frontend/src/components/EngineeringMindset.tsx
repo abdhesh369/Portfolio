@@ -48,7 +48,7 @@ const PrincipleCard = ({
           borderColor: isActive ? "rgba(124,58,237,0.5)" : "rgba(0,0,0,0.1)",
           boxShadow: isActive ? "0 20px 40px -10px rgba(124,58,237,0.3)" : "0 0 0 0 transparent"
         }}
-        className={`relative p-8 bg-card/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-white/10 hover:border-primary/30'}`}
+        className={`relative p-8 bg-card/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 h-full group ${isActive ? 'border-primary/50' : 'border-border hover:border-primary/30'}`}
       >
         {/* Number badge */}
         <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold shadow-lg">
@@ -71,7 +71,7 @@ const PrincipleCard = ({
         </m.div>
 
         {/* Content */}
-        <h3 className={`text-xl font-bold mb-3 transition-colors ${isActive ? 'text-primary' : 'text-white'}`}>
+        <h3 className={`text-xl font-bold mb-3 transition-colors ${isActive ? 'text-primary' : 'text-foreground'}`}>
           {principle.title}
         </h3>
         <p className="text-muted-foreground leading-relaxed text-sm">
@@ -107,7 +107,7 @@ const DetailPanel = ({ principle }: { principle: Omit<Mindset, "icon"> & { icon:
           })()}
         </div>
         <div className="flex-1">
-          <h4 className="text-2xl font-bold mb-3 text-white">{principle.title}</h4>
+          <h4 className="text-2xl font-bold mb-3 text-foreground">{principle.title}</h4>
           <p className="text-muted-foreground leading-relaxed mb-4">
             {principle.description}
           </p>
@@ -185,7 +185,7 @@ export default function EngineeringMindset() {
           initial={fadeDown.initial}
           whileInView={fadeDown.animate}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold mb-4 text-white"
+          className="text-3xl md:text-5xl font-bold mb-4 text-foreground"
         >
           Engineering Mindset
         </m.h2>
@@ -236,7 +236,7 @@ export default function EngineeringMindset() {
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl" />
 
-          <div className="relative p-12 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10 text-center">
+          <div className="relative p-12 bg-card/80 backdrop-blur-sm rounded-3xl border border-border text-center">
             {/* Animated quote icon */}
             <m.div
               animate={{ rotate: [0, 10, -10, 0] }}

@@ -38,10 +38,10 @@ const CyberInput = ({
   return (
     <div className="relative group">
       {/* Corner Accents */}
-      <div className={`absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
-      <div className={`absolute -top-1 -right-1 w-2 h-2 border-t-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
-      <div className={`absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
-      <div className={`absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-white/20"}`} />
+      <div className={`absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-border"}`} />
+      <div className={`absolute -top-1 -right-1 w-2 h-2 border-t-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-border"}`} />
+      <div className={`absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-border"}`} />
+      <div className={`absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 transition-colors duration-300 ${isFocused ? "border-cyan-400" : "border-border"}`} />
 
       <Component
         {...register(id, {
@@ -58,15 +58,15 @@ const CyberInput = ({
         }}
         className={`w-full px-4 py-3 bg-card/50 border rounded-lg outline-none transition-all duration-300 font-mono text-sm ${error
           ? 'border-red-500/50 focus:border-red-500'
-          : 'border-white/10 focus:border-cyan-500/50 hover:border-white/20'
-          } ${isFocused || hasValue ? 'pt-8 pb-2' : 'pt-5 pb-5'} placeholder-transparent text-gray-200 resize-none`}
+          : 'border-border focus:border-cyan-500/50 hover:border-foreground/20'
+          } ${isFocused || hasValue ? 'pt-8 pb-2' : 'pt-5 pb-5'} placeholder-transparent text-foreground resize-none`}
       />
 
       <label
         htmlFor={id}
         className={`absolute left-4 transition-all duration-300 pointer-events-none font-mono uppercase tracking-wider ${isFocused || hasValue
           ? 'top-2 text-[10px] text-cyan-400'
-          : 'top-4 text-xs text-gray-500'
+          : 'top-4 text-xs text-muted-foreground'
           }`}
       >
         {'>'} {label} {required && <span className="text-red-400">*</span>}
@@ -99,16 +99,16 @@ const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.Eleme
   >
     <a
       href={href}
-      className={`flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-cyan-500/30 transition-all ${!href && 'pointer-events-none'}`}
+      className={`flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-foreground/[0.02] hover:bg-foreground/[0.05] hover:border-cyan-500/30 transition-all ${!href && 'pointer-events-none'}`}
     >
       <div className="p-3 bg-cyan-500/10 rounded-lg text-cyan-400 group-hover:scale-110 transition-transform">
         <Icon className="w-5 h-5" />
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-mono mb-0.5">{label}</p>
-        <p className="text-sm font-medium text-gray-200 truncate font-mono">{value}</p>
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono mb-0.5">{label}</p>
+        <p className="text-sm font-medium text-foreground truncate font-mono">{value}</p>
       </div>
-      {href && <Copy className="w-4 h-4 text-gray-600 group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" aria-hidden="true" />}
+      {href && <Copy className="w-4 h-4 text-muted-foreground group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" aria-hidden="true" />}
     </a>
   </m.div>
 );
@@ -193,12 +193,12 @@ export default function Contact() {
             initial={fadeDown.initial}
             whileInView={fadeDown.animate}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-bold font-display text-white mb-4"
+            className="text-3xl md:text-5xl font-bold font-display text-foreground mb-4"
           >
             Initialize <span className="text-cyan-400">Connection</span>
           </m.h2>
 
-          <p className="text-gray-400 max-w-lg mx-auto">
+          <p className="text-muted-foreground max-w-lg mx-auto">
             Ready to collaborate on high-performance systems? Transmit your data below.
           </p>
         </div>
@@ -206,12 +206,12 @@ export default function Contact() {
         <div className="grid lg:grid-cols-5 gap-12 items-start">
           {/* Contact Info Panel */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="p-6 rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm relative overflow-hidden">
+            <div className="p-6 rounded-2xl border border-border bg-card/80 backdrop-blur-sm relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-20">
                 <Terminal className="w-24 h-24 text-cyan-500" />
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <div className="w-1 h-6 bg-cyan-500 rounded-full" />
                 Direct Channels
               </h3>
@@ -223,8 +223,8 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm">
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <div className="p-6 rounded-2xl border border-border bg-card/80 backdrop-blur-sm">
+              <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <div className="w-1 h-6 bg-purple-500 rounded-full" />
                 Social Uplink
               </h3>
@@ -240,7 +240,7 @@ export default function Contact() {
               whileInView={fadeUp.animate}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="p-6 rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm"
+              className="p-6 rounded-2xl border border-border bg-card/80 backdrop-blur-sm"
             >
               <AvailabilityCalendar />
             </m.div>
@@ -254,15 +254,15 @@ export default function Contact() {
             className="lg:col-span-3 relative"
           >
             {/* Terminal Frame */}
-            <div className="relative bg-background/90 backdrop-blur-xl rounded-2xl border border-white/10 p-1 shadow-2xl">
+            <div className="relative bg-background/90 backdrop-blur-xl rounded-2xl border border-border p-1 shadow-2xl">
               {/* Header Bar */}
-              <div className="bg-white/5 px-4 py-2 rounded-t-xl flex items-center justify-between border-b border-white/5">
+              <div className="bg-foreground/5 px-4 py-2 rounded-t-xl flex items-center justify-between border-b border-border/50">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500/50" />
                   <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
                   <div className="w-3 h-3 rounded-full bg-green-500/50" />
                 </div>
-                <div className="text-[10px] font-mono text-gray-500">msg_transmission.exe</div>
+                <div className="text-[10px] font-mono text-muted-foreground">msg_transmission.exe</div>
               </div>
 
               <div className="p-6 md:p-8 relative">
@@ -286,10 +286,10 @@ export default function Contact() {
                       >
                         <CheckCircle className="w-10 h-10 text-green-500" />
                       </m.div>
-                      <h3 className="text-2xl font-bold text-white mb-2">Transmission Successful</h3>
-                      <p className="text-gray-400 mb-4 font-mono text-sm">Target received packet. Awaiting response.</p>
+                      <h3 className="text-2xl font-bold text-foreground mb-2">Transmission Successful</h3>
+                      <p className="text-muted-foreground mb-4 font-mono text-sm">Target received packet. Awaiting response.</p>
                       {/* Auto-dismiss countdown bar */}
-                      <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mb-6">
+                      <div className="w-48 h-1 bg-foreground/10 rounded-full overflow-hidden mb-6">
                         <m.div
                           initial={{ width: "100%" }}
                           animate={{ width: "0%" }}
@@ -305,22 +305,22 @@ export default function Contact() {
                 </AnimatePresence>
 
                 {/* Form Mode Toggle */}
-                <div className="flex flex-col sm:flex-row p-1 bg-white/5 rounded-lg mb-8 border border-white/10 w-full sm:w-fit mx-auto md:mx-0 gap-1 sm:gap-0">
+                <div className="flex flex-col sm:flex-row p-1 bg-foreground/5 rounded-lg mb-8 border border-border w-full sm:w-fit mx-auto md:mx-0 gap-1 sm:gap-0">
                   <button
                     onClick={() => setFormMode("message")}
-                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "message" ? "bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]" : "text-gray-400 hover:text-white"}`}
+                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "message" ? "bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     Standard Message
                   </button>
                   <button
                     onClick={() => setFormMode("project")}
-                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "project" ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/50" : "text-gray-400 hover:text-white"}`}
+                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "project" ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/50" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     Project Request
                   </button>
                   <button
                     onClick={() => setFormMode("wizard")}
-                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "wizard" ? "bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]" : "text-gray-400 hover:text-white"}`}
+                    className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "wizard" ? "bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     Scope AI <span className="ml-1 text-[8px] bg-white/10 px-1 rounded">BETA</span>
                   </button>
@@ -420,7 +420,7 @@ export default function Contact() {
               </div>
 
               {/* Footer Bar */}
-              <div className="bg-white/5 px-4 py-2 rounded-b-xl border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-gray-600">
+              <div className="bg-foreground/5 px-4 py-2 rounded-b-xl border-t border-border/50 flex justify-between items-center text-[10px] font-mono text-muted-foreground">
                 <span>SECURE_CONNECTION: TLS_v1.3</span>
                 <span>LATENCY: 12ms</span>
               </div>
@@ -442,7 +442,7 @@ const SocialLink = ({ href, icon: Icon, label, delay }: { href: string; icon: Re
     viewport={{ once: true }}
     transition={{ delay }}
     whileHover={{ scale: 1.05 }}
-    className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 rounded-lg text-gray-400 hover:text-cyan-400 transition-all"
+    className="p-3 bg-foreground/5 hover:bg-foreground/10 border border-border hover:border-cyan-500/30 rounded-lg text-muted-foreground hover:text-cyan-400 transition-all"
     title={label}
     aria-label={label}
   >

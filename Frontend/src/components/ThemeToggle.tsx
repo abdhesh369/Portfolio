@@ -11,7 +11,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="relative w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-gray-400 hover:text-white"
+      className="relative w-9 h-9 rounded-full bg-foreground/5 border border-border hover:bg-foreground/10 hover:border-foreground/20 transition-all text-muted-foreground hover:text-foreground"
       aria-label="Toggle theme"
     >
       <m.div

@@ -23,11 +23,11 @@ export default function Testimonials() {
             <section id="testimonials" className="py-24 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6">
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-8 w-48 rounded-lg bg-white/5 animate-pulse" />
+                        <div className="h-8 w-48 rounded-lg bg-foreground/5 animate-pulse" />
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse" />
+                            <div key={i} className="h-64 rounded-2xl bg-foreground/5 animate-pulse" />
                         ))}
                     </div>
                 </div>

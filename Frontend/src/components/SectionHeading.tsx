@@ -64,7 +64,7 @@ export default function SectionHeading({
             >
                 {highlight ? (
                     <>
-                        <span className="text-white">{title} </span>
+                        <span className="text-foreground">{title} </span>
                         <span
                             className={`text-transparent bg-clip-text bg-gradient-to-r ${colors.gradient} animate-gradient-x`}
                             style={{ backgroundSize: "200% 200%" }}
@@ -88,7 +88,7 @@ export default function SectionHeading({
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 }}
-                    className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg"
+                    className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg"
                 >
                     {subtitle}
                 </m.p>

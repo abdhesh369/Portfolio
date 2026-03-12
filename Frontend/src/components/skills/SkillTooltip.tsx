@@ -50,9 +50,9 @@ export const SkillTooltip = ({
                 {/* Close button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                    className="absolute top-4 right-4 p-1.5 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                 >
-                    <X className="w-4 h-4 text-gray-400" />
+                    <X className="w-4 h-4 text-muted-foreground" />
                 </button>
 
                 {/* Header */}
@@ -67,7 +67,7 @@ export const SkillTooltip = ({
                         <node.icon className={`w-6 h-6 ${colors.text}`} />
                     </div>
                     <div>
-                        <h4 className="font-bold text-white text-lg">{node.name}</h4>
+                        <h4 className="font-bold text-foreground text-lg">{node.name}</h4>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${colors.bg} ${colors.text} ${colors.border} border font-medium`}>
                             {node.status}
                         </span>
@@ -78,7 +78,7 @@ export const SkillTooltip = ({
                 <div className="space-y-4">
                     {node.mastery !== undefined && (
                         <div>
-                            <div className="flex justify-between items-center mb-1.5 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                            <div className="flex justify-between items-center mb-1.5 text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                                 <span>Mastery</span>
                                 <span>{node.mastery}%</span>
                             </div>
@@ -93,21 +93,21 @@ export const SkillTooltip = ({
                         </div>
                     )}
                     <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">What I Use It For</span>
-                        <p className="text-gray-300 text-sm mt-1 leading-relaxed">{node.description}</p>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">What I Use It For</span>
+                        <p className="text-foreground/80 text-sm mt-1 leading-relaxed">{node.description}</p>
                     </div>
                     <div className="pt-3 border-t border-gray-700/50">
-                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                             <BookOpen className="w-3 h-3" /> Proof of Work
                         </span>
-                        <p className="text-gray-400 text-sm mt-1 italic">{node.proof}</p>
+                        <p className="text-muted-foreground text-sm mt-1 italic">{node.proof}</p>
                     </div>
                 </div>
 
                 {/* Category tag */}
                 <div className="mt-4 pt-3 border-t border-gray-700/30">
-                    <span className="text-xs text-gray-500">
-                        Category: <span className="text-gray-400 font-medium">{node.category}</span>
+                    <span className="text-xs text-muted-foreground">
+                        Category: <span className="text-foreground/80 font-medium">{node.category}</span>
                     </span>
                 </div>
             </m.div>

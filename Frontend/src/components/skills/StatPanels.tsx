@@ -31,7 +31,7 @@ export const StatPanel = ({
         >
             <div className="flex items-center gap-2 mb-3">
                 {icon}
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {title}
                 </h4>
             </div>
@@ -59,7 +59,7 @@ export const ProficiencyChart = ({ skillNodes }: { skillNodes: SkillNode[] }) =>
         <div className="space-y-2.5">
             {categories.map((cat, i) => (
                 <div key={cat.name} className="flex items-center gap-2">
-                    <span className="text-[10px] w-14 md:w-16 text-gray-500 font-medium">{cat.name}</span>
+                    <span className="text-[10px] w-14 md:w-16 text-muted-foreground font-medium">{cat.name}</span>
                     <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(30, 30, 50, 0.8)' }}>
                         <m.div
                             className="h-full rounded-full"
@@ -73,7 +73,7 @@ export const ProficiencyChart = ({ skillNodes }: { skillNodes: SkillNode[] }) =>
                             transition={{ duration: 1, delay: 2.6 + i * 0.1 }}
                         />
                     </div>
-                    <span className="text-[10px] text-gray-400 w-3 font-bold">{cat.count}</span>
+                    <span className="text-[10px] text-muted-foreground w-3 font-bold">{cat.count}</span>
                 </div>
             ))}
         </div>
@@ -109,8 +109,8 @@ export const CategorySummary = ({ skillNodes }: { skillNodes: SkillNode[] }) => 
                 >
                     <span className="text-xs">{cat.icon}</span>
                     <div className="min-w-0">
-                        <div className="text-[9px] text-gray-500 truncate">{cat.name}</div>
-                        <div className="text-xs font-bold text-white">{cat.count}</div>
+                        <div className="text-[9px] text-muted-foreground truncate">{cat.name}</div>
+                        <div className="text-xs font-bold text-foreground">{cat.count}</div>
                     </div>
                 </m.div>
             ))}

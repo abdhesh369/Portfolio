@@ -138,12 +138,12 @@ export default function SkillsTree() {
           transition={{ duration: 0.8 }}
         >
           <m.h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground"
           >
             Skill Tree
           </m.h2>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-gray-400 max-w-md mx-auto text-sm md:text-base">
+            <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base">
               A verified map of my technical abilities
             </p>
             <button
@@ -162,11 +162,11 @@ export default function SkillsTree() {
           
           {/* View Mode Toggle */}
           <div className="flex justify-center mt-6 relative z-50">
-            <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1 shadow-lg">
+            <div className="flex items-center bg-foreground/5 border border-border rounded-full p-1 shadow-lg">
               <button
                 onClick={() => setViewMode('tree')}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  viewMode === 'tree' ? 'bg-primary/20 text-primary' : 'text-gray-400 hover:text-white'
+                  viewMode === 'tree' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Hexagon Tree
@@ -174,7 +174,7 @@ export default function SkillsTree() {
               <button
                 onClick={() => setViewMode('list')}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  viewMode === 'list' ? 'bg-primary/20 text-primary' : 'text-gray-400 hover:text-white'
+                  viewMode === 'list' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 List View
@@ -265,7 +265,7 @@ export default function SkillsTree() {
                   boxShadow: `0 0 8px ${item.color}80`
                 }}
               />
-              <span className="text-xs text-gray-500 font-medium">{item.label}</span>
+              <span className="text-xs text-muted-foreground font-medium">{item.label}</span>
             </div>
           ))}
         </m.div>

@@ -78,7 +78,7 @@ export default function Services() {
           >
             Services & Collaboration
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
             Concrete ways I can contribute to your team or product. Each
             service maps directly to the skills and case studies you see on this
             page.
@@ -101,7 +101,7 @@ export default function Services() {
               transition={
                 shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05 }
               }
-              className="relative rounded-2xl border border-white/10 bg-card/80 backdrop-blur-sm p-5 flex flex-col group card-glow-hover transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+              className="relative rounded-2xl border border-border bg-card/80 backdrop-blur-sm p-5 flex flex-col group card-glow-hover transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)]"
             >
               <div className="flex items-center justify-between mb-3 gap-2">
                 <div className="flex items-center gap-2">
@@ -109,7 +109,7 @@ export default function Services() {
                     <Layers className="w-4 h-4 text-cyan-400" />
                   </span>
                   <div>
-                    <h3 className="text-sm font-semibold text-white">
+                    <h3 className="text-sm font-semibold text-foreground">
                       {svc.title}
                     </h3>
                     <p className="text-[11px] text-cyan-400/80 uppercase tracking-wide">
@@ -124,7 +124,7 @@ export default function Services() {
                 )}
               </div>
 
-              <p className="text-xs text-gray-300 leading-relaxed mb-4 flex-1">
+              <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">
                 {svc.summary}
               </p>
 
