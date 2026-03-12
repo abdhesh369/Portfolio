@@ -195,6 +195,18 @@ export class ArticleService {
         // Note: View counts are allowed to be slightly stale in cache
     }
 
+    /**
+     * Adds an emoji reaction to an article.
+     * @param id - The article ID to add a reaction to
+     * @param emoji - The emoji character
+     * @returns The updated article
+     */
+    async addReaction(id: number, emoji: string): Promise<Article> {
+        const article = await articleRepository.addReaction(id, emoji);
+        await this.invalidateCache(article.slug);
+        return article;
+    }
+
     private async invalidateCache(slug?: string) {
         try {
             await CacheService.invalidateTracked(TRACKED_KEYS);

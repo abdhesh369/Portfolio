@@ -93,11 +93,12 @@ export default function AdminDashboard() {
                     case 'o': targetTab = 'overview'; label = "Overview"; break;
                     case 'm': targetTab = 'messages'; label = "Messages"; break;
                     case 'p': targetTab = 'projects'; label = "Projects"; break;
-                    case 's': targetTab = 'skills'; label = "Skills"; break;
+                    case 'k': targetTab = 'skills'; label = "Skills"; break;
                     case 'a': targetTab = 'articles'; label = "Articles"; break;
                     case 'e': targetTab = 'experiences'; label = "Experiences"; break;
                     case 'n': targetTab = 'analytics'; label = "Analytics"; break;
-                    case '?': setShortcutHint("SHORTCUTS: G+O (Overview), G+M (Messages), G+P (Projects), G+S (Skills), G+A (Articles), G+E (Experiences), G+N (Analytics)"); break;
+                    case 's': targetTab = 'settings'; label = "Site Settings"; break;
+                    case '?': setShortcutHint("SHORTCUTS: G+O (Overview), G+M (Messages), G+P (Projects), G+K (Skills), G+A (Articles), G+E (Experiences), G+N (Analytics), G+S (Settings)"); break;
                 }
 
                 if (targetTab) {

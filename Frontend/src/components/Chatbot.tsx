@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { Send, Minimize2 } from "lucide-react";
+import { Send, Minimize2, Trash2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/api-helpers";
@@ -22,9 +22,20 @@ interface ChatMessage {
 export function Chatbot() {
     const { data: settings } = useSiteSettings();
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: crypto.randomUUID(), role: "model", parts: [{ text: `Hi there! I'm ${settings?.personalName?.split(" ")[0] || "Abdhesh"}'s AI assistant. How can I help you today?` }], timestamp: Date.now() }
-    ]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+    useEffect(() => {
+        if (settings && messages.length === 0) {
+            setMessages([
+                {
+                    id: crypto.randomUUID(),
+                    role: "model",
+                    parts: [{ text: settings.chatbotGreeting || `Hi there! I'm ${settings.personalName?.split(" ")[0] || "Abdhesh"}'s AI assistant. How can I help you today?` }],
+                    timestamp: Date.now()
+                }
+            ]);
+        }
+    }, [settings, messages.length]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -132,6 +143,12 @@ export function Chatbot() {
         }
     };
 
+    const clearMessages = () => {
+        setMessages([
+            { id: crypto.randomUUID(), role: "model", parts: [{ text: settings?.chatbotGreeting || `Hi there! I'm ${settings?.personalName?.split(" ")[0] || "Abdhesh"}'s AI assistant. How can I help you today?` }], timestamp: Date.now() }
+        ]);
+    };
+
     return (
         <>
             <AnimatePresence>
@@ -221,13 +238,22 @@ export function Chatbot() {
                                     </p>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                aria-label="Close chat"
-                                className="group p-2 text-gray-500 hover:text-cyan-400 transition-all hover:bg-cyan-500/5 rounded-lg border border-transparent hover:border-cyan-500/20"
-                            >
-                                <Minimize2 className="w-4 h-4 group-hover:scale-90 transition-transform" />
-                            </button>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={clearMessages}
+                                    title="Clear conversation"
+                                    className="group p-2 text-gray-500 hover:text-red-400 transition-all hover:bg-red-500/5 rounded-lg border border-transparent hover:border-red-500/20"
+                                >
+                                    <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                </button>
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    aria-label="Close chat"
+                                    className="group p-2 text-gray-500 hover:text-cyan-400 transition-all hover:bg-cyan-500/5 rounded-lg border border-transparent hover:border-cyan-500/20"
+                                >
+                                    <Minimize2 className="w-4 h-4 group-hover:scale-90 transition-transform" />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Messages Area */}

@@ -6,7 +6,7 @@ import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover
 
 const defaultFooterNavItems = [
   { name: "Home", href: "/" },
-  { name: "Projects", href: "#projects" },
+  { name: "Projects", href: "/projects" },
   { name: "Skills", href: "#skills" },
   { name: "Experience", href: "#experience" },
   { name: "Blog", href: "/blog" },

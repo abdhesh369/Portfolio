@@ -163,6 +163,7 @@ export const articlesTable = pgTable("articles", {
   metaDescription: text("metaDescription"),
   authorId: integer("authorId"),
   featuredImageAlt: text("featuredImageAlt"),
+  reactions: jsonb("reactions").$type<Record<string, number>>().notNull().default({}),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => {
@@ -328,6 +329,20 @@ export const siteSettingsTable = pgTable("site_settings", {
   personalAvatar: varchar("personalAvatar", { length: 500 }),
   resumeUrl: varchar("resumeUrl", { length: 500 }),
   whyHireMeData: jsonb("whyHireMeData").$type<{ description: string; skills: string[]; stats: { label: string; value: string }[] }>(),
+  aboutAvailability: varchar("aboutAvailability", { length: 255 }).default("Open to Work"),
+  aboutDescription: text("aboutDescription").default("Building scalable web systems and analyzing complex algorithms."),
+  aboutTechStack: jsonb("aboutTechStack").$type<string[]>().default(["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]),
+  aboutTimeline: jsonb("aboutTimeline").$type<{ year: string; title: string; description: string }[]>().default([
+    { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture." },
+    { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University." },
+    { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development." }
+  ]),
+  aboutInfoCards: jsonb("aboutInfoCards").$type<{ icon: string; label: string; value: string; color?: "cyan" | "purple" }[]>().default([
+    { icon: "GraduationCap", label: "Status", value: "B.E. Student" },
+    { icon: "Code", label: "Focus Area", value: "Full Stack System Design", color: "purple" },
+    { icon: "Cpu", label: "Hardware", value: "Electronics & Comms", color: "purple" },
+    { icon: "Target", label: "Goal", value: "Software Engineer" }
+  ]),
 
   // Social Links (10 platforms)
   socialGithub: varchar("socialGithub", { length: 500 }),
@@ -342,6 +357,9 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialMedium: varchar("socialMedium", { length: 500 }),
   socialEmail: varchar("socialEmail", { length: 255 }),
   locationText: varchar("locationText", { length: 255 }).default("Kathmandu, Nepal"),
+
+  // Chatbot
+  chatbotGreeting: text("chatbotGreeting").default("Hi there! I'm Abdhesh's AI assistant. How can I help you today?"),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -396,6 +414,14 @@ export const siteSettingsTable = pgTable("site_settings", {
   featureTestimonials: boolean("featureTestimonials").notNull().default(true),
   featureServices: boolean("featureServices").notNull().default(true),
   featurePlayground: boolean("featurePlayground").notNull().default(false),
+});
+
+export const subscribersTable = pgTable("subscribers", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  status: varchar("status", { length: 50 }).$type<"active" | "unsubscribed">().notNull().default("active"),
+  source: varchar("source", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
@@ -454,6 +480,9 @@ export const insertGuestbookSchema = createInsertSchema(guestbookTable);
 
 export const selectSiteSettingsSchema = createSelectSchema(siteSettingsTable);
 export const insertSiteSettingsSchema = createInsertSchema(siteSettingsTable);
+
+export const selectSubscriberSchema = createSelectSchema(subscribersTable);
+export const insertSubscriberSchema = createInsertSchema(subscribersTable);
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -793,6 +822,19 @@ export const insertSeoSettingsApiSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
 });
 
+export const subscriberSchema = z.object({
+  id: z.number(),
+  email: z.string().email().max(255),
+  status: z.enum(["active", "unsubscribed"]).default("active"),
+  source: z.string().max(100).nullable().optional(),
+  createdAt: z.coerce.date(),
+});
+
+export const insertSubscriberApiSchema = z.object({
+  email: z.string().email().max(255),
+  source: z.string().max(100).optional(),
+});
+
 // Common fields for Site Settings to avoid duplication
 const siteSettingsBaseSchema = z.object({
   isOpenToWork: z.boolean(),
@@ -811,6 +853,14 @@ const siteSettingsBaseSchema = z.object({
       value: z.string()
     }))
   }).nullable().optional(),
+  aboutAvailability: z.string().max(255).optional(),
+  aboutDescription: z.string().max(10000).optional(),
+  aboutTechStack: z.array(z.string()).optional(),
+  aboutTimeline: z.array(z.object({
+    year: z.string(),
+    title: z.string(),
+    description: z.string()
+  })).optional(),
 
   // Social Links (10 platforms)
   socialGithub: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
@@ -850,25 +900,32 @@ const siteSettingsBaseSchema = z.object({
   colorAccent: z.string().max(50).optional(),
   colorBorder: z.string().max(50).optional(),
   colorText: z.string().max(50).optional(),
-  colorMuted: z.string().max(50).optional(),
-  fontDisplay: z.string().max(255).optional(),
-  fontBody: z.string().max(255).optional(),
-  customCss: z.string().max(50000).nullable().optional().transform(sanitizeCss),
+  colorBackground: z.string().max(50).nullish(),
+  colorSurface: z.string().max(50).nullish(),
+  colorPrimary: z.string().max(50).nullish(),
+  colorSecondary: z.string().max(50).nullish(),
+  colorAccent: z.string().max(50).nullish(),
+  colorBorder: z.string().max(50).nullish(),
+  colorText: z.string().max(50).nullish(),
+  colorMuted: z.string().max(50).nullish(),
+  fontDisplay: z.string().max(255).nullish(),
+  fontBody: z.string().max(255).nullish(),
+  customCss: z.string().nullable().optional(),
 
   // Navbar Configuration
   navbarLinks: z.array(z.object({
     label: z.string(),
     href: z.string(),
     icon: z.string().optional(),
-  })).optional(),
+  })).nullish(),
 
   // Footer Configuration
-  footerCopyright: z.string().max(255).optional(),
-  footerTagline: z.string().max(500).optional(),
+  footerCopyright: z.string().max(255).nullish(),
+  footerTagline: z.string().max(500).nullish(),
 
   // Section Ordering & Visibility
-  sectionOrder: z.array(z.string()).optional(),
-  sectionVisibility: z.record(z.boolean()).optional(),
+  sectionOrder: z.array(z.string()).nullish(),
+  sectionVisibility: z.record(z.boolean()).nullish(),
 
   // Availability
   availabilitySlots: z.array(z.object({
@@ -877,14 +934,17 @@ const siteSettingsBaseSchema = z.object({
     endDate: z.string(),
     status: z.enum(["available", "booked", "unavailable"]),
     label: z.string().optional(),
-  })).optional(),
+  })).nullish(),
 
   // Feature Toggles
-  featureBlog: z.boolean().optional(),
-  featureGuestbook: z.boolean().optional(),
-  featureTestimonials: z.boolean().optional(),
-  featureServices: z.boolean().optional(),
-  featurePlayground: z.boolean().optional(),
+  featureBlog: z.boolean().nullish(),
+  featureGuestbook: z.boolean().nullish(),
+  featureTestimonials: z.boolean().nullish(),
+  featureServices: z.boolean().nullish(),
+  featurePlayground: z.boolean().nullish(),
+
+  // Chatbot
+  chatbotGreeting: z.string().nullish(),
 });
 
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({
@@ -910,6 +970,7 @@ export const articleSchema = z.object({
   metaDescription: z.string().nullable().optional(),
   authorId: z.number().nullable().optional(),
   featuredImageAlt: z.string().max(500).nullable().optional(),
+  reactions: z.record(z.number()).default({}),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   tags: z.array(z.string()).optional(),
@@ -972,6 +1033,9 @@ export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
+export type Subscriber = z.infer<typeof selectSubscriberSchema>;
+export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
+export type InsertSubscriberApi = z.infer<typeof insertSubscriberApiSchema>;
 
 // Update schemas
 export const updateProjectSchema = insertProjectApiSchema.partial();
@@ -1013,6 +1077,9 @@ export function isGuestbookEntry(obj: unknown): obj is GuestbookEntry {
 }
 export function isAuditLog(obj: unknown): obj is AuditLog {
   return auditLogSchema.safeParse(obj).success;
+}
+export function isSubscriber(obj: unknown): obj is Subscriber {
+  return subscriberSchema.safeParse(obj).success;
 }
 
 // ================= MF-2: Code Review Schemas =================

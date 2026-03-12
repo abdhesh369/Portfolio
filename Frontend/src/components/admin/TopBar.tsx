@@ -1,10 +1,12 @@
 import {
-    Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings, Globe
+    Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings, Globe, Clock
 } from "lucide-react";
 import { useAuth } from "@/hooks/auth-context";
 import { useTheme } from "@/components/theme-provider";
 import { useState, useRef, useEffect } from "react";
+import { useMutationState } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
 
 interface TopBarProps {
     activeTab: string;
@@ -26,6 +28,20 @@ export default function TopBar({
     const { theme, setTheme } = useTheme();
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
+
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+    // Track successful mutations to show "Last Saved"
+    const mutationResults = useMutationState({
+        filters: { status: 'success' },
+        select: (mutation) => mutation.state.submittedAt,
+    });
+
+    useEffect(() => {
+        if (mutationResults.length > 0) {
+            setLastSaved(new Date());
+        }
+    }, [mutationResults.length]);
 
     const viewSiteUrl = typeof window !== 'undefined' ? window.location.origin : "";
 
@@ -66,9 +82,17 @@ export default function TopBar({
                             {activeTab.replace(/-/g, "_")}
                         </button>
                         {isRefreshing && (
-                            <div className="flex items-center gap-3 ml-6 px-3 py-1.5 nm-inset rounded-lg bg-purple-500/5 text-purple-500 border border-purple-500/10">
-                                <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                            <div className="flex items-center gap-3 ml-6 px-3 py-1.5 nm-inset rounded-lg bg-emerald-500/5 text-emerald-500 border border-emerald-500/10">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 <span className="text-[9px] font-black tracking-widest">DATA_SYNC_ACTIVE</span>
+                            </div>
+                        )}
+                        {lastSaved && !isRefreshing && (
+                            <div className="hidden lg:flex items-center gap-2 ml-6 text-slate-500">
+                                <Clock size={12} />
+                                <span className="text-[9px] font-bold tracking-widest">
+                                    SAVED {formatDistanceToNow(lastSaved, { addSuffix: true }).toUpperCase()}
+                                </span>
                             </div>
                         )}
                     </div>

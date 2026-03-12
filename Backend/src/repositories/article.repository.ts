@@ -26,6 +26,7 @@ export class ArticleRepository {
 
         return results.map(a => ({
             ...a,
+            reactions: a.reactions || {},
             tags: tagsMap.get(a.id) ?? []
         })) as Article[];
     }
@@ -37,6 +38,7 @@ export class ArticleRepository {
         const tags = await db.select().from(articleTagsTable).where(eq(articleTagsTable.articleId, article.id));
         return {
             ...article,
+            reactions: article.reactions || {},
             tags: tags.map(t => t.tag)
         } as Article;
     }
@@ -48,6 +50,7 @@ export class ArticleRepository {
         const tags = await db.select().from(articleTagsTable).where(eq(articleTagsTable.articleId, article.id));
         return {
             ...article,
+            reactions: article.reactions || {},
             tags: tags.map(t => t.tag)
         } as Article;
     }
@@ -71,6 +74,7 @@ export class ArticleRepository {
 
         return results.map(a => ({
             ...a,
+            reactions: a.reactions || {},
             tags: tagsMap.get(a.id) ?? []
         })) as Article[];
     }
@@ -104,6 +108,7 @@ export class ArticleRepository {
                 excerpt: inserted.excerpt ?? undefined,
                 metaTitle: inserted.metaTitle ?? undefined,
                 metaDescription: inserted.metaDescription ?? undefined,
+                reactions: inserted.reactions || {},
             };
         });
     }
@@ -140,6 +145,7 @@ export class ArticleRepository {
                 excerpt: updated.excerpt ?? undefined,
                 metaTitle: updated.metaTitle ?? undefined,
                 metaDescription: updated.metaDescription ?? undefined,
+                reactions: updated.reactions || {},
             };
         });
     }
@@ -175,6 +181,7 @@ export class ArticleRepository {
             metaDescription: string | null;
             authorId: number | null;
             featuredImageAlt: string | null;
+            reactions: Record<string, number> | null;
             createdAt: string | Date;
             updatedAt: string | Date;
             rank: number;
@@ -206,6 +213,7 @@ export class ArticleRepository {
             metaDescription: r.metaDescription ?? undefined,
             authorId: r.authorId ?? undefined,
             featuredImageAlt: r.featuredImageAlt ?? undefined,
+            reactions: r.reactions || {},
             createdAt: new Date(r.createdAt),
             updatedAt: new Date(r.updatedAt),
         }));
@@ -219,10 +227,10 @@ export class ArticleRepository {
                 if (!tagsMap.has(t.articleId)) tagsMap.set(t.articleId, []);
                 tagsMap.get(t.articleId)!.push(t.tag);
             }
-            return articles.map(a => ({ ...a, tags: tagsMap.get(a.id) ?? [] }));
+            return articles.map(a => ({ ...a, tags: tagsMap.get(a.id) ?? [] })) as Article[];
         }
 
-        return articles;
+        return articles as Article[];
     }
 
     async findRelated(articleId: number, limit: number = 3): Promise<Article[]> {
@@ -241,6 +249,7 @@ export class ArticleRepository {
             metaDescription: string | null;
             authorId: number | null;
             featuredImageAlt: string | null;
+            reactions: Record<string, number> | null;
             createdAt: string | Date;
             updatedAt: string | Date;
             score: number;
@@ -252,7 +261,7 @@ export class ArticleRepository {
             JOIN article_tags at1 ON at1."articleId" = ${articleId}
             JOIN article_tags at2 ON at2."articleId" = a.id AND at2.tag = at1.tag
             WHERE a.id != ${articleId} AND a.status = 'published'
-            GROUP BY a.id, a.title, a.slug, a.content, a.excerpt, a."featuredImage", a.status, a."publishedAt", a."viewCount", a."readTimeMinutes", a."metaTitle", a."metaDescription", a."authorId", a."featuredImageAlt", a."createdAt", a."updatedAt"
+            GROUP BY a.id, a.title, a.slug, a.content, a.excerpt, a."featuredImage", a.status, a."publishedAt", a."viewCount", a."readTimeMinutes", a."metaTitle", a."metaDescription", a."authorId", a."featuredImageAlt", a.reactions, a."createdAt", a."updatedAt"
             ORDER BY score DESC, a."publishedAt" DESC
             LIMIT ${limit}
         `);
@@ -274,6 +283,7 @@ export class ArticleRepository {
             metaDescription: r.metaDescription ?? undefined,
             authorId: r.authorId ?? undefined,
             featuredImageAlt: r.featuredImageAlt ?? undefined,
+            reactions: r.reactions || {},
             createdAt: new Date(r.createdAt),
             updatedAt: new Date(r.updatedAt),
         }));
@@ -288,7 +298,36 @@ export class ArticleRepository {
             tagsMap.get(t.articleId)!.push(t.tag);
         }
 
-        return results.map(r => ({ ...r, tags: tagsMap.get(r.id) ?? [] }));
+        return results.map(r => ({ ...r, tags: tagsMap.get(r.id) ?? [] })) as Article[];
+    }
+
+    async addReaction(id: number, emoji: string): Promise<Article> {
+        return await db.transaction(async (tx) => {
+            const [updated] = await tx.update(articlesTable)
+                .set({
+                    reactions: sql`jsonb_set(
+                        COALESCE(reactions, '{}'::jsonb), 
+                        ARRAY[${emoji}], 
+                        (COALESCE((reactions->>${emoji}), '0')::int + 1)::text::jsonb
+                    )`
+                })
+                .where(eq(articlesTable.id, id))
+                .returning();
+            
+            if (!updated) throw new Error(`Article with id ${id} not found`);
+
+            const currentTags = await tx.select().from(articleTagsTable).where(eq(articleTagsTable.articleId, id));
+            return {
+                ...updated,
+                tags: currentTags.map(t => t.tag),
+                authorId: updated.authorId ?? undefined,
+                featuredImage: updated.featuredImage ?? undefined,
+                featuredImageAlt: updated.featuredImageAlt ?? undefined,
+                excerpt: updated.excerpt ?? undefined,
+                metaTitle: updated.metaTitle ?? undefined,
+                metaDescription: updated.metaDescription ?? undefined,
+            } as Article;
+        });
     }
 }
 

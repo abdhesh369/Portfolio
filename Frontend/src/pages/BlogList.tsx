@@ -15,6 +15,7 @@ import { Eye, Clock } from "lucide-react";
 
 import { formatDate } from "@/lib/utils/date";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 
 function BlogCard({ article }: { article: Article }) {
     return (
@@ -240,6 +241,10 @@ export default function BlogList() {
                         <p className="text-white/40">Try a different search query or check back later.</p>
                     </div>
                 )}
+
+                <div className="mt-24">
+                    <NewsletterSignup source="blog_list" />
+                </div>
             </main>
 
             <Footer />

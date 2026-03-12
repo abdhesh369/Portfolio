@@ -384,7 +384,7 @@ export default function Contact() {
                             <span className="shrink-0 mt-0.5">! ERROR:</span>
                             <span>
                               {apiError instanceof Error && apiError.message.includes("429")
-                                ? "Rate limit exceeded. Please wait a moment before sending another message."
+                                ? "Too many messages sent. Please wait 15 minutes before trying again."
                                 : apiError instanceof Error 
                                   ? apiError.message 
                                   : "Transmission failed. Try again."}

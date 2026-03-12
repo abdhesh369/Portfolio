@@ -13,6 +13,8 @@ interface SeoProps {
     type?: string;
     noindex?: boolean;
     structuredData?: Record<string, unknown> | Record<string, unknown>[];
+    prev?: string;
+    next?: string;
 }
 
 export function SEO({
@@ -24,6 +26,8 @@ export function SEO({
     type = "website",
     noindex: propNoindex,
     structuredData,
+    prev,
+    next,
 }: SeoProps) {
     const [location] = useLocation();
     const { data: seoSettings } = useQuery({
@@ -66,6 +70,8 @@ export function SEO({
             {keywords && <meta name="keywords" content={keywords} />}
             {noindex && <meta name="robots" content="noindex,nofollow" />}
             <link rel="canonical" href={canonicalUrl} />
+            {prev && <link rel="prev" href={prev} />}
+            {next && <link rel="next" href={next} />}
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={type} />
@@ -74,14 +80,14 @@ export function SEO({
                 property="og:description"
                 content={seoSettings?.ogDescription || description}
             />
-            {image && <meta property="og:image" content={image} />}
+            <meta property="og:image" content={image} />
             <meta property="og:url" content={canonicalUrl} />
 
             {/* Twitter */}
             <meta name="twitter:card" content={twitterCard} />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            {image && <meta name="twitter:image" content={image} />}
+            <meta name="twitter:image" content={image} />
 
             {/* Structured Data (JSON-LD) */}
             {structuredData && (

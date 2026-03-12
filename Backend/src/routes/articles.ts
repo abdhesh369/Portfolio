@@ -169,3 +169,25 @@ articlesRouter.delete(
         res.status(204).send();
     })
 );
+
+// POST /articles/:id/react - Add a reaction to an article
+articlesRouter.post(
+    "/:id/react",
+    asyncHandler(async (req, res) => {
+        const id = parseInt(req.params.id, 10);
+        const { emoji } = z.object({ emoji: z.string().min(1) }).parse(req.body);
+
+        if (isNaN(id)) {
+            res.status(400).json({ success: false, message: "Invalid article ID" });
+            return;
+        }
+
+        const article = await articleService.addReaction(id, emoji);
+
+        res.json({
+            success: true,
+            message: "Reaction added",
+            data: article.reactions
+        });
+    })
+);

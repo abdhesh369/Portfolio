@@ -33,6 +33,8 @@ import { FooterSection } from "../customization/FooterSection";
 import { SectionLayoutSection } from "../customization/SectionLayoutSection";
 import { ActiveFeaturesSection } from "../customization/ActiveFeaturesSection";
 import { AvailabilitySlotsSection } from "../customization/AvailabilitySlotsSection";
+import { WhyHireMeSection } from "../customization/WhyHireMeSection";
+import { AboutSection } from "../customization/AboutSection";
 import { StickyFormFooter } from "../customization/StickyFormFooter";
 
 const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
@@ -72,7 +74,15 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
   ],
   sectionOrder: ["about", "skills", "whyhireme", "services", "mindset", "projects", "practice", "experience", "testimonials", "guestbook", "contact"],
   sectionVisibility: { hero: true, about: true, projects: true, skills: true, testimonials: true, contact: true },
-  availabilitySlots: []
+  availabilitySlots: [],
+  aboutAvailability: "Open to Work",
+  aboutDescription: "Building scalable web systems and analyzing complex algorithms.",
+  aboutTechStack: ["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"],
+  aboutTimeline: [
+    { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture." },
+    { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University." },
+    { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development." }
+  ]
 };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -279,6 +289,20 @@ export function CustomizationTab() {
           register={register}
           isOpen={activeSection === "footer"}
           onToggle={() => toggleSection("footer")}
+        />
+
+        <AboutSection
+          register={register}
+          control={control}
+          isOpen={activeSection === "about"}
+          onToggle={() => toggleSection("about")}
+        />
+
+        <WhyHireMeSection
+          register={register}
+          control={control}
+          isOpen={activeSection === "whyhireme"}
+          onToggle={() => toggleSection("whyhireme")}
         />
 
         <SectionLayoutSection

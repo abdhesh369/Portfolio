@@ -36,6 +36,17 @@ export let scopeQueue: Queue | null = null;
 export let emailWorker: Worker | null = null;
 export let scopeWorker: Worker | null = null;
 
+import { emailTemplateService } from "../services/email-template.service.js";
+
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 export function initQueues() {
     if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
         logger.warn(
@@ -73,16 +84,6 @@ export function initQueues() {
         if (type === "contact-notification") {
             const { message, targetEmail } = payload;
 
-            // Simple HTML escaping helper for job background
-            function escapeHtml(text: string): string {
-                return text
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
-
             const { data, error } = await resend.emails.send({
                 from: env.CONTACT_EMAIL,
                 to: targetEmail,
@@ -118,24 +119,27 @@ export function initQueues() {
         } else if (type === "auto-reply") {
             const { message } = payload;
             
-            function escapeHtml(text: string): string {
-                return text
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
+            // Try to find a dynamic template
+            const templates = await emailTemplateService.getAll();
+            const dynamicTemplate = templates.find(t => t.name.toLowerCase().includes('auto-reply') || t.name.toLowerCase().includes('inquiry'));
+
+            let subject = "Thank you for reaching out!";
+            let html = `
+                <p>Hi ${escapeHtml(message.name)},</p>
+                <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
+                <p>Best regards,<br/>Portfolio Admin</p>
+            `;
+
+            if (dynamicTemplate) {
+                subject = dynamicTemplate.subject;
+                html = dynamicTemplate.body.replace(/\{name\}/g, escapeHtml(message.name));
             }
 
             const { data, error } = await resend.emails.send({
                 from: env.CONTACT_EMAIL,
                 to: message.email,
-                subject: "Thank you for reaching out!",
-                html: `
-                <p>Hi ${escapeHtml(message.name)},</p>
-                <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
-                <p>Best regards,<br/>Portfolio Admin</p>
-                `
+                subject,
+                html
             });
 
             if (error) {

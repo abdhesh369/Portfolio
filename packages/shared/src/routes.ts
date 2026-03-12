@@ -29,6 +29,8 @@ import {
     insertGuestbookApiSchema,
     siteSettingsSchema,
     insertSiteSettingsApiSchema,
+    subscriberSchema,
+    insertSubscriberApiSchema,
 } from "./schema.js";
 
 // ==================== ERROR SCHEMAS ====================
@@ -698,6 +700,17 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
+        react: {
+            method: "POST" as const,
+            path: "/api/v1/articles/:id/react",
+            description: "Add reaction to article (public)",
+            input: z.object({ emoji: z.string().min(1) }),
+            responses: {
+                200: createSuccessResponse(z.record(z.number())),
+                400: errorSchemas.validation,
+                500: errorSchemas.internal,
+            },
+        },
     },
 
     // ---------- EMAIL TEMPLATES ----------
@@ -1026,6 +1039,34 @@ export const api = {
                 400: errorSchemas.validation,
                 401: errorSchemas.unauthorized,
                 403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
+    },
+
+    // ---------- NEWSLETTER ----------
+    subscribers: {
+        subscribe: {
+            method: "POST" as const,
+            path: "/api/v1/subscribe",
+            description: "Subscribe to newsletter (public)",
+            input: insertSubscriberApiSchema,
+            responses: {
+                201: createSuccessResponse(subscriberSchema),
+                400: errorSchemas.validation,
+                409: z.object({ message: z.string() }),
+                500: errorSchemas.internal,
+            },
+        },
+        unsubscribe: {
+            method: "POST" as const,
+            path: "/api/v1/unsubscribe",
+            description: "Unsubscribe from newsletter (public)",
+            input: z.object({ email: z.string().email() }),
+            responses: {
+                200: z.object({ success: z.boolean(), message: z.string() }),
+                400: errorSchemas.validation,
+                404: errorSchemas.notFound,
                 500: errorSchemas.internal,
             },
         },

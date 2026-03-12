@@ -5,6 +5,7 @@ import { GraduationCap, MapPin, Mail, Code, Calendar, Zap, Target, Layers, Termi
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { Skeleton } from "@/components/ui/skeleton";
 // ...existing code... (profile image moved to public/images/hero.svg)
 
 // Glitch Text Component
@@ -180,10 +181,10 @@ const Highlight = ({ children, color = "cyan" }: { children: React.ReactNode, co
 );
 
 export default function About() {
-  const { data: projects } = useProjects();
-  const { data: skills } = useSkills();
-  const { data: experiences } = useExperiences();
-  const { data: settings } = useSiteSettings();
+  const { data: projects, isLoading: projectsLoading } = useProjects();
+  const { data: skills, isLoading: skillsLoading } = useSkills();
+  const { data: experiences, isLoading: experiencesLoading } = useExperiences();
+  const { data: settings, isLoading: settingsLoading } = useSiteSettings();
   return (
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-16 md:py-24 relative">
       <div className="text-center mb-20 relative z-10">
@@ -247,7 +248,7 @@ export default function About() {
                     <h3 className="text-2xl font-bold text-white font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
                     <div className="flex items-center gap-2 text-sm text-gray-300">
                       <MapPin className="w-4 h-4 text-cyan-400" />
-                      Kathmandu, Nepal
+                      {(settings as any)?.locationText || "Kathmandu, Nepal"}
                     </div>
                   </div>
                 </div>
@@ -256,17 +257,17 @@ export default function About() {
                 <div className="p-6 border-t border-white/10 bg-white/5 space-y-4 relative z-30">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Position</span>
-                    <span className="text-white font-medium">Student Engineer</span>
+                    <span className="text-white font-medium">{(settings as any)?.personalTitle || "Student Engineer"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Availability</span>
-                    <span className="text-green-400 font-medium">Open to Work</span>
+                    <span className="text-green-400 font-medium">{(settings as any)?.aboutAvailability || "Open to Work"}</span>
                   </div>
 
                   <div className="pt-4 border-t border-white/10 space-y-3">
                     <span className="text-sm text-gray-400">Core Tech Stack</span>
                     <div className="flex flex-wrap gap-2">
-                      {["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"].map(tech => (
+                      {((settings as any)?.aboutTechStack || ["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]).map((tech: string) => (
                         <span key={tech} className="px-2 py-1 bg-card/50 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-gray-300">
                           {tech}
                         </span>
@@ -275,10 +276,10 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href={settings?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                    <a href={(settings as any)?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-white/5 hover:bg-cyan-500/20 text-white hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
                       <Code className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
-                    <a href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
+                    <a href={`mailto:${(settings as any)?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${(settings as any)?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-white/5 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
                       <Mail className="w-4 h-4" /> <span className="text-xs">Email</span>
                     </a>
                   </div>
@@ -306,29 +307,67 @@ export default function About() {
               </h3>
 
               <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed font-light space-y-4">
-                <p className="leading-relaxed text-[1.05rem]">
-                  I'm currently pursuing my <Highlight>Bachelor's in Electronics & Communication Engineering</Highlight> at Tribhuvan University. My journey began with a fascination for how hardware meets software, which inevitably led me down the rabbit hole of Full-Stack Development.
-                </p>
-                <p className="leading-relaxed text-[1.05rem]">
-                  Today, I focus on building <Highlight color="purple">scalable web systems</Highlight> and analyzing complex algorithms. I don't just write code; I design systems that resolve real-world inefficiencies. My approach is rooted in engineering fundamentals—understanding <Highlight>memory, complexity, and architecture</Highlight> before typing a single line of syntax.
-                </p>
+                {(settings as any)?.aboutDescription ? (
+                  (settings as any).aboutDescription.split('\n\n').map((para: string, i: number) => (
+                    <p key={i} className="leading-relaxed text-[1.05rem]">
+                      {para}
+                    </p>
+                  ))
+                ) : (
+                  <>
+                    <p className="leading-relaxed text-[1.05rem]">
+                      I'm currently pursuing my <Highlight>Bachelor's in Electronics & Communication Engineering</Highlight> at Tribhuvan University. My journey began with a fascination for how hardware meets software, which inevitably led me down the rabbit hole of Full-Stack Development.
+                    </p>
+                    <p className="leading-relaxed text-[1.05rem]">
+                      Today, I focus on building <Highlight color="purple">scalable web systems</Highlight> and analyzing complex algorithms. I don't just write code; I design systems that resolve real-world inefficiencies. My approach is rooted in engineering fundamentals—understanding <Highlight>memory, complexity, and architecture</Highlight> before typing a single line of syntax.
+                    </p>
+                  </>
+                )}
               </div>
             </m.div>
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <AnimatedCounter value={skills?.length ?? 0} suffix="+" label="Skills" icon={Zap} />
-              <AnimatedCounter value={projects?.length ?? 0} suffix="+" label="Projects" icon={Layers} />
-              <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" icon={Target} />
+              {skillsLoading ? (
+                Array(1).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl bg-white/5" />)
+              ) : (
+                <AnimatedCounter value={skills?.length ?? 0} suffix="+" label="Skills" icon={Zap} />
+              )}
 
+              {projectsLoading ? (
+                Array(1).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl bg-white/5" />)
+              ) : (
+                <AnimatedCounter value={projects?.length ?? 0} suffix="+" label="Projects" icon={Layers} />
+              )}
+
+              {experiencesLoading ? (
+                Array(1).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl bg-white/5" />)
+              ) : (
+                <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" icon={Target} />
+              )}
             </div>
 
             {/* Info Cards Grid */}
             <div className="grid sm:grid-cols-2 gap-4">
-              <InfoCard icon={GraduationCap} label="Status" value="B.E. Student" delay={0.1} />
-              <InfoCard icon={Code} label="Focus Area" value="Full Stack System Design" delay={0.2} color="purple" />
-              <InfoCard icon={Cpu} label="Hardware" value="Electronics & Comms" delay={0.3} color="purple" />
-              <InfoCard icon={Target} label="Goal" value="Software Engineer" delay={0.4} />
+              {((settings as any)?.aboutInfoCards || [
+                { icon: "GraduationCap", label: "Status", value: "B.E. Student" },
+                { icon: "Code", label: "Focus Area", value: "Full Stack System Design", color: "purple" },
+                { icon: "Cpu", label: "Hardware", value: "Electronics & Comms", color: "purple" },
+                { icon: "Target", label: "Goal", value: "Software Engineer" }
+              ]).map((card: any, idx: number) => {
+                const IconMap: Record<string, any> = { GraduationCap, Code, Cpu, Target };
+                const Icon = IconMap[card.icon] || Code;
+                return (
+                  <InfoCard 
+                    key={idx}
+                    icon={Icon} 
+                    label={card.label} 
+                    value={card.value} 
+                    delay={0.1 * (idx + 1)} 
+                    color={card.color} 
+                  />
+                );
+              })}
             </div>
 
           </div>
@@ -352,24 +391,19 @@ export default function About() {
             </h3>
 
             <div className="relative z-10 max-w-2xl mx-auto">
-              <TimelineItem
-                year="2024 - Present"
-                title="Advanced System Design"
-                description="Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications."
-                delay={0}
-              />
-              <TimelineItem
-                year="2023"
-                title="Engineering Core"
-                description="Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University."
-                delay={0.1}
-              />
-              <TimelineItem
-                year="2022"
-                title="Hello World"
-                description="Started the journey with Python scripting and basic web development. Built my first static websites."
-                delay={0.2}
-              />
+              {((settings as any)?.aboutTimeline || [
+                { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications." },
+                { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University." },
+                { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development. Built my first static websites." }
+              ]).map((item: any, index: number) => (
+                <TimelineItem
+                  key={index}
+                  year={item.year}
+                  title={item.title}
+                  description={item.description}
+                  delay={index * 0.1}
+                />
+              ))}
             </div>
           </div>
         </m.div>

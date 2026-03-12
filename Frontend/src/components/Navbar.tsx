@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { Menu, X, Code2 } from "lucide-react";
+import { Menu, X, Code2, Search } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
+import { CommandPalette } from "./CommandPalette";
 import { Button } from "@/components/ui/button";
 import { PerformanceToggle } from "@/components/PerformanceToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useCommandPalette } from "@/hooks/use-command-palette";
 import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
 
 const DEFAULT_NAV_ITEMS = [
@@ -24,6 +26,7 @@ const SECTION_IDS = [...DEFAULT_SECTION_ORDER];
 export default function Navbar() {
   const { data: settings } = useSiteSettings();
   const [isOpen, setIsOpen] = useState(false);
+  const { open: openSearch } = useCommandPalette();
   const [location, setLocation] = useLocation();
 
   // Merge default nav items with admin links to prevent overwriting
@@ -179,6 +182,16 @@ export default function Navbar() {
             })}
 
             <div className="ml-4 pl-4 border-l border-white/10 flex items-center gap-2">
+              <button
+                onClick={() => openSearch()}
+                className="p-2 text-white/50 hover:text-white hover:bg-white/5 rounded-full transition-colors flex items-center gap-2"
+                aria-label="Search"
+              >
+                <Search className="w-5 h-5" />
+                <kbd className="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium text-white/50">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </button>
               <ThemeToggle />
               <PerformanceToggle />
               <Button
@@ -191,7 +204,14 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={() => openSearch()}
+              className="p-2 text-gray-300 hover:text-white transition-colors"
+              aria-label="Search"
+            >
+              <Search className="w-5 h-5" />
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-300 hover:text-white transition-colors"
@@ -258,6 +278,8 @@ export default function Navbar() {
           </m.div>
         )}
       </AnimatePresence>
+
+      {/* CommandPalette is now mounted globally in App.tsx */}
     </nav>
   );
 }

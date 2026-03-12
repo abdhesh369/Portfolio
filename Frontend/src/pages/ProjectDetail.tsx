@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useRoute, Link } from "wouter";
-import { useProjects } from "@/hooks/use-portfolio";
+import { useProjectById, useProjects } from "@/hooks/use-portfolio";
 import { m } from "framer-motion";
 import { fadeUp, fadeUpLarge, fadeLeft, fadeRight, fadeIn, scaleInSubtle, hoverScale, hoverLift } from "@/lib/animation";
 import {
@@ -14,14 +14,21 @@ import {
   BookOpen,
   Layers,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  Share2,
+  Twitter,
+  Linkedin,
+  MessageCircle,
 } from "lucide-react";
+import { useLocation } from "wouter";
+import { toast } from "react-hot-toast";
 import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
 import { getDynamicOgImage } from "@/lib/cloudinary";
 import { ApiResponseViewer } from "@/components/ApiResponseViewer";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { InteractivePlayground } from "@/components/InteractivePlayground";
+import { useTheme } from "@/components/theme-provider";
 
 // Floating particles (reused from main components)
 const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
@@ -35,6 +42,8 @@ const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const FloatingParticles = () => {
+  const { reducedMotion } = useTheme();
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {PARTICLE_DATA.map((p) => (
@@ -50,7 +59,7 @@ const FloatingParticles = () => {
               ? 'radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%)'
               : 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 70%)'
           }}
-          animate={{
+          animate={reducedMotion ? { opacity: 0.4 } : {
             y: [-20, 20, -20],
             x: [-10, 10, -10],
             opacity: [0.2, 0.7, 0.2],
@@ -168,10 +177,12 @@ const TechBadge = ({ tech }: { tech: string }) => {
 
 export default function ProjectDetail() {
   const [, params] = useRoute("/project/:id");
-  const { data: projects, isLoading } = useProjects();
+  const { data: projects } = useProjects();
 
   const projectId = parseInt(params?.id || "");
-  const project = projects?.find(p => p.id === projectId);
+  const { data: project, isLoading } = useProjectById(
+    isNaN(projectId) ? null : projectId
+  );
 
   // Calculate other projects for the recommendation section
   const otherProjects = useMemo(() => {
@@ -180,6 +191,45 @@ export default function ProjectDetail() {
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
   }, [projects, project?.id]);
+
+  const [, setLocation] = useLocation();
+
+  const handleBack = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (window.history.length > 2) {
+      window.history.back();
+    } else {
+      setLocation("/#projects");
+    }
+  };
+
+  const handleShare = async () => {
+    if (project) {
+      const shareData = {
+        title: project.title,
+        text: `Check out this project: ${project.title}`,
+        url: window.location.href,
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          toast.success("Shared successfully!");
+        } catch (err) {
+          if ((err as Error).name !== "AbortError") {
+            console.error("Error sharing:", err);
+          }
+        }
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      }
+    }
+  };
+
+  const twitterShareUrl = project ? `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this project: ${project.title}`)}` : "";
+  const linkedinShareUrl = project ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}` : "";
+  const whatsappShareUrl = project ? `https://wa.me/?text=${encodeURIComponent(`Check out this project: ${project.title} ${window.location.href}`)}` : "";
 
 
 
@@ -323,22 +373,22 @@ export default function ProjectDetail() {
           >
             {/* Breadcrumb & Back Button */}
             <div className="flex items-center gap-3">
-              <Link href="/">
-                <m.button
-                  whileHover={{ x: -3 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all"
-                  style={{
-                    background: 'rgba(20, 15, 40, 0.6)',
-                    border: '1px solid rgba(100, 100, 140, 0.2)',
-                    color: 'var(--color-muted-text)'
-                  }}
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Home
-                </m.button>
-              </Link>
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all"
+                style={{
+                  background: 'rgba(20, 15, 40, 0.6)',
+                  border: '1px solid rgba(100, 100, 140, 0.2)',
+                  color: 'var(--color-muted-text)'
+                }}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </button>
               <ChevronRight className="w-4 h-4 text-gray-600" />
-              <span className="text-gray-500">Projects</span>
+              <Link href="/#projects">
+                <span className="text-gray-500 cursor-pointer hover:text-gray-300 transition-colors">Projects</span>
+              </Link>
               <ChevronRight className="w-4 h-4 text-gray-600" />
               <span style={{ color: catColor.text }}>{project.title}</span>
             </div>
@@ -375,7 +425,7 @@ export default function ProjectDetail() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   {project.githubUrl && (
                     <m.a
                       href={project.githubUrl}
@@ -411,6 +461,49 @@ export default function ProjectDetail() {
                       Live Demo
                     </m.a>
                   )}
+
+                  <div className="flex gap-2 p-1 rounded-xl bg-white/5 border border-white/10">
+                    <m.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={handleShare}
+                      className="p-2 text-gray-400 hover:text-cyan-400 transition-colors"
+                      title="Share link"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </m.button>
+                    <div className="w-px h-4 bg-white/10 my-auto" />
+                    <m.a
+                      href={twitterShareUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      className="p-2 text-gray-400 hover:text-[#1DA1F2] transition-colors"
+                      title="Share on Twitter"
+                    >
+                      <Twitter className="w-4 h-4" />
+                    </m.a>
+                    <m.a
+                      href={linkedinShareUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      className="p-2 text-gray-400 hover:text-[#0077b5] transition-colors"
+                      title="Share on LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </m.a>
+                    <m.a
+                      href={whatsappShareUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      className="p-2 text-gray-400 hover:text-[#25D366] transition-colors"
+                      title="Share on WhatsApp"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </m.a>
+                  </div>
                 </div>
               </div>
 

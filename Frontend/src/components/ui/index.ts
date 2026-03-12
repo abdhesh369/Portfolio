@@ -7,3 +7,6 @@ export * from "./toast";
 export * from "./toaster";
 export * from "./label";
 export * from "./switch";
+export * from "./input";
+export * from "./textarea";
+export * from "./tooltip";

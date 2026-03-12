@@ -10,6 +10,8 @@ export {
   useArticles,
   useArticle,
   useArticleSearch,
+  useArticleReactions,
+  useReactToArticle,
   useExperiences,
   useServices,
   useTestimonials,
@@ -27,4 +29,7 @@ export {
   useAdminServices,
   useAdminSkills,
   useAdminProjects,
+  useProjectById,
+  useSubscribe,
+  useUnsubscribe,
 } from "./portfolio";

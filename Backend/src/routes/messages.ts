@@ -142,15 +142,27 @@ export function registerMessageRoutes(app: Router) {
                                 `
                             });
                         } else if (jobType === "auto-reply") {
-                            await resend.emails.send({
-                                from: env.CONTACT_EMAIL || "onboarding@resend.dev",
-                                to: payload.message.email,
-                                subject: "Thank you for reaching out!",
-                                html: `
+                            const { emailTemplateService } = await import("../services/email-template.service.js");
+                            const templates = await emailTemplateService.getAll();
+                            const dynamicTemplate = templates.find(t => t.name.toLowerCase().includes('auto-reply') || t.name.toLowerCase().includes('inquiry'));
+
+                            let subject = "Thank you for reaching out!";
+                            let html = `
                                 <p>Hi ${escapeHtml(payload.message.name)},</p>
                                 <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
                                 <p>Best regards,<br/>Portfolio Admin</p>
-                                `
+                            `;
+
+                            if (dynamicTemplate) {
+                                subject = dynamicTemplate.subject;
+                                html = dynamicTemplate.body.replace(/\{name\}/g, escapeHtml(payload.message.name));
+                            }
+
+                            await resend.emails.send({
+                                from: env.CONTACT_EMAIL || "onboarding@resend.dev",
+                                to: payload.message.email,
+                                subject,
+                                html
                             });
                         }
                     } catch (e) {

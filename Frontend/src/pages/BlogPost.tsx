@@ -4,19 +4,21 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { TableOfContents } from "@/components/TableOfContents";
-import { useArticle } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
 import type { ArticleWithRelated } from "@portfolio/shared/schema";
 import { useRoute } from "wouter";
-import { m } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Link2, Check, Eye } from "lucide-react";
+import { ArrowLeft, Link2, Check, Eye, Share2, Twitter, Linkedin, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
-import { AUTHOR } from "@/lib/author";
+import { useArticle, useReactToArticle } from "@/hooks/use-portfolio";
+
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { ArticleReactions } from "@/components/ArticleReactions";
 
 function PostSkeleton() {
     return (
@@ -46,6 +48,7 @@ export default function BlogPost() {
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
+    const { mutate: react } = useReactToArticle();
     const [copied, setCopied] = useState(false);
     const articleRef = useRef<HTMLElement>(null);
 
@@ -81,7 +84,7 @@ export default function BlogPost() {
         );
     }
 
-    if (error || !article) {
+    if (!isLoading && (error || !article)) {
         return (
             <div className="min-h-screen bg-background text-foreground">
                 <Navbar />
@@ -97,25 +100,25 @@ export default function BlogPost() {
         );
     }
 
-    const authorName = settings?.personalName || AUTHOR.name;
-    const authorBio = settings?.personalBio || AUTHOR.bio;
+    const authorName = settings?.personalName || "Abdhesh Sah";
+    const authorBio = settings?.personalBio || "Full Stack Engineer & Tech Enthusiast";
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground" style={{ fontFamily: "var(--font-body)" }}>
             <SEO
-                slug={`blog/${article.slug}`}
-                title={`${article.title} | ${authorName}`}
-                description={article.excerpt || article.title}
+                slug={`blog/${article!.slug}`}
+                title={`${article!.title} | ${authorName}`}
+                description={article!.excerpt || article!.title}
                 image={ogImage}
                 structuredData={[
                     {
                         "@context": "https://schema.org",
                         "@type": "TechArticle",
-                        "headline": article.title,
-                        "image": article.featuredImage ? [article.featuredImage] : [],
-                        "datePublished": article.publishedAt,
-                        "dateModified": article.updatedAt,
-                        "wordCount": article.content ? article.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length : 0,
+                        "headline": article!.title,
+                        "image": article!.featuredImage ? [article!.featuredImage] : [],
+                        "datePublished": article!.publishedAt,
+                        "dateModified": article!.updatedAt,
+                        "wordCount": article!.content ? article!.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length : 0,
                         "author": {
                             "@type": "Person",
                             "name": authorName,
@@ -127,7 +130,7 @@ export default function BlogPost() {
                         },
                         "mainEntityOfPage": {
                             "@type": "WebPage",
-                            "@id": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article.slug}`
+                            "@id": `${(import.meta as any).env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
                         }
                     },
                     {
@@ -149,8 +152,8 @@ export default function BlogPost() {
                             {
                                 "@type": "ListItem",
                                 "position": 3,
-                                "name": article.title,
-                                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article.slug}`
+                                "name": article!.title,
+                                "item": `${(import.meta as any).env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
                             }
                         ]
                     }
@@ -183,14 +186,14 @@ export default function BlogPost() {
                                     className="flex flex-wrap items-center gap-4 mb-6"
                                 >
                                     <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                                        {article.publishedAt ? formatDate(article.publishedAt, { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
+                                        {article!.publishedAt ? formatDate(article!.publishedAt, { month: "long", day: "numeric", year: "numeric" }) : "Draft"}
                                     </Badge>
-                                    <span className="text-white/30 text-sm">{article.readTimeMinutes || 5} min read</span>
+                                    <span className="text-white/30 text-sm">{article!.readTimeMinutes || 5} min read</span>
                                     <span className="text-white/40 text-sm flex items-center gap-1.5">
                                         <Eye className="w-4 h-4" />
-                                        {article.viewCount || 0} views
+                                        {article!.viewCount || 0} views
                                     </span>
-                                    {article.tags?.map((tag: string) => (
+                                    {article!.tags?.map((tag: string) => (
                                         <span key={tag} className="text-xs text-white/40">#{tag}</span>
                                     ))}
                                 </m.div>
@@ -202,10 +205,10 @@ export default function BlogPost() {
                                     className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 md:mb-8 leading-tight"
                                     style={{ fontFamily: "var(--font-display)" }}
                                 >
-                                    {article.title}
+                                    {article!.title}
                                 </m.h1>
 
-                                {article.featuredImage && (
+                                {article!.featuredImage && (
                                     <m.div
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -213,8 +216,8 @@ export default function BlogPost() {
                                         className="aspect-video relative rounded-3xl overflow-hidden bg-white/5 border border-white/10"
                                     >
                                         <OptimizedImage
-                                            src={article.featuredImage}
-                                            alt={article.featuredImageAlt || `${article.title} - Featured image for blog post`}
+                                            src={article!.featuredImage}
+                                            alt={article!.featuredImageAlt || `${article!.title} - Featured image for blog post`}
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
@@ -231,21 +234,88 @@ export default function BlogPost() {
                         prose-strong:text-white prose-code:text-primary prose-pre:bg-white/5
                         prose-img:rounded-2xl prose-img:border prose-img:border-white/10
                         animate-fade-in pt-4 md:pt-8"
-                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article!.content) }}
                             />
 
-                            {/* Share button */}
-                            <div className="mt-12 flex items-center gap-3">
-                                <button
-                                    onClick={copyLink}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm"
-                                >
-                                    {copied ? (
-                                        <><Check className="w-4 h-4 text-green-400" /> Copied!</>
-                                    ) : (
-                                        <><Link2 className="w-4 h-4" /> Copy Link</>
-                                    )}
-                                </button>
+                            {/* Share buttons */}
+                            <div className="mt-12 pt-8 border-t border-white/10 flex flex-col gap-4">
+                                <h3 className="text-sm font-semibold text-white/50">How was the read?</h3>
+                                <ArticleReactions articleId={article!.id} reactions={(article! as any).reactions || {}} />
+                            </div>
+
+                            {/* Share buttons */}
+                            <div className="mt-12 flex flex-col gap-4">
+                                <h3 className="text-sm font-semibold text-white/50">Share this article:</h3>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <button
+                                        onClick={copyLink}
+                                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm group"
+                                    >
+                                        {copied ? (
+                                            <><Check className="w-4 h-4 text-green-400" /> Copied!</>
+                                        ) : (
+                                            <><Link2 className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Copy Link</>
+                                        )}
+                                    </button>
+
+                                    {typeof navigator !== "undefined" && (navigator as any).share ? (
+                                        <button
+                                            onClick={async () => {
+                                                try {
+                                                    await (navigator as any).share({
+                                                        title: article!.title,
+                                                        url: window.location.href
+                                                    });
+                                                } catch (err) {
+                                                    if ((err as Error).name !== "AbortError") {
+                                                        console.error("Error sharing:", err);
+                                                    }
+                                                }
+                                            }}
+                                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all text-sm group"
+                                        >
+                                            <Share2 className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" /> Share
+                                        </button>
+                                    ) : null}
+
+                                    <div className="flex items-center gap-2 p-1 rounded-full bg-white/5 border border-white/10">
+                                        <a
+                                            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}&text=${encodeURIComponent(article!.title)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 text-white/40 hover:text-[#1DA1F2] transition-colors hover:bg-white/5 rounded-full"
+                                            title="Share on Twitter"
+                                        >
+                                            <Twitter className="w-4 h-4" />
+                                        </a>
+                                        <a
+                                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 text-white/40 hover:text-[#0077b5] transition-colors hover:bg-white/5 rounded-full"
+                                            title="Share on LinkedIn"
+                                        >
+                                            <Linkedin className="w-4 h-4" />
+                                        </a>
+                                        <a
+                                            href={`https://wa.me/?text=${encodeURIComponent(`${article!.title} ${typeof window !== "undefined" ? window.location.href : ""}`)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 text-white/40 hover:text-[#25D366] transition-colors hover:bg-white/5 rounded-full"
+                                            title="Share on WhatsApp"
+                                        >
+                                            <MessageCircle className="w-4 h-4" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-16">
+                                <NewsletterSignup 
+                                    source="blog_post" 
+                                    title="Liked this article?" 
+                                    description="Get notified when I publish more deep dives into engineering and system design."
+                                />
                             </div>
 
                             {/* Related articles strip */}

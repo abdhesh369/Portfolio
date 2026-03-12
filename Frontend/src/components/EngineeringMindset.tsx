@@ -71,7 +71,7 @@ const PrincipleCard = ({
         </m.div>
 
         {/* Content */}
-        <h3 className={`text-xl font-bold mb-3 transition-colors ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>
+        <h3 className={`text-xl font-bold mb-3 transition-colors ${isActive ? 'text-primary' : 'text-white'}`}>
           {principle.title}
         </h3>
         <p className="text-muted-foreground leading-relaxed text-sm">

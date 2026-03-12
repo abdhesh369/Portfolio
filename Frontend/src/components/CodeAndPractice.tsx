@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useTheme } from "@/components/theme-provider";
 
 import { formatDate } from "@/lib/utils/date";
 
@@ -30,9 +31,10 @@ export default function CodeAndPractice() {
   const [events, setEvents] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { reducedMotion } = useTheme();
 
   const { data: settings } = useSiteSettings();
-  const githubUsername = settings?.socialGithub?.split("/").pop() || "abdhesh369";
+  const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "abdhesh369";
 
   useEffect(() => {
     apiFetch("/api/v1/github/activity")
@@ -124,7 +126,7 @@ export default function CodeAndPractice() {
       <div className="max-w-5xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <m.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={reducedMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-6"
@@ -167,7 +169,7 @@ export default function CodeAndPractice() {
           </m.div>
 
           <m.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={reducedMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="relative"
@@ -226,7 +228,7 @@ export default function CodeAndPractice() {
 
               <div className="mt-8 pt-8 border-t border-border/50">
                 <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                  {!reducedMotion && <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>}
                   <OptimizedImage
                     src={`https://ghchart.rshah.org/00d4ff/${githubUsername}`}
                     alt="GitHub Contribution Graph"

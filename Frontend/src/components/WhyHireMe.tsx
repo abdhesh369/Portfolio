@@ -132,7 +132,7 @@ const PointCard = ({ point, index }: { point: Point; index: number }) => {
   );
 };
 
-const points = [
+const defaultPoints = [
   {
     title: "Strong Fundamentals",
     description: "Solid foundation in electronics, communication engineering, and core computer science principles that enable me to understand systems at a deeper level.",
@@ -155,7 +155,7 @@ const points = [
   },
 ];
 
-const skills = [
+const defaultSkills = [
   { skill: "Problem Solving", level: 85, color: "bg-gradient-to-r from-violet-500 to-purple-500" },
   { skill: "Learning Speed", level: 90, color: "bg-gradient-to-r from-blue-500 to-cyan-500" },
   { skill: "Communication", level: 80, color: "bg-gradient-to-r from-green-500 to-emerald-500" },
@@ -174,24 +174,23 @@ export default function WhyHireMe() {
   const resumeFileName = resumeUrl.split('/').pop() || "Resume.docx";
 
   // Use dynamic data if available, otherwise fall back to local constants
-  const dynamicPoints = settings?.whyHireMeData?.stats?.map(stat => ({
+  const dynamicPoints = (settings as any)?.whyHireMeData?.stats?.map((stat: any) => ({
     title: stat.label,
     description: stat.value,
     icon: CheckCircle2 // Fallback icon since we don't store icon names in DB yet
-  })) || points;
+  })) || defaultPoints;
 
-  const dynamicSkills = settings?.whyHireMeData?.skills || [
-    "Blend of hardware and software knowledge",
-    "Strong foundation in data structures & algorithms",
-    "Passion for clean, maintainable code",
-    "Quick learner with adaptability",
-    "Proactive problem-solving approach"
-  ];
+  const dynamicSkills = (settings as any)?.whyHireMeData?.skills?.map((s: any, i: number) => ({
+    skill: s.skill || s,
+    level: s.level || 85,
+    color: s.color || defaultSkills[i % defaultSkills.length].color
+  })) || defaultSkills;
   
-  const displayDescription = settings?.whyHireMeData?.description || "As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.";
+  const displayDescription = (settings as any)?.whyHireMeData?.description || "As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.";
 
   return (
-    <section id="why-hire-me" className="section-container overflow-hidden">
+    <section id="why-hire-me" className="section-container overflow-hidden relative">
+      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
       {/* Header */}
       <div className="text-center mb-16">
         <m.div
@@ -252,9 +251,9 @@ export default function WhyHireMe() {
           <div className="p-8 bg-card/80 backdrop-blur-sm rounded-3xl border border-white/10">
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
               <Target className="w-5 h-5 text-primary" />
-              Core Strengths
+              Core Competencies
             </h3>
-            {skills.map((s, i) => (
+            {dynamicSkills.slice(0, 4).map((s: any, i: number) => (
               <SkillBar key={i} {...s} delay={i * 0.1} />
             ))}
           </div>
@@ -266,18 +265,8 @@ export default function WhyHireMe() {
               What Sets Me Apart
             </h3>
             <ul className="space-y-4">
-              {dynamicSkills.map((item, i) => (
-                <m.li
-                  key={i}
-                  initial={fadeLeft.initial}
-                  whileInView={fadeLeft.animate}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span className="text-muted-foreground">{item}</span>
-                </m.li>
+              {dynamicSkills.map((s: any, i: number) => (
+                <SkillBar key={i} {...s} delay={i * 0.1} />
               ))}
             </ul>
           </div>
