@@ -38,7 +38,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
         setHealthLoading(true);
         try {
             const start = performance.now();
-            const data = await apiFetch("/health", { signal: controller.signal });
+            const data = await apiFetch("/api/v1/health", { signal: controller.signal });
             const elapsed = Math.round(performance.now() - start);
             setHealthData(prev => ({ ...prev, ...data, responseTimeMs: elapsed }));
         } catch (err) {

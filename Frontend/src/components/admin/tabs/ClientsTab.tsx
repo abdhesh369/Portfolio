@@ -25,11 +25,11 @@ export const ClientsTab: React.FC = () => {
 
     const { data: clients = [], isLoading } = useQuery({
         queryKey: ['admin-clients'],
-        queryFn: () => apiFetch('/admin/clients'),
+        queryFn: () => apiFetch('/api/v1/admin/clients'),
     });
 
     const createMutation = useMutation({
-        mutationFn: (data: typeof form) => apiFetch('/admin/clients', { method: 'POST', body: JSON.stringify(data) }),
+        mutationFn: (data: typeof form) => apiFetch('/api/v1/admin/clients', { method: 'POST', body: JSON.stringify(data) }),
         onSuccess: () => { 
             queryClient.invalidateQueries({ queryKey: ['admin-clients'] }); 
             setShowForm(false); 
@@ -46,7 +46,7 @@ export const ClientsTab: React.FC = () => {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (id: number) => apiFetch(`/admin/clients/${id}`, { method: 'DELETE' }),
+        mutationFn: (id: number) => apiFetch(`/api/v1/admin/clients/${id}`, { method: 'DELETE' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-clients'] }),
     });
 

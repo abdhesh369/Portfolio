@@ -892,7 +892,7 @@ export const api = {
         },
         approve: {
             method: "PATCH" as const,
-            path: "/api/v1/admin/guestbook/:id/approve",
+            path: "/api/v1/guestbook/:id/approve",
             description: "Approve guestbook entry (admin only)",
             requiresAuth: true,
             responses: {
@@ -905,7 +905,7 @@ export const api = {
         },
         delete: {
             method: "DELETE" as const,
-            path: "/api/v1/admin/guestbook/:id",
+            path: "/api/v1/guestbook/:id",
             description: "Delete guestbook entry (admin only)",
             requiresAuth: true,
             responses: {

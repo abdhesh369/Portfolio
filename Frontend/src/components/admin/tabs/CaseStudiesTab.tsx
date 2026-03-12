@@ -33,27 +33,27 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
 
     const { data: studies = [], isLoading } = useQuery({
         queryKey: ['admin-case-studies'],
-        queryFn: () => apiFetch('/admin/case-studies'),
+        queryFn: () => apiFetch('/api/v1/admin/case-studies'),
     });
 
     const { data: projects = [] } = useQuery({
         queryKey: ['admin-projects'],
-        queryFn: () => apiFetch('/admin/projects'),
+        queryFn: () => apiFetch('/api/v1/projects'),
     });
 
     const generateMutation = useMutation({
-        mutationFn: (projectId: number) => apiFetch(`/case-studies/generate/${projectId}`, { method: 'POST' }),
+        mutationFn: (projectId: number) => apiFetch(`/api/v1/case-studies/generate/${projectId}`, { method: 'POST' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
     });
 
     const toggleStatusMutation = useMutation({
         mutationFn: ({ id, status }: { id: number; status: string }) =>
-            apiFetch(`/case-studies/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }),
+            apiFetch(`/api/v1/case-studies/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (id: number) => apiFetch(`/case-studies/${id}`, { method: 'DELETE' }),
+        mutationFn: (id: number) => apiFetch(`/api/v1/case-studies/${id}`, { method: 'DELETE' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
     });
 

@@ -22,12 +22,12 @@ export const SketchpadTab: React.FC = () => {
 
     const { data: sessions = [], isLoading } = useQuery({
         queryKey: ['admin-sketchpad'],
-        queryFn: () => apiFetch('/admin/sketchpad/sessions'),
+        queryFn: () => apiFetch('/api/v1/admin/sketchpad/sessions'),
     });
 
     const createMutation = useMutation({
         mutationKey: ['create-sketchpad-session'],
-        mutationFn: (title: string) => apiFetch('/sketchpad/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
+        mutationFn: (title: string) => apiFetch('/api/v1/sketchpad/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] });
             setNewTitle('');
@@ -36,13 +36,13 @@ export const SketchpadTab: React.FC = () => {
 
     const archiveMutation = useMutation({
         mutationKey: ['archive-sketchpad-session'],
-        mutationFn: (id: number) => apiFetch(`/sketchpad/sessions/${id}/archive`, { method: 'PUT' }),
+        mutationFn: (id: number) => apiFetch(`/api/v1/sketchpad/sessions/${id}/archive`, { method: 'PUT' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
     });
 
     const deleteMutation = useMutation({
         mutationKey: ['delete-sketchpad-session'],
-        mutationFn: (id: number) => apiFetch(`/sketchpad/sessions/${id}`, { method: 'DELETE' }),
+        mutationFn: (id: number) => apiFetch(`/api/v1/sketchpad/sessions/${id}`, { method: 'DELETE' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
     });
 

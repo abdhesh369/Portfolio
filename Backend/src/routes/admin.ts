@@ -8,7 +8,7 @@ import { env } from "../env.js";
 export function registerAdminRoutes(app: Router) {
     // POST /api/v1/admin/optimize-images - Scan and optimize all images
     app.post(
-        "/api/v1/admin/optimize-images",
+        "/admin/optimize-images",
         isAuthenticated,
         asyncHandler(async (req, res) => {
             logger.info({ context: "admin-tools", user: typeof req.user === 'object' ? req.user.email : undefined }, "Starting bulk image optimization");
@@ -36,7 +36,7 @@ export function registerAdminRoutes(app: Router) {
 
     // POST /api/v1/admin/deploy - Trigger production deployment
     app.post(
-        "/api/v1/admin/deploy",
+        "/admin/deploy",
         isAuthenticated,
         asyncHandler(async (req, res) => {
             const userEmail = typeof req.user === 'object' ? req.user.email : undefined;
