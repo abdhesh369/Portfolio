@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useProjects, useAuth } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ArrowRight, Folder, Zap, Cpu } from "lucide-react";
 import { Link } from "wouter";
@@ -8,9 +9,10 @@ import { Link } from "wouter";
 export default function Projects() {
   const { data: projects, isLoading, error } = useProjects("default");
   const { user } = useAuth();
+  const { data: settings } = useSiteSettings();
 
   const allProjects = (Array.isArray(projects) ? projects : []).filter(p => !p.isHidden);
-  
+
   // Homepage logic: show pinned (isFlagship) projects first
   let displayedProjects = allProjects
     .filter(p => p.isFlagship)
@@ -61,7 +63,7 @@ export default function Projects() {
               animation: 'gradient-x 8s ease infinite'
             }}
           >
-            Flagship Projects
+            {settings?.projectsHeading || "Flagship Projects"}
           </m.h2>
 
           <m.p
@@ -77,8 +79,8 @@ export default function Projects() {
 
         {/* Admin Fallback Notice */}
         {hasNoPinned && user && (
-          <m.div 
-            initial={{ opacity: 0 }} 
+          <m.div
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="max-w-xl mx-auto mb-8 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm text-center"
           >
@@ -147,7 +149,7 @@ export default function Projects() {
                 {/* Background effects */}
                 <div className="absolute inset-0 bg-card border border-border group-hover:border-primary/50 transition-colors" />
                 <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
+
                 <span className="relative z-10 flex items-center gap-3">
                   View All Projects ({allProjects.length})
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

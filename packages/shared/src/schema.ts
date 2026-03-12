@@ -415,6 +415,19 @@ export const siteSettingsTable = pgTable("site_settings", {
   featureTestimonials: boolean("featureTestimonials").notNull().default(true),
   featureServices: boolean("featureServices").notNull().default(true),
   featurePlayground: boolean("featurePlayground").notNull().default(false),
+
+  // Section Headings
+  aboutHeading: varchar("aboutHeading", { length: 255 }).default("About Me"),
+  projectsHeading: varchar("projectsHeading", { length: 255 }).default("Flagship Projects"),
+  skillsHeading: varchar("skillsHeading", { length: 255 }).default("Technical Arsenal"),
+  whyHireMeHeading: varchar("whyHireMeHeading", { length: 255 }).default("Why Hire Me"),
+  servicesHeading: varchar("servicesHeading", { length: 255 }).default("What I Do"),
+  mindsetHeading: varchar("mindsetHeading", { length: 255 }).default("Engineering Mindset"),
+  practiceHeading: varchar("practiceHeading", { length: 255 }).default("Disciplined Practice"),
+  experienceHeading: varchar("experienceHeading", { length: 255 }).default("Professional Journey"),
+  testimonialsHeading: varchar("testimonialsHeading", { length: 255 }).default("Client Feedback"),
+  guestbookHeading: varchar("guestbookHeading", { length: 255 }).default("Guestbook"),
+  contactHeading: varchar("contactHeading", { length: 255 }).default("Get In Touch"),
 });
 
 export const subscribersTable = pgTable("subscribers", {
@@ -940,6 +953,19 @@ const siteSettingsBaseSchema = z.object({
 
   // Chatbot
   chatbotGreeting: z.string().nullish(),
+
+  // Section Headings
+  aboutHeading: z.string().max(255).nullish(),
+  projectsHeading: z.string().max(255).nullish(),
+  skillsHeading: z.string().max(255).nullish(),
+  whyHireMeHeading: z.string().max(255).nullish(),
+  servicesHeading: z.string().max(255).nullish(),
+  mindsetHeading: z.string().max(255).nullish(),
+  practiceHeading: z.string().max(255).nullish(),
+  experienceHeading: z.string().max(255).nullish(),
+  testimonialsHeading: z.string().max(255).nullish(),
+  guestbookHeading: z.string().max(255).nullish(),
+  contactHeading: z.string().max(255).nullish(),
 });
 
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({

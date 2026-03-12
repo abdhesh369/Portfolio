@@ -3,6 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2, Heart, Star, ThumbsUp, Flame } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/portfolio/use-guestbook";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useToast } from "@/hooks/use-toast";
 import type { GuestbookEntry } from "@portfolio/shared/schema";
 
@@ -17,6 +18,7 @@ export const Guestbook = () => {
     const { data: entries = [], isLoading: loading } = useGuestbook();
     const submitMutation = useSubmitGuestbook();
     const reactMutation = useReactToGuestbook();
+    const { data: settings } = useSiteSettings();
     const { toast } = useToast();
 
     const [message, setMessage] = useState("");
@@ -66,7 +68,9 @@ export const Guestbook = () => {
                         >
                             <MessageSquare className="w-8 h-8 text-primary" />
                         </m.div>
-                        <h2 className="text-4xl font-bold mb-4 tracking-tighter text-white">Guestbook</h2>
+                        <h2 className="text-4xl font-bold mb-4 tracking-tighter text-white">
+                            {settings?.guestbookHeading || "Guestbook"}
+                        </h2>
                         <p className="text-muted-foreground text-lg max-w-xl">
                             Leave a message, some feedback, or just say hello!
                         </p>

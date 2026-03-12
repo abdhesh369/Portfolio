@@ -1,5 +1,6 @@
 import { m, useReducedMotion } from "framer-motion";
 import { useServices } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { Sparkles, ChevronRight, Layers } from "lucide-react";
 import type { Service } from "@portfolio/shared";
 
@@ -40,6 +41,7 @@ function getFallbackServices() {
 
 export default function Services() {
   const { data, isLoading, error } = useServices();
+  const { data: settings } = useSiteSettings();
   const shouldReduceMotion = useReducedMotion();
 
   const services = (data && data.length > 0 ? (data as Service[]) : (getFallbackServices() as unknown as Service[])).slice().sort(
@@ -76,7 +78,7 @@ export default function Services() {
               WebkitTextFillColor: "transparent",
             }}
           >
-            Services & Collaboration
+            {settings?.servicesHeading || "Services & Collaboration"}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
             Concrete ways I can contribute to your team or product. Each

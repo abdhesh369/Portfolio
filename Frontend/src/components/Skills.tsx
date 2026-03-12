@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { fadeIn } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
 import { useTheme } from './theme-provider';
 
@@ -21,6 +22,7 @@ export default function SkillsTree() {
 
   const { data: apiSkills } = useSkills();
   const { data: apiConnections } = useSkillConnections();
+  const { data: settings } = useSiteSettings();
   const [viewMode, setViewMode] = useState<'tree' | 'list'>('tree');
 
   const skillNodes = useMemo(() => {
@@ -140,7 +142,7 @@ export default function SkillsTree() {
           <m.h2
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground"
           >
-            Skill Tree
+            {settings?.skillsHeading || "Skill Tree"}
           </m.h2>
           <div className="flex flex-col items-center gap-2">
             <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base">

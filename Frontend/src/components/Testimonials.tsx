@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useTestimonials } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { Quote, Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
 import { OptimizedImage } from "./OptimizedImage";
 import { fadeUp, hoverLiftSmall } from "@/lib/animation";
 
 export default function Testimonials() {
     const { data: testimonials, isLoading } = useTestimonials();
+    const { data: settings } = useSiteSettings();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -75,7 +77,7 @@ export default function Testimonials() {
                         className="text-4xl sm:text-5xl font-bold text-foreground mb-6"
                         style={{ fontFamily: "var(--font-display)" }}
                     >
-                        What People Say
+                        {settings?.testimonialsHeading || "What People Say"}
                     </h2>
                     <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-lg leading-relaxed">
                         Kind words from colleagues, mentors, and clients I've had the privilege to work with.

@@ -204,7 +204,7 @@ export default function About() {
           transition={{ duration: 0.5 }}
           className="text-3xl md:text-5xl font-bold font-display"
         >
-          <span className="text-white">About</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"><GlitchText text="Me" /></span>
+          {settings?.aboutHeading || "About Me"}
         </m.h2>
       </div>
 

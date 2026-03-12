@@ -2,6 +2,7 @@ import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageApiSchema, type InsertMessage } from "@portfolio/shared";
 import { useSendMessage } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";
 import { useState, useEffect } from "react";
@@ -129,6 +130,7 @@ export default function Contact() {
     return () => window.removeEventListener('set-contact-mode', handleSetMode);
   }, []);
   const { mutate: sendMessage, isPending, error: apiError } = useSendMessage();
+  const { data: settings } = useSiteSettings();
 
 
   // Auto-dismiss success message
@@ -195,7 +197,11 @@ export default function Contact() {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold font-display text-foreground mb-4"
           >
-            Initialize <span className="text-cyan-400">Connection</span>
+            {settings?.contactHeading || (
+              <>
+                Initialize <span className="text-cyan-400">Connection</span>
+              </>
+            )}
           </m.h2>
 
           <p className="text-muted-foreground max-w-lg mx-auto">

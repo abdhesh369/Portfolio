@@ -209,7 +209,7 @@ export default function WhyHireMe() {
           viewport={{ once: true }}
           className="text-foreground text-3xl md:text-5xl font-bold mb-4"
         >
-          Why Hire Me as a Student Engineer
+          {settings?.whyHireMeHeading || "Why Hire Me as a Student Engineer"}
         </m.h2>
         <m.div
           initial={scaleXReveal.initial}

@@ -119,7 +119,9 @@ export default function CodeAndPractice() {
   return (
     <section id="code-practice" className="section-container">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">Code & Practice</h2>
+        <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+          {settings?.practiceHeading || "Code & Practice"}
+        </h2>
         <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
       </div>
 

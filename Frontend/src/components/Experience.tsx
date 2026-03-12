@@ -2,6 +2,7 @@ import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale } from "@/lib/animation";
 import { useExperiences } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import type { Experience as ExperienceType } from "@portfolio/shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin } from "lucide-react";
 
@@ -194,6 +195,7 @@ const CurrentStatusBadge = () => (
 
 export default function Experience() {
   const { data: experiences, isLoading } = useExperiences();
+  const { data: settings } = useSiteSettings();
 
   // Split into education and work
   const education = (experiences as ExperienceType[])?.filter(e => e.type === "Education") || [];
@@ -210,7 +212,7 @@ export default function Experience() {
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4 text-foreground"
         >
-          My Journey
+          {settings?.experienceHeading || "Professional Journey"}
         </m.h2>
         <m.div
           initial={{ width: 0 }}

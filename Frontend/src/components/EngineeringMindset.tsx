@@ -1,9 +1,10 @@
 import { m, useInView } from "framer-motion";
-import { useRef, useState, useMemo } from "react";
-import { fadeUpLarge, hoverCardLift, expand, fadeDown, scaleXReveal, fadeIn, fadeUp, hoverScale } from "@/lib/animation";
-import { useMindset } from "@/hooks/use-portfolio";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { fadeLeft, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, fadeIn, hoverCardLift, expand } from "@/lib/animation";
+import { useMindset } from "@/hooks/portfolio/use-mindset";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import type { Mindset } from "@portfolio/shared/schema";
-import { Brain, Layers, Zap, Users, Code2, ChevronRight, Sparkles, ArrowRight, Cpu } from "lucide-react";
+import { Brain, Zap, Target, Layers, Sparkles, Terminal, Code, Cpu, ChevronRight, ArrowRight, Code2, Users } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Brain,
@@ -158,6 +159,7 @@ const principles = [
 export default function EngineeringMindset() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const { data: apiPrinciples } = useMindset();
+  const { data: settings } = useSiteSettings();
 
   const principlesData = useMemo(() => {
     if (!apiPrinciples || apiPrinciples.length === 0) return principles;
@@ -187,7 +189,7 @@ export default function EngineeringMindset() {
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bold mb-4 text-foreground"
         >
-          Engineering Mindset
+          {settings?.mindsetHeading || "Engineering Mindset"}
         </m.h2>
         <m.div
           initial={scaleXReveal.initial}
