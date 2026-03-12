@@ -370,7 +370,9 @@ export default function Hero() {
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
                 <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
-                {settings?.heroHeadingLine1 || "Start building"} <br />
+                <span className="text-white bg-clip-text">
+                  {settings?.heroHeadingLine1 || "Start building"}
+                </span> <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
                   {settings?.heroHeadingLine2 || "The Future"}
                   <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />

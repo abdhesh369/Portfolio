@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -148,50 +148,27 @@ interface FloatingLabelInputProps extends React.InputHTMLAttributes<HTMLInputEle
     error?: string;
 }
 
-export function FloatingLabelInput({
+export const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInputProps>(({
     label,
     error,
     className,
     placeholder,
     ...props
-}: FloatingLabelInputProps) {
-    const [isFocused, setIsFocused] = useState(false);
-    // Support both controlled (value) and uncontrolled (defaultValue/ref)
-    const hasValue = props.value !== undefined
-        ? String(props.value).length > 0
-        : String(props.defaultValue ?? "").length > 0;
-    const active = isFocused || hasValue;
-
+}, ref) => {
     return (
-        <div className={cn("relative group w-full", className)}>
-            <motion.label
-                initial={false}
-                animate={{
-                    y: active ? -28 : 0,
-                    x: active ? 0 : 4,
-                    scale: active ? 0.8 : 1,
-                    color: isFocused ? "#7c3aed" : "rgba(255,255,255,0.4)"
-                }}
-                className="absolute left-6 top-4 z-10 pointer-events-none text-[10px] font-black tracking-[0.2em] uppercase"
-            >
-                {label}
-            </motion.label>
+        <div className={cn("relative group w-full mt-2 md:mt-0", className)}>
             <input
                 {...props}
-                onFocus={(e) => {
-                    setIsFocused(true);
-                    props.onFocus?.(e);
-                }}
-                onBlur={(e) => {
-                    setIsFocused(false);
-                    props.onBlur?.(e);
-                }}
+                ref={ref}
+                placeholder={placeholder || " "}
                 className={cn(
-                    "admin-input pt-6",
+                    "admin-input pt-6 peer placeholder-transparent focus:placeholder-white/20 transition-all",
                     error && "border-pink-500/50 focus:ring-pink-500/20"
                 )}
-                placeholder={active ? placeholder : ""}
             />
+            <label className="absolute left-[24px] top-[16px] z-10 pointer-events-none text-[10px] font-black tracking-[0.2em] uppercase text-white/40 origin-left transition-all duration-300 peer-focus:-translate-y-[28px] peer-focus:scale-[0.85] peer-focus:text-purple-500 peer-[:not(:placeholder-shown)]:-translate-y-[28px] peer-[:not(:placeholder-shown)]:scale-[0.85]">
+                {label}
+            </label>
             {error && (
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-pink-500">
                     <AlertCircle size={14} />
@@ -200,7 +177,7 @@ export function FloatingLabelInput({
             )}
         </div>
     );
-}
+});
 
 interface FormFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     label: string;
