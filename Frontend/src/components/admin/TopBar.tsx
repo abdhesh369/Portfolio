@@ -74,10 +74,10 @@ export default function TopBar({
                         >
                             <span className="opacity-40 group-hover:opacity-100">CONFIG_ENGINE</span>
                         </button>
-                        <ChevronRight size={14} className="opacity-20 translate-y-[1px]" />
+                        <ChevronRight size={14} className="opacity-20 translate-y-[1px] text-[var(--admin-text-primary)]" />
                         <button 
                             onClick={() => onNavigate?.(activeTab)}
-                            className="text-[var(--admin-text-primary)] tracking-[0.4em] font-black drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] hover:text-purple-400 transition-all uppercase"
+                            className="text-[var(--admin-text-primary)] tracking-[0.4em] font-black drop-shadow-[0_0_10px_var(--nm-shadow)] hover:text-purple-400 transition-all uppercase"
                         >
                             {activeTab.replace(/-/g, "_")}
                         </button>
@@ -88,7 +88,7 @@ export default function TopBar({
                             </div>
                         )}
                         {lastSaved && !isRefreshing && (
-                            <div className="hidden lg:flex items-center gap-2 ml-6 text-slate-500">
+                            <div className="hidden lg:flex items-center gap-2 ml-6 text-[var(--admin-text-secondary)]">
                                 <Clock size={12} />
                                 <span className="text-[9px] font-bold tracking-widest">
                                     SAVED {formatDistanceToNow(lastSaved, { addSuffix: true }).toUpperCase()}
@@ -106,7 +106,7 @@ export default function TopBar({
                         <input
                             type="text"
                             placeholder="SEARCH_KERNEL_MODS..."
-                            className="w-full h-12 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-[0.2em] placeholder:opacity-30 focus:outline-none transition-all focus:ring-1 focus:ring-purple-500/20"
+                            className="w-full h-12 pl-12 pr-6 nm-inset rounded-2xl text-[10px] font-black tracking-[0.2em] placeholder:text-[var(--admin-text-muted)] focus:outline-none transition-all focus:ring-1 focus:ring-purple-500/20 text-[var(--admin-text-primary)]"
                         />
                     </div>
 
@@ -151,7 +151,7 @@ export default function TopBar({
                             </div>
                         </button>
 
-                        <div className="w-px h-8 bg-white/5 mx-2 hidden sm:block" />
+                        <div className="w-px h-8 bg-[var(--nm-light)] mx-2 hidden sm:block" />
 
                         {/* User Access Terminal */}
                         <div className="relative" ref={profileRef}>
@@ -174,25 +174,25 @@ export default function TopBar({
                             </button>
 
                             {profileOpen && (
-                                <div className="absolute right-0 mt-6 w-72 nm-float rounded-3xl py-3 flex flex-col animate-in slide-in-from-top-4 duration-500 var(--nm-timing) overflow-hidden z-50 border border-white/5">
-                                    <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02]">
-                                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em] mb-2">Access_Protocol</p>
-                                        <p className="text-sm font-black text-white truncate tracking-wide">{user?.username || "ADMIN_UNKNWN"}</p>
+                                <div className="absolute right-0 mt-6 w-72 nm-float rounded-3xl py-3 flex flex-col animate-in slide-in-from-top-4 duration-500 var(--nm-timing) overflow-hidden z-50 border border-[var(--nm-light)]">
+                                    <div className="px-8 py-6 border-b border-[var(--nm-light)] bg-[var(--nm-card)]">
+                                        <p className="text-[8px] font-black text-[var(--admin-text-muted)] uppercase tracking-[0.4em] mb-2">Access_Protocol</p>
+                                        <p className="text-sm font-black text-[var(--admin-text-primary)] truncate tracking-wide">{user?.username || "ADMIN_UNKNWN"}</p>
                                         <div className="flex items-center gap-2 mt-3 text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                             CORE_SECURITY_CLEARANCE
                                         </div>
                                     </div>
                                     <div className="p-3 space-y-2">
-                                        <button disabled className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-bold text-slate-400 opacity-30 cursor-not-allowed">
+                                        <button disabled className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-bold text-[var(--admin-text-muted)] opacity-30 cursor-not-allowed">
                                             <User size={16} />
                                             IDENTITY_CORE
                                         </button>
-                                        <button disabled className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-bold text-slate-400 opacity-30 cursor-not-allowed">
+                                        <button disabled className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-bold text-[var(--admin-text-muted)] opacity-30 cursor-not-allowed">
                                             <Settings size={16} />
                                             SYSTEM_RESOURCES
                                         </button>
-                                        <div className="h-px bg-white/5 mx-3 my-2" />
+                                        <div className="h-px bg-[var(--nm-light)] mx-3 my-2" />
                                         <button
                                             onClick={() => logout()}
                                             className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black text-pink-500 hover:bg-pink-500/10 transition-all group"

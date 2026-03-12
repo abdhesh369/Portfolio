@@ -36,9 +36,9 @@ export function AdminButton({
 }) {
     const variants = {
         primary: "nm-button-primary",
-        secondary: "nm-button text-admin-text-primary",
+        secondary: "nm-button text-[var(--admin-text-primary)]",
         danger: "nm-button text-pink-500 hover:text-pink-400",
-        ghost: "bg-transparent text-admin-text-secondary hover:text-white transition-colors"
+        ghost: "bg-transparent text-[var(--admin-text-secondary)] hover:text-[var(--admin-text-primary)] transition-colors"
     };
 
     const sizes = {
@@ -116,9 +116,9 @@ export function SpringToggle({
     className?: string;
 }) {
     return (
-        <div className={cn("flex items-center justify-between p-6 nm-flat border-white/5", className)}>
+        <div className={cn("flex items-center justify-between p-6 nm-flat border-[var(--nm-light)]", className)}>
             <div className="space-y-1">
-                <label className="text-[10px] font-black text-white tracking-[0.2em] uppercase block">{label}</label>
+                <label className="text-[10px] font-black text-[var(--admin-text-primary)] tracking-[0.2em] uppercase block">{label}</label>
                 {description && <p className="text-[9px] text-admin-text-muted tracking-wide font-medium">{description}</p>}
             </div>
             <motion.button
@@ -162,11 +162,11 @@ export const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInpu
                 ref={ref}
                 placeholder={placeholder || " "}
                 className={cn(
-                    "admin-input pt-6 peer placeholder-transparent focus:placeholder-white/20 transition-all",
+                    "admin-input pt-6 peer placeholder-transparent focus:placeholder-[var(--admin-text-muted)] transition-all text-[var(--admin-text-primary)]",
                     error && "border-pink-500/50 focus:ring-pink-500/20"
                 )}
             />
-            <label className="absolute left-[24px] top-[16px] z-10 pointer-events-none text-[10px] font-black tracking-[0.2em] uppercase text-white/40 origin-left transition-all duration-300 peer-focus:-translate-y-[28px] peer-focus:scale-[0.85] peer-focus:text-purple-500 peer-[:not(:placeholder-shown)]:-translate-y-[28px] peer-[:not(:placeholder-shown)]:scale-[0.85]">
+            <label className="absolute left-[24px] top-[16px] z-10 pointer-events-none text-[10px] font-black tracking-[0.2em] uppercase text-[var(--admin-text-muted)] origin-left transition-all duration-300 peer-focus:-translate-y-[28px] peer-focus:scale-[0.85] peer-focus:text-purple-500 peer-[:not(:placeholder-shown)]:-translate-y-[28px] peer-[:not(:placeholder-shown)]:scale-[0.85]">
                 {label}
             </label>
             {error && (
@@ -242,10 +242,10 @@ export function FormSelect({ label, options, icon: Icon, onChange, ...props }: F
                 <select
                     {...props}
                     onChange={(e) => onChange?.(e.target.value)}
-                    className={cn("admin-input appearance-none cursor-pointer", props.className)}
+                    className={cn("admin-input appearance-none cursor-pointer text-[var(--admin-text-primary)]", props.className)}
                 >
                     {options.map((opt) => (
-                        <option key={opt.value} value={opt.value} className="bg-[var(--nm-card)] text-white">
+                        <option key={opt.value} value={opt.value} className="bg-[var(--nm-card)] text-[var(--admin-text-primary)]">
                             {opt.label.toUpperCase()}
                         </option>
                     ))}
@@ -260,7 +260,7 @@ export function FormSelect({ label, options, icon: Icon, onChange, ...props }: F
 
 export function EmptyState({ icon: Icon, text, className }: { icon: React.ComponentType<{ size?: number; className?: string }>; text: string; className?: string }) {
     return (
-        <div className={cn("text-center py-24 nm-flat border-white/5 relative overflow-hidden", className)}>
+        <div className={cn("text-center py-24 nm-flat border-[var(--nm-light)] relative overflow-hidden", className)}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-purple-600/30 to-transparent" />
             <div className="nm-inset w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 text-purple-500/20 group hover:text-purple-500/40 transition-colors">
                 {Icon ? <Icon size={32} /> : <div className="w-4 h-4 bg-current rounded-sm rotate-45" />}
@@ -286,9 +286,9 @@ export function FormCheckbox({ label, onChange, checked, activeColor, ...props }
                 "w-6 h-6 rounded-lg nm-inset flex items-center justify-center transition-all duration-300",
                 checked && (activeColor || "bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)]")
             )}>
-                {checked && <Check size={14} strokeWidth={4} className="text-white" />}
+                {checked && <Check size={14} strokeWidth={4} className="text-white dark:text-[var(--admin-text-primary)]" />}
             </div>
-            <span className="text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] group-hover:text-white transition-colors">
+            <span className="text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.2em] group-hover:text-[var(--admin-text-primary)] transition-colors">
                 {label}
             </span>
         </div>
@@ -299,12 +299,12 @@ export function LoadingSkeleton({ className }: { className?: string } = {}) {
     return (
         <div className={cn("space-y-8 animate-pulse p-2", className)}>
             {[1, 2, 3].map((i) => (
-                <div key={i} className="nm-flat rounded-[2rem] p-10 h-40 relative overflow-hidden bg-white/5">
+                <div key={i} className="nm-flat rounded-[2rem] p-10 h-40 relative overflow-hidden bg-[var(--nm-light)]">
                     <div className="flex gap-6 items-center">
-                        <div className="w-16 h-16 rounded-2xl bg-white/10" />
+                        <div className="w-16 h-16 rounded-2xl bg-[var(--nm-shadow)]" />
                         <div className="space-y-3 flex-1">
-                            <div className="h-4 w-1/3 bg-white/10 rounded" />
-                            <div className="h-3 w-1/2 bg-white/5 rounded" />
+                            <div className="h-4 w-1/3 bg-[var(--nm-shadow)] rounded" />
+                            <div className="h-3 w-1/2 bg-[var(--nm-shadow)] rounded opacity-50" />
                         </div>
                     </div>
                 </div>

@@ -88,7 +88,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     </AdminButton>
                 </div>
 
-                <div className="nm-flat p-8 rounded-3xl border border-white/5">
+                <div className="nm-flat p-8 rounded-3xl border border-[var(--nm-light)]">
                     <form onSubmit={save} className="space-y-8 max-w-4xl mx-auto">
                         <div className="grid md:grid-cols-2 gap-8">
                             <FloatingLabelInput
@@ -184,7 +184,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                                 type="submit"
                                 isLoading={isPending}
                                 variant="primary"
-                                className="px-10 h-12 rounded-xl nm-button bg-admin-accent text-white font-bold text-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_10px_20px_-5px_rgba(var(--nm-accent-rgb),0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                className="px-10 h-12 rounded-xl nm-button bg-admin-accent text-[var(--admin-text-primary)] font-bold text-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_10px_20px_-5px_rgba(var(--nm-accent-rgb),0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                             >
                                 {editing.id ? "Update Changes" : "Create Milestone"}
                             </AdminButton>
@@ -221,7 +221,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     onClick={() => setEditing({ ...emptyExperience })}
                     variant="primary"
                     icon={Plus}
-                    className="group flex items-center gap-3 px-8 h-14 rounded-2xl nm-button bg-admin-accent text-white font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="group flex items-center gap-3 px-8 h-14 rounded-2xl nm-button bg-admin-accent text-[var(--admin-text-primary)] font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                     <span>Add Milestone</span>
                 </AdminButton>
@@ -232,7 +232,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                     {[1, 2, 3].map(i => <LoadingSkeleton key={i} />)}
                 </div>
             ) : !experiences.length ? (
-                <div className="nm-flat p-20 rounded-[3rem] text-center border border-white/5 overflow-hidden relative">
+                <div className="nm-flat p-20 rounded-[3rem] text-center border border-[var(--nm-light)] overflow-hidden relative">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <Briefcase size={200} />
                     </div>
@@ -253,15 +253,15 @@ export function ExperiencesTab(_props: AdminTabProps) {
 
                             {/* Card Content */}
                             <div className={cn(
-                                "nm-flat p-8 rounded-[2rem] flex flex-col md:flex-row items-start gap-8 border border-white/5 transition-all duration-500",
-                                selectedIds.includes(exp.id) ? "nm-inset border-nm-accent/20 translate-x-1" : "hover:nm-inset hover:border-white/10"
+                                "nm-flat p-8 rounded-[2rem] flex flex-col md:flex-row items-start gap-8 border border-[var(--nm-light)] transition-all duration-500",
+                                selectedIds.includes(exp.id) ? "nm-inset border-nm-accent/20 translate-x-1" : "hover:nm-inset hover:border-[var(--nm-light)]/20"
                             )}>
                                 {/* Selector */}
                                 <button
                                     className={cn(
                                         "w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0 mt-1",
                                         selectedIds.includes(exp.id)
-                                            ? "bg-nm-accent text-white shadow-lg"
+                                            ? "bg-nm-accent text-[var(--admin-text-primary)] shadow-lg"
                                             : "nm-inset text-transparent hover:text-admin-text-secondary hover:nm-flat"
                                     )}
                                     onClick={() => toggleSelect(exp.id)}
@@ -337,7 +337,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
             {/* Bulk Selection Bar */}
             {
                 selectedIds.length > 0 && (
-                    <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-white/10 rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl border-t-white/20">
+                    <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-[var(--nm-light)] rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-rose-500 animate-pulse">
                                 <Trash2 size={24} />
@@ -353,7 +353,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                         <div className="flex items-center gap-4">
                             <AdminButton
                                 variant="secondary"
-                                className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-[var(--admin-text-primary)] font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 onClick={handleBulkDelete}
                             >
                                 Delete Selected

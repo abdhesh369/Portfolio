@@ -143,7 +143,7 @@ export default function Sidebar({
                     {!collapsed && (
                         <button 
                             onClick={() => setCollapsed(true)}
-                            className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center text-slate-500 hover:text-purple-400 transition-colors"
+                            className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center text-[var(--admin-text-secondary)] hover:text-purple-400 transition-colors"
                         >
                             <ChevronLeft size={16} />
                         </button>
@@ -162,25 +162,25 @@ export default function Sidebar({
                                     setCollapsed(false);
                                     setTimeout(() => document.getElementById('sidebar-search')?.focus(), 500);
                                 }}
-                                className="w-12 h-12 nm-button flex items-center justify-center text-slate-400 hover:text-purple-400"
+                                className="w-12 h-12 nm-button flex items-center justify-center text-[var(--admin-text-secondary)] hover:text-purple-400"
                             >
                                 <Search size={18} />
                             </button>
                         ) : (
                             <div className="relative group">
-                                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-500 transition-colors" />
+                                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--admin-text-secondary)] group-focus-within:text-purple-500 transition-colors" />
                                 <input
                                     id="sidebar-search"
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="FILTER_NAV..."
-                                    className="w-full h-11 pl-11 pr-10 nm-inset rounded-xl text-[10px] font-black tracking-widest bg-transparent border-none focus:ring-1 focus:ring-purple-500/20 placeholder:text-slate-600 outline-none"
+                                    className="w-full h-11 pl-11 pr-10 nm-inset rounded-xl text-[10px] font-black tracking-widest bg-transparent border-none focus:ring-1 focus:ring-purple-500/20 placeholder:text-[var(--admin-text-muted)] text-[var(--admin-text-primary)] outline-none"
                                 />
                                 {searchQuery && (
                                     <button 
                                         onClick={() => setSearchQuery("")}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-pink-500 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-secondary)] hover:text-pink-500 transition-colors"
                                     >
                                         <X size={14} />
                                     </button>
@@ -197,11 +197,11 @@ export default function Sidebar({
                             {/* Group Header */}
                             <div className="flex items-center gap-3 h-4 px-2">
                                 {!collapsed ? (
-                                    <span className="text-[8px] uppercase tracking-[0.4em] text-slate-600 font-black whitespace-nowrap">
+                                    <span className="text-[8px] uppercase tracking-[0.4em] text-[var(--admin-text-muted)] font-black whitespace-nowrap">
                                         {group.label}
                                     </span>
                                 ) : (
-                                    <div className="w-full h-px bg-slate-800/50" />
+                                    <div className="w-full h-px bg-[var(--nm-light)]" />
                                 )}
                             </div>
 
@@ -231,7 +231,7 @@ export default function Sidebar({
                                         >
                                             <div className={cn(
                                                 "flex items-center justify-center transition-all duration-500 shrink-0 relative",
-                                                isActive ? "text-[var(--nm-accent-purple)] scale-110" : "group-hover:text-purple-400 group-hover:rotate-12 text-slate-500"
+                                                isActive ? "text-[var(--nm-accent-purple)] scale-110" : "group-hover:text-purple-400 group-hover:rotate-12 text-[var(--admin-text-secondary)]"
                                             )}>
                                                 <Icon size={isActive ? 20 : 18} strokeWidth={isActive ? 2.5 : 2} />
                                                 
@@ -244,7 +244,7 @@ export default function Sidebar({
                                             {!collapsed && (
                                                 <span className={cn(
                                                     "font-bold text-[9px] tracking-[0.2em] whitespace-nowrap opacity-100 transition-all duration-300 uppercase flex-1 text-left",
-                                                    isActive ? "text-slate-200" : "text-slate-500 group-hover:text-slate-300"
+                                                    isActive ? "text-[var(--admin-text-primary)]" : "text-[var(--admin-text-secondary)] group-hover:text-[var(--admin-text-primary)]"
                                                 )}>
                                                     {item.label}
                                                 </span>
@@ -268,7 +268,7 @@ export default function Sidebar({
                 </nav>
 
                 {/* Footer Action: Context Sync */}
-                <div className="p-4 border-t border-white/5">
+                <div className="p-4 border-t border-[var(--nm-light)]">
                     <div className={cn(
                         "nm-inset p-3 transition-all duration-500",
                         collapsed ? "w-12 h-12 p-0 flex items-center justify-center mx-auto rounded-xl" : "flex items-center gap-4 rounded-2xl"
@@ -278,8 +278,8 @@ export default function Sidebar({
                         </div>
                         {!collapsed && (
                             <div className="flex flex-col min-w-0">
-                                <span className="text-[8px] uppercase tracking-[0.4em] font-black text-slate-500">Kernel_Link</span>
-                                <span className="text-[10px] font-bold truncate uppercase text-slate-300">{brandName}</span>
+                                <span className="text-[8px] uppercase tracking-[0.4em] font-black text-[var(--admin-text-muted)]">Kernel_Link</span>
+                                <span className="text-[10px] font-bold truncate uppercase text-[var(--admin-text-primary)]">{brandName}</span>
                             </div>
                         )}
                     </div>

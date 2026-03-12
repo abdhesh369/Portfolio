@@ -143,8 +143,8 @@ export default function AdminDashboard() {
             )}
 
             {shortcutHint && (
-                <div className="fixed bottom-36 right-10 z-[100] nm-inset px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-4 animate-in fade-in duration-300">
-                    <span className="text-[9px] font-bold tracking-widest text-slate-300 uppercase">{shortcutHint}</span>
+                <div className="fixed bottom-36 right-10 z-[100] nm-inset px-6 py-3 rounded-2xl border border-[var(--nm-light)] flex items-center gap-4 animate-in fade-in duration-300">
+                    <span className="text-[9px] font-bold tracking-widest text-[var(--admin-text-secondary)] uppercase">{shortcutHint}</span>
                 </div>
             )}
 

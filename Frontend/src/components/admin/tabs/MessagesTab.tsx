@@ -103,7 +103,7 @@ export function MessagesTab() {
             </div>
 
             {!filtered.length ? (
-                <div className="nm-flat p-20 rounded-[3rem] text-center border border-white/5 overflow-hidden relative">
+                <div className="nm-flat p-20 rounded-[3rem] text-center border border-[var(--nm-light)] overflow-hidden relative">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <MessageSquare size={200} />
                     </div>
@@ -115,8 +115,8 @@ export function MessagesTab() {
                         <div
                             key={msg.id}
                             className={cn(
-                                "nm-flat p-6 rounded-3xl flex flex-col md:flex-row md:items-start gap-6 group transition-all duration-500 border border-white/5 animate-in slide-in-from-bottom-4",
-                                selectedIds.includes(msg.id) ? "nm-inset border-nm-accent/20" : "hover:nm-inset hover:border-white/10"
+                                "nm-flat p-6 rounded-3xl flex flex-col md:flex-row md:items-start gap-6 group transition-all duration-500 border border-[var(--nm-light)] animate-in slide-in-from-bottom-4",
+                                selectedIds.includes(msg.id) ? "nm-inset border-nm-accent/20" : "hover:nm-inset hover:border-[var(--nm-light)]/20"
                             )}
                             style={{ animationDelay: `${index * 50}ms` }}
                         >
@@ -129,7 +129,7 @@ export function MessagesTab() {
                                     className={cn(
                                         "w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0",
                                         selectedIds.includes(msg.id)
-                                            ? "bg-nm-accent text-white shadow-lg"
+                                            ? "bg-nm-accent text-[var(--admin-text-primary)] shadow-lg"
                                             : "nm-inset text-transparent hover:text-admin-text-secondary hover:nm-flat"
                                     )}
                                     onClick={() => toggleSelect(msg.id)}
@@ -186,7 +186,7 @@ export function MessagesTab() {
 
             {/* Bulk Selection Bar */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-white/10 rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl border-t-white/20">
+                <div className="fixed bottom-10 left-[calc(50%+140px)] -translate-x-1/2 z-50 nm-flat bg-admin-bg/95 border border-[var(--nm-light)] rounded-[2rem] shadow-2xl px-10 py-5 flex items-center gap-10 animate-in slide-in-from-bottom-10 fade-in backdrop-blur-xl">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl nm-inset flex items-center justify-center text-rose-500 animate-pulse">
                             <Trash2 size={24} />
@@ -202,7 +202,7 @@ export function MessagesTab() {
                     <div className="flex items-center gap-4">
                         <AdminButton
                             variant="secondary"
-                            className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="px-8 h-12 rounded-xl nm-button bg-rose-500 text-[var(--admin-text-primary)] font-bold text-xs uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                             onClick={handleBulkDelete}
                         >
                             Delete Transmissions
@@ -274,9 +274,9 @@ function ReplyDialog({ message }: { message: Message }) {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-8">
             <div className="absolute inset-0 bg-admin-bg/60 backdrop-blur-md animate-in fade-in duration-300" onClick={() => setOpen(false)} />
-            <div className="relative w-full max-w-5xl nm-flat rounded-[3rem] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-5 duration-500 border border-white/10 shadow-2xl">
+            <div className="relative w-full max-w-5xl nm-flat rounded-[3rem] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-5 duration-500 border border-[var(--nm-light)] shadow-2xl">
                 {/* Modal Header */}
-                <div className="p-8 flex items-center justify-between border-b border-white/5 nm-flat">
+                <div className="p-8 flex items-center justify-between border-b border-[var(--nm-light)] nm-flat">
                     <div className="flex items-center gap-6">
                         <div className="w-16 h-16 rounded-2xl nm-inset flex items-center justify-center text-nm-accent">
                             <Reply size={32} />
@@ -297,7 +297,7 @@ function ReplyDialog({ message }: { message: Message }) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 h-[600px]">
                     {/* Templates Sidebar */}
-                    <div className="lg:col-span-1 p-8 nm-flat border-r border-white/5 overflow-y-auto custom-scrollbar">
+                    <div className="lg:col-span-1 p-8 nm-flat border-r border-[var(--nm-light)] overflow-y-auto custom-scrollbar">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-8 h-8 rounded-lg nm-inset flex items-center justify-center text-nm-accent">
                                 <Plus size={16} />

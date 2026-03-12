@@ -79,17 +79,17 @@ const MenuBar = ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
     ];
 
     return (
-        <div className="flex flex-wrap gap-1 p-2 bg-white/5 border-b border-white/10">
+        <div className="flex flex-wrap gap-1 p-2 bg-var(--nm-panel) border-b border-[var(--nm-light)]">
             {buttons.map((btn, index) => (
                 btn.type === 'divider' ? (
-                    <div key={index} className="w-px h-6 bg-white/10 mx-1 self-center" />
+                    <div key={index} className="w-px h-6 bg-[var(--nm-light)] mx-1 self-center" />
                 ) : (
                     <button
                         key={index}
                         onClick={(e) => { e.preventDefault(); btn.action(); }}
                         className={`p-1.5 rounded-md transition-colors ${btn.isActive
                             ? 'bg-purple-500/20 text-purple-400'
-                            : 'text-white/60 hover:bg-white/10 hover:text-white'
+                            : 'text-[var(--admin-text-secondary)] hover:bg-[var(--nm-light)] hover:text-[var(--admin-text-primary)]'
                             }`}
                         title={btn.title}
                         type="button"
@@ -110,7 +110,7 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
             StarterKit,
             Image.configure({
                 HTMLAttributes: {
-                    class: 'rounded-xl border border-white/10 max-w-full my-4',
+                    class: 'rounded-xl border border-[var(--nm-light)] max-w-full my-4',
                 },
             }),
             Link.configure({
@@ -132,7 +132,7 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
         },
         editorProps: {
             attributes: {
-                class: 'prose prose-invert max-w-none focus:outline-none min-h-[150px] px-3 py-2 text-sm text-white/90',
+                class: 'prose dark:prose-invert max-w-none focus:outline-none min-h-[150px] px-3 py-2 text-sm text-[var(--admin-text-primary)]',
             },
         },
     });
@@ -148,7 +148,7 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
         <div className={className}>
             <div className="flex items-center justify-between mb-1.5">
                 {label && (
-                    <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                    <label className="block text-xs font-medium text-[var(--admin-text-muted)] uppercase tracking-wider">
                         {label}
                     </label>
                 )}
@@ -157,7 +157,7 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsPreview(!isPreview)}
-                    className="h-7 px-2 text-[10px] text-white/40 hover:text-white flex items-center gap-1.5"
+                    className="h-7 px-2 text-[10px] text-[var(--admin-text-muted)] hover:text-[var(--admin-text-primary)] flex items-center gap-1.5"
                 >
                     {isPreview ? (
                         <>
@@ -173,12 +173,12 @@ export function RichTextEditor({ value, onChange, label, className }: RichTextEd
                 </Button>
             </div>
 
-            <div className="border border-white/10 rounded-lg overflow-hidden bg-[hsl(224_71%_4%_/_0.5)] focus-within:ring-1 focus-within:border-purple-500 transition-all">
+            <div className="border border-[var(--nm-light)] rounded-lg overflow-hidden bg-[var(--nm-panel)] focus-within:ring-1 focus-within:border-purple-500 transition-all">
                 {!isPreview && <MenuBar editor={editor} />}
 
                 {isPreview ? (
                     <div
-                        className="prose prose-invert max-w-none min-h-[150px] px-4 py-4 text-sm text-white/80 overflow-auto"
+                        className="prose dark:prose-invert max-w-none min-h-[150px] px-4 py-4 text-sm text-[var(--admin-text-secondary)] overflow-auto"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }}
                     />
                 ) : (

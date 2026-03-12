@@ -161,15 +161,15 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                     <button
                         key={action.label}
                         onClick={() => onNavigate?.(action.tab)}
-                        className="nm-flat p-4 rounded-2xl flex items-center justify-between group hover:nm-inset transition-all duration-300 border border-white/5"
+                        className="nm-flat p-4 rounded-2xl flex items-center justify-between group hover:nm-inset transition-all duration-300 border border-[var(--nm-light)]"
                         style={{ animation: `fadeInUp 0.5s ease-out forwards ${0.5 + idx * 0.1}s`, opacity: 0 }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className={cn("p-2 rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform", action.color)}>
+                            <div className={cn("p-2 rounded-xl bg-[var(--nm-light)] border border-[var(--nm-light)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all", action.color)}>
                                 <action.icon size={18} />
                             </div>
                             <div className="flex flex-col items-start">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 group-hover:text-white transition-colors">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--admin-text-secondary)] group-hover:text-[var(--admin-text-primary)] transition-colors">
                                     {action.label}
                                 </span>
                                 {action.badge !== undefined && action.badge > 0 && (
@@ -179,7 +179,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                                 )}
                             </div>
                         </div>
-                        <ChevronRight size={14} className="text-slate-600 group-hover:translate-x-1 group-hover:text-purple-400 transition-all" />
+                        <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:translate-x-1 group-hover:text-purple-400 transition-all" />
                     </button>
                 ))}
             </div>

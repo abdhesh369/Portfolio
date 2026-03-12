@@ -81,10 +81,10 @@ function SortableProjectItem({ project, onEdit, onDelete, onTogglePin, isSelecte
                     onClick={(e) => { e.stopPropagation(); onToggleSelect(project.id); }}
                     className={cn(
                         "w-6 h-6 rounded-lg nm-inset flex items-center justify-center cursor-pointer transition-all duration-300",
-                        isSelected ? "bg-nm-accent text-white" : "hover:shadow-lg"
+                        isSelected ? "bg-nm-accent text-[var(--admin-text-primary)]" : "hover:shadow-lg"
                     )}
                 >
-                    {isSelected && <Check size={14} strokeWidth={4} />}
+                    {isSelected && <Check size={14} strokeWidth={4} className="text-white dark:text-[var(--admin-text-primary)]" />}
                 </div>
             </div>
 
@@ -99,7 +99,7 @@ function SortableProjectItem({ project, onEdit, onDelete, onTogglePin, isSelecte
                     />
                 </div>
                 {project.isFlagship && (
-                    <div className="absolute -top-2 -right-2 nm-float bg-amber-500 p-1.5 rounded-lg text-white shadow-xl animate-bounce-subtle">
+                    <div className="absolute -top-2 -right-2 nm-float bg-amber-500 p-1.5 rounded-lg text-white dark:text-[var(--admin-text-primary)] shadow-xl animate-bounce-subtle">
                         <Zap size={12} fill="currentColor" />
                     </div>
                 )}
@@ -542,7 +542,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                     </div>
                     <AdminButton
                         variant="secondary"
-                        className="nm-button px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/5 hover:bg-rose-500 hover:text-white border-none"
+                        className="nm-button px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/5 hover:bg-rose-500 hover:text-[var(--admin-text-primary)] border-none"
                         onClick={handleBulkDelete}
                     >
                         Terminate Selection

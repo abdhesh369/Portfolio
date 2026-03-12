@@ -43,7 +43,7 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
     }, [theme]);
 
     return (
-        <div className={`admin-mode min-h-screen relative overflow-hidden selection:bg-purple-500/30 selection:text-white ${resolvedTheme}`}>
+        <div className={`admin-mode min-h-screen relative overflow-hidden selection:bg-purple-500/30 selection:text-[var(--admin-text-primary)] ${resolvedTheme}`}>
             {/* Ambient Technical Glows */}
             <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" />
             <div className="fixed bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
@@ -78,13 +78,13 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
 
                     {/* Technical Status Footer */}
                     <footer className="px-12 py-8 opacity-30">
-                        <div className="flex items-center justify-between text-[9px] font-black tracking-[0.3em] uppercase text-[var(--admin-text-muted)] border-t border-white/5 pt-8">
+                        <div className="flex items-center justify-between text-[9px] font-black tracking-[0.3em] uppercase text-[var(--admin-text-muted)] border-t border-[var(--nm-light)] pt-8">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-technical" />
                                     CORE_LINK_STABLE
                                 </div>
-                                <div className="w-px h-3 bg-white/10" />
+                                <div className="w-px h-3 bg-[var(--nm-light)]" />
                                 <span>KERNEL_v5.0.4-LATEST</span>
                             </div>
                             <div className="flex items-center gap-6">
