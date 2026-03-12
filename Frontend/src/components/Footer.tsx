@@ -10,6 +10,7 @@ const defaultFooterNavItems = [
   { name: "Skills", href: "#skills" },
   { name: "Experience", href: "#experience" },
   { name: "Blog", href: "/blog" },
+  { name: "Portal", href: "/portal" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -182,14 +183,19 @@ export default function Footer() {
         {/* Footer bottom bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm pt-8 border-t border-border/50 gap-6">
           {/* Status Pill (New placement) */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/5 border border-border">
-            <div className="relative flex h-2 w-2">
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/5 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+            <div className="relative flex h-2.5 w-2.5">
               <div className={`absolute inset-0 rounded-full animate-ping opacity-75 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
-              <div className={`relative rounded-full h-2 w-2 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
+              <div className={`relative rounded-full h-2.5 w-2.5 ${visitorCount.count > 0 ? 'bg-emerald-500' : 'bg-gray-500'}`} />
             </div>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
-              {visitorCount.count} live visitors
-            </span>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest leading-none mb-1">
+                Live Status
+              </span>
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-tighter leading-none">
+                {visitorCount.count} Active {visitorCount.count === 1 ? 'Visitor' : 'Visitors'}
+              </span>
+            </div>
           </div>
 
           {/* Copyright (Centralized) */}
