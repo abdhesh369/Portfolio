@@ -5,7 +5,6 @@ import { m, AnimatePresence } from "framer-motion";
 import { CommandPalette } from "./CommandPalette";
 import { Button } from "@/components/ui/button";
 import { PerformanceToggle } from "@/components/PerformanceToggle";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollStore } from "@/hooks/use-scroll-store";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -192,7 +191,6 @@ export default function Navbar() {
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </button>
-              <ThemeToggle />
               <PerformanceToggle />
               <Button
                 onClick={() => handleNavClick(settings?.heroCtaPrimaryUrl || "#contact")}
@@ -264,7 +262,6 @@ export default function Navbar() {
               <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
                 <span className="text-sm text-muted-foreground">Appearance</span>
                 <div className="flex items-center gap-2">
-                  <ThemeToggle />
                   <PerformanceToggle />
                 </div>
               </div>

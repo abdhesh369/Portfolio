@@ -38,9 +38,12 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   disableGlobalClass = false,
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (!disableGlobalClass) {
+      return defaultTheme;
+    }
+    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+  });
 
   const [reducedMotion, setReducedMotion] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -83,7 +86,9 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
+      if (disableGlobalClass) {
+        localStorage.setItem(storageKey, theme);
+      }
       setTheme(theme);
     },
     reducedMotion,
