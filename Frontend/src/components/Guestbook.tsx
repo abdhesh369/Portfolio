@@ -2,7 +2,7 @@ import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2, Heart, Star, ThumbsUp, Flame } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/portfolio/use-guestbook";
+import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useToast } from "@/hooks/use-toast";
 import type { GuestbookEntry } from "@portfolio/shared/schema";

@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import type { EmailTemplate } from "@portfolio/shared/schema";
-import { useEmailTemplates } from "@/hooks/portfolio/use-email-templates";
+import { useEmailTemplates } from "@/hooks/use-portfolio";
 import { FileText, Plus, Trash2, Edit3, X, Check, Mail } from "lucide-react";
 
 const emptyTemplate = { name: "", subject: "", body: "" };

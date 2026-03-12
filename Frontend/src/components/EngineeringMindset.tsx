@@ -1,7 +1,7 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState, useEffect, useMemo } from "react";
-import { fadeLeft, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, fadeIn, hoverCardLift, expand } from "@/lib/animation";
-import { useMindset } from "@/hooks/portfolio/use-mindset";
+import { fadeLeft, fadeUp, fadeUpLarge, fadeDown, scaleXReveal, scaleIn, bobble, fadeIn, hoverCardLift, expand, hoverScale } from "@/lib/animation";
+import { useMindset } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import type { Mindset } from "@portfolio/shared/schema";
 import { Brain, Zap, Target, Layers, Sparkles, Terminal, Code, Cpu, ChevronRight, ArrowRight, Code2, Users } from "lucide-react";

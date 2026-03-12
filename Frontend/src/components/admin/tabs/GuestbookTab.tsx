@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "@/hooks/portfolio/use-guestbook";
+import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "@/hooks/use-portfolio";
 
 import { EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import {
@@ -140,10 +140,10 @@ export function GuestbookTab() {
 
                                     {entry.reactions && Object.keys(entry.reactions).length > 0 && (
                                         <div className="flex flex-wrap gap-3">
-                                            {Object.entries(entry.reactions).map(([emoji, count]) => (
+                                            {Object.entries(entry.reactions || {}).map(([emoji, count]) => (
                                                 <div key={emoji} className="nm-inset px-3 py-1 rounded-full flex items-center gap-2">
                                                     <span className="text-xs">{emoji}</span>
-                                                    <span className="text-[10px] font-black text-indigo-500">{count}</span>
+                                                    <span className="text-[10px] font-black text-indigo-500">{count as React.ReactNode}</span>
                                                 </div>
                                             ))}
                                         </div>
