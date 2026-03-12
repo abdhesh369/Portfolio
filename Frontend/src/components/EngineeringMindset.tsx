@@ -169,7 +169,7 @@ export default function EngineeringMindset() {
 
   return (
     <section id="mindset" className="section-container bg-muted/30 relative overflow-hidden">
-      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
+      <div className="absolute inset-0 bg-background/20 pointer-events-none -z-10" />
       {/* Header */}
       <div className="text-center mb-16">
         <m.div

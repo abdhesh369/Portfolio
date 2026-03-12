@@ -83,7 +83,6 @@
   --brand-linkedin: #0077b5;
   --brand-twitter: #1da1f2;
   --brand-instagram: #e1306c;
-  --brand-facebook: #1877f2;
 }
 
 .dark {
@@ -147,6 +146,42 @@
   --brand-twitter: #1da1f2;
   --brand-instagram: #e1306c;
   --brand-facebook: #1877f2;
+}
+
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 262 83% 58%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 262 83% 58%;
+  --color-cyan: #0891b2;
+  --color-purple: #9333ea;
+  --color-purple-light: #8b5cf6;
+  --color-pink: #db2777;
+  --color-blue: #2563eb;
+  --color-green: #16a34a;
+  --color-amber: #d97706;
+  --color-sky: #0284c7;
+  --color-muted-text: #64748b;
+  --foreground-hex: #1e293b;
+  --background-hex: #ffffff;
+  --color-bg-deep: #f8fafc;
+  --color-bg-mid: #f1f5f9;
+  --color-bg-accent: #e2e8f0;
 }
 
 /* ==================== BASE STYLES ==================== */
@@ -249,15 +284,8 @@
   /* Container */
   .section-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative;
-    background: hsl(var(--background) / 0.85);
   }
 
-  /* In light mode, sections should be more opaque to stay readable */
-  :root .section-container {
-    background: hsl(var(--background) / 0.92);
-  }
-
-  /* In dark mode, keep the glass effect */
   .dark .section-container {
     background: hsl(var(--background) / 0.6);
   }

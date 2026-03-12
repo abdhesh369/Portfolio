@@ -55,7 +55,7 @@ export const Guestbook = () => {
 
     return (
         <section id="guestbook" className="py-24 relative overflow-hidden">
-            <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
+            <div className="absolute inset-0 bg-background/20 pointer-events-none -z-10" />
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col items-center mb-12 text-center">

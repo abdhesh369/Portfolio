@@ -257,7 +257,7 @@ export default function About() {
                 <div className="p-6 border-t border-border bg-foreground/5 space-y-4 relative z-30">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Position</span>
-                    <span className="text-white font-medium">{(settings as any)?.personalTitle || "Student Engineer"}</span>
+                    <span className="text-foreground font-medium">{(settings as any)?.personalTitle || "Student Engineer"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Availability</span>

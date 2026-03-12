@@ -201,7 +201,7 @@ export default function Experience() {
 
   return (
     <section id="experience" className="section-container overflow-hidden relative">
-      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
+      <div className="absolute inset-0 bg-background/20 pointer-events-none -z-10" />
       {/* Section Header */}
       <div className="text-center mb-16">
         <m.h2

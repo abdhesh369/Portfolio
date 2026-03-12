@@ -370,7 +370,7 @@ export default function Hero() {
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
                 <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
-                <span className="text-foreground bg-clip-text">
+                <span className="text-foreground">
                   {settings?.heroHeadingLine1 || "Start building"}
                 </span> <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
@@ -399,7 +399,7 @@ export default function Hero() {
 
             {/* LCP element — no animation delay so it paints immediately */}
             <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              I'm <strong className="text-foreground">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
+              I'm <strong className="text-white font-bold">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
             </p>
 
             <m.div

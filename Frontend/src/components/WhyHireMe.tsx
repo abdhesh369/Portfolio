@@ -58,7 +58,8 @@ const SkillBar = ({ skill, level, delay, color }: { skill: string; level: number
       className="mb-4"
     >
       <div className="flex justify-between mb-2">
-        <span className="text-sm font-medium">{skill}</span>
+        <span className="text-sm font-medium text-foreground">{skill}</span>
+        <span className="text-xs text-muted-foreground">{level}%</span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <m.div
@@ -190,7 +191,7 @@ export default function WhyHireMe() {
 
   return (
     <section id="why-hire-me" className="section-container overflow-hidden relative">
-      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10" />
+      <div className="absolute inset-0 bg-background/20 pointer-events-none -z-10" />
       {/* Header */}
       <div className="text-center mb-16">
         <m.div
@@ -235,7 +236,7 @@ export default function WhyHireMe() {
 
         {/* Points Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {dynamicPoints.map((point, index) => (
+          {dynamicPoints.map((point: Point, index: number) => (
             <PointCard key={index} point={point} index={index} />
           ))}
         </div>
@@ -294,7 +295,7 @@ export default function WhyHireMe() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
                   whileHover={{ y: -2 }}
-                  className="px-4 py-2 bg-primary/5 hover:bg-primary/20 border border-primary/20 hover:border-primary/50 text-foreground/80 hover:text-foreground rounded-xl transition-all font-mono text-sm cursor-default shadow-sm"
+                  className="px-4 py-2 bg-primary/5 hover:bg-primary/20 border border-primary/20 hover:border-primary/50 text-muted-foreground hover:text-foreground rounded-xl transition-all font-mono text-sm cursor-default shadow-sm"
                 >
                   {tech}
                 </m.div>
@@ -353,7 +354,7 @@ export default function WhyHireMe() {
               <m.button
                 {...hoverScale}
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' })}
-                className="h-14 px-8 bg-card/80 backdrop-blur-sm border border-border text-foreground rounded-full font-bold hover:bg-foreground/5 hover:border-cyan-500/50 transition-all flex items-center gap-2"
+                className="h-14 px-8 bg-card/80 backdrop-blur-sm border-2 border-primary/50 text-foreground rounded-full font-bold hover:bg-foreground/5 hover:border-cyan-500/50 transition-all flex items-center gap-2"
               >
                 Let's Talk
                 <ArrowRight className="w-5 h-5" />

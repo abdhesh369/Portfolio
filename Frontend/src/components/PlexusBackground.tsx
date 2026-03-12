@@ -75,8 +75,8 @@ const DEFAULT_CONFIG: PlexusConfig = {
 
 // Sci-Fi color scheme
 const SCIFI_COLORS = {
-    dark: { particleColor: 0x00d4ff, lineColor: 0xa855f7, background: 0x000000 },
-    light: { particleColor: 0x0891b2, lineColor: 0x9333ea, background: 0xf8fafc }
+    dark: { particleColor: 0x00d4ff, lineColor: 0xa855f7, background: 0x050510 },
+    light: { particleColor: 0x0891b2, lineColor: 0x9333ea, background: 0xf1f5f9 }
 };
 
 // ============================================
@@ -510,7 +510,7 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     const resolvedTheme = theme === "system"
         ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
         : theme;
-    const fallbackBg = resolvedTheme === "light" ? "#f8fafc" : "#000000";
+    const fallbackBg = resolvedTheme === "light" ? "#f1f5f9" : "#050510";
 
     return (
         <div

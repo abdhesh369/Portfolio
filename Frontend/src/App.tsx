@@ -503,7 +503,7 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system" storageKey="portfolio-theme">
+        <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={loadFramerFeatures}>
               {/* Apply dynamic settings early */}
