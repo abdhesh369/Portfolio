@@ -207,7 +207,7 @@ export default function WhyHireMe() {
           initial={fadeDown.initial}
           whileInView={fadeDown.animate}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold mb-4"
+          className="text-white text-3xl md:text-5xl font-bold mb-4"
         >
           Why Hire Me as a Student Engineer
         </m.h2>
