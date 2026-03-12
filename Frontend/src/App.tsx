@@ -362,6 +362,7 @@ function Router() {
           key={location}
           initial={transition.initial}
           animate={transition.animate}
+          exit={transition.exit}
           transition={transition.transition}
         >
           <Switch>

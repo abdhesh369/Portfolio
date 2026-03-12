@@ -30,6 +30,10 @@ export const EASE = {
   linear: "linear" as const,
   /** Smooth deceleration cubic-bezier used for stagger children */
   smooth: [0.22, 1, 0.36, 1] as [number, number, number, number],
+  /** Premium "snappy" easing for modern UI feel */
+  premium: [0.16, 1, 0.3, 1] as [number, number, number, number],
+  /** Dramatic reveal easing */
+  reveal: [0.23, 1, 0.32, 1] as [number, number, number, number],
 } as const;
 
 // ─── Spring Presets ─────────────────────────────────────────────────────────
@@ -138,11 +142,15 @@ export const scaleInSubtle = {
   transition: { duration: DURATION.slow, delay: 0.2 } as Transition,
 };
 
-/** Page-level route transition (small y: 8 offset + fast). */
+/** Page-level route transition (small scale + y offset). */
 export const pageTransition = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: DURATION.fast, ease: EASE.easeOut } as Transition,
+  initial: { opacity: 0, y: 10, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -10, scale: 0.98 },
+  transition: {
+    duration: DURATION.fast,
+    ease: EASE.premium,
+  },
 };
 
 // ─── Expand / Collapse ──────────────────────────────────────────────────────
@@ -209,17 +217,69 @@ export const scaleXReveal = {
 
 export const staggerContainer: Variants = {
   hidden: { opacity: 0 },
-  visible: {
+  visible: (i: number = 0) => ({
     opacity: 1,
-    transition: { staggerChildren: STAGGER.slow },
-  },
+    transition: {
+      staggerChildren: STAGGER.normal,
+      delayChildren: i * STAGGER.normal,
+    },
+  }),
 };
 
 export const staggerChild: Variants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: EASE.smooth as number[] },
+    transition: {
+      duration: DURATION.normal,
+      ease: EASE.premium,
+    },
+  },
+};
+
+export const staggerChildSlide: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: DURATION.normal,
+      ease: EASE.premium,
+    },
+  },
+};
+
+export const staggerChildScale: Variants = {
+  hidden: { opacity: 0, scale: 0 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 15,
+    },
+  },
+};
+
+// ─── Interactive Utilities ──────────────────────────────────────────────────
+
+/** Magnetic effect variants for interactive elements */
+export const magneticTransition = {
+  type: "spring",
+  stiffness: 150,
+  damping: 15,
+  mass: 0.1,
+};
+
+export const textReveal: Variants = {
+  hidden: { y: "100%" },
+  visible: {
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: EASE.reveal,
+    },
   },
 };

@@ -1,6 +1,6 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle } from "@/lib/animation";
+import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle, staggerContainer, staggerChild } from "@/lib/animation";
 import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -97,9 +97,7 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
   return (
     <m.div
       ref={ref}
-      initial={scaleInSubtle.initial}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
+      variants={staggerChild}
       whileHover={{ scale: 1.05 }}
       className="relative group p-[1px] rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20"
     >
@@ -121,10 +119,7 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
 const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: React.ElementType; label: string; value: string; delay: number, color?: "cyan" | "purple" }) => {
   return (
     <m.div
-      initial={fadeUp.initial}
-      whileInView={fadeUp.animate}
-      viewport={{ once: true }}
-      transition={{ delay }}
+      variants={staggerChild}
       className="relative group h-full"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${color === "cyan" ? "from-cyan-500/20" : "from-purple-500/20"} to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-xl blur-lg`} />
@@ -149,10 +144,7 @@ const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: R
 // Timeline Node
 const TimelineItem = ({ year, title, description, delay }: { year: string; title: string; description: string; delay: number }) => (
   <m.div
-    initial={fadeLeft.initial}
-    whileInView={fadeLeft.animate}
-    viewport={{ once: true }}
-    transition={{ delay }}
+    variants={staggerChild}
     className="relative pl-8 pb-12 last:pb-0 group"
   >
     {/* Animated Beam */}
@@ -327,7 +319,13 @@ export default function About() {
             </m.div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <m.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            >
               {skillsLoading ? (
                 Array(1).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl bg-white/5" />)
               ) : (
@@ -345,10 +343,16 @@ export default function About() {
               ) : (
                 <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" icon={Target} />
               )}
-            </div>
+            </m.div>
 
             {/* Info Cards Grid */}
-            <div className="grid sm:grid-cols-2 gap-4">
+            <m.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid sm:grid-cols-2 gap-4"
+            >
               {((settings as any)?.aboutInfoCards || [
                 { icon: "GraduationCap", label: "Status", value: "B.E. Student" },
                 { icon: "Code", label: "Focus Area", value: "Full Stack System Design", color: "purple" },
@@ -368,7 +372,7 @@ export default function About() {
                   />
                 );
               })}
-            </div>
+            </m.div>
 
           </div>
         </div>
@@ -391,6 +395,12 @@ export default function About() {
             </h3>
 
             <div className="relative z-10 max-w-2xl mx-auto">
+              <m.div 
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+              >
               {((settings as any)?.aboutTimeline || [
                 { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications." },
                 { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University." },
@@ -404,6 +414,7 @@ export default function About() {
                   delay={index * 0.1}
                 />
               ))}
+              </m.div>
             </div>
           </div>
         </m.div>

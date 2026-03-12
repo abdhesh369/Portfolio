@@ -297,6 +297,65 @@ const OpenToWorkBanner = () => {
 };
 
 import { LiveVisitorCount } from "./LiveVisitorCount";
+import { textReveal, magneticTransition } from "@/lib/animation";
+
+const CharacterReveal = ({ text, delay = 0, className = "" }: { text: string; delay?: number, className?: string }) => {
+  return (
+    <span className={`inline-flex flex-wrap ${className}`}>
+      {text.split("").map((char, i) => (
+        <span key={i} className="overflow-hidden inline-flex">
+          <m.span
+            variants={textReveal}
+            initial="hidden"
+            animate="visible"
+            transition={{
+              delay: delay + i * 0.02,
+              duration: 0.8,
+              ease: EASE.premium
+            }}
+            className="inline-block"
+          >
+            {char === " " ? "\u00A0" : char}
+          </m.span>
+        </span>
+      ))}
+    </span>
+  );
+};
+
+const Magnetic = ({ children }: { children: React.ReactNode }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
+  const x = useSpring(mouseX, springConfig);
+  const y = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current!.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    mouseX.set(middleX * 0.35);
+    mouseY.set(middleY * 0.35);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <m.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x, y }}
+    >
+      {children}
+    </m.div>
+  );
+};
 
 export default function Hero() {
   const status = useServerStatus();
@@ -364,18 +423,21 @@ export default function Hero() {
 
             <div className="space-y-4">
               <m.h1
-                initial={fadeUp.initial}
-                animate={fadeUp.animate}
-                transition={{ delay: 0.3 }}
                 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight font-display tracking-tight"
               >
                 <span className="sr-only">{settings?.personalName || "Portfolio"} - </span>
-                <span className="text-foreground">
-                  {settings?.heroHeadingLine1 || "Start building"}
-                </span> <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-block pb-2">
-                  {settings?.heroHeadingLine2 || "The Future"}
-                  <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
+                <span className="text-foreground block">
+                  <CharacterReveal text={settings?.heroHeadingLine1 || "Start building"} delay={0.4} />
+                </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x relative inline-flex pb-2">
+                   <CharacterReveal text={settings?.heroHeadingLine2 || "The Future"} delay={0.8} />
+                  <m.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.5, type: "spring" }}
+                  >
+                    <Sparkles className="w-8 h-8 text-yellow-400 absolute -top-4 -right-8 animate-pulse" />
+                  </m.div>
                 </span>
               </m.h1>
 
@@ -398,69 +460,80 @@ export default function Hero() {
             </div>
 
             {/* LCP element — no animation delay so it paints immediately */}
-            <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed">
+            <m.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+              className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed"
+            >
               I'm <strong className="text-white font-bold">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
-            </p>
+            </m.p>
 
             <m.div
               initial={fadeUp.initial}
               animate={fadeUp.animate}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 1.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Button
-                onClick={() => {
-                  const url = settings?.heroCtaPrimaryUrl || "#projects";
-                  if (url.startsWith("#")) {
-                    const target = document.getElementById(url.slice(1));
+              <Magnetic>
+                <Button
+                  onClick={() => {
+                    const url = settings?.heroCtaPrimaryUrl || "#projects";
+                    if (url.startsWith("#")) {
+                      const target = document.getElementById(url.slice(1));
+                      if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  size="lg"
+                  aria-label={settings?.heroCtaPrimary || "View My Work"}
+                  className="w-full sm:w-auto bg-primary text-black hover:bg-primary/90 font-bold rounded-full px-8 shadow-[0_0_20px_var(--primary-glow)] hover:shadow-[0_0_30px_var(--primary-glow)] transition-all"
+                >
+                  {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Magnetic>
+
+              <Magnetic>
+                <Button
+                  onClick={() => {
+                    const url = settings?.heroCtaSecondaryUrl || "#contact";
+                    if (url.startsWith("#")) {
+                      const target = document.getElementById(url.slice(1));
+                      if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  size="lg"
+                  aria-label={settings?.heroCtaSecondary || "Contact for AI Project Scope"}
+                  className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
+                >
+                  <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
+                  {settings?.heroCtaSecondary || "AI Project Scope"}
+                </Button>
+              </Magnetic>
+
+              <Magnetic>
+                <Button
+                  onClick={() => {
+                    const target = document.getElementById("contact");
                     if (target) {
                       target.scrollIntoView({ behavior: 'smooth' });
                     }
-                  } else {
-                    window.open(url, '_blank', 'noopener,noreferrer');
-                  }
-                }}
-                size="lg"
-                aria-label={settings?.heroCtaPrimary || "View My Work"}
-                className="w-full sm:w-auto bg-primary text-black hover:bg-primary/90 font-bold rounded-full px-8 shadow-[0_0_20px_var(--primary-glow)] hover:shadow-[0_0_30px_var(--primary-glow)] transition-all"
-              >
-                {settings?.heroCtaPrimary || "View My Work"} <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-
-              <Button
-                onClick={() => {
-                  const url = settings?.heroCtaSecondaryUrl || "#contact";
-                  if (url.startsWith("#")) {
-                    const target = document.getElementById(url.slice(1));
-                    if (target) {
-                      target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  } else {
-                    window.open(url, '_blank', 'noopener,noreferrer');
-                  }
-                }}
-                size="lg"
-                aria-label={settings?.heroCtaSecondary || "Contact for AI Project Scope"}
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all border border-purple-400/30 group"
-              >
-                <Sparkles className="mr-2 w-4 h-4 animate-pulse group-hover:scale-125 transition-transform" />
-                {settings?.heroCtaSecondary || "AI Project Scope"}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  const target = document.getElementById("contact");
-                  if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                variant="outline"
-                size="lg"
-                aria-label="Contact Me directly via form"
-                className="w-full sm:w-auto border-border text-foreground hover:bg-foreground/10 rounded-full px-8 backdrop-blur-sm"
-              >
-                Contact Me <Mail className="ml-2 w-4 h-4" />
-              </Button>
+                  }}
+                  variant="outline"
+                  size="lg"
+                  aria-label="Contact Me directly via form"
+                  className="w-full sm:w-auto border-border text-foreground hover:bg-foreground/10 rounded-full px-8 backdrop-blur-sm"
+                >
+                  Contact Me <Mail className="ml-2 w-4 h-4" />
+                </Button>
+              </Magnetic>
             </m.div>
 
             {/* Social Proof */}

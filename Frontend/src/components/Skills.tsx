@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { fadeIn } from '@/lib/animation';
+import { fadeIn, staggerContainer, staggerChild } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
@@ -213,17 +213,24 @@ export default function SkillsTree() {
           />
 
           {/* Skill Nodes */}
-          {skillNodes.map((node, idx) => (
-            <HexagonNode
-              key={node.id}
-              node={node}
-              isActive={activeNode === node.id}
-              onClick={() => handleNodeClick(node.id)}
-              onHover={() => setActiveNode(node.id)}
-              onLeave={() => !showTooltip && setActiveNode(null)}
-              data-skill-idx={idx}
-            />
-          ))}
+          <m.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            {skillNodes.map((node, idx) => (
+              <HexagonNode
+                key={node.id}
+                node={node}
+                isActive={activeNode === node.id}
+                onClick={() => handleNodeClick(node.id)}
+                onHover={() => setActiveNode(node.id)}
+                onLeave={() => !showTooltip && setActiveNode(null)}
+                data-skill-idx={idx}
+              />
+            ))}
+          </m.div>
 
 
           {/* Stat Panels */}
@@ -249,17 +256,21 @@ export default function SkillsTree() {
         {/* Legend */}
         <m.div
           className="flex justify-center gap-4 md:gap-8 mt-6 md:mt-8"
-          initial={fadeIn.initial}
-          whileInView={fadeIn.animate}
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 2.8 }}
         >
           {[
             { label: 'Core', color: 'var(--color-cyan)' },
             { label: 'Comfortable', color: 'var(--color-purple)' },
             { label: 'Learning', color: '#ec4899' }
           ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
+            <m.div 
+              key={item.label} 
+              variants={staggerChild}
+              className="flex items-center gap-2"
+            >
               <div
                 className="w-2.5 h-2.5 rounded-full"
                 style={{
@@ -268,7 +279,7 @@ export default function SkillsTree() {
                 }}
               />
               <span className="text-xs text-muted-foreground font-medium">{item.label}</span>
-            </div>
+            </m.div>
           ))}
         </m.div>
       </div>

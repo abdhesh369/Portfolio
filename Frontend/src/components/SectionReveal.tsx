@@ -1,5 +1,6 @@
 import { useRef, ReactNode } from "react";
 import { m, useInView } from "framer-motion";
+import { EASE } from "@/lib/animation";
 
 interface SectionRevealProps {
     children: ReactNode;
@@ -15,12 +16,12 @@ export default function SectionReveal({ children, className = "", delay = 0, wid
     return (
         <div ref={ref} className={className} style={{ width }}>
             <m.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{
-                    duration: 0.6,
+                    duration: 0.8,
                     delay: delay,
-                    ease: [0.21, 0.47, 0.32, 0.98],
+                    ease: EASE.premium,
                 }}
             >
                 {children}

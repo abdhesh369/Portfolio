@@ -1,4 +1,5 @@
 import { m } from 'framer-motion';
+import { staggerChildScale } from '@/lib/animation';
 import { SkillNode, NodeColors } from './SkillTypes';
 
 const statusColors: Record<string, NodeColors> = {
@@ -59,10 +60,7 @@ export const HexagonNode = ({
         <m.div
             className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10"
             style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ type: 'spring', stiffness: 180, damping: 18, delay: 0.5 + Math.random() * 0.4 }}
+            variants={staggerChildScale}
             onClick={onClick}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
             role="button"

@@ -4,6 +4,7 @@ import { useProjects, useAuth } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ArrowRight, Folder, Zap, Cpu } from "lucide-react";
+import { staggerContainer } from "@/lib/animation";
 import { Link } from "wouter";
 
 export default function Projects() {
@@ -100,7 +101,13 @@ export default function Projects() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <m.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+          >
             <AnimatePresence mode="popLayout">
               {displayedProjects.map((project) => (
                 <ProjectCard
@@ -109,7 +116,7 @@ export default function Projects() {
                 />
               ))}
             </AnimatePresence>
-          </div>
+          </m.div>
         )}
 
         {error && (

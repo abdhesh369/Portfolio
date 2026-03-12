@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { m, useReducedMotion } from "framer-motion";
 import { type Project } from "@portfolio/shared/schema";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { staggerChild } from "@/lib/animation";
 import { ExternalLink, Github, ArrowRight, Folder, Eye, Zap, Cpu, Layers, Terminal, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
@@ -87,9 +88,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
       <m.div
         ref={cardRef}
         layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        variants={staggerChild}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}

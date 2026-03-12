@@ -1,6 +1,6 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale } from "@/lib/animation";
+import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale, staggerContainer, staggerChild } from "@/lib/animation";
 import { useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import type { Experience as ExperienceType } from "@portfolio/shared/schema";
@@ -87,9 +87,7 @@ const TimelineItem = ({
   return (
     <m.div
       ref={ref}
-      initial={{ opacity: 0, x: -30 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ delay, duration: 0.5 }}
+      variants={staggerChild}
       className={`relative pl-10 ${!isLast ? 'pb-10' : ''}`}
     >
       <TimelineLine isActive={isInView} />
@@ -241,10 +239,17 @@ export default function Experience() {
             subtitle="Academic Background"
           />
 
-          <div className="space-y-0 relative">
+          <m.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="space-y-0 relative"
+          >
             {isLoading || education.length === 0 ? (
               <>
                 <TimelineItem
+                  key="edu-fallback-1"
                   role="B.E. in Electronics & Communication"
                   org="Tribhuvan University"
                   period="2023 - Present"
@@ -253,6 +258,7 @@ export default function Experience() {
                   type="education"
                 />
                 <TimelineItem
+                  key="edu-fallback-2"
                   role="+2 Science (PCM)"
                   org="Higher Secondary"
                   period="2021 - 2023"
@@ -278,7 +284,7 @@ export default function Experience() {
                 />
               ))
             )}
-          </div>
+          </m.div>
 
           {/* Current Status */}
           <m.div
@@ -300,7 +306,13 @@ export default function Experience() {
             subtitle="Professional Journey"
           />
 
-          <div className="space-y-0 relative">
+          <m.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="space-y-0 relative"
+          >
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2].map(i => (
@@ -389,7 +401,7 @@ export default function Experience() {
                 />
               ))
             )}
-          </div>
+          </m.div>
         </div>
       </div>
     </section>
