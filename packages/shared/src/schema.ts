@@ -932,11 +932,11 @@ const siteSettingsBaseSchema = z.object({
   })).nullish(),
 
   // Feature Toggles
-  featureBlog: z.boolean().nullish(),
-  featureGuestbook: z.boolean().nullish(),
-  featureTestimonials: z.boolean().nullish(),
-  featureServices: z.boolean().nullish(),
-  featurePlayground: z.boolean().nullish(),
+  featureBlog: z.boolean().optional(),
+  featureGuestbook: z.boolean().optional(),
+  featureTestimonials: z.boolean().optional(),
+  featureServices: z.boolean().optional(),
+  featurePlayground: z.boolean().optional(),
 
   // Chatbot
   chatbotGreeting: z.string().nullish(),
