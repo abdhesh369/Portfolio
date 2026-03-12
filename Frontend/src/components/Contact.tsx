@@ -223,8 +223,8 @@ export default function Contact() {
               </h3>
 
               <div className="space-y-4 relative z-10">
-                <DataCard icon={Mail} label="Email Protocol" value="abdheshshah111@gmail.com" href="mailto:abdheshshah111@gmail.com?subject=Project%20Inquiry&body=Hi%20Abdhesh," delay={0.1} />
-                <DataCard icon={MapPin} label="Base Location" value="Kathmandu, Nepal" href="#" delay={0.2} />
+                <DataCard icon={Mail} label="Email Protocol" value={settings?.socialEmail || "abdheshshah111@gmail.com"} href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} delay={0.1} />
+                <DataCard icon={MapPin} label="Base Location" value={settings?.locationText || "Kathmandu, Nepal"} href="#" delay={0.2} />
                 <DataCard icon={Phone} label="Signal Freq" value="+977 9761363076" href="tel:+9779761363076" delay={0.3} />
               </div>
             </div>
@@ -235,8 +235,8 @@ export default function Contact() {
                 Social Uplink
               </h3>
               <div className="flex gap-4">
-                <SocialLink href="https://github.com/abdhesh369" icon={Github} label="GitHub" delay={0.4} />
-                <SocialLink href="https://www.linkedin.com/in/abdhesh369" icon={Linkedin} label="LinkedIn" delay={0.5} />
+                {settings?.socialGithub && <SocialLink href={settings.socialGithub} icon={Github} label="GitHub" delay={0.4} />}
+                {settings?.socialLinkedin && <SocialLink href={settings.socialLinkedin} icon={Linkedin} label="LinkedIn" delay={0.5} />}
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle } from "@/lib/animation";
-import { GraduationCap, MapPin, Mail, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
+import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -276,10 +276,10 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href={(settings as any)?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-foreground/5 hover:bg-cyan-500/20 text-foreground hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
-                      <Code className="w-4 h-4" /> <span className="text-xs">GitHub</span>
+                    <a href={settings?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-foreground/5 hover:bg-cyan-500/20 text-foreground hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                      <Github className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
-                    <a href={`mailto:${(settings as any)?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${(settings as any)?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-foreground/5 hover:bg-purple-500/20 text-foreground hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
+                    <a href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-foreground/5 hover:bg-purple-500/20 text-foreground hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
                       <Mail className="w-4 h-4" /> <span className="text-xs">Email</span>
                     </a>
                   </div>
