@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
       manifest: {
         name: env.VITE_SITE_NAME || 'Abdhesh Sah | Portfolio',
@@ -42,6 +42,8 @@ export default defineConfig(({ mode }) => {
         ]
       }, // Enabled static manifest fallback; overridden by dynamic /api/v1/settings/manifest.json if reachable
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
