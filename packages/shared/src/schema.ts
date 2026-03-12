@@ -1,4 +1,5 @@
 import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index } from "drizzle-orm/pg-core";
+import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
@@ -893,13 +894,7 @@ const siteSettingsBaseSchema = z.object({
   heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
 
   // Appearance & Typography
-  colorBackground: z.string().max(50).optional(),
-  colorSurface: z.string().max(50).optional(),
-  colorPrimary: z.string().max(50).optional(),
-  colorSecondary: z.string().max(50).optional(),
-  colorAccent: z.string().max(50).optional(),
-  colorBorder: z.string().max(50).optional(),
-  colorText: z.string().max(50).optional(),
+
   colorBackground: z.string().max(50).nullish(),
   colorSurface: z.string().max(50).nullish(),
   colorPrimary: z.string().max(50).nullish(),
@@ -1033,8 +1028,8 @@ export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
-export type Subscriber = z.infer<typeof selectSubscriberSchema>;
-export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
+export type Subscriber = InferSelectModel<typeof subscribersTable>;
+export type InsertSubscriber = InferInsertModel<typeof subscribersTable>;
 export type InsertSubscriberApi = z.infer<typeof insertSubscriberApiSchema>;
 
 // Update schemas
