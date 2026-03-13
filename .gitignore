@@ -57,6 +57,7 @@ typecheck-results.txt
 test-results/
 playwright-report/
 test_browser/
+test-report*.txt
 stats.html
 stats.json
 
