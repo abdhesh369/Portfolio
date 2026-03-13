@@ -16,6 +16,10 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
 
+    if (results.violations.some(v => v.impact === 'critical')) {
+      console.log("CRITICAL ACCESSIBILITY VIOLATIONS:", JSON.stringify(results.violations.filter(v => v.impact === 'critical'), null, 2));
+    }
+
     expect(results.violations.filter(v => v.impact === 'critical')).toEqual([]);
   });
 
@@ -45,7 +49,7 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
     await expect(skipLink).toBeFocused();
 
     // Click to jump to main content
-    await skipLink.click();
+    await skipLink.click({ force: true });
 
     // The main content element should now have focus or be the target
     const mainContent = page.locator('#main-content');

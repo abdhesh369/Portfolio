@@ -12,7 +12,7 @@ test.describe('Portfolio Smoke Tests', () => {
         await expect(heading).toBeVisible();
 
         // Check for the "View My Work" button in the hero
-        const viewWorkBtn = page.getByRole('button', { name: /View My Work/i });
+        const viewWorkBtn = page.getByRole('button', { name: /View My Work/i }).first();
         await expect(viewWorkBtn).toBeVisible();
     });
 

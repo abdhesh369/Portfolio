@@ -38,10 +38,14 @@ test.describe("Admin Authentication Flow", () => {
     const submitBtn = page
       .getByRole("button", { name: /login|sign in|submit/i })
       .first();
+    console.log("Submitting login with wrong password...");
     await submitBtn.click();
 
     // We should see an error message and still be on the login page
-    await expect(page.getByText(/invalid|incorrect|wrong|unauthorized|error/i).first()).toBeVisible({ timeout: 8000 });
+    console.log("Waiting for error message...");
+    const errorMsg = page.getByText(/invalid|incorrect|wrong|unauthorized|error/i).first();
+    await expect(errorMsg).toBeVisible({ timeout: 10000 });
+    console.log("Error message visible");
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 

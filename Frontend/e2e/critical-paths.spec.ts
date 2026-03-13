@@ -189,6 +189,9 @@ test.describe("Performance & Accessibility Basics", () => {
       (e) => !e.includes("net::ERR") && !e.includes("Failed to fetch") && !e.includes("NetworkError")
     );
 
+    if (criticalErrors.length > 0) {
+      console.log("Critical Console Errors:", criticalErrors);
+    }
     expect(criticalErrors).toHaveLength(0);
   });
 });
