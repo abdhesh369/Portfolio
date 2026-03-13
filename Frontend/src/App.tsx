@@ -13,7 +13,6 @@ import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
 import { sanitizeCss } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
-import { Toaster as HotToaster } from "react-hot-toast";
 
 // ─── Chunk-Load Error Boundary ────────────────────────────────────────────
 // Catches React.lazy() failures (network blips, Render redeployment with
@@ -89,6 +88,7 @@ const ClientPortalPage = lazy(() => import("@/components/ClientPortal"));
 const CaseStudyListPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
 const CaseStudyViewerPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
 const GuestbookPage = lazy(() => import("@/pages/GuestbookPage"));
+const ResumePage = lazy(() => import("@/pages/Resume"));
 import NotFound from "@/pages/not-found";
 
 // Lazy load admin pages
@@ -370,6 +370,7 @@ function Router() {
             <Route path="/" component={Home} />
             <Route path="/projects" component={ProjectsPage} />
             <Route path="/project/:id" component={ProjectDetail} />
+            <Route path="/resume" component={ResumePage} />
 
             {/* Feature-guarded routes */}
             {showBlog && (
@@ -527,7 +528,6 @@ function App() {
               <ReloadPrompt />
               <InstallPrompt />
               <Toaster />
-              <HotToaster position="bottom-right" />
               <CommandPalette />
             </LazyMotion>
           </AuthProvider>

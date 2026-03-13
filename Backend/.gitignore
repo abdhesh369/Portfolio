@@ -33,18 +33,3 @@ test_storage*.txt
 check_db.ts
 seed_extra.ts
 test-connection.ts
-
-# OS Files
-.DS_Store
-Thumbs.db
-
-# IDE / Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*.swn
-
-# TypeScript / Tooling
-*.tsbuildinfo
-.eslintcache

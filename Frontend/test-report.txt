@@ -1,0 +1,1219 @@
+npm warn config ignoring workspace config at D:\Portfolio\Frontend/.npmrc
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mD:/Portfolio/Frontend[39m
+
+ [31mΓ¥»[39m src/hooks/use-visitor-count.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 364[2mms[22m[39m
+[31m     [31m├ù[31m should initialize with 0 and connect to SSE[39m[33m 328[2mms[22m[39m
+[31m     [31m├ù[31m should update count when receiving SSE message[39m[32m 2[2mms[22m[39m
+[31m     [31m├ù[31m should fallback to polling on SSE error[39m[32m 32[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/api-helpers.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 285[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/__tests__/utils.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/use-document-title.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 913[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m sets the document title [33m 455[2mms[22m[39m
+stderr | src/components/SectionHeading.test.tsx > SectionHeading > renders badge text
+React does not recognize the `whileInView` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `whileinview` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+
+ [32mΓ£ô[39m src/components/SpatialGrid.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 301[2mms[22m[39m
+ [32mΓ£ô[39m src/components/SectionHeading.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 2654[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m renders badge text [33m 1057[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/use-site-settings.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1025[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m fetches site settings correctly [33m 766[2mms[22m[39m
+ [31mΓ¥»[39m src/components/ErrorBoundary.test.tsx [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 3255[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m renders children when no error is thrown [33m 1132[2mms[22m[39m
+[31m     [31m├ù[31m renders default fallback UI when child component throws[39m[33m 1316[2mms[22m[39m
+     [32mΓ£ô[39m renders custom fallback if provided[32m 70[2mms[22m[39m
+     [32mΓ£ô[39m calls window.location.reload when Reload System is clicked[32m 279[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m updates window.location.href when Return to Base is clicked [33m 454[2mms[22m[39m
+ [31mΓ¥»[39m src/components/ScopeWizard.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 1217[2mms[22m[39m
+[31m     [31m├ù[31m should render initial step[39m[33m 900[2mms[22m[39m
+[31m     [31m├ù[31m should navigate through steps[39m[32m 163[2mms[22m[39m
+[31m     [31m├ù[31m should submit request correctly[39m[32m 150[2mms[22m[39m
+ [31mΓ¥»[39m src/components/components.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1115[2mms[22m[39m
+[31m     [31m├ù[31m should render ClientPortal with key sections[39m[33m 432[2mms[22m[39m
+     [32mΓ£ô[39m should render ScopeWizard and allow navigation[32m 164[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should render Sketchpad with toolbar [33m 515[2mms[22m[39m
+ [31mΓ¥»[39m src/components/Sketchpad.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 2827[2mms[22m[39m
+[31m     [31m├ù[31m should render controls and canvas[39m[33m 2253[2mms[22m[39m
+[31m     [31m├ù[31m should switch tools[39m[33m 310[2mms[22m[39m
+[31m     [31m├ù[31m should clear elements on Reset[39m[32m 262[2mms[22m[39m
+ [31mΓ¥»[39m src/components/ClientPortal.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 1602[2mms[22m[39m
+[31m     [31m├ù[31m should render login screen initially[39m[33m 1354[2mms[22m[39m
+[31m     [31m├ù[31m should authenticate with valid token[39m[32m 121[2mms[22m[39m
+[31m     [31m├ù[31m should show error on invalid token[39m[32m 91[2mms[22m[39m
+ [31mΓ¥»[39m src/components/admin/tabs/CustomizationTab.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 494[2mms[22m[39m
+     [32mΓ£ô[39m renders loading state[32m 70[2mms[22m[39m
+[31m     [31m├ù[31m renders form content when data is loaded[39m[32m 200[2mms[22m[39m
+[31m     [31m├ù[31m handles form submission[39m[32m 221[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 16 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/components/ClientPortal.test.tsx > ClientPortal > should render login screen initially
+TestingLibraryElementError: Unable to find an element with the text: /Client Collaboration Portal/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen flex items-center justify-center bg-slate-950"
+    >
+      <div
+        class="max-w-[400px] w-full p-10 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl"
+        style="opacity: 0; transform: translateY(20px);"
+      >
+        <h2
+          class="text-center text-white mb-2 text-2xl font-bold"
+        >
+          Client Portal
+        </h2>
+        <p
+          class="text-center text-slate-400 text-sm mb-6"
+        >
+          Enter your portal access token
+        </p>
+        <label
+          class="sr-only"
+          for="portal-token"
+        >
+          Portal Access Token
+        </label>
+        <input
+          class="w-full p-3 rounded-lg border border-slate-800 bg-slate-950 text-white text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          id="portal-token"
+          placeholder="Paste your token here..."
+          type="password"
+          value=""
+        />
+        <button
+          class="w-full p-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+          disabled=""
+        >
+          <svg
+            class="lucide lucide-arrow-right"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+          Access Portal
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ClientPortal.test.tsx:21:23
+     19|     it("should render login screen initially", () => {
+     20|         render(<ClientPortal />);
+     21|         expect(screen.getByText(/Client Collaboration Portal/i)).toBeDΓÇª
+       |                       ^
+     22|         expect(screen.getByPlaceholderText(/Enter your secure access tΓÇª
+     23|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/16]ΓÄ»
+
+ FAIL  src/components/ClientPortal.test.tsx > ClientPortal > should authenticate with valid token
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /Enter your secure access token/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen flex items-center justify-center bg-slate-950"
+    >
+      <div
+        class="max-w-[400px] w-full p-10 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl"
+        style="opacity: 0; transform: translateY(20px);"
+      >
+        <h2
+          class="text-center text-white mb-2 text-2xl font-bold"
+        >
+          Client Portal
+        </h2>
+        <p
+          class="text-center text-slate-400 text-sm mb-6"
+        >
+          Enter your portal access token
+        </p>
+        <label
+          class="sr-only"
+          for="portal-token"
+        >
+          Portal Access Token
+        </label>
+        <input
+          class="w-full p-3 rounded-lg border border-slate-800 bg-slate-950 text-white text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          id="portal-token"
+          placeholder="Paste your token here..."
+          type="password"
+          value=""
+        />
+        <button
+          class="w-full p-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+          disabled=""
+        >
+          <svg
+            class="lucide lucide-arrow-right"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+          Access Portal
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ClientPortal.test.tsx:39:30
+     37|         render(<ClientPortal />);
+     38| 
+     39|         const input = screen.getByPlaceholderText(/Enter your secure aΓÇª
+       |                              ^
+     40|         const button = screen.getByText(/Access Portal/i);
+     41| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/16]ΓÄ»
+
+ FAIL  src/components/ClientPortal.test.tsx > ClientPortal > should show error on invalid token
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /Enter your secure access token/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen flex items-center justify-center bg-slate-950"
+    >
+      <div
+        class="max-w-[400px] w-full p-10 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl"
+        style="opacity: 0; transform: translateY(20px);"
+      >
+        <h2
+          class="text-center text-white mb-2 text-2xl font-bold"
+        >
+          Client Portal
+        </h2>
+        <p
+          class="text-center text-slate-400 text-sm mb-6"
+        >
+          Enter your portal access token
+        </p>
+        <label
+          class="sr-only"
+          for="portal-token"
+        >
+          Portal Access Token
+        </label>
+        <input
+          class="w-full p-3 rounded-lg border border-slate-800 bg-slate-950 text-white text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          id="portal-token"
+          placeholder="Paste your token here..."
+          type="password"
+          value=""
+        />
+        <button
+          class="w-full p-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+          disabled=""
+        >
+          <svg
+            class="lucide lucide-arrow-right"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+          Access Portal
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ClientPortal.test.tsx:60:33
+     58|         render(<ClientPortal />);
+     59| 
+     60|         fireEvent.change(screen.getByPlaceholderText(/Enter your securΓÇª
+       |                                 ^
+     61|         fireEvent.click(screen.getByText(/Access Portal/i));
+     62| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/16]ΓÄ»
+
+ FAIL  src/components/components.test.tsx > Frontend Components Sanity > should render ClientPortal with key sections
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /Enter your access token/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen flex items-center justify-center bg-slate-950"
+    >
+      <div
+        animate="[object Object]"
+        class="max-w-[400px] w-full p-10 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl"
+        initial="[object Object]"
+      >
+        <h2
+          class="text-center text-white mb-2 text-2xl font-bold"
+        >
+          Client Portal
+        </h2>
+        <p
+          class="text-center text-slate-400 text-sm mb-6"
+        >
+          Enter your portal access token
+        </p>
+        <label
+          class="sr-only"
+          for="portal-token"
+        >
+          Portal Access Token
+        </label>
+        <input
+          class="w-full p-3 rounded-lg border border-slate-800 bg-slate-950 text-white text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          id="portal-token"
+          placeholder="Paste your token here..."
+          type="password"
+          value=""
+        />
+        <button
+          class="w-full p-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+          disabled=""
+        >
+          <svg
+            class="lucide lucide-arrow-right"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+          Access Portal
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/components.test.tsx:54:23
+     52|         );
+     53|         expect(screen.getByText(/Client Portal/i)).toBeDefined();
+     54|         expect(screen.getByPlaceholderText(/Enter your access token/i)ΓÇª
+       |                       ^
+     55|     });
+     56| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/16]ΓÄ»
+
+ FAIL  src/components/ErrorBoundary.test.tsx > ErrorBoundary > renders default fallback UI when child component throws
+TestingLibraryElementError: Unable to find an element with the text: /Critical System Error/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen flex items-center justify-center p-4 bg-background"
+    >
+      <div
+        class="max-w-md w-full space-y-8 text-center bg-card p-8 rounded-2xl border border-destructive/20 shadow-2xl relative overflow-hidden group"
+      >
+        <div
+          class="absolute top-0 right-0 w-32 h-32 bg-destructive/10 blur-3xl -z-10 group-hover:bg-destructive/20 transition-colors"
+        />
+        <div
+          class="flex justify-center"
+        >
+          <div
+            class="p-4 rounded-full bg-destructive/10 text-destructive animate-pulse"
+          >
+            <svg
+              class="lucide lucide-circle-alert w-12 h-12"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="8"
+                y2="12"
+              />
+              <line
+                x1="12"
+                x2="12.01"
+                y1="16"
+                y2="16"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="space-y-4"
+        >
+          <h1
+            class="text-3xl font-bold tracking-tight text-foreground"
+          >
+            Oops! Something went wrong.
+          </h1>
+          <p
+            class="text-muted-foreground text-sm leading-relaxed"
+          >
+            We've hit an unexpected snag while loading this page. Don't worryΓÇötry reloading the application or heading back to the homepage.
+          </p>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row gap-4 pt-4"
+        >
+          <button
+            class="whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border border-primary-border min-h-9 px-4 py-2 flex-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all flex items-center justify-center gap-2"
+          >
+            <svg
+              class="lucide lucide-refresh-ccw w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+              />
+              <path
+                d="M3 3v5h5"
+              />
+              <path
+                d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"
+              />
+              <path
+                d="M16 16h5v5"
+              />
+            </svg>
+            Reload System
+          </button>
+          <button
+            class="whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border [border-color:var(--button-outline)] shadow-xs active:shadow-none min-h-9 px-4 py-2 flex-1 border-white/10 hover:bg-white/5 flex items-center justify-center gap-2"
+          >
+            <svg
+              class="lucide lucide-house w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+            Return to Base
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ErrorBoundary.test.tsx:52:19
+     50|       </ErrorBoundary>
+     51|     );
+     52|     expect(screen.getByText(/Critical System Error/i)).toBeInTheDocumeΓÇª
+       |                   ^
+     53|     expect(screen.getByText(/Return to Base/i)).toBeInTheDocument();
+     54|     expect(screen.getByText(/Reload System/i)).toBeInTheDocument();
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/16]ΓÄ»
+
+ FAIL  src/components/ScopeWizard.test.tsx > ScopeWizard > should render initial step
+TestingLibraryElementError: Unable to find an element with the text: /Step 1 of 5/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="max-w-2xl mx-auto"
+    >
+      <div
+        class="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden"
+      >
+        <div
+          class="bg-foreground/5 px-4 py-3 border-b border-border/50 flex items-center justify-between"
+        >
+          <div
+            class="flex gap-1.5"
+          >
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-red-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-yellow-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-green-500/40"
+            />
+          </div>
+          <div
+            class="text-[10px] font-mono text-muted-foreground uppercase tracking-widest"
+          >
+            System://Scope_Analyzer_v1.0
+          </div>
+          <div
+            class="w-10 text-[10px] font-mono text-cyan-500/50 text-right"
+          >
+            20
+            %
+          </div>
+        </div>
+        <div
+          class="w-full h-0.5 bg-foreground/5"
+        >
+          <div
+            animate="[object Object]"
+            class="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+            initial="[object Object]"
+          />
+        </div>
+        <div
+          class="p-6 md:p-10 relative min-h-[450px] flex flex-col"
+        >
+          <div
+            class="flex-1"
+          >
+            <div
+              animate="[object Object]"
+              class="space-y-6"
+              exit="[object Object]"
+              initial="[object Object]"
+            >
+              <div>
+                <h3
+                  class="text-xl font-bold text-foreground mb-2 flex items-center gap-2"
+                >
+                  <span
+                    class="text-cyan-400 font-mono"
+                  >
+                    01.
+                  </span>
+                   Project Identity
+                </h3>
+                <p
+                  class="text-muted-foreground text-sm"
+                >
+                  What should we call this mission?
+                </p>
+              </div>
+              <div
+                class="space-y-4"
+              >
+                <div
+                  class="relative"
+                >
+                  <input
+                    class="w-full bg-foreground/5 border border-border rounded-lg px-4 py-3 text-foreground outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                    placeholder="Project Name"
+                    type="text"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="grid grid-cols-2 gap-2"
+                >
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Web Application
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Mobile App (iOS/Android)
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    AI / Machine Learning
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    E-commerce Platform
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    SaaS Product
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    API / Backend Service
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Portfolio / Landing Page
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Other
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="mt-8 pt-6 border-t border-border/50 flex justify-between items-center"
+          >
+            <button
+              class="flex items-center gap-2 text-xs font-mono transition-all opacity-0 pointer-events-none"
+              disabled=""
+            >
+              <svg
+                class="lucide lucide-chevron-left w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15 18-6-6 6-6"
+                />
+              </svg>
+               PREV_STEP
+            </button>
+            <button
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 min-h-9 py-2 bg-foreground/10 hover:bg-foreground/20 text-foreground border border-border font-mono px-8 h-10 group"
+              disabled=""
+            >
+              NEXT_STEP 
+              <svg
+                class="lucide lucide-chevron-right ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m9 18 6-6-6-6"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ScopeWizard.test.tsx:42:23
+     40|     it("should render initial step", () => {
+     41|         render(<ScopeWizard />);
+     42|         expect(screen.getByText(/Step 1 of 5/i)).toBeDefined();
+       |                       ^
+     43|         expect(screen.getByPlaceholderText(/e.g. My Next Big Idea/i)).ΓÇª
+     44|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[6/16]ΓÄ»
+
+ FAIL  src/components/ScopeWizard.test.tsx > ScopeWizard > should navigate through steps
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /e.g. My Next Big Idea/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="max-w-2xl mx-auto"
+    >
+      <div
+        class="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden"
+      >
+        <div
+          class="bg-foreground/5 px-4 py-3 border-b border-border/50 flex items-center justify-between"
+        >
+          <div
+            class="flex gap-1.5"
+          >
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-red-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-yellow-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-green-500/40"
+            />
+          </div>
+          <div
+            class="text-[10px] font-mono text-muted-foreground uppercase tracking-widest"
+          >
+            System://Scope_Analyzer_v1.0
+          </div>
+          <div
+            class="w-10 text-[10px] font-mono text-cyan-500/50 text-right"
+          >
+            20
+            %
+          </div>
+        </div>
+        <div
+          class="w-full h-0.5 bg-foreground/5"
+        >
+          <div
+            animate="[object Object]"
+            class="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+            initial="[object Object]"
+          />
+        </div>
+        <div
+          class="p-6 md:p-10 relative min-h-[450px] flex flex-col"
+        >
+          <div
+            class="flex-1"
+          >
+            <div
+              animate="[object Object]"
+              class="space-y-6"
+              exit="[object Object]"
+              initial="[object Object]"
+            >
+              <div>
+                <h3
+                  class="text-xl font-bold text-foreground mb-2 flex items-center gap-2"
+                >
+                  <span
+                    class="text-cyan-400 font-mono"
+                  >
+                    01.
+                  </span>
+                   Project Identity
+                </h3>
+                <p
+                  class="text-muted-foreground text-sm"
+                >
+                  What should we call this mission?
+                </p>
+              </div>
+              <div
+                class="space-y-4"
+              >
+                <div
+                  class="relative"
+                >
+                  <input
+                    class="w-full bg-foreground/5 border border-border rounded-lg px-4 py-3 text-foreground outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                    placeholder="Project Name"
+                    type="text"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="grid grid-cols-2 gap-2"
+                >
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Web Application
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Mobile App (iOS/Android)
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    AI / Machine Learning
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    E-commerce Platform
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    SaaS Product
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    API / Backend Service
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Portfolio / Landing Page
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Other
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="mt-8 pt-6 border-t border-border/50 flex justify-between items-center"
+          >
+            <button
+              class="flex items-center gap-2 text-xs font-mono transition-all opacity-0 pointer-events-none"
+              disabled=""
+            >
+              <svg
+                class="lucide lucide-chevron-left w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15 18-6-6 6-6"
+                />
+              </svg>
+               PREV_STEP
+            </button>
+            <button
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 min-h-9 py-2 bg-foreground/10 hover:bg-foreground/20 text-foreground border border-border font-mono px-8 h-10 group"
+              disabled=""
+            >
+              NEXT_STEP 
+              <svg
+                class="lucide lucide-chevron-right ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m9 18 6-6-6-6"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ScopeWizard.test.tsx:49:30
+     47|         render(<ScopeWizard />);
+     48| 
+     49|         const input = screen.getByPlaceholderText(/e.g. My Next Big IdΓÇª
+       |                              ^
+     50|         fireEvent.change(input, { target: { value: "Test Project" } });
+     51| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[7/16]ΓÄ»
+
+ FAIL  src/components/ScopeWizard.test.tsx > ScopeWizard > should submit request correctly
+TestingLibraryElementError: Unable to find an element with the text: /Tell me about your project/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="max-w-2xl mx-auto"
+    >
+      <div
+        class="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden"
+      >
+        <div
+          class="bg-foreground/5 px-4 py-3 border-b border-border/50 flex items-center justify-between"
+        >
+          <div
+            class="flex gap-1.5"
+          >
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-red-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-yellow-500/40"
+            />
+            <div
+              class="w-2.5 h-2.5 rounded-full bg-green-500/40"
+            />
+          </div>
+          <div
+            class="text-[10px] font-mono text-muted-foreground uppercase tracking-widest"
+          >
+            System://Scope_Analyzer_v1.0
+          </div>
+          <div
+            class="w-10 text-[10px] font-mono text-cyan-500/50 text-right"
+          >
+            20
+            %
+          </div>
+        </div>
+        <div
+          class="w-full h-0.5 bg-foreground/5"
+        >
+          <div
+            animate="[object Object]"
+            class="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+            initial="[object Object]"
+          />
+        </div>
+        <div
+          class="p-6 md:p-10 relative min-h-[450px] flex flex-col"
+        >
+          <div
+            class="flex-1"
+          >
+            <div
+              animate="[object Object]"
+              class="space-y-6"
+              exit="[object Object]"
+              initial="[object Object]"
+            >
+              <div>
+                <h3
+                  class="text-xl font-bold text-foreground mb-2 flex items-center gap-2"
+                >
+                  <span
+                    class="text-cyan-400 font-mono"
+                  >
+                    01.
+                  </span>
+                   Project Identity
+                </h3>
+                <p
+                  class="text-muted-foreground text-sm"
+                >
+                  What should we call this mission?
+                </p>
+              </div>
+              <div
+                class="space-y-4"
+              >
+                <div
+                  class="relative"
+                >
+                  <input
+                    class="w-full bg-foreground/5 border border-border rounded-lg px-4 py-3 text-foreground outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                    placeholder="Project Name"
+                    type="text"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="grid grid-cols-2 gap-2"
+                >
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Web Application
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Mobile App (iOS/Android)
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    AI / Machine Learning
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    E-commerce Platform
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    SaaS Product
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    API / Backend Service
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Portfolio / Landing Page
+                  </button>
+                  <button
+                    class="px-3 py-2 text-xs font-mono rounded border transition-all text-left bg-foreground/5 border-border text-muted-foreground hover:border-foreground/30"
+                  >
+                    Other
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="mt-8 pt-6 border-t border-border/50 flex justify-between items-center"
+          >
+            <button
+              class="flex items-center gap-2 text-xs font-mono transition-all opacity-0 pointer-events-none"
+              disabled=""
+            >
+              <svg
+                class="lucide lucide-chevron-left w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15 18-6-6 6-6"
+                />
+              </svg>
+               PREV_STEP
+            </button>
+            <button
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 min-h-9 py-2 bg-foreground/10 hover:bg-foreground/20 text-foreground border border-border font-mono px-8 h-10 group"
+              disabled=""
+            >
+              NEXT_STEP 
+              <svg
+                class="lucide lucide-chevron-right ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m9 18 6-6-6-6"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ Γ¥» Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ Γ¥» ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/ScopeWizard.test.tsx:67:23
+     65|         // Skip steps to submission (this depends on component logic, ΓÇª
+     66|         // For simplicity, we just check if it's defined and can be inΓÇª
+     67|         expect(screen.getByText(/Tell me about your project/i)).toBeDeΓÇª
+       |                       ^
+     68|     });
+     69| });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[8/16]ΓÄ»
+
+ FAIL  src/components/Sketchpad.test.tsx > Sketchpad > should render controls and canvas
+ FAIL  src/components/Sketchpad.test.tsx > Sketchpad > should switch tools
+ FAIL  src/components/Sketchpad.test.tsx > Sketchpad > should clear elements on Reset
+TypeError: ctx.scale is not a function
+ Γ¥» resizeCanvas src/components/Sketchpad.tsx:113:30
+    111|                 canvas.height = Math.max(600, rect.height) * dpr;
+    112|                 const ctx = canvas.getContext('2d');
+    113|                 if (ctx) ctx.scale(dpr, dpr);
+       |                              ^
+    114|                 drawAll();
+    115|             }
+ Γ¥» src/components/Sketchpad.tsx:118:9
+ Γ¥» Object.react_stack_bottom_frame ../node_modules/react-dom/cjs/react-dom-client.development.js:25989:20
+ Γ¥» runWithFiberInDEV ../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ Γ¥» commitHookEffectListMount ../node_modules/react-dom/cjs/react-dom-client.development.js:13249:29
+ Γ¥» commitHookPassiveMountEffects ../node_modules/react-dom/cjs/react-dom-client.development.js:13336:11
+ Γ¥» commitPassiveMountOnFiber ../node_modules/react-dom/cjs/react-dom-client.development.js:15484:13
+ Γ¥» recursivelyTraversePassiveMountEffects ../node_modules/react-dom/cjs/react-dom-client.development.js:15439:11
+ Γ¥» commitPassiveMountOnFiber ../node_modules/react-dom/cjs/react-dom-client.development.js:15519:11
+ Γ¥» flushPassiveEffects ../node_modules/react-dom/cjs/react-dom-client.development.js:18432:9
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[9/16]ΓÄ»
+
+ FAIL  src/hooks/use-visitor-count.test.ts > useVisitorCount > should initialize with 0 and connect to SSE
+TypeError: [Function MockEventSource] is not a spy or a call to a spy!
+ Γ¥» src/hooks/use-visitor-count.test.ts:32:36
+     30|         const { result } = renderHook(() => useVisitorCount());
+     31|         expect(result.current.count).toBe(0);
+     32|         expect(global.EventSource).toHaveBeenCalled();
+       |                                    ^
+     33|     });
+     34| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[10/16]ΓÄ»
+
+ FAIL  src/hooks/use-visitor-count.test.ts > useVisitorCount > should update count when receiving SSE message
+TypeError: __vite_ssr_import_2__.vi.mocked(...).mockImplementation is not a function
+ Γ¥» src/hooks/use-visitor-count.test.ts:37:39
+     35|     it("should update count when receiving SSE message", async () => {
+     36|         let countListener: any;
+     37|         vi.mocked(global.EventSource).mockImplementation((_url: stringΓÇª
+       |                                       ^
+     38|             const instance = new MockEventSource(_url);
+     39|             instance.addEventListener.mockImplementation((event: strinΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[11/16]ΓÄ»
+
+ FAIL  src/hooks/use-visitor-count.test.ts > useVisitorCount > should fallback to polling on SSE error
+TypeError: __vite_ssr_import_2__.vi.mocked(...).mockImplementation is not a function
+ Γ¥» src/hooks/use-visitor-count.test.ts:56:39
+     54| 
+     55|     it("should fallback to polling on SSE error", async () => {
+     56|         vi.mocked(global.EventSource).mockImplementation((_url: stringΓÇª
+       |                                       ^
+     57|             const instance = new MockEventSource(_url);
+     58|             // In the hook, onerror is assigned directly
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[12/16]ΓÄ»
+
+ FAIL  src/components/admin/tabs/CustomizationTab.test.tsx > CustomizationTab > renders form content when data is loaded
+ FAIL  src/components/admin/tabs/CustomizationTab.test.tsx > CustomizationTab > handles form submission
+Error: [vitest] No "FloatingLabelInput" export is defined on the "@/components/admin/AdminShared" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("@/components/admin/AdminShared"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ Γ¥» AvailabilitySlotsSection src/components/admin/customization/AvailabilitySlotsSection.tsx:131:30
+    129| 
+    130|                         <div className="md:col-span-2">
+    131|                             <FloatingLabelInput
+       |                              ^
+    132|                                 label="Window Identifier (Optional)"
+    133|                                 placeholder="e.g., Client ArchitectureΓÇª
+ Γ¥» Object.react_stack_bottom_frame ../node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ Γ¥» renderWithHooks ../node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ Γ¥» updateFunctionComponent ../node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+ Γ¥» beginWork ../node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ Γ¥» runWithFiberInDEV ../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ Γ¥» performUnitOfWork ../node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ Γ¥» workLoopSync ../node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[13/16]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (13)[39m
+[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m41 passed[39m[22m[90m (57)[39m
+[2m   Start at [22m 13:23:17
+[2m   Duration [22m 42.12s[2m (transform 46.00s, setup 85.00s, import 108.57s, tests 16.09s, environment 34.66s)[22m
+

@@ -11,12 +11,12 @@ import { TOGGLE_COMMAND_PALETTE } from "@/hooks/use-command-palette";
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [, setLocation] = useLocation();
   const { setTheme, theme } = useTheme();
 
   const { data: projects = [] } = useProjects();
   const { data: articles = [] } = useArticles("published");
-  const { data: skills = [] } = useSkills();
 
   // Handle keyboard shortcut (Ctrl+K or Cmd+K) and custom events
   useEffect(() => {
@@ -43,19 +43,13 @@ export function CommandPalette() {
     };
   }, []);
 
-  // Reset query when closed
-  useEffect(() => {
-    if (!open) {
-      setTimeout(() => setQuery(""), 200);
-    }
-  }, [open]);
-
   // Filter items based on query
   const searchResults = useCallback(() => {
     const staticCommands = [
-      { id: "home", title: "Go Home", type: "action" as const, icon: Home, href: "/" },
-      { id: "newsletter", title: "Subscribe to Newsletter", type: "action" as const, icon: Mail, href: "/blog#newsletter" },
-      { id: "theme", title: `Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`, type: "action" as const, icon: Palette, action: () => setTheme(theme === "dark" ? "light" : "dark") },
+      { id: "home", title: "Go Home", type: "navigation" as const, icon: Home, href: "/" },
+      { id: "projects-nav", title: "Browse Projects", type: "navigation" as const, icon: FolderGit2, href: "/#projects" },
+      { id: "contact-nav", title: "Get in Touch", type: "navigation" as const, icon: Mail, href: "/#contact" },
+      { id: "theme", title: `Toggle ${theme === "dark" ? "Light" : "Dark"} Theme`, type: "action" as const, icon: Palette, action: () => setTheme(theme === "dark" ? "light" : "dark") },
     ];
 
     if (!query.trim()) return staticCommands;
@@ -68,7 +62,7 @@ export function CommandPalette() {
         id: `project-${p.id}`,
         title: p.title,
         type: "project" as const,
-        icon: FolderGit2,
+        icon: Code,
         href: `/project/${p.id}`,
       }));
 
@@ -82,94 +76,182 @@ export function CommandPalette() {
         href: `/blog/${a.slug}`,
       }));
 
-    const filteredSkills = skills
-      .filter((s) => s.name.toLowerCase().includes(lowerQuery) || s.category.toLowerCase().includes(lowerQuery))
-      .map((s) => ({
-        id: `skill-${s.id}`,
-        title: s.name,
-        type: "skill" as const,
-        icon: Code,
-        href: `/#skills`,
-      }));
-
     const filteredStatic = staticCommands.filter(c => c.title.toLowerCase().includes(lowerQuery));
 
-    return [...filteredStatic, ...filteredProjects, ...filteredArticles, ...filteredSkills].slice(0, 10);
-  }, [query, projects, articles, skills, theme, setTheme]);
+    return [...filteredStatic, ...filteredProjects, ...filteredArticles].slice(0, 10);
+  }, [query, projects, articles, theme, setTheme]);
 
   const results = searchResults();
 
-  const handleSelect = (item: any) => {
+  // Reset selected index when results change
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [results.length]);
+
+  const handleSelect = useCallback((item: any) => {
     setOpen(false);
     if (item.action) {
       item.action();
     } else if (item.href) {
       setLocation(item.href);
     }
-  };
+  }, [setLocation]);
+
+  // Handle keyboard navigation within the results list
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i + 1) % results.length);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i - 1 + results.length) % results.length);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (results[selectedIndex]) {
+          handleSelect(results[selectedIndex]);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, selectedIndex, results, handleSelect]);
+
+  // Reset query when closed
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => setQuery(""), 200);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl rounded-2xl">
-        <div className="flex items-center border-b border-white/10 px-4">
-          <Search className="w-5 h-5 text-white/40 shrink-0" />
+      <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-[#0A0A0B]/95 backdrop-blur-2xl border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)] rounded-2xl">
+        <div className="flex items-center px-4 py-3 border-b border-white/5">
+          <Search className="w-5 h-5 text-white/30 shrink-0" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search projects, articles, or skills..."
-            className="border-0 bg-transparent focus-visible:ring-0 text-white placeholder:text-white/40 h-14 w-full text-base sm:text-lg rounded-none shadow-none"
+            placeholder="Type a command or search..."
+            className="border-0 bg-transparent focus-visible:ring-0 text-white placeholder:text-white/20 h-10 w-full text-lg rounded-none shadow-none px-4"
             autoFocus
           />
-          <div className="hidden sm:flex items-center gap-1 shrink-0 text-xs text-white/40">
-            <kbd className="bg-white/5 py-1 px-2 rounded-md font-sans">esc</kbd> to close
-          </div>
+          <m.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="hidden sm:flex items-center gap-2 shrink-0 text-[10px] uppercase tracking-tighter text-white/20 font-bold"
+          >
+            <span className="bg-white/5 px-1.5 py-0.5 rounded border border-white/5">esc</span>
+            <span>to close</span>
+          </m.div>
         </div>
 
-        <div className="max-h-[300px] sm:max-h-[400px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="max-h-[450px] overflow-y-auto p-2 scrollbar-hide">
           <AnimatePresence mode="wait">
             {results.length === 0 ? (
               <m.div
                 key="no-results"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="py-12 text-center text-white/40 text-sm"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="py-20 text-center flex flex-col items-center gap-3"
               >
-                No results found for <span className="text-white font-medium">"{query}"</span>
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                  <Search className="w-6 h-6 text-white/10" />
+                </div>
+                <p className="text-white/30 text-sm">
+                  No matches found for <span className="text-white/60 font-medium">"{query}"</span>
+                </p>
               </m.div>
             ) : (
               <m.div
                 key="results"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col gap-1"
+                className="flex flex-col gap-0.5"
               >
-                {results.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => handleSelect(item)}
-                    className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-white/5 group transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3 w-full min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
-                        <item.icon className="w-5 h-5 opacity-70 group-hover:opacity-100" />
+                {results.map((item, index) => {
+                  const isSelected = index === selectedIndex;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleSelect(item)}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      className={`flex items-center justify-between w-full p-2.5 rounded-xl group transition-all duration-200 text-left relative ${
+                        isSelected ? "bg-primary/10" : "hover:bg-white/[0.03]"
+                      }`}
+                    >
+                      {isSelected && (
+                        <m.div 
+                          layoutId="active-bg"
+                          className="absolute inset-0 bg-primary/20 rounded-xl"
+                          initial={false}
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        />
+                      )}
+                      
+                      <div className="flex items-center gap-3 w-full min-w-0 relative z-10">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                          isSelected ? "bg-primary text-white" : "bg-white/5 text-white/40"
+                        }`}>
+                          <item.icon className="w-4.5 h-4.5" />
+                        </div>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <span className={`font-medium truncate transition-colors ${
+                            isSelected ? "text-white" : "text-white/60"
+                          }`}>
+                            {item.title}
+                          </span>
+                          <span className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 font-bold border ${
+                            isSelected ? "bg-primary/20 border-primary/30 text-primary" : "bg-white/5 border-white/5 text-white/20"
+                          }`}>
+                            {item.type}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="text-white font-medium truncate group-hover:text-primary transition-colors">
-                          {item.title}
-                        </span>
-                        <span className="text-xs text-white/30 capitalize px-2 py-0.5 rounded-full bg-white/5 shrink-0">
-                          {item.type}
-                        </span>
+
+                      <div className="relative z-10">
+                        {isSelected ? (
+                          <div className="flex items-center gap-1.5 text-[10px] text-primary/60 font-bold uppercase tracking-tighter">
+                            <span>Open</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </div>
+                        ) : (
+                          <div className="w-4 h-4 bg-white/5 rounded flex items-center justify-center">
+                             <ArrowRight className="w-3 h-3 text-white/10" />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-white/20 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0" />
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </m.div>
             )}
           </AnimatePresence>
+        </div>
+
+        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-4 text-[10px] text-white/20 font-bold uppercase tracking-[0.1em]">
+            <div className="flex items-center gap-1.5">
+              <span className="flex items-center gap-0.5">
+                <kbd className="bg-white/5 px-1 rounded">↑</kbd>
+                <kbd className="bg-white/5 px-1 rounded">↓</kbd>
+              </span>
+              <span>Navigate</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <kbd className="bg-white/5 px-1 rounded">↵</kbd>
+              <span>Select</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 text-[10px] text-white/10 font-medium">
+            <Code className="w-3 h-3" />
+            <span>Power User Mode</span>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

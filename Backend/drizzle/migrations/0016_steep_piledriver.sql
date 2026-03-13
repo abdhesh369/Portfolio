@@ -1,3 +1,6 @@
+-- Migration: 0016_steep_piledriver
+-- Purpose: Add slug, longDescription, and timestamps to projects table; add article author foreign key.
+
 ALTER TABLE "projects" ADD COLUMN "slug" varchar(255) DEFAULT '' NOT NULL;--> statement-breakpoint
 ALTER TABLE "projects" ADD COLUMN "longDescription" text;--> statement-breakpoint
 ALTER TABLE "projects" ADD COLUMN "createdAt" timestamp;--> statement-breakpoint

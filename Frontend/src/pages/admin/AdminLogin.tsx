@@ -137,7 +137,7 @@ export default function AdminLogin() {
 
                         <button
                             type="submit"
-                            disabled={loading || !password.trim()}
+                            disabled={loading}
                             className="w-full py-3 px-4 rounded-xl font-semibold text-white
                 bg-gradient-primary hover:opacity-90 active:scale-[0.98]
                 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed

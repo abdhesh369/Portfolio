@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@portfolio/shared";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 
 export function useSubscribe() {
   const queryClient = useQueryClient();
@@ -14,11 +14,11 @@ export function useSubscribe() {
       });
     },
     onSuccess: () => {
-      toast.success("Thanks for subscribing!");
+      toast({ title: "Thanks for subscribing!" });
       queryClient.invalidateQueries({ queryKey: ["subscribers"] });
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast({ variant: "destructive", title: error.message });
     },
   });
 }
@@ -33,10 +33,10 @@ export function useUnsubscribe() {
       });
     },
     onSuccess: () => {
-      toast.success("Successfully unsubscribed");
+      toast({ title: "Successfully unsubscribed" });
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast({ variant: "destructive", title: error.message });
     },
   });
 }

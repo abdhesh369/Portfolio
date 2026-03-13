@@ -48,7 +48,7 @@ describe("SettingsService", () => {
 
             const result = await service.getSettings();
 
-            expect(result).toEqual({ ...mockSettings, customCss: null });
+            expect(result).toEqual(mockSettings);
             expect(mockCacheGetOrSet).toHaveBeenCalled();
         });
 
@@ -63,7 +63,7 @@ describe("SettingsService", () => {
 
             expect(mockGetSettings).toHaveBeenCalled();
             expect(mockUpdateSettings).toHaveBeenCalledWith({ isOpenToWork: true });
-            expect(result).toEqual({ id: 1, isOpenToWork: true, updatedAt: expect.any(Date), customCss: null });
+            expect(result).toEqual({ id: 1, isOpenToWork: true, updatedAt: expect.any(Date) });
         });
     });
 
@@ -75,7 +75,7 @@ describe("SettingsService", () => {
 
             const result = await service.updateSettings(data as unknown as Parameters<typeof service.updateSettings>[0]);
 
-            expect(result).toEqual({ ...updated, updatedAt: expect.any(Date), customCss: null });
+            expect(result).toEqual({ ...updated, updatedAt: expect.any(Date) });
             expect(mockUpdateSettings).toHaveBeenCalledWith(data);
             expect(mockCacheInvalidate).toHaveBeenCalledWith("site:settings");
         });

@@ -49,7 +49,7 @@ describe("ErrorBoundary", () => {
         <ThrowingComponent error={new Error("Test crash")} />
       </ErrorBoundary>
     );
-    expect(screen.getByText(/Critical System Error/i)).toBeInTheDocument();
+    expect(screen.getByText(/Oops! Something went wrong/i)).toBeInTheDocument();
     expect(screen.getByText(/Return to Base/i)).toBeInTheDocument();
     expect(screen.getByText(/Reload System/i)).toBeInTheDocument();
   });

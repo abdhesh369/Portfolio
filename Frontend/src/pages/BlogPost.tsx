@@ -8,7 +8,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
 import type { ArticleWithRelated } from "@portfolio/shared/schema";
 import { useRoute } from "wouter";
-import { m, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,12 @@ export default function BlogPost() {
     const { mutate: react } = useReactToArticle();
     const [copied, setCopied] = useState(false);
     const articleRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
 
     // Add copy-to-clipboard buttons on code blocks after content renders
     useCodeBlockCopy(articleRef, article?.content);
@@ -158,6 +164,10 @@ export default function BlogPost() {
                         ]
                     }
                 ]}
+            />
+            <m.div
+                className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 origin-[0%]"
+                style={{ scaleX }}
             />
             <Navbar />
 

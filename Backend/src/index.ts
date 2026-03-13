@@ -43,7 +43,6 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
-  "https://abdheshsah.com.np",
   process.env.FRONTEND_URL,
   ...(process.env.NODE_ENV !== "production" ? [
     "http://localhost:3000",
@@ -239,22 +238,6 @@ app.get("/health", async (_req: Request, res: Response) => {
   });
 });
 
-// Formal API Health Check for monitoring tools
-app.get("/api/v1/health", async (_req: Request, res: Response) => {
-  const dbHealth = await checkDatabaseHealth();
-  const redisHealth = await getRedisHealthSafe();
-
-  const isHealthy = dbHealth.healthy && redisHealth.healthy;
-
-  res.status(200).json({
-    status: isHealthy ? "healthy" : "degraded",
-    database: dbHealth.healthy ? "connected" : "reconnecting",
-    redis: redisHealth.healthy ? "connected" : "reconnecting",
-    ...(process.env.NODE_ENV === "development" && {
-      timestamp: new Date().toISOString()
-    })
-  });
-});
 
 function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {
@@ -402,8 +385,9 @@ async function startServer() {
           requestId: req.id,
           status,
           error: err.message,
-          stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+          stack: env.NODE_ENV === "development" ? err.stack : undefined,
         }, `Global Error Handler`);
+
 
         if (env.SENTRY_DSN && status >= 500) {
           Sentry.captureException(err);

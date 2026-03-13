@@ -141,6 +141,20 @@
       "when": 1773239256582,
       "tag": "0019_stormy_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1773408000000,
+      "tag": "0020_rename_snake_to_camel",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1773408001000,
+      "tag": "0021_fix_column_mismatches",
+      "breakpoints": true
     }
   ]
 }

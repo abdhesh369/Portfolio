@@ -1,9 +1,9 @@
-# Dependencies
 node_modules/
 
 # Production
 dist/
 build/
+coverage/
 
 # Environment
 .env
@@ -11,30 +11,14 @@ build/
 .env.production
 
 # Test artifacts
-coverage/
 test-results/
 playwright-report/
 stats.html
 tsc_output*.txt
 
-# Database
-*.sqlite
-*.sqlite-shm
-*.sqlite-wal
-
 # Logs
 *.log
 npm-debug.log*
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
 
 # Temp
 *.tmp

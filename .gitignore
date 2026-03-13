@@ -5,6 +5,9 @@ node_modules/
 dist/
 build/
 coverage/
+.next/
+out/
+*.tsbuildinfo
 
 # Environment Variables
 .env
@@ -18,12 +21,14 @@ coverage/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+drizzle/migrations/meta/
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+server_logs.txt
 
 # OS Files
 .DS_Store
@@ -36,33 +41,31 @@ Thumbs.db
 *.swo
 *.swn
 
-# TypeScript / Tooling
-*.tsbuildinfo
-.eslintcache
-
 # Debug / Temp files
-server_logs.txt
 headers*.txt
 db_report*.txt
 test_storage*.txt
 ts_errors.txt
 tsc_output*.txt
+test-results.txt
+typecheck-results.txt
 *.tmp
 .cache/
+.eslintcache
 
 # Test artifacts
 test-results/
 playwright-report/
-stats.
+test_browser/
+stats.html
+stats.json
 
+# Tooling
 .qodo/
 
-# Shared package build artifacts
-packages/shared/dist/
-packages/shared/src/*.js
-test_browser/
-Portfolio_Review_v8.md
-Portfolio_Review_v7.md
-Frontend/current_lint_output.txt
-Frontend/final_lint_output.txt
-Frontend/lint_output.txt
+# Portfolio Specific
+Portfolio_Review_v*.md
+Frontend/*_lint_output.txt
+Backend/check_db.ts
+Backend/seed_extra.ts
+Backend/test-connection.ts

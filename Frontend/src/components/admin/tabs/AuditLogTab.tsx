@@ -1,7 +1,7 @@
 import { formatDate } from "../../../lib/utils/date";
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api-helpers";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 import { LoadingSkeleton, EmptyState, AdminButton, FormSelect } from "@/components/admin/AdminShared";
 import { ChevronDown, ChevronRight, Filter, RefreshCw, Shield, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,7 +47,7 @@ export function AuditLogTab() {
       setEntries(data.entries);
       setTotal(data.total);
     } catch (_err: unknown) {
-      toast.error("Failed to load audit logs");
+      toast({ variant: "destructive", title: "Failed to load audit logs" });
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Clock, MessageSquare, Send, CheckCircle2, Circle, Loader2, ArrowRight } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils/date';
 
 interface ClientProject {
@@ -56,11 +56,11 @@ export const ClientPortal: React.FC = () => {
             if (!result.success) throw new Error(result.message || 'Authentication failed');
             setDashboard(result.data);
             setAuthenticated(true);
-            toast.success('Successfully logged in');
+            toast({ title: 'Successfully logged in' });
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
             setError(errorMessage);
-            toast.error(errorMessage);
+            toast({ variant: "destructive", title: errorMessage });
         } finally {
             setLoading(false);
         }
@@ -85,12 +85,12 @@ export const ClientPortal: React.FC = () => {
                 const errData = await res.json();
                 throw new Error(errData.message || 'Failed to submit feedback');
             }
-            toast.success('Feedback sent successfully');
+            toast({ title: 'Feedback sent successfully' });
             setFeedbackMsg('');
             // Optional: refresh dashboard or project feedback list
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to send feedback';
-            toast.error(errorMessage);
+            toast({ variant: "destructive", title: errorMessage });
         } finally {
             setLoading(false);
         }

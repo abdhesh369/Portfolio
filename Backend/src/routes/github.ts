@@ -126,4 +126,25 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
     }
 }));
 
+githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req, res) => {
+    try {
+        const username = env.GITHUB_USERNAME || "abdhesh369";
+        const response = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
+        
+        if (!response.ok) {
+            throw new Error(`GitHub Contributions API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        logger.error({ context: "github-contributions", error }, "Error fetching GitHub contributions");
+        res.status(502).json({ 
+            message: "Unable to fetch contributions", 
+            contributions: [],
+            total: {} 
+        });
+    }
+}));
+
 export default githubRoutes;

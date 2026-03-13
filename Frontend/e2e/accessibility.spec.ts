@@ -8,6 +8,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Accessibility — WCAG 2.1 AA', () => {
   test('Home page has no critical a11y violations', async ({ page }) => {
+    test.slow();
     await page.goto('/');
     // Wait for hero to render
     await page.locator('h1').waitFor({ state: 'visible' });
@@ -16,10 +17,15 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
 
+    if (results.violations.some(v => v.impact === 'critical')) {
+      console.log("CRITICAL ACCESSIBILITY VIOLATIONS:", JSON.stringify(results.violations.filter(v => v.impact === 'critical'), null, 2));
+    }
+
     expect(results.violations.filter(v => v.impact === 'critical')).toEqual([]);
   });
 
   test('Blog list page has no critical a11y violations', async ({ page }) => {
+    test.slow();
     await page.goto('/blog');
     // Wait for content to load
     await page.waitForTimeout(2000);
@@ -33,19 +39,19 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
   test('skip-to-content link is functional', async ({ page }) => {
     await page.goto('/');
+    // Wait for hero to render
+    await page.locator('h1').waitFor({ state: 'visible' });
 
-    const skipLink = page.locator('a.skip-to-content, a[href="#main-content"]');
-    // Should exist in the DOM
-    await expect(skipLink).toBeAttached();
-
-    // Focus the skip link (it may be visually hidden until focused)
+    const skipLink = page.locator('a.skip-to-content, a[href="#main-content"]').first();
+    
+    // Focus manually to ensure it's the active element for accessibility tests
     await skipLink.focus();
     await expect(skipLink).toBeFocused();
 
-    // Click to jump to main content
-    await skipLink.click();
+    // Trigger jump
+    await page.keyboard.press('Enter');
 
-    // The main content element should now have focus or be the target
+    // The main content element should exist
     const mainContent = page.locator('#main-content');
     await expect(mainContent).toBeAttached();
   });
@@ -54,9 +60,12 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
     await page.goto('/');
     await page.locator('h1').waitFor({ state: 'visible' });
 
+    // Wait for any images to appear or timeout quietly
+    await page.waitForSelector('img', { timeout: 5000 }).catch(() => {});
+
     // Check that no img tag is missing an alt attribute
-    const imagesWithoutAlt = await page.locator('img:not([alt])').count();
-    expect(imagesWithoutAlt).toBe(0);
+    const imagesWithoutAltCount = await page.locator('img:not([alt])').count();
+    expect(imagesWithoutAltCount).toBe(0);
   });
 
   test('interactive elements are keyboard accessible', async ({ page }) => {

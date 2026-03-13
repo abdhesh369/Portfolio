@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
             type: 'image/png'
           },
           {
-            src: '/icons/maskable-icon.png',
+            src: '/icons/pwa-512x512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
@@ -117,6 +117,23 @@ export default defineConfig(({ mode }) => {
   },
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/health': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/ping': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+  preview: {
+    port: 4173,
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

@@ -11,6 +11,7 @@ const mockContext = {
     clearRect: vi.fn(),
     strokeRect: vi.fn(),
     arc: vi.fn(),
+    scale: vi.fn(),
 };
 
 describe("Sketchpad", () => {

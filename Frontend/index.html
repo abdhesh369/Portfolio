@@ -168,7 +168,6 @@
 </head>
 
 <body class="">
-  <a href="#main-content" class="skip-to-content">Skip to content</a>
   <div id="root">
     <noscript>
       <div
@@ -219,7 +218,30 @@
   <script type="module" src="/src/main.tsx"></script>
 
   <!-- Defer Google Analytics to idle time — not render-blocking -->
-  <script src="/ga-loader.js" defer></script>
+  <script>
+    (function() {
+      var gaId = '%VITE_GA_MEASUREMENT_ID%';
+      if (!gaId || gaId.startsWith('%')) return; // GA not configured
+      
+      function loadGA() {
+        var s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+        s.async = true;
+        document.head.appendChild(s);
+        s.onload = function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId, { send_page_view: false });
+        };
+      }
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(loadGA, { timeout: 4000 });
+      } else {
+        setTimeout(loadGA, 3500);
+      }
+    })();
+  </script>
 </body>
 
 </html>

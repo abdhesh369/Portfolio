@@ -1,7 +1,13 @@
-import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType } from "drizzle-orm/pg-core";
 import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
+
+const tsvectorType = customType<{ data: string }>({
+  dataType() {
+    return 'tsvector';
+  },
+});
 import { z } from "zod";
 
 // ================= CONSTANTS =================
@@ -36,8 +42,9 @@ export const projectsTable = pgTable("projects", {
   role: text("role"),
   imageAlt: text("imageAlt"),
   viewCount: integer("viewCount").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  summary: text("summary"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => {
   return {
     categoryIdx: index("projects_category_idx").on(table.category),
@@ -167,6 +174,7 @@ export const articlesTable = pgTable("articles", {
   reactions: jsonb("reactions").$type<Record<string, number>>().notNull().default({}),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  searchVector: tsvectorType("searchVector"),
 }, (table) => {
   return {
     statusIdx: index("articles_status_idx").on(table.status),
@@ -321,6 +329,7 @@ export const auditLogTable = pgTable("audit_log", {
 export const siteSettingsTable = pgTable("site_settings", {
   id: serial("id").primaryKey(),
   isOpenToWork: boolean("isOpenToWork").notNull().default(true),
+  availabilityStatus: varchar("availabilityStatus", { length: 255 }),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 
   // Personal Branding
@@ -585,6 +594,7 @@ export const projectSchema = z.object({
   role: z.string().max(5000).nullable().default(null),
   imageAlt: z.string().max(500).nullable().default(null),
   viewCount: z.number().int().default(0),
+  summary: z.string().max(500).nullable().default(null),
   createdAt: z.coerce.date().nullable().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
 });
@@ -852,6 +862,7 @@ export const insertSubscriberApiSchema = z.object({
 // Common fields for Site Settings to avoid duplication
 const siteSettingsBaseSchema = z.object({
   isOpenToWork: z.boolean(),
+  availabilityStatus: z.string().max(255).nullable().optional(),
 
   // Personal Branding
   personalName: z.string().max(255).optional(),

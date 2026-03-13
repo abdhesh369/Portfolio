@@ -20,6 +20,7 @@ export class ProjectRepository {
             impact: project.impact ?? null,
             role: project.role ?? null,
             imageAlt: project.imageAlt ?? null,
+            summary: project.summary ?? null,
         };
     }
 
@@ -67,6 +68,7 @@ export class ProjectRepository {
             impact: data.impact ?? null,
             role: data.role ?? null,
             imageAlt: data.imageAlt ?? null,
+            summary: data.summary ?? null,
         };
 
         const [inserted] = await db
@@ -90,6 +92,7 @@ export class ProjectRepository {
             ...(data.impact !== undefined && { impact: data.impact }),
             ...(data.role !== undefined && { role: data.role }),
             ...(data.imageAlt !== undefined && { imageAlt: data.imageAlt }),
+            ...(data.summary !== undefined && { summary: data.summary }),
         };
 
         const [updated] = await db

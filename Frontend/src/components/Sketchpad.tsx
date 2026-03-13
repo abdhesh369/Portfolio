@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pen, Eraser, Square, Circle as CircleIcon, Minus, Palette, RotateCcw, Download, Save, MousePointer2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '@/hooks/use-toast';
 
 interface Point { x: number; y: number }
 interface DrawElement {
@@ -173,13 +173,13 @@ export const Sketchpad: React.FC<SketchpadProps> = ({ sessionId: _sessionId, onS
         link.download = `sketchpad-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        toast.success("Sketch exported as PNG");
+        toast({ title: "Sketch exported as PNG" });
     };
 
     const saveManual = () => {
         if (onSave) {
             onSave({ elements, savedAt: new Date().toISOString() });
-            toast.success("Canvas saved to server");
+            toast({ title: "Canvas saved to server" });
         }
     };
 

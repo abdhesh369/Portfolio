@@ -1,7 +1,8 @@
+import { useLocation } from "wouter";
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Twitter, Instagram, Youtube, Code2 } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Twitter, Instagram, Youtube, Code2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
@@ -256,7 +257,7 @@ const OrbitItem = ({ icon: Icon, label, color, delay, x, y }: OrbitItemProps) =>
   );
 };
 
-const OpenToWorkBanner = () => {
+const OpenToWorkBanner = ({ settings }: { settings: SiteSettings | undefined | null }) => {
   return (
     <m.div
       initial={{ opacity: 0, y: -20 }}
@@ -275,7 +276,7 @@ const OpenToWorkBanner = () => {
             <span className="relative inline-flex rounded-full h-3 w-3 bg-primary shadow-[0_0_8px_var(--primary)]"></span>
           </span>
           <span className="text-primary/90 font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap">
-            Status: Open for opportunities
+            Status: {settings?.availabilityStatus || "Open for opportunities"}
           </span>
         </span>
 
@@ -358,6 +359,7 @@ const Magnetic = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function Hero() {
+  const [, setLocation] = useLocation();
   const status = useServerStatus();
   const { data: projects } = useProjects();
   const { data: skills } = useSkills();
@@ -400,7 +402,7 @@ export default function Hero() {
             </m.div>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              {showBanner && <OpenToWorkBanner />}
+              {showBanner && <OpenToWorkBanner settings={settings} />}
               <LiveVisitorCount />
             </div>
 
@@ -520,16 +522,28 @@ export default function Hero() {
 
               <Magnetic>
                 <Button
+                  onClick={() => setLocation("/resume")}
+                  variant="outline"
+                  size="lg"
+                  aria-label="View Resume"
+                  className="w-full sm:w-auto border-border text-foreground hover:bg-foreground/10 rounded-full px-8 backdrop-blur-sm"
+                >
+                  View Resume <ExternalLink className="ml-2 w-4 h-4" />
+                </Button>
+              </Magnetic>
+
+              <Magnetic>
+                <Button
                   onClick={() => {
                     const target = document.getElementById("contact");
                     if (target) {
                       target.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  variant="outline"
+                  variant="ghost"
                   size="lg"
                   aria-label="Contact Me directly via form"
-                  className="w-full sm:w-auto border-border text-foreground hover:bg-foreground/10 rounded-full px-8 backdrop-blur-sm"
+                  className="w-full sm:w-auto text-muted-foreground hover:text-foreground rounded-full px-8"
                 >
                   Contact Me <Mail className="ml-2 w-4 h-4" />
                 </Button>

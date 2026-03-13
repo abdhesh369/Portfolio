@@ -154,6 +154,7 @@ export default function Testimonials() {
                         <button
                             onClick={() => { setIsAutoPlaying(false); setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length); }}
                             className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                            aria-label="Previous testimonial"
                         >
                             <ChevronLeft size={20} />
                         </button>
@@ -164,6 +165,7 @@ export default function Testimonials() {
                                     key={i}
                                     onClick={() => { setIsAutoPlaying(false); setCurrentIndex(i); }}
                                     className={`w-2 h-2 rounded-full transition-all duration-500 ${i === currentIndex ? "w-8 bg-primary" : "bg-muted hover:bg-muted-foreground/20"}`}
+                                    aria-label={`Go to testimonial ${i + 1}`}
                                 />
                             ))}
                         </div>
@@ -171,6 +173,7 @@ export default function Testimonials() {
                         <button
                             onClick={() => { setIsAutoPlaying(false); setCurrentIndex((prev) => (prev + 1) % testimonials.length); }}
                             className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                            aria-label="Next testimonial"
                         >
                             <ChevronRight size={20} />
                         </button>

@@ -21,6 +21,7 @@ export default [
         rules: {
             ...ts.configs.recommended.rules,
             "@typescript-eslint/no-explicit-any": "error",
+            "no-console": ["error", { allow: ["warn", "error"] }],
         },
     },
 ];

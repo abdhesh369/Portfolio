@@ -14,13 +14,13 @@ const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".en
 const envPath = path.join(rootDir, envFile);
 
 if (fs.existsSync(envPath)) {
-    console.log(`[ENV] Loading variables from: ${envPath}`);
+    process.stdout.write(`[ENV] Loading variables from: ${envPath}\n`);
     dotenv.config({ path: envPath });
 } else {
     // Try fallback .env in root
     const fallback = path.join(rootDir, ".env");
     if (fs.existsSync(fallback)) {
-        console.log(`[ENV] Loading variables from fallback: ${fallback}`);
+        process.stdout.write(`[ENV] Loading variables from fallback: ${fallback}\n`);
         dotenv.config({ path: fallback });
     } else {
         console.warn("[ENV] No .env file found in root. Relying on platform environment variables.");
@@ -69,8 +69,8 @@ function validateEnv(): Env {
     } catch (err) {
         if (err instanceof z.ZodError) {
             const missing = err.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
-            console.error(`❌ [ENV] Environment validation failed: ${missing}`);
-            console.error("💡 Please check your .env file and ensure all required variables are set correctly.");
+            process.stderr.write(`❌ [ENV] Environment validation failed: ${missing}\n`);
+            process.stderr.write("💡 Please check your .env file and ensure all required variables are set correctly.\n");
             process.exit(1);
         }
         throw err;

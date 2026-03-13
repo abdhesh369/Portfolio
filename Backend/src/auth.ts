@@ -7,9 +7,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 import { redis } from "./lib/redis.js";
-const isProd = env.NODE_ENV === "production";
+import { getIsProd } from "./lib/is-prod.js";
 
-if (isProd && !redis) {
+if (getIsProd() && !redis) {
     logger.warn({ context: "auth" }, "Redis is not configured in production. Token blacklist is disabled.");
 }
 

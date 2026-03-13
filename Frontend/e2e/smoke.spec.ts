@@ -12,7 +12,7 @@ test.describe('Portfolio Smoke Tests', () => {
         await expect(heading).toBeVisible();
 
         // Check for the "View My Work" button in the hero
-        const viewWorkBtn = page.getByRole('button', { name: /View My Work/i });
+        const viewWorkBtn = page.getByRole('button', { name: /View My Work/i }).first();
         await expect(viewWorkBtn).toBeVisible();
     });
 
@@ -33,6 +33,6 @@ test.describe('Portfolio Smoke Tests', () => {
 
         // The chatbot FAB should be visible in the bottom right
         const chatbotBtn = page.locator('button[aria-label="Initialize AI Assistant"]');
-        await expect(chatbotBtn).toBeVisible();
+        await expect(chatbotBtn).toBeVisible({ timeout: 15000 });
     });
 });

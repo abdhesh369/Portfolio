@@ -1,54 +1,411 @@
 name: CI
 
+# ─── Triggers ────────────────────────────────────────────────────────────────
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
+# Cancel in-progress runs for the same branch/PR on new pushes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 1 — Static checks (type-check, lint, migration integrity)
+# Fastest gate. All other jobs wait on this one.
+# ══════════════════════════════════════════════════════════════════════════════
 jobs:
-  test:
-    name: Build and Test
+  static-checks:
+    name: "Static Checks"
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: 'npm'
-      
-      - name: Install root dependencies
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
         run: npm ci
-        
+
       - name: Build shared package
         run: npm run build:shared
-        
-      - name: Backend - Type check
+
+      - name: Backend — type check
         run: npm run type-check -w Backend
-        
-      - name: Backend - Lint
+
+      - name: Frontend — type check
+        run: npm run type-check -w Frontend
+
+      - name: Backend — lint (zero warnings)
         run: npm run lint -w Backend
-        
-      - name: Backend - Run Tests
-        run: npm run test -w Backend
+
+      - name: Frontend — lint (zero warnings)
+        run: npm run lint -w Frontend
+
+      # ── Migration duplicate number check ───────────────────────────────────
+      # The existing validate-migrations.js only counts files; it does NOT
+      # detect duplicate numbers (e.g. the 0017 collision that currently exists).
+      # This step catches that before it can reach any database.
+      - name: Check for duplicate migration numbers
+        run: |
+          node --input-type=module << 'EOF'
+          import { readdirSync } from "fs";
+
+          const dir = "Backend/drizzle/migrations";
+          const files = readdirSync(dir)
+            .filter(f => f.endsWith(".sql"))
+            .map(f => ({ file: f, prefix: f.split("_")[0] }));
+
+          const seen = new Map();
+          const duplicates = [];
+
+          for (const { file, prefix } of files) {
+            if (seen.has(prefix)) {
+              duplicates.push(`  ${seen.get(prefix)}  <->  ${file}`);
+            } else {
+              seen.set(prefix, file);
+            }
+          }
+
+          if (duplicates.length > 0) {
+            console.error("FAIL: Duplicate migration numbers detected:");
+            duplicates.forEach(d => console.error(d));
+            console.error("Resolve the collision before merging.");
+            process.exit(1);
+          }
+
+          console.log(`OK: ${files.length} migrations, no duplicate numbers.`);
+          EOF
+
+      - name: Run migration validator
+        run: node Backend/scripts/validate-migrations.js
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 2 — Unit tests + coverage
+# No real database needed — DB calls are mocked.
+# FIX: Added ADMIN_PASSWORD, ADMIN_EMAIL, CONTACT_EMAIL which were missing from
+# the original CI, causing process.exit(1) before any auth test could run.
+# ══════════════════════════════════════════════════════════════════════════════
+  unit-tests:
+    name: "Unit Tests + Coverage"
+    runs-on: ubuntu-latest
+    needs: static-checks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Backend — unit tests with coverage
+        run: npm run test:coverage -w Backend
         env:
           NODE_ENV: test
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/postgres
-          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_padding__
-          JWT_REFRESH_SECRET: test_refresh_token_secret_key_at_least_64_characters_long_for_security__
-          
-      - name: Frontend - Type check
-        run: npm run type-check -w Frontend
-        
-      - name: Frontend - Lint
-        run: npm run lint -w Frontend
-        
-      - name: Frontend - Run Tests
-        run: npm run test -w Frontend
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
+          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
+          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_EMAIL: admin@ci-test.local
+          CONTACT_EMAIL: contact@ci-test.local
+
+      - name: Frontend — unit tests with coverage
+        run: npm run test:coverage -w Frontend
         env:
           VITE_API_URL: http://localhost:5000
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
           VITE_SENTRY_ENVIRONMENT: test
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage
+          path: Backend/coverage/
+          retention-days: 7
+
+      - name: Upload frontend coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: Frontend/coverage/
+          retention-days: 7
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 3 — Integration tests
+# FIX: The original CI had a DATABASE_URL pointing to localhost:5432 but no
+# postgres service block — every integration test failed with ECONNREFUSED.
+# ══════════════════════════════════════════════════════════════════════════════
+  integration-tests:
+    name: "Integration Tests"
+    runs-on: ubuntu-latest
+    needs: static-checks
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: portfolio_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d portfolio_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready"
+
+      - name: Run database migrations
+        run: npm run migrate -w Backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          NODE_ENV: test
+
+      - name: Backend — integration tests
+        run: npm run test:integration -w Backend
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
+          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
+          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_EMAIL: admin@ci-test.local
+          CONTACT_EMAIL: contact@ci-test.local
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 4 — Frontend build + bundle size guard
+# Prevents silent bundle bloat. The current vite.config.ts raises the warning
+# threshold to 1200 KB to suppress warnings — this job enforces a real limit.
+# ══════════════════════════════════════════════════════════════════════════════
+  build-check:
+    name: "Frontend Build + Bundle Size"
+    runs-on: ubuntu-latest
+    needs: static-checks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Build frontend
+        run: npm run build -w Frontend
+        env:
+          VITE_API_URL: https://placeholder.api
+          VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
+          VITE_SENTRY_DSN: ""
+          VITE_SENTRY_ENVIRONMENT: ci
+
+      - name: Check chunk sizes (max 1000 KB per chunk)
+        run: |
+          node --input-type=module << 'EOF'
+          import { readdirSync, statSync } from "fs";
+          import path from "path";
+
+          const distDir = "Frontend/dist/assets";
+          const MAX_KB = 1000;
+          const MAX_BYTES = MAX_KB * 1024;
+
+          let failed = false;
+          const files = readdirSync(distDir).filter(f => f.endsWith(".js"));
+
+          for (const file of files) {
+            const { size } = statSync(path.join(distDir, file));
+            const kb = (size / 1024).toFixed(1);
+            const status = size > MAX_BYTES ? "FAIL" : "OK";
+            console.log(`${status}  ${kb} KB  ${file}`);
+            if (size > MAX_BYTES) failed = true;
+          }
+
+          if (failed) {
+            console.error(`\nOne or more chunks exceed ${MAX_KB} KB. Split the chunk or audit what caused the regression.`);
+            process.exit(1);
+          }
+          EOF
+
+      - name: Upload bundle stats
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-stats
+          path: Frontend/stats.html
+          retention-days: 7
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 5 — E2E tests (non-blocking)
+# These four spec files exist but are never run in CI. Running them here with
+# continue-on-error so they report without blocking merges until the suite
+# has a proven green track record. Flip to false when stable.
+# ══════════════════════════════════════════════════════════════════════════════
+  e2e-tests:
+    name: "E2E Tests (non-blocking)"
+    runs-on: ubuntu-latest
+    needs: [unit-tests, build-check]
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: Frontend
+
+      - name: Build frontend for preview
+        run: npm run build -w Frontend
+        env:
+          VITE_API_URL: http://localhost:5000
+          VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
+          VITE_SENTRY_DSN: ""
+
+      - name: Run E2E tests
+        run: npm run test:e2e -w Frontend
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: Frontend/playwright-report/
+          retention-days: 7
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 6 — PR summary comment
+# Posts a single comment summarising all job results. Updates in-place on
+# subsequent pushes so the PR thread doesn't get spammed.
+# ══════════════════════════════════════════════════════════════════════════════
+  pr-summary:
+    name: "Post PR Summary"
+    runs-on: ubuntu-latest
+    needs: [static-checks, unit-tests, integration-tests, build-check, e2e-tests]
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Post summary comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const jobs = {
+              "Static Checks":      "${{ needs.static-checks.result }}",
+              "Unit Tests":         "${{ needs.unit-tests.result }}",
+              "Integration Tests":  "${{ needs.integration-tests.result }}",
+              "Build + Bundle":     "${{ needs.build-check.result }}",
+              "E2E (non-blocking)": "${{ needs.e2e-tests.result }}",
+            };
+
+            const icon = r => r === "success" ? "✅" : r === "skipped" ? "⏭️" : "❌";
+            const rows = Object.entries(jobs)
+              .map(([name, result]) => `| ${icon(result)} | ${name} | \`${result}\` |`)
+              .join("\n");
+
+            const critical = ["Static Checks","Unit Tests","Integration Tests","Build + Bundle"];
+            const allPassed = critical.every(k => jobs[k] === "success");
+
+            const header = allPassed
+              ? "## ✅ All checks passed — ready to merge"
+              : "## ❌ Checks failed — merge is blocked";
+
+            const body = [
+              header,
+              "",
+              "| | Check | Result |",
+              "|---|---|---|",
+              rows,
+              "",
+              "> E2E tests are **non-blocking** until the suite has a proven green track record.",
+              "> When stable, set `continue-on-error: false` on the `e2e-tests` job.",
+            ].join("\n");
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === "github-actions[bot]" &&
+              (c.body.includes("All checks passed") || c.body.includes("merge is blocked"))
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

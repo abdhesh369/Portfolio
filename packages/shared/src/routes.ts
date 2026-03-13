@@ -183,6 +183,19 @@ export const api = {
                 500: errorSchemas.internal,
             },
         },
+        generateSummary: {
+            method: "POST" as const,
+            path: "/api/v1/projects/:id/summary",
+            description: "Generate AI summary for project (admin only)",
+            requiresAuth: true,
+            responses: {
+                200: z.object({ success: z.boolean(), summary: z.string() }),
+                400: errorSchemas.badRequest,
+                401: errorSchemas.unauthorized,
+                403: errorSchemas.forbidden,
+                500: errorSchemas.internal,
+            },
+        },
     },
 
     // ---------- SKILLS ----------
@@ -922,7 +935,7 @@ export const api = {
         latestCommit: {
             method: "GET" as const,
             path: "/api/v1/github/latest-commit",
-            description: "Get the latest commit with AI summary",
+            description: "Get latest public commit activity",
             responses: {
                 200: z.object({
                     repo: z.string(),
@@ -931,8 +944,18 @@ export const api = {
                     date: z.string(),
                     aiSummary: z.string().optional(),
                 }),
-                500: errorSchemas.internal,
                 502: z.object({ message: z.string(), events: z.array(z.any()) }),
+                500: errorSchemas.internal,
+            },
+        },
+        contributions: {
+            method: "GET" as const,
+            path: "/api/v1/github/contributions",
+            description: "Get GitHub contribution history",
+            responses: {
+                200: z.any(),
+                502: errorSchemas.badRequest,
+                500: errorSchemas.internal,
             },
         },
     },

@@ -22,12 +22,19 @@ export default defineConfig({
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],
-            include: ['src/services/**/*', 'src/hooks/**/*', 'src/components/admin/**/*'],
+            include: ['src/**/*.{ts,tsx}'],
+            exclude: [
+                'src/**/*.test.{ts,tsx}',
+                'src/**/*.spec.{ts,tsx}',
+                'src/test/**',
+                'src/vite-env.d.ts',
+                'src/main.tsx',
+            ],
             thresholds: {
-                lines: 70,
-                functions: 70,
+                lines: 75,
+                functions: 75,
                 branches: 70,
-                statements: 70,
+                statements: 75,
             },
         },
     },
