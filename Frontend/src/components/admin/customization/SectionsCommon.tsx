@@ -73,7 +73,7 @@ export function CollapsibleSection({ title, description, isOpen, onToggle, icon,
             </button>
             <div
                 className={cn(
-                    "overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                    "overflow-hidden transition-all duration-500 ease-[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]",
                     isOpen ? "max-h-[3000px] opacity-100" : "max-h-0 opacity-0"
                 )}
             >

@@ -274,7 +274,7 @@ export default function Sidebar({
                         collapsed ? "w-12 h-12 p-0 flex items-center justify-center mx-auto rounded-xl" : "flex items-center gap-4 rounded-2xl"
                     )}>
                         <div className="w-8 h-8 rounded-xl bg-purple-500/5 flex items-center justify-center text-purple-500 group">
-                            <Globe size={16} className="group-hover:rotate-180 transition-transform duration-[2s]" />
+                            <Globe size={16} className="group-hover:rotate-180 transition-transform duration-[length:2s]" />
                         </div>
                         {!collapsed && (
                             <div className="flex flex-col min-w-0">
