@@ -1,0 +1,67 @@
+services:
+  # ── Backend Web Service ───────────────────────────────────────────────────
+  - type: web
+    name: portfolio-backend
+    runtime: node
+    plan: free
+    region: singapore # Adjust based on your primary audience
+    buildCommand: npm install && npm run build:backend
+    startCommand: npm run start -w Backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false # Set to your Frontend URL after first deployment
+      - key: BACKEND_RENDER_URL
+        fromService:
+          name: portfolio-backend
+          type: web
+          property: host
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GITHUB_USERNAME
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+
+  # ── Frontend Static Site ──────────────────────────────────────────────────
+  - type: static
+    name: portfolio-frontend
+    runtime: static
+    buildCommand: npm install && npm run build:frontend
+    publishDir: Frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: portfolio-backend
+          type: web
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
