@@ -411,7 +411,7 @@
   .bg-gradient-primary {
     background: linear-gradient(135deg,
         hsl(var(--primary)),
-        hsl(263 70% 60%));
+        hsl(270 100% 65%)); /* More vibrant purple for better contrast */
   }
 
   .bg-gradient-secondary {

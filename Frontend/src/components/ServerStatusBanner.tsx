@@ -52,14 +52,16 @@ export function ServerStatusBanner() {
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className={`server-status-banner ${status === "offline" ? "server-status-banner--offline" : "server-status-banner--waking"}`}
         >
-          <span className="server-status-banner__icon">{MESSAGES[status].icon}</span>
-          <span className="server-status-banner__text">
-            {MESSAGES[status].text}
-            <span className="ml-2 px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] tabular-nums">
-              {Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}
+          <div className="flex items-center gap-3">
+            <span className="server-status-banner__icon">{MESSAGES[status].icon}</span>
+            <span className="server-status-banner__text transition-all">
+              {MESSAGES[status].text}
+              <span className="ml-3 px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] tabular-nums inline-flex items-center gap-2 border border-white/5">
+                {Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}
+                <span className="server-status-banner__pulse scale-75" />
+              </span>
             </span>
-          </span>
-          <span className="server-status-banner__pulse" />
+          </div>
         </m.div>
       )}
     </AnimatePresence>

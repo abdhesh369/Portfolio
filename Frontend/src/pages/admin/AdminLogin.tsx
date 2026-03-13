@@ -60,10 +60,10 @@ export default function AdminLogin() {
         >
             {/* Decorative background orbs */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full opacity-20"
+                <div className="absolute top-1/4 -left-32 w-64 h-64 rounded-full opacity-10"
                     style={{ background: "radial-gradient(circle, hsl(263 70% 50%), transparent)" }}
                 />
-                <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full opacity-15"
+                <div className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full opacity-10"
                     style={{ background: "radial-gradient(circle, hsl(239 84% 67%), transparent)" }}
                 />
             </div>
@@ -138,10 +138,10 @@ export default function AdminLogin() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 px-4 rounded-xl font-semibold text-white
+                            className="w-full py-3.5 px-4 rounded-xl font-bold text-white
                 bg-gradient-primary hover:opacity-90 active:scale-[0.98]
-                transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
-                flex items-center justify-center gap-2"
+                transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed
+                flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(124,58,237,0.3)] hover:shadow-[0_8px_30px_rgba(124,58,237,0.5)]"
                         >
                             {loading ? (
                                 <>

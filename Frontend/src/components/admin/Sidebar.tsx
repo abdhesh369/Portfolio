@@ -111,7 +111,7 @@ export default function Sidebar({
             )}
 
             <aside className={cn(
-                "fixed lg:sticky top-0 left-0 h-screen z-50 transition-all duration-500 var(--nm-timing)",
+                "fixed lg:sticky top-0 left-0 h-screen z-50 transition-all duration-500 ease-[var(--nm-timing)]",
                 "sidebar-container flex flex-col",
                 collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-width)]",
                 mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"

@@ -44,9 +44,9 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
 
     return (
         <div className={`admin-mode min-h-screen relative overflow-hidden selection:bg-purple-500/30 selection:text-[var(--admin-text-primary)] ${resolvedTheme}`}>
-            {/* Ambient Technical Glows */}
-            <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" />
-            <div className="fixed bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
+            {/* Ambient Technical Glows - Toned down for v5 */}
+            <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none animate-pulse" />
+            <div className="fixed bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/5 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
 
             {/* Main Container */}
             <div className="flex relative z-10">
@@ -62,7 +62,7 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
                 />
 
                 {/* Content Area */}
-                <div className="flex-1 min-h-screen flex flex-col relative transition-all duration-500 var(--nm-timing)">
+                <div className="flex-1 min-h-screen flex flex-col relative transition-all duration-500 ease-[var(--nm-timing)]">
                     <TopBar
                         activeTab={activeTab}
                         setMobileMenuOpen={setMobileMenuOpen}
@@ -72,7 +72,7 @@ const AdminLayoutContent: React.FC<AdminLayoutProps> = ({
                         onNavigate={onNavigate}
                     />
 
-                    <main className="flex-1 p-6 md:p-10 lg:p-12 max-w-[1700px] mx-auto w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
+                    <main id="main-content" className="flex-1 p-6 md:p-10 lg:p-12 max-w-[1700px] mx-auto w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out outline-none" tabIndex={-1}>
                         {children}
                     </main>
 
