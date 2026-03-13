@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const API_URL = import.meta.env.DEV ? "" : (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export function useVisitorCount() {
     const [visitorCount, setVisitorCount] = useState<number>(0);

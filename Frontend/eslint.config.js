@@ -24,6 +24,7 @@ export default tseslint.config(
                     destructuredArrayIgnorePattern: '^_'
                 }
             ],
+            "no-console": ["warn", { allow: ["warn", "error"] }],
         },
         ignores: [
             'dist/**',

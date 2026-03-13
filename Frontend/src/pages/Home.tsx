@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useState, useMemo } from "react";
+import { m, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import { SEO } from "@/components/SEO";
@@ -24,6 +25,7 @@ const Footer = lazy(() => import("@/components/Footer"));
 const BackToTop = lazy(() => import("@/components/BackToTop"));
 const SectionReveal = lazy(() => import("@/components/SectionReveal"));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
+import { GithubHeatmap } from "@/components/GithubHeatmap";
 import { CurrentlyBuildingTicker } from "@/components/CurrentlyBuildingTicker";
 
 
@@ -102,6 +104,45 @@ function useHashScroll() {
     return () => window.removeEventListener("hashchange", handleHashScroll);
   }, []);
 }
+const ShortcutHint = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) setIsVisible(false);
+      else setIsVisible(true);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <m.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="fixed bottom-8 right-8 z-40 hidden lg:flex items-center gap-3 px-4 py-2 bg-background/40 backdrop-blur-md border border-border/50 rounded-2xl shadow-2xl pointer-events-none transition-all duration-500"
+        >
+          <div className="flex flex-col items-end">
+             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">Quick Actions</span>
+             <div className="flex items-center gap-1.5">
+                <kbd className="px-2 py-1 rounded bg-foreground/10 border border-border font-mono text-xs font-bold text-foreground/80">⌘</kbd>
+                <span className="text-xs font-bold text-muted-foreground">+</span>
+                <kbd className="px-2 py-1 rounded bg-foreground/10 border border-border font-mono text-xs font-bold text-foreground/80">K</kbd>
+             </div>
+          </div>
+          <div className="w-[1px] h-8 bg-border/50 mx-1" />
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium text-muted-foreground">Command Palette</span>
+          </div>
+        </m.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 export default function Home() {
   const { data: settings } = useSiteSettings();
   const { progress } = useScrollStore();
@@ -198,6 +239,12 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <CurrentlyBuildingTicker />
+        
+        <div className="section-container pb-20">
+          <GithubHeatmap />
+        </div>
+
+        <ShortcutHint />
 
         {sectionOrder
           .filter((sectionId: string) => sectionVisibility[sectionId] ?? true)

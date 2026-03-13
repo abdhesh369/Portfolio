@@ -3,6 +3,7 @@ import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import type { Project, InsertProject } from "@portfolio/shared";
 import { CacheService } from "../lib/cache.js";
 import { logger } from "../lib/logger.js";
+import { aiClient } from "../lib/ai.js";
 
 const FEATURE = "project";
 const LIST_NAMESPACE = "list";
@@ -109,6 +110,35 @@ export class ProjectService {
      */
     async incrementViewCount(id: number): Promise<void> {
         await projectRepository.incrementViewCount(id);
+    }
+
+    /**
+     * Generates an AI summary for a project.
+     * @param id - The project ID to generate summary for
+     * @returns The generated summary
+     */
+    async generateSummary(id: number): Promise<string> {
+        const project = await this.getById(id);
+        if (!project) {
+            throw new Error("Project not found");
+        }
+
+        const prompt = `
+            Summarize the following project in exactly two impactful sentences.
+            Focus on the "what" and the "impact".
+            
+            Project Title: ${project.title}
+            Full Description: ${project.description}
+            Tech Stack: ${project.techStack.join(", ")}
+            ${project.problemStatement ? `Problem Statement: ${project.problemStatement}` : ""}
+            ${project.impact ? `Impact: ${project.impact}` : ""}
+            
+            Summary:
+        `;
+
+        const summary = await aiClient.generateContent(prompt);
+        await this.update(id, { summary });
+        return summary;
     }
 }
 

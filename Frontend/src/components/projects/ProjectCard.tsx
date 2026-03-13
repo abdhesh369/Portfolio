@@ -174,19 +174,37 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
               {project.description}
             </p>
 
+            {project.summary && (
+              <m.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mb-4 p-2.5 rounded-xl bg-primary/5 border border-primary/10 relative overflow-hidden group/tldr"
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">AI Summary</span>
+                </div>
+                <p className="text-xs text-foreground/80 leading-relaxed italic line-clamp-2">
+                  "{project.summary}"
+                </p>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 -translate-x-full group-hover/tldr:translate-x-full transition-transform duration-1000" />
+              </m.div>
+            )}
+
             {/* Tech Stack */}
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {project.techStack.slice(0, 4).map((tech) => (
-                <span
+            <div className="flex flex-wrap gap-1.5 mb-4 relative z-10">
+              {project.techStack.slice(0, 5).map((tech) => (
+                <m.span
                   key={tech}
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded border border-border bg-foreground/5 text-muted-foreground`}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/20 bg-primary/5 text-primary/80 hover:bg-primary/10 hover:border-primary/40 transition-colors cursor-default shadow-sm"
                 >
                   {tech}
-                </span>
+                </m.span>
               ))}
-              {project.techStack.length > 4 && (
-                <span className="text-[10px] font-medium text-muted-foreground py-0.5">
-                  +{project.techStack.length - 4} more
+              {project.techStack.length > 5 && (
+                <span className="text-[10px] font-medium text-muted-foreground py-0.5 px-1">
+                  +{project.techStack.length - 5}
                 </span>
               )}
             </div>

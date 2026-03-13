@@ -4,24 +4,13 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
 import { isAuthenticated, asyncHandler, createRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { getIsProd } from "../lib/is-prod.js";
 import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
 import { authLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
 
-/**
- * Shared helper to determine if the request is in a production environment
- * Used for secure cookie flags
- */
-const getIsProd = (req: Request): boolean => {
-    const origin = req.headers.origin || "";
-    return process.env.NODE_ENV === "production" || 
-           process.env.RENDER === "true" || 
-           req.secure || 
-           req.headers["x-forwarded-proto"] === "https" || 
-           (origin.startsWith("https://") && !origin.includes("localhost"));
-};
 
 /**
  * Constant-time string comparison to prevent timing attacks.
@@ -114,9 +103,9 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
 
 /**
  * GET /api/auth/status
- * Returns current auth status
+ * Returns current auth status. Returns 200 regardless of auth to avoid console error noise.
  */
-router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+router.get("/status", asyncHandler(async (req: Request, res: Response) => {
     // Return existing CSRF token from cookie if present, otherwise generate a new one
     // to ensure frontend memory store is always populated after reload
     let csrfToken = req.cookies?.csrf_token;
@@ -133,29 +122,57 @@ router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Re
         });
     }
 
-    res.json({
-        success: true,
-        authenticated: true,
-        csrfToken
-    });
+    // Check if user is actually authenticated
+    let token: string | undefined;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7);
+    } else if (req.cookies && req.cookies.auth_token) {
+        token = req.cookies.auth_token;
+    }
+
+    if (!token) {
+        return res.json({
+            success: true,
+            authenticated: false,
+            csrfToken
+        });
+    }
+
+    try {
+        jwt.verify(token, env.JWT_SECRET);
+        return res.json({
+            success: true,
+            authenticated: true,
+            csrfToken
+        });
+    } catch (err) {
+        return res.json({
+            success: true,
+            authenticated: false,
+            csrfToken
+        });
+    }
 }));
+
 
 /**
  * POST /api/auth/refresh
- * Validates refresh token cookie and issues new access token
+ * Validates refresh token cookie and issues new access token.
+ * Returns 200 OK even on failure (with success: false) to avoid console error noise.
  */
 router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     const refreshToken = req.cookies?.refresh_token;
 
     if (!refreshToken) {
-        return res.status(401).json({ success: false, message: "No refresh token provided" });
+        return res.json({ success: false, message: "No refresh token provided" });
     }
 
     // validateRefreshToken now verifies the JWT signature (stateless, no Redis needed)
     const isValid = await validateRefreshToken(refreshToken);
 
     if (!isValid) {
-        return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
+        return res.json({ success: false, message: "Invalid or expired refresh token" });
     }
 
     // Issue new short-lived access token

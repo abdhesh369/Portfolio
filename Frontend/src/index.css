@@ -13,31 +13,33 @@
 
   /*
    * Light Theme Colors
-   * These define the light mode appearance. The .dark class below
-   * provides the dark theme overrides.
+   * Page background is a cool grey-blue so white cards visually pop off it.
+   * Cards are pure white (#fff) — they lift above the page via color + shadow.
+   * Secondary/muted zones are darker than the page bg to create depth layers.
+   * All text pairs verified against WCAG AA (4.5:1 minimum).
    */
-  --background: 0 0% 100%;
+  --background: 214 20% 91%;      /* cool grey-blue page bg — was #fff (identical to card) */
   --foreground: 222 47% 11%;
 
-  --card: 0 0% 100%;
+  --card: 0 0% 100%;              /* pure white — pops against grey-blue page */
   --card-foreground: 222 47% 11%;
-  --card-border: 214 32% 91%;
+  --card-border: 214 25% 72%;     /* visible border — was 91% (nearly invisible) */
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --popover-border: 214 32% 91%;
+  --popover-border: 214 25% 72%;
 
   --primary: 262 83% 58%;
   --primary-foreground: 210 40% 98%;
   --primary-border: 262 83% 58%;
 
-  --secondary: 210 40% 96%;
+  --secondary: 214 20% 85%;       /* sidebar/badge zones — darker than page bg */
   --secondary-foreground: 222 47% 11%;
-  --secondary-border: 214 32% 91%;
+  --secondary-border: 214 25% 72%;
 
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
-  --muted-border: 214 32% 91%;
+  --muted: 214 20% 85%;           /* muted surfaces — same as secondary */
+  --muted-foreground: 215 25% 36%;/* 7.26:1 on white card — was 47% (4.72:1, barely passing) */
+  --muted-border: 214 25% 72%;
 
   --accent: 262 83% 58%;
   --accent-foreground: 210 40% 98%;
@@ -47,8 +49,8 @@
   --destructive-foreground: 210 40% 98%;
   --destructive-border: 0 84% 60%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --border: 214 25% 72%;          /* clear visible border — was 91% (1.24:1, nearly invisible) */
+  --input: 214 25% 72%;
   --ring: 262 83% 58%;
 
   --radius: 0.75rem;
@@ -69,14 +71,14 @@
   --color-green: #16a34a;
   --color-amber: #d97706;
   --color-sky: #0284c7;
-  --color-muted-text: #64748b;
+  --color-muted-text: #445068;    /* matches new muted-foreground 215 25% 36% */
   --foreground-hex: #1e293b;
-  --background-hex: #ffffff;
+  --background-hex: #dce3ec;      /* matches new background 214 20% 91% */
 
-  /* Background gradients */
-  --color-bg-deep: #f8fafc;
-  --color-bg-mid: #f1f5f9;
-  --color-bg-accent: #e2e8f0;
+  /* Background gradients — cool layered depth */
+  --color-bg-deep: #dce3ec;       /* page background */
+  --color-bg-mid: #e6eaf2;        /* slightly lighter mid layer */
+  --color-bg-accent: #c8d3e0;     /* subtle accent depth */
 
   /* Brand colors */
   --brand-github: #6e5494;
@@ -86,29 +88,35 @@
 }
 
 .dark {
-  /* Dark Theme Colors */
-  --background: 224 71% 4%;
+  /* Dark Theme Colors
+   * Background stays deep navy (224 71% 4%).
+   * Card raised to 15% lightness — visible separation from near-black page.
+   * Secondary/muted at 23% — clearly lighter than card for nested surfaces.
+   * Border at 28% — actually visible against dark backgrounds.
+   * All text pairs verified WCAG AA.
+   */
+  --background: 224 71% 4%;       /* deep navy — unchanged */
   --foreground: 213 31% 91%;
 
-  --card: 222 47% 11%;
+  --card: 222 40% 15%;            /* was 11% — raised for visible page→card separation */
   --card-foreground: 213 31% 91%;
-  --card-border: 216 34% 17%;
+  --card-border: 216 28% 28%;     /* was 17% — now visible against dark card */
 
-  --popover: 222 47% 11%;
+  --popover: 222 40% 15%;
   --popover-foreground: 213 31% 91%;
-  --popover-border: 216 34% 17%;
+  --popover-border: 216 28% 28%;
 
   --primary: 263 70% 50%;
   --primary-foreground: 210 40% 98%;
   --primary-border: 263 70% 50%;
 
-  --secondary: 222 47% 11%;
+  --secondary: 218 33% 23%;       /* was 11% (identical to card) — now a distinct surface level */
   --secondary-foreground: 210 40% 98%;
-  --secondary-border: 216 34% 17%;
+  --secondary-border: 216 28% 28%;
 
-  --muted: 223 47% 11%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --muted-border: 216 34% 17%;
+  --muted: 218 33% 23%;           /* was 11% (identical to card) — now matches secondary */
+  --muted-foreground: 215 18% 68%;/* was 65.1% — brighter for better contrast on dark surfaces */
+  --muted-border: 216 28% 28%;
 
   --accent: 263 70% 50%;
   --accent-foreground: 210 40% 98%;
@@ -118,8 +126,8 @@
   --destructive-foreground: 210 40% 98%;
   --destructive-border: 0 63% 31%;
 
-  --border: 216 34% 17%;
-  --input: 216 34% 17%;
+  --border: 216 28% 28%;          /* was 17% — visible border on dark surfaces */
+  --input: 216 28% 28%;
   --ring: 263 70% 50%;
 
   /* Extended accent colors (hex for inline styles, HSL for Tailwind) */
@@ -131,7 +139,7 @@
   --color-green: #22c55e;
   --color-amber: #f59e0b;
   --color-sky: #38bdf8;
-  --color-muted-text: #a0a0b0;
+  --color-muted-text: #a8afc0;    /* matches new muted-foreground 215 18% 68% */
   --foreground-hex: #e2e8f0;
   --background-hex: #050510;
 
@@ -149,7 +157,7 @@
 }
 
 .light {
-  --background: 0 0% 100%;
+  --background: 214 20% 91%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
@@ -157,16 +165,16 @@
   --popover-foreground: 222 47% 11%;
   --primary: 262 83% 58%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96%;
+  --secondary: 214 20% 85%;
   --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 214 20% 85%;
+  --muted-foreground: 215 25% 36%;
   --accent: 262 83% 58%;
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --border: 214 25% 72%;
+  --input: 214 25% 72%;
   --ring: 262 83% 58%;
   --color-cyan: #0891b2;
   --color-purple: #9333ea;
@@ -176,21 +184,17 @@
   --color-green: #16a34a;
   --color-amber: #d97706;
   --color-sky: #0284c7;
-  --color-muted-text: #64748b;
+  --color-muted-text: #445068;
   --foreground-hex: #1e293b;
-  --background-hex: #ffffff;
-  --color-bg-deep: #f8fafc;
-  --color-bg-mid: #f1f5f9;
-  --color-bg-accent: #e2e8f0;
+  --background-hex: #dce3ec;
+  --color-bg-deep: #dce3ec;
+  --color-bg-mid: #e6eaf2;
+  --color-bg-accent: #c8d3e0;
 }
 
 /* ==================== BASE STYLES ==================== */
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
     @apply scroll-smooth;
     touch-action: manipulation;
@@ -295,6 +299,17 @@
     @apply backdrop-blur-md border border-border/50 shadow-lg;
     @apply transition-all duration-300 hover:shadow-xl hover:border-border;
     background-color: hsl(var(--card) / 0.8);
+  }
+
+  /* Light mode: add a stronger shadow so white cards clearly lift off the grey page */
+  :root .glass-card,
+  .light .glass-card {
+    box-shadow: 0 2px 8px 0 rgba(30, 41, 59, 0.10), 0 1px 3px 0 rgba(30, 41, 59, 0.08);
+  }
+
+  :root .glass-card:hover,
+  .light .glass-card:hover {
+    box-shadow: 0 8px 24px 0 rgba(30, 41, 59, 0.14), 0 2px 6px 0 rgba(30, 41, 59, 0.10);
   }
 
   /* Navigation Links */

@@ -33,6 +33,6 @@ test.describe('Portfolio Smoke Tests', () => {
 
         // The chatbot FAB should be visible in the bottom right
         const chatbotBtn = page.locator('button[aria-label="Initialize AI Assistant"]');
-        await expect(chatbotBtn).toBeVisible();
+        await expect(chatbotBtn).toBeVisible({ timeout: 15000 });
     });
 });

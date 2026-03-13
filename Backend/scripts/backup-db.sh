@@ -10,9 +10,12 @@ BACKUP_DIR="./backups"
 DATE=$(date +%Y-%m-%d_%H-%M-%S)
 FILENAME="portfolio_backup_$DATE.sql"
 
-# Read database credentials from .env
+# Extract DATABASE_URL directly rather than sourcing the whole .env file.
+# xargs-based sourcing splits on whitespace, breaking passwords that
+# contain spaces, quotes, or dollar signs.
 if [ -f ../.env ]; then
-    export $(cat ../.env | grep -v '^#' | xargs)
+    DATABASE_URL=$(grep -E '^DATABASE_URL=' ../.env | cut -d '=' -f2-)
+    export DATABASE_URL
 fi
 
 # Extract DB credentials from DATABASE_URL

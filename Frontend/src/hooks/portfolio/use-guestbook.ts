@@ -29,22 +29,44 @@ export function useSubmitGuestbook() {
                 method: api.guestbook.create.method,
                 body: JSON.stringify(data),
             });
-            return api.guestbook.create.responses[201].parse(res);
+            const result = api.guestbook.create.responses[201].parse(res);
+            return result.data;
+        },
+        onMutate: async (newEntry) => {
+            await queryClient.cancelQueries({ queryKey: ["guestbook"] });
+            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(["guestbook"]);
+
+            if (previousEntries) {
+                const optimisticEntry: GuestbookEntry = {
+                    id: Math.random(), // Temporary ID
+                    name: newEntry.name,
+                    content: newEntry.content,
+                    isApproved: true, // Show it immediately for the user
+                    createdAt: new Date(),
+                    reactions: {},
+                };
+                queryClient.setQueryData<GuestbookEntry[]>(["guestbook"], [optimisticEntry, ...previousEntries]);
+            }
+
+            return { previousEntries };
+        },
+        onError: (err: any, _newEntry, context) => {
+            if (context?.previousEntries) {
+                queryClient.setQueryData(["guestbook"], context.previousEntries);
+            }
+            toast({
+                title: "Failed to submit entry",
+                description: err.message || "Something went wrong",
+                variant: "destructive",
+            });
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
         },
         onSuccess: () => {
-            // Invalidate guestbook query to show new (approved) entry if applicable
-            // Note: Backend might require approval, so invalidating might not show the entry immediately
-            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
             toast({
                 title: "Entry submitted",
                 description: "Your message has been sent for approval.",
-            });
-        },
-        onError: (error: Error) => {
-            toast({
-                title: "Failed to submit entry",
-                description: error.message,
-                variant: "destructive",
             });
         },
     });
@@ -130,10 +152,35 @@ export function useReactToGuestbook() {
                 method: api.guestbook.react.method,
                 body: JSON.stringify({ emoji }),
             });
-            return api.guestbook.react.responses[200].parse(res);
+            const result = api.guestbook.react.responses[200].parse(res);
+            return result.data;
         },
-        onSuccess: () => {
-            // Optimistic updates could be added here, but simple invalidation for now
+        onMutate: async ({ id, emoji }) => {
+            await queryClient.cancelQueries({ queryKey: ["guestbook"] });
+            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(["guestbook"]);
+
+            if (previousEntries) {
+                queryClient.setQueryData<GuestbookEntry[]>(
+                    ["guestbook"],
+                    previousEntries.map((entry) => {
+                        if (entry.id === id) {
+                            const reactions = { ...(entry.reactions as Record<string, number> || {}) };
+                            reactions[emoji] = (reactions[emoji] || 0) + 1;
+                            return { ...entry, reactions };
+                        }
+                        return entry;
+                    })
+                );
+            }
+
+            return { previousEntries };
+        },
+        onError: (_err, _variables, context) => {
+            if (context?.previousEntries) {
+                queryClient.setQueryData(["guestbook"], context.previousEntries);
+            }
+        },
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ["guestbook"] });
         },
     });

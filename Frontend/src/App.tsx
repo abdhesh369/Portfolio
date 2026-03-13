@@ -88,6 +88,7 @@ const ClientPortalPage = lazy(() => import("@/components/ClientPortal"));
 const CaseStudyListPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
 const CaseStudyViewerPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
 const GuestbookPage = lazy(() => import("@/pages/GuestbookPage"));
+const ResumePage = lazy(() => import("@/pages/Resume"));
 import NotFound from "@/pages/not-found";
 
 // Lazy load admin pages
@@ -369,6 +370,7 @@ function Router() {
             <Route path="/" component={Home} />
             <Route path="/projects" component={ProjectsPage} />
             <Route path="/project/:id" component={ProjectDetail} />
+            <Route path="/resume" component={ResumePage} />
 
             {/* Feature-guarded routes */}
             {showBlog && (

@@ -57,6 +57,22 @@ export function registerProjectRoutes(app: Router) {
     })
   );
 
+  // POST /projects/:id/summary - AI Summary Generation
+  app.post(
+    "/projects/:id/summary",
+    isAuthenticated,
+    asyncHandler(async (req, res) => {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: "Invalid project ID" });
+        return;
+      }
+      const summary = await projectService.generateSummary(id);
+      recordAudit("UPDATE", "project", id, null, { summary });
+      res.json({ success: true, summary });
+    })
+  );
+
   // POST /projects/bulk-delete
   app.post(
     "/projects/bulk-delete",

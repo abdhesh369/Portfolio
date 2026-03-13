@@ -32,8 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (data.csrfToken) {
                 setCsrfToken(data.csrfToken);
             }
-            setUser(data.user || { username: 'Admin' });
-            setIsAuthenticated(true);
+            if (data.authenticated) {
+                setUser(data.user || { username: 'Admin' });
+                setIsAuthenticated(true);
+            } else {
+                setUser(null);
+                setIsAuthenticated(false);
+            }
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setIsAuthenticated(false);

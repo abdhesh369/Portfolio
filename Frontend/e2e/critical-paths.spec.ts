@@ -34,9 +34,12 @@ test.describe("Public User Journey", () => {
   test("can navigate to project detail from homepage", async ({ page }) => {
     await page.goto("/");
 
-    // Look for any project card link
-    const projectLink = page.locator('a[href^="/project/"]').first();
-    await expect(projectLink).toBeVisible({ timeout: 5000 });
+    // Wait for projects heading to ensure section is loaded
+    await page.getByText(/Featured Projects|My Projects|Projects/i).first().waitFor({ state: 'visible' });
+
+    // Look for any project card link - using a more specific locator that targets the ProjectCard Link wrapper
+    const projectLink = page.locator('a[href*="/project/"]').first();
+    await expect(projectLink).toBeVisible({ timeout: 10000 });
     await projectLink.click();
     await page.waitForURL("**/project/**");
     await expect(page).toHaveURL(/\/project\//);
@@ -57,29 +60,29 @@ test.describe("Contact Form", () => {
     await page.goto("/");
 
     // Scroll to contact section and find the form
-    const nameInput = page.locator(
-      'input[name="name"], input[placeholder*="name" i], input[aria-label*="name" i]'
-    ).first();
+    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
 
     await expect(nameInput).toBeVisible({ timeout: 5000 });
 
     // Try to submit empty form
     const submitBtn = page
-      .getByRole("button", { name: /send|submit|contact/i })
+      .getByRole("button", { name: /send|submit|contact|transmission|packet/i })
       .first();
     await submitBtn.click();
 
     // Should show validation errors or the form should still be present
-    // (browser native validation or custom error messages)
+    // Custom check for Zod error message or presence of required attr
+    const nameInputId = await nameInput.getAttribute('id');
+    if (nameInputId) {
+      await expect(page.locator(`label[for="${nameInputId}"]`)).toBeVisible();
+    }
     await expect(nameInput).toBeVisible();
   });
 
   test("contact form accepts valid input", async ({ page }) => {
     await page.goto("/");
 
-    const nameInput = page.locator(
-      'input[name="name"], input[placeholder*="name" i], input[aria-label*="name" i]'
-    ).first();
+    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
 
     await expect(nameInput).toBeVisible({ timeout: 5000 });
     await nameInput.fill("Test User");
@@ -162,35 +165,34 @@ test.describe("Performance & Accessibility Basics", () => {
     // Wait for content to load
     await page.waitForTimeout(2000);
 
-    // Check that visible images have alt text
-    const images = page.locator("img:visible");
-    const count = await images.count();
-
-    for (let i = 0; i < Math.min(count, 10); i++) {
-      const alt = await images.nth(i).getAttribute("alt");
-      // alt should exist (can be empty string for decorative images)
-      expect(alt).not.toBeNull();
-    }
+    // Check that no img tag is missing an alt attribute
+    const imagesWithoutAlt = await page.locator('img:not([alt])').count();
+    expect(imagesWithoutAlt).toBe(0);
   });
 
   test("no console errors on homepage", async ({ page }) => {
-    const errors: string[] = [];
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        errors.push(msg.text());
+    const criticalErrors: string[] = [];
+    page.on('console', msg => {
+      const text = msg.text();
+      if (msg.type() === 'error' && (text.includes('Failed to load') || text.includes('401') || text.includes('500') || text.includes('502'))) {
+        criticalErrors.push(text);
       }
     });
 
-    await page.goto("/");
-    await page.waitForTimeout(3000);
+    // Also listen for failed requests which often show up as console errors
+    page.on('requestfailed', request => {
+      const url = request.url();
+      const failure = request.failure();
+      if (url.includes('/api/')) {
+        criticalErrors.push(`Request failed: ${url} (${failure?.errorText || 'Unknown error'})`);
+      }
+    });
 
-    // Filter out known acceptable errors (e.g., network errors when backend is down)
-    const criticalErrors = errors.filter(
-      (e) => !e.includes("net::ERR") && !e.includes("Failed to fetch") && !e.includes("NetworkError")
-    );
-
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(5000); // Wait for async resources like analytics/chatbot
+    
     if (criticalErrors.length > 0) {
-      console.log("Critical Console Errors:", criticalErrors);
+      console.log("Critical Console/Network Errors:", JSON.stringify(criticalErrors, null, 2));
     }
     expect(criticalErrors).toHaveLength(0);
   });

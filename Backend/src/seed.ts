@@ -463,7 +463,7 @@ if (isMainModule) {
       process.exit(0);
     })
     .catch((err) => {
-      console.error("Seeding failed:", err);
+      logger.error({ context: "seed", error: err }, "Seeding failed");
       process.exit(1);
     });
 }

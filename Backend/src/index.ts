@@ -43,7 +43,6 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
-  "https://abdheshsah.com.np",
   process.env.FRONTEND_URL,
   ...(process.env.NODE_ENV !== "production" ? [
     "http://localhost:3000",
@@ -386,8 +385,9 @@ async function startServer() {
           requestId: req.id,
           status,
           error: err.message,
-          stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+          stack: env.NODE_ENV === "development" ? err.stack : undefined,
         }, `Global Error Handler`);
+
 
         if (env.SENTRY_DSN && status >= 500) {
           Sentry.captureException(err);

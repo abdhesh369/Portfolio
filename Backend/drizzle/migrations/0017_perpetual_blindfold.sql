@@ -1,3 +1,6 @@
+-- Migration: 0017_perpetual_blindfold
+-- Purpose: Schema normalization: drop old constraints, update experience defaults, add project/site settings fields.
+
 ALTER TABLE "seo_settings" DROP CONSTRAINT "seo_settings_page_slug_unique";--> statement-breakpoint
 ALTER TABLE "skill_connections" DROP CONSTRAINT "skill_connections_from_to_unique";--> statement-breakpoint
 ALTER TABLE "articles" DROP CONSTRAINT "articles_authorId_authors_id_fk";

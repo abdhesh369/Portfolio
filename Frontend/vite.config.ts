@@ -132,6 +132,23 @@ export default defineConfig(({ mode }) => {
       },
     },
   },
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/health': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/ping': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     outDir: 'dist',
     chunkSizeWarningLimit: 1200,
