@@ -96,6 +96,30 @@ export function registerClientRoutes(app: Router) {
         })
     );
 
+    // GET /admin/clients/:id/projects — get all projects for a client
+    app.get(
+        "/admin/clients/:id/projects",
+        isAuthenticated,
+        asyncHandler(async (req: Request, res: Response) => {
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
+            const projects = await clientService.getClientProjects(id);
+            res.json({ success: true, data: projects });
+        })
+    );
+
+    // GET /admin/client-projects/:id/feedback — get feedback for a project
+    app.get(
+        "/admin/client-projects/:id/feedback",
+        isAuthenticated,
+        asyncHandler(async (req: Request, res: Response) => {
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
+            const feedback = await clientService.getProjectFeedback(id);
+            res.json({ success: true, data: feedback });
+        })
+    );
+
     // ========== CLIENT PORTAL ROUTES (token-based auth) ==========
 
     // GET /portal/dashboard — client dashboard

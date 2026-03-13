@@ -1,10 +1,115 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap } from 'lucide-react';
+import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar } from 'lucide-react';
 import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/utils/date';
+
+interface ClientProject {
+    id: number;
+    title: string;
+    status: string;
+    deadline?: string;
+    notes?: string;
+}
+
+interface ClientFeedback {
+    id: number;
+    message: string;
+    createdAt: string;
+}
+
+const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
+    const { data: projects = [], isLoading } = useQuery({
+        queryKey: ['admin-client-projects', clientId],
+        queryFn: () => apiFetch(`/api/v1/admin/clients/${clientId}/projects`).then(res => res.data)
+    });
+
+    const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
+
+    const { data: feedback = [], isLoading: loadingFeedback } = useQuery({
+        queryKey: ['admin-client-feedback', expandedProjectId],
+        queryFn: () => expandedProjectId ? apiFetch(`/api/v1/admin/client-projects/${expandedProjectId}/feedback`).then(res => res.data) : Promise.resolve([]),
+        enabled: !!expandedProjectId
+    });
+
+    if (isLoading) return <div className="p-4 text-xs text-muted-foreground animate-pulse">Loading projects...</div>;
+    
+    if (projects.length === 0) {
+        return <div className="p-4 text-xs text-muted-foreground italic">No projects assigned to this client yet.</div>;
+    }
+
+    return (
+        <div className="space-y-3 p-4 bg-slate-900/40 rounded-xl border border-slate-800/80 mt-4 animate-in fade-in slide-in-from-top-2">
+            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
+                <FolderOpen size={12} /> Active Projects ({projects.length})
+            </h4>
+            {projects.map((project: ClientProject) => {
+                const isExpanded = expandedProjectId === project.id;
+                return (
+                    <div key={project.id} className={cn("border border-slate-800/60 rounded-lg overflow-hidden transition-all", isExpanded ? "bg-slate-900/80" : "bg-slate-950/30 hover:bg-slate-900/50")}>
+                        <button 
+                            onClick={() => setExpandedProjectId(isExpanded ? null : project.id)}
+                            className="w-full flex items-center justify-between p-3 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                        >
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                                <span className="font-bold text-sm text-slate-200">{project.title}</span>
+                                <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm border w-fit",
+                                    project.status === 'completed' ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/10" :
+                                    project.status === 'in_progress' ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/10" :
+                                    project.status === 'review' ? "text-amber-400 border-amber-500/20 bg-amber-500/10" :
+                                    "text-slate-400 border-slate-500/20 bg-slate-500/10"
+                                )}>
+                                    {project.status.replace('_', ' ')}
+                                </span>
+                            </div>
+                            <div className="text-muted-foreground">
+                                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </div>
+                        </button>
+
+                        {isExpanded && (
+                            <div className="px-3 pb-3 pt-1 border-t border-slate-800/50 animate-in slide-in-from-top-1">
+                                {project.deadline && (
+                                    <div className="flex items-center gap-2 text-[10px] text-slate-500/80 font-mono mb-3 uppercase font-bold tracking-widest">
+                                        <Calendar size={10} /> Deadline: {formatDate(project.deadline)}
+                                    </div>
+                                )}
+                                
+                                <div className="space-y-2 mt-4">
+                                    <h5 className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-widest">
+                                        <MessageSquare size={10} /> Client Feedback
+                                    </h5>
+                                    
+                                    {loadingFeedback ? (
+                                         <div className="text-xs text-muted-foreground animate-pulse pl-4">Loading feedback...</div>
+                                    ) : feedback.length === 0 ? (
+                                        <div className="text-xs text-slate-500 italic pl-4 border-l-2 border-slate-800 py-1">No feedback submitted yet.</div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {(feedback as ClientFeedback[]).map(f => (
+                                                <div key={f.id} className="bg-slate-950/50 border border-slate-800/80 p-3 rounded-lg relative">
+                                                    <div className="absolute -left-[17px] top-4 w-4 h-[1px] bg-slate-800" />
+                                                    <div className="text-xs text-slate-300 whitespace-pre-wrap">{f.message}</div>
+                                                    <div className="mt-2 text-[9px] text-slate-500/80 font-mono flex items-center gap-1 uppercase font-bold">
+                                                        <Clock size={8} /> {formatDate(f.createdAt)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 
 interface ClientData {
     id: number;
@@ -24,6 +129,7 @@ export const ClientsTab: React.FC = () => {
     const [copiedId, setCopiedId] = useState<number | null>(null);
     const [newToken, setNewToken] = useState<string | null>(null);
     const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
+    const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
 
     const { data: clients = [], isLoading } = useQuery({
         queryKey: ['admin-clients'],
@@ -162,8 +268,8 @@ export const ClientsTab: React.FC = () => {
             ) : (
                 <div className="space-y-4">
                     {(clients as ClientData[]).map((client, idx) => (
+                        <div key={client.id} className="w-full">
                         <div
-                            key={client.id}
                             className="nm-flat p-6 flex flex-col sm:flex-row sm:items-center gap-6 group transition-all duration-300 hover:scale-[1.005] animate-in fade-in"
                             style={{ animationDelay: `${idx * 80}ms` }}
                         >
@@ -210,6 +316,15 @@ export const ClientsTab: React.FC = () => {
                                 </AdminButton>
 
                                 <AdminButton
+                                    onClick={() => setExpandedClientId(expandedClientId === client.id ? null : client.id)}
+                                    variant="secondary"
+                                    icon={FolderOpen}
+                                    className={cn("nm-button w-10 h-10 rounded-xl flex items-center justify-center transition-colors", expandedClientId === client.id ? "text-indigo-500 nm-inset" : "text-muted-foreground hover:text-indigo-400")}
+                                    title="View projects & feedback"
+                                >
+                                </AdminButton>
+
+                                <AdminButton
                                     onClick={() => {
                                         if (window.confirm(`Are you sure you want to regenerate the token for "${client.name}"? The existing token will be permanently invalidated immediately.`)) {
                                             setRegeneratingId(client.id);
@@ -224,6 +339,14 @@ export const ClientsTab: React.FC = () => {
                                 >
                                 </AdminButton>
                             </div>
+                        </div>
+                        
+                        {/* Render Expanded Projects View */}
+                        {expandedClientId === client.id && (
+                            <div className="w-full mt-4">
+                                <ClientProjectsView clientId={client.id} />
+                            </div>
+                        )}
                         </div>
                     ))}
                 </div>
