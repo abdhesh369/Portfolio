@@ -66,23 +66,6 @@ export function withReducedMotion<
   } as T;
 }
 
-/** Return reduced-motion-safe variants (collapses hidden/visible to instant). */
-export function withReducedMotionVariants(
-  variants: Variants,
-  reduced: boolean,
-): Variants {
-  if (!reduced) return variants;
-  const safe: Variants = {};
-  for (const key of Object.keys(variants)) {
-    const v = variants[key];
-    if (typeof v === "object" && v !== null) {
-      safe[key] = { ...(v as Variant), transition: { duration: 0 } };
-    } else {
-      safe[key] = v;
-    }
-  }
-  return safe;
-}
 
 // ─── Entrance Presets ───────────────────────────────────────────────────────
 
@@ -238,17 +221,6 @@ export const staggerChild: Variants = {
   },
 };
 
-export const staggerChildSlide: Variants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE.premium,
-    },
-  },
-};
 
 export const staggerChildScale: Variants = {
   hidden: { opacity: 0, scale: 0 },
