@@ -4,7 +4,7 @@ export const API_BASE_URL = (() => {
         return "";
     }
 
-    const prodUrl = import.meta.env.VITE_API_URL;
+    const prodUrl = import.meta.env.VITE_PRODUCTION_API_URL || import.meta.env.VITE_API_URL;
 
     if (!prodUrl) {
         console.warn("⚠️ VITE_API_URL not configured. Falling back to relative path or placeholder.");

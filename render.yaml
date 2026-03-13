@@ -61,6 +61,8 @@ services:
           name: portfolio-backend
           type: web
           property: host
+      - key: VITE_PRODUCTION_API_URL
+        value: https://backend-1gk6.onrender.com
     routes:
       - type: rewrite
         source: /*

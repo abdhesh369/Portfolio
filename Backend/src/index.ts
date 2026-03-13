@@ -43,6 +43,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
+  "https://abdheshsah.com.np",
+  "https://portfolio-frontend-h4f2.onrender.com",
   process.env.FRONTEND_URL,
   ...(process.env.NODE_ENV !== "production" ? [
     "http://localhost:3000",
