@@ -22,6 +22,10 @@ export class ClientService {
         return clientRepository.update(id, data);
     }
 
+    async regenerateClientToken(id: number): Promise<string> {
+        return clientRepository.regenerateToken(id);
+    }
+
     async deleteClient(id: number): Promise<void> {
         return clientRepository.delete(id);
     }

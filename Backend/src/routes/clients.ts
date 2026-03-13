@@ -45,6 +45,19 @@ export function registerClientRoutes(app: Router) {
         })
     );
 
+    // POST /admin/clients/:id/regenerate-token
+    app.post(
+        "/admin/clients/:id/regenerate-token",
+        isAuthenticated,
+        asyncHandler(async (req: Request, res: Response) => {
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
+            const rawToken = await clientService.regenerateClientToken(id);
+            recordAudit("UPDATE", "client", id, null, { action: "REGENERATE_TOKEN" });
+            res.json({ success: true, rawToken });
+        })
+    );
+
     // DELETE /admin/clients/:id
     app.delete(
         "/admin/clients/:id",

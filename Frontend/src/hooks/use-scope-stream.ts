@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { API_BASE_URL } from "@/lib/api-helpers";
 
 export interface ScopeEstimation {
     summary: string;
@@ -45,8 +46,7 @@ export function useScopeStream(id: string | null) {
         setStatus("connecting");
         setError(null);
 
-        const backendUrl = import.meta.env.VITE_API_URL || "";
-        const streamUrl = `${backendUrl.replace(/\/$/, "")} /api/v1 / scope / stream / ${id} `;
+        const streamUrl = `${API_BASE_URL}/api/v1/scope/stream/${id}`;
 
         const eventSource = new EventSource(streamUrl, {
             withCredentials: true,

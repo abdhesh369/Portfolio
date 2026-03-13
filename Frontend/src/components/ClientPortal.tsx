@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Clock, MessageSquare, Send, CheckCircle2, Circle, Loader2, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils/date';
+import { API_BASE_URL } from '@/lib/api-helpers';
 
 interface ClientProject {
     id: number;
@@ -48,7 +49,7 @@ export const ClientPortal: React.FC = () => {
         setError('');
         setLoading(true);
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/v1/clients/portal/dashboard`, {
+            const res = await fetch(`${API_BASE_URL}/api/v1/clients/portal/dashboard`, {
                 headers: { 'x-client-token': token }
             });
             if (!res.ok) throw new Error('Invalid or expired token');
@@ -70,7 +71,7 @@ export const ClientPortal: React.FC = () => {
         if (!selectedProject || !feedbackMsg.trim()) return;
         setLoading(true);
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/v1/clients/portal/feedback`, {
+            const res = await fetch(`${API_BASE_URL}/api/v1/clients/portal/feedback`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

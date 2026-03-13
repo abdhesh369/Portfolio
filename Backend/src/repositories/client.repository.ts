@@ -50,6 +50,20 @@ export class ClientRepository {
         return updated;
     }
 
+    async regenerateToken(id: number): Promise<string> {
+        const rawToken = crypto.randomUUID();
+        const salt = await bcrypt.genSalt(10);
+        const hashedToken = await bcrypt.hash(rawToken, salt);
+
+        const [updated] = await db.update(clientsTable)
+            .set({ token: hashedToken })
+            .where(eq(clientsTable.id, id))
+            .returning();
+
+        if (!updated) throw new Error("Client not found");
+        return rawToken;
+    }
+
     async delete(id: number): Promise<void> {
         await db.delete(clientsTable).where(eq(clientsTable.id, id));
     }

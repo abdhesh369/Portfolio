@@ -22,6 +22,8 @@ export const ClientsTab: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ name: '', email: '', company: '' });
     const [copiedId, setCopiedId] = useState<number | null>(null);
+    const [newToken, setNewToken] = useState<string | null>(null);
+    const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
 
     const { data: clients = [], isLoading } = useQuery({
         queryKey: ['admin-clients'],
@@ -30,10 +32,11 @@ export const ClientsTab: React.FC = () => {
 
     const createMutation = useMutation({
         mutationFn: (data: typeof form) => apiFetch('/api/v1/admin/clients', { method: 'POST', body: JSON.stringify(data) }),
-        onSuccess: () => { 
+        onSuccess: (res) => { 
             queryClient.invalidateQueries({ queryKey: ['admin-clients'] }); 
             setShowForm(false); 
             setForm({ name: '', email: '', company: '' }); 
+            setNewToken(res.rawToken);
             toast({ title: "Success", description: "Client created successfully." });
         },
         onError: (err: any) => {
@@ -48,6 +51,14 @@ export const ClientsTab: React.FC = () => {
     const deleteMutation = useMutation({
         mutationFn: (id: number) => apiFetch(`/api/v1/admin/clients/${id}`, { method: 'DELETE' }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-clients'] }),
+    });
+
+    const regenerateMutation = useMutation({
+        mutationFn: (id: number) => apiFetch(`/api/v1/admin/clients/${id}/regenerate-token`, { method: 'POST' }),
+        onSuccess: (res) => {
+            setNewToken(res.rawToken);
+            toast({ title: "Success", description: "Token regenerated successfully." });
+        }
     });
 
     const copyToken = (client: ClientData) => {
@@ -186,9 +197,75 @@ export const ClientsTab: React.FC = () => {
                                     title="Delete client"
                                 >
                                 </AdminButton>
+
+                                <AdminButton
+                                    onClick={() => regenerateMutation.mutate(client.id)}
+                                    isLoading={regenerateMutation.isPending && regeneratingId === client.id}
+                                    variant="secondary"
+                                    icon={Zap}
+                                    className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-amber-500 transition-colors"
+                                    title="Regenerate token"
+                                >
+                                </AdminButton>
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* New Token Modal */}
+            {newToken && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+                    <div className="nm-flat max-w-md w-full p-8 rounded-[2.5rem] relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
+                        
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 nm-inset rounded-2xl text-emerald-500">
+                                    <Shield className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-xl font-black tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+                                    PORTAL_ACCESS_TOKEN
+                                </h3>
+                            </div>
+                            <button 
+                                onClick={() => setNewToken(null)}
+                                className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-all"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold mb-6 italic">
+                            IMPORTANT: Copy this token now. It is hashed and cannot be retrieved again.
+                        </p>
+
+                        <div className="nm-inset p-5 rounded-2xl bg-slate-900/50 flex flex-col items-center gap-4">
+                            <code className="text-lg font-mono text-emerald-500 break-all text-center select-all">
+                                {newToken}
+                            </code>
+                            <AdminButton
+                                onClick={() => {
+                                    navigator.clipboard.writeText(newToken);
+                                    toast({ title: "Copied", description: "Token copied to clipboard." });
+                                }}
+                                variant="primary"
+                                icon={Copy}
+                                className="nm-button w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500"
+                            >
+                                Copy_Access_Token
+                            </AdminButton>
+                        </div>
+
+                        <div className="mt-8 flex justify-end">
+                            <AdminButton
+                                onClick={() => setNewToken(null)}
+                                className="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground"
+                            >
+                                Close_Terminal
+                            </AdminButton>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
