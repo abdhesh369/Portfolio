@@ -2,6 +2,7 @@ import { Router } from "express";
 import { emailTemplateService } from "../services/email-template.service.js";
 import { insertEmailTemplateApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
@@ -23,11 +24,8 @@ export function registerEmailTemplateRoutes(app: Router) {
         "/email-templates/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid template ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid template ID");
+            if (id === null) return;
             const template = await emailTemplateService.getById(id);
             if (!template) {
                 res.status(404).json({
@@ -65,11 +63,8 @@ export function registerEmailTemplateRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertEmailTemplateApiSchema.partial()),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid template ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid template ID");
+            if (id === null) return;
             const template = await emailTemplateService.update(id, req.body);
 
             // Audit log (A4)
@@ -88,11 +83,8 @@ export function registerEmailTemplateRoutes(app: Router) {
         "/email-templates/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid template ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid template ID");
+            if (id === null) return;
             await emailTemplateService.delete(id);
 
             // Audit log (A4)

@@ -64,11 +64,8 @@ export function registerProjectRoutes(app: Router) {
     "/projects/:id/summary",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid project ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
       const summary = await projectService.generateSummary(id);
       recordAudit("UPDATE", "project", id, null, { summary });
       res.json({ success: true, summary });
@@ -109,11 +106,8 @@ export function registerProjectRoutes(app: Router) {
     "/projects/:id",
     cachePublic(600),
     asyncHandler(async (req, res) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid project ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
       const project = await projectService.getById(id);
       if (!project) {
         res.status(404).json({ success: false, message: "Project not found" });
@@ -154,11 +148,8 @@ export function registerProjectRoutes(app: Router) {
     isAuthenticated,
     validateBody(insertProjectApiSchema.partial()),
     asyncHandler(async (req: Request, res: Response) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid project ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
       const project = await projectService.update(id, req.body);
       recordAudit("UPDATE", "project", id, null, req.body);
       res.json({
@@ -174,11 +165,8 @@ export function registerProjectRoutes(app: Router) {
     "/projects/:id",
     isAuthenticated,
     asyncHandler(async (req: Request, res: Response) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid project ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
       await projectService.delete(id);
       recordAudit("DELETE", "project", id, null, null);
       res.status(204).send();

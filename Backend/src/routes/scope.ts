@@ -3,6 +3,7 @@ import { z } from "zod";
 import { insertScopeRequestApiSchema } from "@portfolio/shared";
 import { scopeService } from "../services/scope.service.js";
 import { scopeRepository } from "../repositories/scope.repository.js";
+import { parseIntParam } from "../lib/params.js";
 import { logger } from "../lib/logger.js";
 import { aiLimiter } from "../lib/rate-limit.js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -23,11 +24,8 @@ router.post("/request", aiLimiter, asyncHandler(async (req, res) => {
 
 // GET /api/v1/scope/stream/:id - SSE endpoint to stream estimation progress/results
 router.get("/stream/:id", (req, res) => {
-    const requestId = parseInt(req.params.id);
-
-    if (isNaN(requestId)) {
-        return res.status(400).json({ error: "Invalid request ID" });
-    }
+    const requestId = parseIntParam(res, req.params.id, "request ID");
+    if (requestId === null) return;
 
     // Set SSE headers
     res.setHeader("Content-Type", "text/event-stream");
@@ -84,8 +82,8 @@ router.get("/recent", asyncHandler(async (req, res) => {
 
 // GET /api/v1/scope/:id - Get status/result of a specific request
 router.get("/:id", asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+    const id = parseIntParam(res, req.params.id, "ID");
+    if (id === null) return;
 
     const request = await scopeRepository.findById(id);
     if (!request) return res.status(404).json({ error: "Request not found" });

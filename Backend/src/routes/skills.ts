@@ -5,6 +5,7 @@ import { skillConnectionService } from "../services/skill-connection.service.js"
 import { insertSkillApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import { parseIntParam } from "../lib/params.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
@@ -35,11 +36,8 @@ export function registerSkillRoutes(app: Router) {
         "/skills/:id",
         cachePublic(600),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid skill ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "skill ID");
+            if (id === null) return;
             const skill = await skillService.getById(id);
             if (!skill) {
                 res.status(404).json({ success: false, message: "Skill not found" });
@@ -71,11 +69,8 @@ export function registerSkillRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertSkillApiSchema.partial()),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid skill ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "skill ID");
+            if (id === null) return;
             const skill = await skillService.update(id, req.body);
             recordAudit("UPDATE", "skill", id, null, req.body);
             res.json({
@@ -91,11 +86,8 @@ export function registerSkillRoutes(app: Router) {
         "/skills/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid skill ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "skill ID");
+            if (id === null) return;
             await skillService.delete(id);
             recordAudit("DELETE", "skill", id, null, null);
             res.status(204).send();

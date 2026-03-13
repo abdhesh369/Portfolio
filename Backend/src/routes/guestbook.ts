@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { guestbookService } from "../services/guestbook.service.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
 import { guestbookLimiter } from "../lib/rate-limit.js";
@@ -37,11 +38,8 @@ guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req: Request
 
 // PATCH /guestbook/:id/approve - Approve an entry
 guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
-        return;
-    }
+    const id = parseIntParam(res, req.params.id, "guestbook entry ID");
+    if (id === null) return;
     const entry = await guestbookService.approveMessage(id);
 
     // Audit log (A1)
@@ -56,13 +54,10 @@ guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, 
 
 // POST /guestbook/:id/react - Add a reaction to an entry
 guestbookRoutes.post("/:id/react", asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id, 10);
+    const id = parseIntParam(res, req.params.id, "guestbook entry ID");
+    if (id === null) return;
+    
     const { emoji } = req.body;
-
-    if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
-        return;
-    }
 
     if (!emoji || typeof emoji !== "string") {
         res.status(400).json({ success: false, message: "Emoji is required" });
@@ -81,11 +76,8 @@ guestbookRoutes.post("/:id/react", asyncHandler(async (req, res) => {
 
 // DELETE /guestbook/:id - Delete an entry
 guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid guestbook entry ID" });
-        return;
-    }
+    const id = parseIntParam(res, req.params.id, "guestbook entry ID");
+    if (id === null) return;
     await guestbookService.deleteMessage(id);
 
     // Audit log (A1)

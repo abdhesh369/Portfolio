@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { caseStudyService } from "../services/case-study.service.js";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { cachePublic } from "../middleware/cache.js";
@@ -63,11 +64,8 @@ export function registerCaseStudyRoutes(app: Router) {
         "/case-studies/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             const study = await caseStudyService.update(id, req.body);
             recordAudit("UPDATE", "case_study", id, null, req.body);
             res.json({ success: true, data: study });
@@ -79,11 +77,8 @@ export function registerCaseStudyRoutes(app: Router) {
         "/case-studies/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             await caseStudyService.delete(id);
             recordAudit("DELETE", "case_study", id, null, null);
             res.status(204).send();

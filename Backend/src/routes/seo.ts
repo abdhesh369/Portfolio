@@ -2,6 +2,7 @@ import { Router } from "express";
 import { seoSettingsService } from "../services/seo-settings.service.js";
 import { insertSeoSettingsApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
@@ -63,11 +64,8 @@ router.patch(
     "/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-        const id = parseInt(req.params.id, 10);
-        if (isNaN(id)) {
-            res.status(400).json({ message: "Invalid ID" });
-            return;
-        }
+        const id = parseIntParam(res, req.params.id, "Invalid ID");
+            if (id === null) return;
         const data = insertSeoSettingsApiSchema.partial().parse(req.body);
         const updated = await seoSettingsService.update(id, data);
 
@@ -87,11 +85,8 @@ router.delete(
     "/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-        const id = parseInt(req.params.id, 10);
-        if (isNaN(id)) {
-            res.status(400).json({ message: "Invalid ID" });
-            return;
-        }
+        const id = parseIntParam(res, req.params.id, "Invalid ID");
+            if (id === null) return;
         await seoSettingsService.delete(id);
 
         // Audit log (A3)

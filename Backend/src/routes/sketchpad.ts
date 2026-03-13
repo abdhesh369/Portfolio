@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { sketchpadService } from "../services/sketchpad.service.js";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
@@ -30,8 +31,8 @@ export function registerSketchpadRoutes(app: Router) {
     app.get(
         "/sketchpad/sessions/:id",
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             const session = await sketchpadService.getById(id);
             if (!session) { res.status(404).json({ success: false, message: "Session not found" }); return; }
             res.json({ success: true, data: session });
@@ -54,8 +55,8 @@ export function registerSketchpadRoutes(app: Router) {
         "/sketchpad/sessions/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             const session = await sketchpadService.saveCanvas(id, req.body.canvasData || {});
             res.json({ success: true, data: session });
         })
@@ -66,8 +67,8 @@ export function registerSketchpadRoutes(app: Router) {
         "/sketchpad/sessions/:id/archive",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             await sketchpadService.archive(id);
             recordAudit("UPDATE", "sketchpad_session", id, null, { status: "archived" });
             res.json({ success: true, message: "Session archived" });
@@ -79,8 +80,8 @@ export function registerSketchpadRoutes(app: Router) {
         "/sketchpad/sessions/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             await sketchpadService.delete(id);
             recordAudit("DELETE", "sketchpad_session", id, null, null);
             res.status(204).send();

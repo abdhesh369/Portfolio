@@ -2,6 +2,7 @@ import { Router } from "express";
 import { portfolioServiceService } from "../services/portfolio-service.service.js";
 import { insertServiceApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
@@ -23,11 +24,8 @@ export function registerServiceRoutes(app: Router) {
     "/services/:id",
     cachePublic(3600),
     asyncHandler(async (req, res) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid service ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "service ID");
+            if (id === null) return;
       const service = await portfolioServiceService.getById(id);
       if (!service) {
         res.status(404).json({ success: false, message: "Service not found" });
@@ -59,11 +57,8 @@ export function registerServiceRoutes(app: Router) {
     isAuthenticated,
     validateBody(insertServiceApiSchema.partial()),
     asyncHandler(async (req, res) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid service ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "service ID");
+            if (id === null) return;
       const service = await portfolioServiceService.update(id, req.body);
       recordAudit("UPDATE", "service", id, null, req.body);
       res.json({
@@ -79,11 +74,8 @@ export function registerServiceRoutes(app: Router) {
     "/services/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        res.status(400).json({ success: false, message: "Invalid service ID" });
-        return;
-      }
+      const id = parseIntParam(res, req.params.id, "service ID");
+            if (id === null) return;
       await portfolioServiceService.delete(id);
       recordAudit("DELETE", "service", id, null, null);
       res.status(204).send();

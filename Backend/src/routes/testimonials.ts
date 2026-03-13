@@ -23,11 +23,8 @@ export function registerTestimonialRoutes(app: Router) {
         "/testimonials/:id",
         cachePublic(300),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "testimonial ID");
+            if (id === null) return;
             const testimonial = await testimonialService.getById(id);
             if (!testimonial) {
                 res.status(404).json({ success: false, message: "Testimonial not found" });
@@ -58,11 +55,8 @@ export function registerTestimonialRoutes(app: Router) {
         "/testimonials/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "testimonial ID");
+            if (id === null) return;
             const data = insertTestimonialApiSchema.partial().parse(req.body);
             const testimonial = await testimonialService.update(id, data);
             recordAudit("UPDATE", "testimonial", id, null, data as Record<string, unknown>);
@@ -79,11 +73,8 @@ export function registerTestimonialRoutes(app: Router) {
         "/testimonials/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid testimonial ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "testimonial ID");
+            if (id === null) return;
             await testimonialService.delete(id);
             recordAudit("DELETE", "testimonial", id, null, null);
             res.status(204).send();

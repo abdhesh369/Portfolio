@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { clientService } from "../services/client.service.js";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
@@ -36,8 +37,8 @@ export function registerClientRoutes(app: Router) {
         "/admin/clients/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             const client = await clientService.updateClient(id, req.body);
             recordAudit("UPDATE", "client", id, null, req.body);
             res.json({ success: true, data: client });
@@ -49,8 +50,8 @@ export function registerClientRoutes(app: Router) {
         "/admin/clients/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             await clientService.deleteClient(id);
             recordAudit("DELETE", "client", id, null, null);
             res.status(204).send();
@@ -74,8 +75,8 @@ export function registerClientRoutes(app: Router) {
         "/admin/client-projects/:id",
         isAuthenticated,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) { res.status(400).json({ success: false, message: "Invalid ID" }); return; }
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
             const project = await clientService.updateClientProject(id, req.body);
             recordAudit("UPDATE", "client_project", id, null, req.body);
             res.json({ success: true, data: project });

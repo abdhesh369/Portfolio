@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { aiReviewService } from "../services/ai-review.service.js";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { aiLimiter } from "../lib/rate-limit.js";
@@ -14,11 +15,8 @@ export function registerReviewRoutes(app: Router) {
         isAuthenticated,
         aiLimiter,
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid project ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
             const review = await aiReviewService.triggerReview(id);
             recordAudit("CREATE", "code_review", review.id, null, { projectId: id });
             res.status(202).json({ success: true, data: review });
@@ -29,11 +27,8 @@ export function registerReviewRoutes(app: Router) {
     app.get(
         "/projects/:id/review",
         asyncHandler(async (req: Request, res: Response) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid project ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "project ID");
+            if (id === null) return;
             const review = await aiReviewService.getLatestReview(id);
             if (!review) {
                 res.status(404).json({ success: false, message: "No review found" });

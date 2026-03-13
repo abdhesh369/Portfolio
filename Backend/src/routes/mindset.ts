@@ -2,6 +2,7 @@ import { Router } from "express";
 import { mindsetService } from "../services/mindset.service.js";
 import { insertMindsetApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
+import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { validateBody } from "../middleware/validate.js";
@@ -39,11 +40,8 @@ export function registerMindsetRoutes(app: Router) {
         "/mindset/:id",
         cachePublic(3600),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid mindset ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid mindset ID");
+            if (id === null) return;
             const mindset = await mindsetService.getById(id);
             if (!mindset) {
                 res.status(404).json({
@@ -62,11 +60,8 @@ export function registerMindsetRoutes(app: Router) {
         isAuthenticated,
         validateBody(insertMindsetApiSchema.partial()),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid mindset ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid mindset ID");
+            if (id === null) return;
             const mindset = await mindsetService.update(id, req.body);
             recordAudit("UPDATE", "mindset", id, null, req.body as Record<string, unknown>);
             res.json({
@@ -82,11 +77,8 @@ export function registerMindsetRoutes(app: Router) {
         "/mindset/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "Invalid mindset ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "Invalid mindset ID");
+            if (id === null) return;
             await mindsetService.delete(id);
             recordAudit("DELETE", "mindset", id, null, null);
             res.status(204).send();

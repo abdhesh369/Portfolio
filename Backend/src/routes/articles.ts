@@ -2,6 +2,7 @@ import { Router } from "express";
 import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "@portfolio/shared";
 import { isAuthenticated, checkAuthStatus } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import { parseIntParam } from "../lib/params.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
 import { articleService } from "../services/article.service.js";
@@ -46,8 +47,6 @@ articlesRouter.get(
         res.json(results);
     })
 );
-
-
 
 // GET /articles/:slug - Get article by slug
 articlesRouter.get(
@@ -136,11 +135,8 @@ articlesRouter.patch(
     "/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-        const id = parseInt(req.params.id, 10);
-        if (isNaN(id)) {
-            res.status(400).json({ success: false, message: "Invalid article ID" });
-            return;
-        }
+        const id = parseIntParam(res, req.params.id, "article ID");
+        if (id === null) return;
         const data = updateArticleApiSchema.parse(req.body);
         if (data.content && (!data.readTimeMinutes || data.readTimeMinutes === 0)) {
             data.readTimeMinutes = Math.max(1, Math.ceil(data.content.split(/\s+/).length / 200));
@@ -160,11 +156,8 @@ articlesRouter.delete(
     "/:id",
     isAuthenticated,
     asyncHandler(async (req, res) => {
-        const id = parseInt(req.params.id, 10);
-        if (isNaN(id)) {
-            res.status(400).json({ success: false, message: "Invalid article ID" });
-            return;
-        }
+        const id = parseIntParam(res, req.params.id, "article ID");
+        if (id === null) return;
         await articleService.delete(id);
         recordAudit("DELETE", "article", id, null, null);
         res.status(204).send();
@@ -175,14 +168,10 @@ articlesRouter.delete(
 articlesRouter.post(
     "/:id/react",
     asyncHandler(async (req, res) => {
-        const id = parseInt(req.params.id, 10);
+        const id = parseIntParam(res, req.params.id, "article ID");
+        if (id === null) return;
+        
         const { emoji } = z.object({ emoji: z.string().min(1) }).parse(req.body);
-
-        if (isNaN(id)) {
-            res.status(400).json({ success: false, message: "Invalid article ID" });
-            return;
-        }
-
         const article = await articleService.addReaction(id, emoji);
 
         res.json({

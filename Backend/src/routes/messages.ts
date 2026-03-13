@@ -85,11 +85,8 @@ export function registerMessageRoutes(app: Router) {
         "/messages/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid message ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "message ID");
+            if (id === null) return;
             const message = await messageService.getById(id);
             if (!message) {
                 res.status(404).json({ success: false, message: "Message not found" });
@@ -222,11 +219,8 @@ export function registerMessageRoutes(app: Router) {
         "/messages/:id/reply",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid message ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "message ID");
+            if (id === null) return;
 
             const schema = z.object({
                 subject: z.string().min(1),
@@ -294,11 +288,8 @@ export function registerMessageRoutes(app: Router) {
         "/messages/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid message ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "message ID");
+            if (id === null) return;
             const deleted = await messageService.delete(id);
             if (!deleted) {
                 res.status(404).json({ success: false, message: "Message not found" });

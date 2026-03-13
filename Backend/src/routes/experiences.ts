@@ -23,11 +23,8 @@ export function registerExperienceRoutes(app: Router) {
         "/experiences/:id",
         cachePublic(600),
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid experience ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "experience ID");
+            if (id === null) return;
             const experience = await experienceService.getById(id);
             if (!experience) {
                 res.status(404).json({ success: false, message: "Experience not found" });
@@ -58,11 +55,8 @@ export function registerExperienceRoutes(app: Router) {
         "/experiences/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid experience ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "experience ID");
+            if (id === null) return;
             const data = insertExperienceApiSchema.partial().parse(req.body);
             const experience = await experienceService.update(id, data);
             recordAudit("UPDATE", "experience", id, null, data as Record<string, unknown>);
@@ -79,11 +73,8 @@ export function registerExperienceRoutes(app: Router) {
         "/experiences/:id",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const id = parseInt(req.params.id, 10);
-            if (isNaN(id)) {
-                res.status(400).json({ success: false, message: "Invalid experience ID" });
-                return;
-            }
+            const id = parseIntParam(res, req.params.id, "experience ID");
+            if (id === null) return;
             await experienceService.delete(id);
             recordAudit("DELETE", "experience", id, null, null);
             res.status(204).send();
