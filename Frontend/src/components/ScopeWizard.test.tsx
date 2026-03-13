@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { ScopeWizard } from "./ScopeWizard";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useScopeStream } from "@/hooks/use-scope-stream";
@@ -15,15 +15,17 @@ vi.mock("@/lib/api-helpers", () => ({
 }));
 
 // Mock framer-motion to avoid animation issues in tests
-vi.mock("framer-motion", () => ({
-    motion: {
-        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
-    },
-    AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => <>{children}</>,
-    m: {
-        div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
-    }
-}));
+vi.mock("framer-motion", async () => {
+    const actual = await vi.importActual("framer-motion") as any;
+    return {
+        ...actual,
+        motion: {
+            ...actual.motion,
+            div: ({ children, whileInView, initial, animate, exit, transition, viewport, ...props }: any) => <div {...props}>{children}</div>,
+        },
+        AnimatePresence: ({ children }: any) => <div data-testid="animate-presence">{children}</div>,
+    };
+});
 
 describe("ScopeWizard", () => {
     beforeEach(() => {
@@ -39,21 +41,30 @@ describe("ScopeWizard", () => {
 
     it("should render initial step", () => {
         render(<ScopeWizard />);
-        expect(screen.getByText(/Step 1 of 5/i)).toBeDefined();
-        expect(screen.getByPlaceholderText(/e.g. My Next Big Idea/i)).toBeDefined();
+        expect(screen.getByText(/Project Identity/i)).toBeDefined();
+        expect(screen.getByPlaceholderText(/Project Name/i)).toBeDefined();
     });
 
     it("should navigate through steps", async () => {
         render(<ScopeWizard />);
 
-        const input = screen.getByPlaceholderText(/e.g. My Next Big Idea/i);
-        fireEvent.change(input, { target: { value: "Test Project" } });
+        const input = screen.getByPlaceholderText(/Project Name/i);
+        act(() => {
+            fireEvent.change(input, { target: { value: "Test Project" } });
+        });
+        
+        const typeButton = screen.getByText(/Web Application/i);
+        act(() => {
+            fireEvent.click(typeButton);
+        });
 
-        const nextButton = screen.getByText(/Next/i);
-        fireEvent.click(nextButton);
+        const nextButton = screen.getByText(/NEXT_STEP/i);
+        act(() => {
+            fireEvent.click(nextButton);
+        });
 
         await waitFor(() => {
-            expect(screen.getByText(/Step 2 of 5/i)).toBeDefined();
+            expect(screen.getByText(/Mission Objectives/i)).toBeDefined();
         });
     });
 
@@ -64,6 +75,6 @@ describe("ScopeWizard", () => {
 
         // Skip steps to submission (this depends on component logic, usually step 5)
         // For simplicity, we just check if it's defined and can be interacted with
-        expect(screen.getByText(/Tell me about your project/i)).toBeDefined();
+        expect(screen.getByText(/Project Identity|Tell me about your project/i)).toBeDefined();
     });
 });

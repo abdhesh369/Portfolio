@@ -10,6 +10,22 @@ jobs:
   test:
     name: Build and Test
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
       
@@ -38,6 +54,9 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/postgres
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_padding__
           JWT_REFRESH_SECRET: test_refresh_token_secret_key_at_least_64_characters_long_for_security__
+          ADMIN_PASSWORD: super_secret_admin_password_12345
+          ADMIN_EMAIL: admin@example.com
+          CONTACT_EMAIL: contact@example.com
           
       - name: Frontend - Type check
         run: npm run type-check -w Frontend
@@ -52,3 +71,8 @@ jobs:
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
           VITE_SENTRY_ENVIRONMENT: test
+
+      - name: Frontend - Run E2E Tests
+        run: npx playwright install --with-deps && npm run test:e2e -w Frontend
+        env:
+          VITE_API_URL: http://localhost:5000

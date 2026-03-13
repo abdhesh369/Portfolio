@@ -239,22 +239,6 @@ app.get("/health", async (_req: Request, res: Response) => {
   });
 });
 
-// Formal API Health Check for monitoring tools
-app.get("/api/v1/health", async (_req: Request, res: Response) => {
-  const dbHealth = await checkDatabaseHealth();
-  const redisHealth = await getRedisHealthSafe();
-
-  const isHealthy = dbHealth.healthy && redisHealth.healthy;
-
-  res.status(200).json({
-    status: isHealthy ? "healthy" : "degraded",
-    database: dbHealth.healthy ? "connected" : "reconnecting",
-    redis: redisHealth.healthy ? "connected" : "reconnecting",
-    ...(process.env.NODE_ENV === "development" && {
-      timestamp: new Date().toISOString()
-    })
-  });
-});
 
 function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {

@@ -21,7 +21,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useLocation } from "wouter";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
 import { getDynamicOgImage } from "@/lib/cloudinary";
@@ -214,7 +214,7 @@ export default function ProjectDetail() {
       if (navigator.share) {
         try {
           await navigator.share(shareData);
-          toast.success("Shared successfully!");
+          toast({ title: "Shared successfully!" });
         } catch (err) {
           if ((err as Error).name !== "AbortError") {
             console.error("Error sharing:", err);
@@ -222,7 +222,7 @@ export default function ProjectDetail() {
         }
       } else {
         navigator.clipboard.writeText(window.location.href);
-        toast.success("Link copied to clipboard!");
+        toast({ title: "Link copied to clipboard!" });
       }
     }
   };

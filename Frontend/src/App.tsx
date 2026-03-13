@@ -13,7 +13,6 @@ import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
 import { sanitizeCss } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
-import { Toaster as HotToaster } from "react-hot-toast";
 
 // ─── Chunk-Load Error Boundary ────────────────────────────────────────────
 // Catches React.lazy() failures (network blips, Render redeployment with
@@ -527,7 +526,6 @@ function App() {
               <ReloadPrompt />
               <InstallPrompt />
               <Toaster />
-              <HotToaster position="bottom-right" />
               <CommandPalette />
             </LazyMotion>
           </AuthProvider>

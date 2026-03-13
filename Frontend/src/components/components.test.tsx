@@ -51,7 +51,7 @@ describe("Frontend Components Sanity", () => {
             </QueryClientProvider>
         );
         expect(screen.getByText(/Client Portal/i)).toBeDefined();
-        expect(screen.getByPlaceholderText(/Enter your access token/i)).toBeDefined();
+        expect(screen.getByPlaceholderText(/Paste your token here/i)).toBeDefined();
     });
 
     it("should render ScopeWizard and allow navigation", () => {

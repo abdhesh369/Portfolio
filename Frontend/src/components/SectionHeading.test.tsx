@@ -4,14 +4,18 @@ import React from "react";
 import type { LucideIcon } from "lucide-react";
 
 // Mock framer-motion to render plain HTML elements
-vi.mock("framer-motion", () => ({
-  m: {
-    div: (props: React.HTMLAttributes<HTMLDivElement>) => React.createElement("div", props),
-    h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => React.createElement("h2", props),
-    p: (props: React.HTMLAttributes<HTMLParagraphElement>) => React.createElement("p", props),
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-}));
+vi.mock("framer-motion", async () => {
+  const actual = await vi.importActual("framer-motion") as any;
+  return {
+    ...actual,
+    motion: {
+      ...actual.motion,
+      div: ({ children, whileInView, initial, transition, viewport, ...props }: any) => <div {...props}>{children}</div>,
+      h2: ({ children, whileInView, initial, transition, viewport, ...props }: any) => <h2 {...props}>{children}</h2>,
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  };
+});
 
 import SectionHeading from "./SectionHeading";
 

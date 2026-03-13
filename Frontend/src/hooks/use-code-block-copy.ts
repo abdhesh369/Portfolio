@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 
 /**
  * Adds copy-to-clipboard button to all <pre> code blocks in the article.
@@ -54,7 +54,7 @@ export function useCodeBlockCopy(containerRef: React.RefObject<HTMLElement | nul
             btn.style.color = "rgba(255,255,255,0.5)";
           }, 2000);
         } catch (err: unknown) {
-          toast.error("Failed to copy code to clipboard");
+          toast({ variant: "destructive", title: "Failed to copy code to clipboard" });
           console.error(err);
         }
       });
