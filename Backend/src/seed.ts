@@ -40,7 +40,7 @@ export async function seedDatabase() {
 
     logSeed("Starting database seed...");
 
-    const seedData = (await import("./seed-data.json", { assert: { type: "json" } })).default;
+    const seedData = (await import("./seed-data.json", { with: { type: "json" } })).default;
 
     const currentYear = new Date().getFullYear();
     const siteSettingsSeed: InsertSiteSettings = {

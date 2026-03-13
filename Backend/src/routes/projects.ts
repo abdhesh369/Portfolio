@@ -5,6 +5,7 @@ import { insertProjectApiSchema } from "@portfolio/shared";
 import { api } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import { parseIntParam } from "../lib/params.js";
 
 const router = Router();
 

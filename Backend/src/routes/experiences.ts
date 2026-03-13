@@ -2,6 +2,7 @@ import { Router } from "express";
 import { insertExperienceApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import { parseIntParam } from "../lib/params.js";
 import { cachePublic } from "../middleware/cache.js";
 import { experienceService } from "../services/experience.service.js";
 import { recordAudit } from "../lib/audit.js";
