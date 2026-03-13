@@ -19,7 +19,7 @@ subscribersRouter.post("/subscribe", async (req, res) => {
         if (error instanceof z.ZodError) {
             return res.status(400).json({
                 message: "Validation failed",
-                errors: error.errors,
+                errors: error.issues,
             });
         }
         if (error.message === "Already subscribed") {
@@ -42,7 +42,7 @@ subscribersRouter.post("/unsubscribe", async (req, res) => {
         if (error instanceof z.ZodError) {
             return res.status(400).json({
                 message: "Validation failed",
-                errors: error.errors,
+                errors: error.issues,
             });
         }
         if (error.message === "Subscriber not found") {
