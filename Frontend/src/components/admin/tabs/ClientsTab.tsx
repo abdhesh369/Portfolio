@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield } from 'lucide-react';
+import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap } from 'lucide-react';
 import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
@@ -57,13 +57,20 @@ export const ClientsTab: React.FC = () => {
         mutationFn: (id: number) => apiFetch(`/api/v1/admin/clients/${id}/regenerate-token`, { method: 'POST' }),
         onSuccess: (res) => {
             setNewToken(res.rawToken);
+            setRegeneratingId(null);
             toast({ title: "Success", description: "Token regenerated successfully." });
+        },
+        onError: (err: any) => {
+            setRegeneratingId(null);
+            let description = err instanceof Error ? err.message : "An error occurred";
+            toast({ title: "Regeneration Failed", description, variant: "destructive" });
         }
     });
 
     const copyToken = (client: ClientData) => {
         navigator.clipboard.writeText(client.token);
         setCopiedId(client.id);
+        toast({ title: "Copied", description: "Token hash copied to clipboard." });
         setTimeout(() => setCopiedId(null), 2000);
     };
 
@@ -190,7 +197,11 @@ export const ClientsTab: React.FC = () => {
                                 >
                                 </AdminButton>
                                 <AdminButton
-                                    onClick={() => deleteMutation.mutate(client.id)}
+                                    onClick={() => {
+                                        if (window.confirm(`Are you sure you want to delete client "${client.name}"? They will lose access to the portal permanently.`)) {
+                                            deleteMutation.mutate(client.id);
+                                        }
+                                    }}
                                     variant="secondary"
                                     icon={Trash2}
                                     className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-rose-500 transition-colors"
@@ -199,7 +210,12 @@ export const ClientsTab: React.FC = () => {
                                 </AdminButton>
 
                                 <AdminButton
-                                    onClick={() => regenerateMutation.mutate(client.id)}
+                                    onClick={() => {
+                                        if (window.confirm(`Are you sure you want to regenerate the token for "${client.name}"? The existing token will be permanently invalidated immediately.`)) {
+                                            setRegeneratingId(client.id);
+                                            regenerateMutation.mutate(client.id);
+                                        }
+                                    }}
                                     isLoading={regenerateMutation.isPending && regeneratingId === client.id}
                                     variant="secondary"
                                     icon={Zap}
