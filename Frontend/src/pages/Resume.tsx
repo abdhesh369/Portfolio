@@ -198,15 +198,33 @@ export default function Resume() {
             <style dangerouslySetInnerHTML={{ __html: `
                 @media print {
                     @page {
-                        margin: 0;
+                        margin: 15mm;
                         size: A4;
                     }
                     body {
                         background: white !important;
+                        color: black !important;
                         -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
                     }
                     .print\\:hidden {
                         display: none !important;
+                    }
+                    /* Ensure text is black and background is white when printing */
+                    div, section, header, footer {
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        border-color: #eee !important;
+                    }
+                    h1, h2, h3, h4 {
+                        color: black !important;
+                    }
+                    p, span, li {
+                        color: #333 !important;
+                    }
+                    /* Force page breaks for long resumes if needed */
+                    section {
+                        page-break-inside: avoid;
                     }
                 }
             `}} />

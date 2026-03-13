@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { aiReviewService } from "../services/ai-review.service.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { aiLimiter } from "../lib/rate-limit.js";
 

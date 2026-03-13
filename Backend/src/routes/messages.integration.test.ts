@@ -48,7 +48,8 @@ vi.mock("../lib/queue.js", () => ({
 import cookieParser from "cookie-parser";
 import { Router } from "express";
 import { registerMessageRoutes } from "../routes/messages.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 
 function createMessagesApp() {
     const app = express();

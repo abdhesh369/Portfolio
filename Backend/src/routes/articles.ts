@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "@portfolio/shared";
-import { isAuthenticated, asyncHandler, checkAuthStatus } from "../auth.js";
+import { isAuthenticated, checkAuthStatus } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
 import { articleService } from "../services/article.service.js";

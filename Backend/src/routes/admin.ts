@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { BulkImageService } from "../services/bulk-image.service.js";
 import { logger } from "../lib/logger.js";

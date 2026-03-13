@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { insertTestimonialApiSchema } from "@portfolio/shared";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { testimonialService } from "../services/testimonial.service.js";
 import { recordAudit } from "../lib/audit.js";

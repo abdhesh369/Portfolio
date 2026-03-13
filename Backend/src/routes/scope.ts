@@ -5,7 +5,7 @@ import { scopeService } from "../services/scope.service.js";
 import { scopeRepository } from "../repositories/scope.repository.js";
 import { logger } from "../lib/logger.js";
 import { aiLimiter } from "../lib/rate-limit.js";
-import { asyncHandler } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 
 const router = Router();
 

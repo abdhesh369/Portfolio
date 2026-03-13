@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { emailTemplateService } from "../services/email-template.service.js";
 import { insertEmailTemplateApiSchema } from "@portfolio/shared";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
 import { recordAudit } from "../lib/audit.js";

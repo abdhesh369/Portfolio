@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { portfolioServiceService } from "../services/portfolio-service.service.js";
 import { insertServiceApiSchema } from "@portfolio/shared";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";

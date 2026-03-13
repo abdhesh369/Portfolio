@@ -40,22 +40,12 @@ export async function seedDatabase() {
 
     logSeed("Starting database seed...");
 
+    const seedData = (await import("./seed-data.json", { assert: { type: "json" } })).default;
+
     const currentYear = new Date().getFullYear();
     const siteSettingsSeed: InsertSiteSettings = {
-      personalName: "Abdhesh Sah",
-      personalTitle: "Full Stack Developer",
-      personalBio: "Passionate about building robust digital systems with a focus on performance, scalability, and intuitive user experiences. Currently pursuing Electronics & Communication Engineering.",
-      logoText: "Abdhesh.Sah",
-      heroHeadingLine1: "Crafting the",
-      heroHeadingLine2: "Digital Future",
-      heroTaglines: ["Engineering scalable systems.", "Crafting intuitive interfaces.", "Solving complex problems."],
-      socialEmail: "abdheshshah111@gmail.com",
-      socialGithub: "https://github.com/abdhesh369",
-      socialLinkedin: "https://linkedin.com/in/abdhesh369",
-      footerTagline: "Building the future, one line of code at a time.",
+      ...seedData.siteSettings,
       footerCopyright: `© ${currentYear} Abdhesh Sah. All rights reserved.`,
-      locationText: "Kathmandu, Nepal",
-      isOpenToWork: true,
     };
 
     try {
@@ -65,104 +55,7 @@ export async function seedDatabase() {
       logSeed(`Failed to seed site settings: ${err}`, "error");
     }
 
-    const projectList: InsertProject[] = [
-      {
-        title: "Portfolio Website",
-        slug: "portfolio-website",
-        description: "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
-        techStack: ["React", "TypeScript", "Express", "PostgreSQL", "TailwindCSS", "Framer Motion", "Drizzle ORM", "Three.js"],
-        imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
-        category: "Web",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Frontend.git",
-        liveUrl: "https://abdheshsah.com.np",
-        problemStatement: "Needed a professional online presence to showcase projects and skills to potential employers and collaborators with a unique, memorable design.",
-        motivation: "Create a modern, responsive portfolio that demonstrates full-stack development capabilities with cutting-edge UI/UX design principles.",
-        systemDesign: "Full-stack application with React frontend using Framer Motion and Three.js for animations, Express REST API backend, PostgreSQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
-        challenges: "Implementing complex animations like the 3D plexus and skill tree without performance issues, creating a cohesive sci-fi design language, and ensuring responsive design across all devices.",
-        learnings: "Advanced animation techniques, full-stack development workflow, API design patterns, and the importance of consistent design systems.",
-      },
-      {
-        title: "AI Study Buddy",
-        slug: "ai-study-buddy",
-        description: "A Monolithic Flask application integrated with OpenRouter API (GPT-4o-mini) to provide AI-powered study assistance. Features a modern glassmorphic UI.",
-        techStack: ["Python", "Flask", "OpenRouter API", "Jinja2", "JavaScript", "Glassmorphism", "CSS3"],
-        imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
-        category: "Web",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Projects",
-        liveUrl: null,
-        problemStatement: "Students often lack immediate access to tutoring or help when studying complex subjects, leading to frustration and slower learning.",
-        motivation: "To leverage modern LLMs to provide a personal AI tutor that can answer questions and generate study materials in a visually appealing interface.",
-        systemDesign: "Flask backend handling API requests to OpenRouter, using Jinja2 templates for dynamic content delivery. Frontend uses vanilla JavaScript for asynchronous communication and CSS for glassmorphism effects.",
-        challenges: "Ensuring smooth API integration with error handling for rate limits or connectivity issues, and perfecting the glassmorphic UI without sacrificing readability.",
-        learnings: "AI API integration, Flask web development, and advanced CSS styling techniques.",
-      },
-      {
-        title: "Assistant (Edith)",
-        slug: "edith-assistant",
-        description: "A modular Python-based desktop automation assistant with voice recognition and text-to-speech capabilities, designed to streamline daily tasks.",
-        techStack: ["Python", "pyttsx3", "SpeechRecognition", "pyautogui", "pywhatkit", "psutil"],
-        imageUrl: "https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=800&auto=format&fit=crop",
-        category: "System",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Projects",
-        liveUrl: null,
-        problemStatement: "Interacting with computer systems manually for repetitive tasks like opening apps, searching YouTube, or taking notes can be inefficient.",
-        motivation: "Created to experiment with desktop automation and voice-UI (VUI) to build a hands-free interactive layer for Windows.",
-        systemDesign: "Modular architecture with dedicated command mapping for dispatcher efficiency. Uses pyttsx3 for offline TTS and Google Speech Recognition for STT. pyautogui handles hardware control.",
-        challenges: "Improving the robustness of voice command detection and ensuring file-path automation (like video playback) works across different system environments.",
-        learnings: "Automation scripting, speech processing, and modular software design in Python.",
-      },
-      {
-        title: "Finance Tracker",
-        slug: "finance-tracker",
-        description: "A secure personal finance management web application featuring user authentication and database persistence for transaction tracking.",
-        techStack: ["Flask", "Flask-Login", "SQLAlchemy", "SQLite", "Flask-Migrate", "Flask-WTF", "Python"],
-        imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
-        category: "Web",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Projects",
-        liveUrl: null,
-        problemStatement: "Managing personal expenses and budgets manually is tedious and often results in lost data or lack of financial insight.",
-        motivation: "Demonstrate secure development practices including password hashing, session management, and database migrations in a Flask environment.",
-        systemDesign: "Application Factory pattern with Blueprints for authentication and main routes. Uses SQLAlchemy ORM for database abstraction and Flask-Login for session security.",
-        challenges: "Implementing a clean authentication flow and setting up scalable database migrations for future feature expansions.",
-        learnings: "Web security fundamentals, database design, and the Flask application factory pattern.",
-      },
-      {
-        title: "Calculator Application",
-        slug: "calculator-app",
-        description: "A polished scientific calculator featuring a detailed dark-theme UI with ripple effects and comprehensive keyboard support.",
-        techStack: ["HTML5", "CSS3", "JavaScript", "Vanilla JS", "Regex"],
-        imageUrl: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=800&auto=format&fit=crop",
-        category: "Utility",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Projects",
-        liveUrl: null,
-        problemStatement: "Most basic web calculators lack a premium feel and do not support keyboard navigation, making them less efficient for power users.",
-        motivation: "To create a highly interactive and visually stunning utility tool that prioritizes user experience through micro-animations and responsive logic.",
-        systemDesign: "Event-driven architecture using vanilla JS. Implements custom ripple animations via dynamic DOM manipulation and uses regex for real-time number formatting.",
-        challenges: "Perfecting the CSS Grid layout for all screen sizes and implementing error-free keyboard event listeners for all math operations.",
-        learnings: "Advanced DOM manipulation, event handling, and polished UI design using modern CSS.",
-      },
-      {
-        title: "Flappy Bird",
-        slug: "flappy-bird",
-        description: "A Python-based desktop game prototype using Pygame, demonstrating game loop fundamentals and collision detection concepts.",
-        techStack: ["Python", "Pygame"],
-        imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
-        category: "Academic",
-        status: "Completed",
-        githubUrl: "https://github.com/abdhesh369/Projects",
-        liveUrl: null,
-        problemStatement: "Understanding the complexities of game physics and state management can be difficult for beginners.",
-        motivation: "Built as a skeleton project to explore the Pygame engine and set the foundation for more complex game development projects.",
-        systemDesign: "Implements a standard game loop (Process Inputs -> Update State -> Render). Features a 1000x1000 game window with basic event polling.",
-        challenges: "Setting up a stable frame-rate and preparing the architectural hooks for bird physics and pipe generation.",
-        learnings: "Game development basics, 2D rendering, and event-driven programming.",
-      },
-    ];
+    const projectList: InsertProject[] = seedData.projects as any;
 
     let successCount = 0;
     let failCount = 0;
@@ -184,26 +77,9 @@ export async function seedDatabase() {
       }
     }
 
-    logSeed(`Projects: ${successCount} processed(${successCount - (projectList.length - failCount)} updated, ${projectList.length - failCount} created / synced), ${failCount} failed`);
+    logSeed(`Projects: ${successCount} processed`);
 
-    const skillList = [
-      // Foundations
-      { name: "C", category: "Foundations", icon: "Terminal", status: "Core", x: 20, y: 20, description: "System programming language", proof: "Academic coursework" },
-      { name: "C++", category: "Foundations", icon: "Code2", status: "Core", x: 50, y: 18, description: "Object-oriented programming", proof: "Academic coursework" },
-      { name: "Python", category: "Foundations", icon: "Terminal", status: "Core", x: 80, y: 20, description: "General-purpose language", proof: "Project Edith, AI Study Buddy" },
-      // Frontend
-      { name: "HTML", category: "Frontend", icon: "Globe", status: "Core", x: 30, y: 45, description: "Web structure", proof: "All web projects" },
-      { name: "CSS", category: "Frontend", icon: "Layers", status: "Core", x: 50, y: 45, description: "Web styling", proof: "All web projects" },
-      { name: "JavaScript", category: "Frontend", icon: "Zap", status: "Core", x: 70, y: 45, description: "Web scripting", proof: "All web projects" },
-      { name: "React", category: "Frontend", icon: "Code2", status: "Core", x: 70, y: 60, description: "Frontend library", proof: "Portfolio Website" },
-      // Backend
-      { name: "Node.js", category: "Backend", icon: "Server", status: "Advanced", x: 40, y: 70, description: "Server-side runtime", proof: "Portfolio Backend" },
-      { name: "Express", category: "Backend", icon: "Terminal", status: "Advanced", x: 60, y: 70, description: "Web framework", proof: "Portfolio Backend" },
-      { name: "PostgreSQL", category: "Backend", icon: "Database", status: "Advanced", x: 50, y: 85, description: "Relational database", proof: "Portfolio Backend" },
-      // Tools
-      { name: "Git", category: "Tools", icon: "GitBranch", status: "Core", x: 15, y: 60, description: "Version control", proof: "All projects" },
-      { name: "GitHub", category: "Tools", icon: "GitBranch", status: "Core", x: 30, y: 70, description: "Code hosting", proof: "All projects" },
-    ];
+    const skillList = seedData.skills;
 
     const existingSkills = await skillService.getAll();
     for (const skill of skillList) {
@@ -223,7 +99,7 @@ export async function seedDatabase() {
       }
     }
 
-    logSeed(`Skills: ${successCount} succeeded, ${failCount} failed`);
+    logSeed(`Skills: ${successCount} processed`);
 
     // Add Skill Connections
     const connectionData = [
@@ -264,32 +140,7 @@ export async function seedDatabase() {
       }
     }
 
-    const mindsetList = [
-      {
-        title: "Occam's Razor",
-        description: "The simplest explanation is usually the best. Applied to code: avoid over-engineering and keep solutions as simple as possible.",
-        icon: "Brain",
-        tags: ["Architecture", "Simplicity"]
-      },
-      {
-        title: "The DRY Principle",
-        description: "Don't Repeat Yourself. Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.",
-        icon: "Zap",
-        tags: ["Refactoring", "Efficiency"]
-      },
-      {
-        title: "Growth Mindset",
-        description: "Viewing challenges as opportunities to learn rather than obstacles. Documentation and failures are just data points for improvement.",
-        icon: "Cpu",
-        tags: ["Learning", "Resilience"]
-      },
-      {
-        title: "The KISS Principle",
-        description: "Keep It Simple, Stupid. Complexity is a cost. I strive to write code that is easy to read, easy to test, and easy for the next developer to maintain.",
-        icon: "Zap",
-        tags: ["Maintainability", "Clean Code", "Design"]
-      }
-    ];
+    const mindsetList = seedData.mindsets;
 
     const currentMindsets = await mindsetService.getAll();
     for (const mindset of mindsetList) {
@@ -306,24 +157,10 @@ export async function seedDatabase() {
       }
     }
 
-    const experienceList = [
-      {
-        role: "Bachelor of Engineering Student",
-        organization: "Tribhuvan University",
-        period: "2024 – 2028",
-        startDate: new Date("2024-01-01"), // Approximate seed data
-        description: "Pursuing B.E. in Electronics & Communication Engineering. Relevant coursework: Data Structures, Computer Programming, Digital Electronics, Microprocessors, and Engineering Mathematics.",
-        type: "Education",
-      },
-      {
-        role: "Self-Taught Developer",
-        organization: "Personal Projects",
-        period: "2023 – Present",
-        startDate: new Date("2023-01-01"), // Approximate seed data
-        description: "Building web applications and automation tools. Learning modern web technologies including React, TypeScript, and Node.js through hands-on projects.",
-        type: "Experience",
-      },
-    ];
+    const experienceList = seedData.experiences.map((exp: any) => ({
+      ...exp,
+      startDate: new Date(exp.startDate)
+    }));
 
     const currentExperiences = await experienceService.getAll();
     successCount = 0;
@@ -364,18 +201,7 @@ export async function seedDatabase() {
       logSeed("Messages already exist, skipping sample message seeding.");
     }
 
-    const emailTemplates = [
-      {
-        name: "General Inquiry Reply",
-        subject: "Re: Inquiry regarding my portfolio",
-        body: "Hello {name},\n\nThank you for reaching out! I've received your message and will get back to you shortly.\n\nBest regards,\nAbdhesh",
-      },
-      {
-        name: "Project Collaboration",
-        subject: "Re: Collaboration opportunity",
-        body: "Hi {name},\n\nThanks for your interest in collaborating. I've reviewed your message and I'm very interested in hearing more about the project.\n\nLet's schedule a call to discuss further.\n\nBest,\nAbdhesh",
-      },
-    ];
+    const emailTemplates = seedData.emailTemplates;
 
     const currentTemplates = await emailTemplateService.getAll();
     for (const template of emailTemplates) {
@@ -392,40 +218,7 @@ export async function seedDatabase() {
       }
     }
 
-    const seoSettings: InsertSeoSettings[] = [
-      {
-        pageSlug: "home",
-        metaTitle: "Abdhesh Sah | Full Stack Developer",
-        metaDescription: "Portfolio of Abdhesh Sah, a Full Stack Developer specializing in React, Node.js, and modern web technologies.",
-        keywords: "Abdhesh Sah, Full Stack Developer, React, Node.js, Portfolio, Web Development",
-        noindex: false,
-        twitterCard: "summary_large_image",
-      },
-      {
-        pageSlug: "projects",
-        metaTitle: "Projects | Abdhesh Sah",
-        metaDescription: "Explore the projects built by Abdhesh Sah, showcasing skills in full-stack development, AI, and automation.",
-        keywords: "Projects, Web Development, Case Studies, Portfolio Work",
-        noindex: false,
-        twitterCard: "summary_large_image",
-      },
-      {
-        pageSlug: "about",
-        metaTitle: "About Me | Abdhesh Sah",
-        metaDescription: "Learn more about Abdhesh Sah, his background, education, and journey as a self-taught developer.",
-        keywords: "About Abdhesh, Biography, Developer Journey, Skills",
-        noindex: false,
-        twitterCard: "summary_large_image",
-      },
-      {
-        pageSlug: "contact",
-        metaTitle: "Contact | Abdhesh Sah",
-        metaDescription: "Get in touch with Abdhesh Sah for collaborations, freelance work, or just to say hi.",
-        keywords: "Contact, Hire Developer, Freelance, Collaboration",
-        noindex: false,
-        twitterCard: "summary_large_image",
-      },
-    ];
+    const seoSettings: InsertSeoSettings[] = seedData.seoSettings;
 
     for (const settings of seoSettings) {
       try {

@@ -18,27 +18,14 @@ if [ -f ../.env ]; then
     export DATABASE_URL
 fi
 
-# Extract DB credentials from DATABASE_URL
-# Format: postgresql://user:password@host:port/database
-# or postgres://...
-DB_USER=$(echo $DATABASE_URL | sed -n 's|.*://\([^:]*\):.*|\1|p')
-DB_PASS=$(echo $DATABASE_URL | sed -n 's|.*://[^:]*:\([^@]*\)@.*|\1|p')
-DB_HOST=$(echo $DATABASE_URL | sed -n 's|.*://[^@]*@\([^:]*\):.*|\1|p')
-DB_PORT=$(echo $DATABASE_URL | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
-DB_NAME=$(echo $DATABASE_URL | sed -n 's|.*/\([^?]*\).*|\1|p')
-
-# Export password for pg_dump
-export PGPASSWORD=$DB_PASS
-
 # Create backup directory
-mkdir -p $BACKUP_DIR
+mkdir -p "$BACKUP_DIR"
 
 echo "📦 Creating database backup..."
-echo "Database: $DB_NAME"
 echo "File: $FILENAME"
 
-# Create backup
-pg_dump -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME --clean --if-exists > "$BACKUP_DIR/$FILENAME"
+# Create backup using DATABASE_URL directly
+pg_dump "$DATABASE_URL" --clean --if-exists > "$BACKUP_DIR/$FILENAME"
 
 # Compress
 echo "🗜️  Compressing backup..."

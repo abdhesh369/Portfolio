@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { sketchpadService } from "../services/sketchpad.service.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
 import { insertSketchpadSessionApiSchema } from "@portfolio/shared";

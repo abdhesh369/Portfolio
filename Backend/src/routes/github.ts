@@ -1,9 +1,31 @@
 import { Router } from "express";
+import { env } from "../env.js";
 import { logger } from "../lib/logger.js";
-import { asyncHandler } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { getOpenRouterClient } from "./chat.js";
-import { env } from "../env.js";
+
+async function fetchGitHubEvents(username: string): Promise<any> {
+    const headers: Record<string, string> = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "Portfolio-Backend",
+        ...(env.GITHUB_TOKEN ? { "Authorization": `token ${env.GITHUB_TOKEN}` } : {})
+    };
+    const response = await fetch(`https://api.github.com/users/${username}/events/public`, { headers });
+
+    if (!response.ok) {
+        const errorBody = await response.text().catch(() => "No body");
+        logger.error({ 
+            context: "github-proxy", 
+            status: response.status, 
+            statusText: response.statusText,
+            body: errorBody
+        }, "GitHub API fetch failed");
+        throw new Error(`GitHub API error: ${response.statusText}`);
+    }
+
+    return await response.json();
+}
 
 const githubRoutes = Router();
 
@@ -11,29 +33,11 @@ githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) 
     try {
         logger.info({ context: "github-proxy" }, "Fetching GitHub activity");
         
-        const headers: Record<string, string> = {
-            "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "Portfolio-Backend"
-        };
-
-        if (env.GITHUB_TOKEN) {
-            headers["Authorization"] = `token ${env.GITHUB_TOKEN}`;
+        if (!env.GITHUB_USERNAME) {
+            return res.status(503).json({ message: "GitHub username not configured" });
         }
 
-        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, { headers });
-
-        if (!response.ok) {
-            const errorBody = await response.text().catch(() => "No body");
-            logger.error({ 
-                context: "github-proxy", 
-                status: response.status, 
-                statusText: response.statusText,
-                body: errorBody
-            }, "GitHub API fetch failed");
-            throw new Error(`GitHub API error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchGitHubEvents(env.GITHUB_USERNAME);
 
         // Limit the payload size to the first 15 events
         const filteredData = Array.isArray(data) ? data.slice(0, 15) : [];
@@ -49,29 +53,11 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
     try {
         logger.info({ context: "github-proxy" }, "Fetching latest GitHub commit");
         
-        const headers: Record<string, string> = {
-            "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "Portfolio-Backend"
-        };
-
-        if (env.GITHUB_TOKEN) {
-            headers["Authorization"] = `token ${env.GITHUB_TOKEN}`;
+        if (!env.GITHUB_USERNAME) {
+            return res.status(503).json({ message: "GitHub username not configured" });
         }
 
-        const response = await fetch(`https://api.github.com/users/${env.GITHUB_USERNAME}/events/public`, { headers });
-
-        if (!response.ok) {
-            const errorBody = await response.text().catch(() => "No body");
-            logger.error({ 
-                context: "github-proxy", 
-                status: response.status, 
-                statusText: response.statusText,
-                body: errorBody
-            }, "GitHub API latest-commit fetch failed");
-            throw new Error(`GitHub API error: ${response.statusText}`);
-        }
-
-        const events = await response.json();
+        const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
         const pushEvent = Array.isArray(events) ? events.find((e: any) => e.type === "PushEvent") : null;
 
         if (!pushEvent) {
@@ -128,7 +114,10 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
 
 githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req, res) => {
     try {
-        const username = env.GITHUB_USERNAME || "abdhesh369";
+        if (!env.GITHUB_USERNAME) {
+            return res.status(503).json({ message: "GitHub username not configured" });
+        }
+        const username = env.GITHUB_USERNAME;
         const response = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
         
         if (!response.ok) {

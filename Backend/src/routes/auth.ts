@@ -3,7 +3,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, asyncHandler, createRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { isAuthenticated, createRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
+import { recordAudit } from "../lib/audit.js";
+import { logger } from "../lib/logger.js";
 import { getIsProd } from "../lib/is-prod.js";
 import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
 
@@ -54,6 +57,8 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     if (!isValid) {
         // Delay to further prevent brute-force attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
+        logger.warn({ context: "auth", ip: req.ip }, "Failed login attempt");
+        recordAudit("LOGIN_FAILED" as any, "auth", undefined, null, { ip: req.ip });
         return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
@@ -97,6 +102,9 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
+
+    logger.info({ context: "auth", ip: req.ip }, "Admin login");
+    recordAudit("LOGIN_SUCCESS" as any, "auth", undefined, null, { ip: req.ip });
 
     res.json({ success: true, message: "Login successful", csrfToken });
 }));

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { guestbookService } from "../services/guestbook.service.js";
-import { asyncHandler, isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
+import { isAuthenticated } from "../auth.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
 import { guestbookLimiter } from "../lib/rate-limit.js";

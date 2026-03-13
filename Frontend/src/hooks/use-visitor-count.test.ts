@@ -7,10 +7,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 class MockEventSource {
     onopen: ((ev: Event) => void) | null = null;
     onerror: ((ev: Event) => void) | null = null;
+    onmessage: ((ev: MessageEvent) => void) | null = null;
     addEventListener = vi.fn();
     close = vi.fn();
     constructor(_url: string | URL, _options?: Record<string, unknown>) {
-        setTimeout(() => { if (this.onopen) this.onopen(new Event("open")); }, 0);
+        // Use a microtask to fire onopen so it's more predictable than setTimeout
+        queueMicrotask(() => { if (this.onopen) this.onopen(new Event("open")); });
     }
 }
 vi.stubGlobal("EventSource", MockEventSource);

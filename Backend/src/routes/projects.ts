@@ -3,7 +3,8 @@ import { z } from "zod";
 import { projectService } from "../services/project.service.js";
 import { insertProjectApiSchema } from "@portfolio/shared";
 import { api } from "@portfolio/shared";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 
 const router = Router();
 

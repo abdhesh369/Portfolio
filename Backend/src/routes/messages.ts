@@ -6,11 +6,13 @@ import { messageService } from "../services/message.service.js";
 import { insertMessageApiSchema } from "@portfolio/shared";
 import { api } from "@portfolio/shared";
 import { env } from "../env.js";
-import { isAuthenticated, asyncHandler } from "../auth.js";
+import { isAuthenticated } from "../auth.js";
+import { asyncHandler } from "../lib/async-handler.js";
 import DOMPurify from 'isomorphic-dompurify';
 import { emailQueue } from "../lib/queue.js";
 import { logger } from "../lib/logger.js";
 import { recordAudit } from "../lib/audit.js";
+import { parseIntParam } from "../lib/params.js";
 
 function escapeHtml(text: string): string {
     return text
@@ -124,7 +126,10 @@ export function registerMessageRoutes(app: Router) {
 
                 // Direct fallback logic
                 const sendDirectFallback = async (jobType: string, payload: any) => {
-                    if (!env.RESEND_API_KEY) return;
+                    if (!env.RESEND_API_KEY) {
+                        logger.error({ context: "messages" }, "RESEND_API_KEY not set - contact form emails are disabled");
+                        return;
+                    }
                     try {
                         const resend = new Resend(env.RESEND_API_KEY);
                         if (jobType === "contact-notification") {
@@ -190,6 +195,9 @@ export function registerMessageRoutes(app: Router) {
                     }
                 } else {
                     logger.warn({ context: "messages" }, "Skipping queue - not initialized. Using direct Resend fallback.");
+                    if (!env.RESEND_API_KEY) {
+                         logger.error({ context: "messages" }, "RESEND_API_KEY not set - message stored but no email sent");
+                    }
                     await sendDirectFallback("contact-notification", { message, targetEmail: env.ADMIN_EMAIL });
                     await sendDirectFallback("auto-reply", { message });
                 }
