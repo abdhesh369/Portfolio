@@ -33,6 +33,8 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
   test('skip-to-content link is functional', async ({ page }) => {
     await page.goto('/');
+    // Wait for hero to render
+    await page.locator('h1').waitFor({ state: 'visible' });
 
     const skipLink = page.locator('a.skip-to-content, a[href="#main-content"]');
     // Should exist in the DOM

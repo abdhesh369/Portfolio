@@ -123,8 +123,7 @@ router.get("/status", isAuthenticated, asyncHandler(async (req: Request, res: Re
 
     if (!csrfToken) {
         csrfToken = generateCsrfToken();
-        const origin = req.headers.origin || "";
-        const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || req.secure || req.headers["x-forwarded-proto"] === "https" || (origin.startsWith("https://") && !origin.includes("localhost"));
+        const isProd = getIsProd(req);
         res.cookie("csrf_token", csrfToken, {
             httpOnly: false,
             secure: isProd,

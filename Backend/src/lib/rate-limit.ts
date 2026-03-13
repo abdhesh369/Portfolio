@@ -21,6 +21,13 @@ const createLimiter = (options: {
         standardHeaders: true,
         legacyHeaders: false,
         skipSuccessfulRequests: options.skipSuccessfulRequests || false,
+        skip: (req) => {
+            // Bypass rate limiting for local development/testing or if explicitly disabled
+            return req.ip === '127.0.0.1' || 
+                   req.ip === '::1' || 
+                   process.env.NODE_ENV !== 'production' ||
+                   process.env.DISABLE_RATE_LIMIT === 'true';
+        },
         store: redis ? new RedisStore({
             sendCommand: async (...args: string[]) => {
                 const [command, ...rest] = args;
