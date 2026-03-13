@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
+import { asyncHandler } from "../lib/async-handler.js";
 import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
 import rateLimit from "express-rate-limit";
@@ -115,98 +116,83 @@ const chatLimiter = rateLimit({
 });
 
 export const registerChatRoutes = (router: Router) => {
-    router.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
+    router.post("/chat", chatLimiter, validateBody(chatSchema), asyncHandler(async (req: Request, res: Response) => {
+        let openrouter: OpenRouter;
         try {
-            let openrouter: OpenRouter;
-            try {
-                openrouter = getOpenRouterClient();
-            } catch (err: unknown) {
-                const message = err instanceof Error ? err.message : "Chat service unavailable";
-                logger.error({ context: "chat" }, message);
-                return res.status(500).json({ message });
-            }
+            openrouter = getOpenRouterClient();
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Chat service unavailable";
+            logger.error({ context: "chat" }, message);
+            return res.status(500).json({ message });
+        }
 
-            const validatedData: z.infer<typeof chatSchema> = req.body;
+        const validatedData: z.infer<typeof chatSchema> = req.body;
 
-            // Build system prompt (cached in Redis with 15-min TTL)
-            let systemPrompt: string;
-            try {
-                systemPrompt = await buildSystemPrompt();
-            } catch (dbErr: unknown) {
-                const message = dbErr instanceof Error ? dbErr.message : "Unknown error";
-                logger.error({ context: "chat", error: message }, "Failed to build system prompt from DB");
-                return res.status(503).json({
-                    success: false,
-                    message: "Chat is temporarily unavailable. Database connection issue."
-                });
-            }
-
-            // Map internal history to OpenRouter messages format { role, content }
-            // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
-            const allMessages = validatedData.messages.map(msg => ({
-                role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
-                content: msg.parts.map(p => p.text).join("\n")
-            }));
-            const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
-
-            // Prepend system prompt
-            const finalMessages = [
-                {
-                    role: "system" as const,
-                    content: systemPrompt
-                },
-                ...messages
-            ];
-
-            // Try each model in order until one succeeds
-            let lastError: unknown = null;
-            for (const model of CHAT_MODELS) {
-                try {
-                    const response = await openrouter.chat.send({
-                        chatGenerationParams: {
-                            model,
-                            messages: finalMessages,
-                            stream: false
-                        }
-                    });
-
-                    const text = response.choices?.[0]?.message?.content || "No response generated.";
-
-                    return res.json({ message: text });
-                } catch (modelErr: unknown) {
-                    lastError = modelErr;
-                    const msg = modelErr instanceof Error ? modelErr.message : "Unknown error";
-                    logger.warn({ context: "chat", model, error: msg }, `Model ${model} failed, trying next`);
-                    continue;
-                }
-            }
-
-            // All models failed
-            const lastErrMsg = lastError instanceof Error ? lastError.message : "Unknown error";
-            logger.error({ context: "chat", error: lastErrMsg }, "All chat models failed");
-            throw lastError;
-        } catch (error: unknown) {
-            const errMsg = error instanceof Error ? error.message : "Unknown error";
-            const errStatus = (error as Record<string, unknown>)?.status;
-            const errResponseData = (error as Record<string, unknown>)?.response;
-            logger.error({
-                context: "chat",
-                error: errMsg,
-                responseData: errResponseData
-            }, "Chat API Error");
-
-            if (errStatus === 429 || errMsg.includes("429")) {
-                return res.status(429).json({
-                    success: false,
-                    message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
-                    details: "Quota exceeded"
-                });
-            }
-
-            return res.status(500).json({
+        // Build system prompt (cached in Redis with 15-min TTL)
+        let systemPrompt: string;
+        try {
+            systemPrompt = await buildSystemPrompt();
+        } catch (dbErr: unknown) {
+            const message = dbErr instanceof Error ? dbErr.message : "Unknown error";
+            logger.error({ context: "chat", error: message }, "Failed to build system prompt from DB");
+            return res.status(503).json({
                 success: false,
-                message: "Internal server error during chat processing."
+                message: "Chat is temporarily unavailable. Database connection issue."
             });
         }
-    });
+
+        // Map internal history to OpenRouter messages format { role, content }
+        // Cap to last MAX_CHAT_MESSAGES to prevent token limit abuse
+        const allMessages = validatedData.messages.map(msg => ({
+            role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
+            content: msg.parts.map(p => p.text).join("\n")
+        }));
+        const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
+
+        // Prepend system prompt
+        const finalMessages = [
+            {
+                role: "system" as const,
+                content: systemPrompt
+            },
+            ...messages
+        ];
+
+        // Try each model in order until one succeeds
+        let lastError: unknown = null;
+        for (const model of CHAT_MODELS) {
+            try {
+                const response = await openrouter.chat.send({
+                    chatGenerationParams: {
+                        model,
+                        messages: finalMessages,
+                        stream: false
+                    }
+                });
+
+                const text = response.choices?.[0]?.message?.content || "No response generated.";
+
+                return res.json({ message: text });
+            } catch (modelErr: unknown) {
+                lastError = modelErr;
+                const msg = modelErr instanceof Error ? modelErr.message : "Unknown error";
+                logger.warn({ context: "chat", model, error: msg }, `Model ${model} failed, trying next`);
+                continue;
+            }
+        }
+
+        // All models failed - will be caught by asyncHandler if we rethrow
+        const lastErrMsg = lastError instanceof Error ? lastError.message : "Unknown error";
+        logger.error({ context: "chat", error: lastErrMsg }, "All chat models failed");
+        
+        if (lastError instanceof Error && (lastError.message.includes("429") || (lastError as any).status === 429)) {
+            return res.status(429).json({
+                success: false,
+                message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
+                details: "Quota exceeded"
+            });
+        }
+
+        throw lastError || new Error("All chat models failed");
+    }));
 };
