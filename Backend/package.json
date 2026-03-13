@@ -69,7 +69,7 @@
     "@types/nodemailer": "^7.0.11",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.0.18",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.18.1",
     "globals": "^17.4.0",
     "supertest": "^7.2.2",
     "tsx": "^4.20.5",
