@@ -49,7 +49,7 @@ export const ClientPortal: React.FC = () => {
         setError('');
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/clients/portal/dashboard`, {
+            const res = await fetch(`${API_BASE_URL}/api/v1/portal/dashboard`, {
                 headers: { 'x-client-token': token }
             });
             if (!res.ok) throw new Error('Invalid or expired token');
@@ -71,7 +71,7 @@ export const ClientPortal: React.FC = () => {
         if (!selectedProject || !feedbackMsg.trim()) return;
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/clients/portal/feedback`, {
+            const res = await fetch(`${API_BASE_URL}/api/v1/portal/feedback`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
