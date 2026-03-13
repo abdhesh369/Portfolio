@@ -621,6 +621,7 @@ export const insertProjectApiSchema = z.object({
   impact: z.string().max(5000).nullable().optional(),
   role: z.string().max(5000).nullable().optional(),
   imageAlt: z.string().max(500).nullable().optional(),
+  summary: z.string().max(500).nullable().optional(),
 });
 
 export const insertScopeRequestApiSchema = z.object({
