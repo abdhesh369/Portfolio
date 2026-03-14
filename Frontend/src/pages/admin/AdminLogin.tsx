@@ -5,7 +5,10 @@ import { useToast } from "@/hooks/use-toast";
 
 import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
 
+import { useSiteSettings } from "@/hooks/use-site-settings";
+
 export default function AdminLogin() {
+    const { data: settings } = useSiteSettings();
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -84,7 +87,7 @@ export default function AdminLogin() {
                         <h1 className="text-2xl font-bold text-white mb-1"
                             style={{ fontFamily: "var(--font-display)" }}
                         >
-                            Admin Panel
+                            {settings?.logoText || "Admin Panel"}
                         </h1>
                         <p className="text-sm text-white/50">Enter your password to continue</p>
                     </div>

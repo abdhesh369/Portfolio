@@ -10,22 +10,11 @@ export class ProjectRepository {
         return {
             ...project,
             techStack: project.techStack || [],
-            githubUrl: project.githubUrl ?? null,
-            liveUrl: project.liveUrl ?? null,
-            problemStatement: project.problemStatement ?? null,
-            motivation: project.motivation ?? null,
-            systemDesign: project.systemDesign ?? null,
-            challenges: project.challenges ?? null,
-            learnings: project.learnings ?? null,
-            impact: project.impact ?? null,
-            role: project.role ?? null,
-            imageAlt: project.imageAlt ?? null,
-            summary: project.summary ?? null,
-        };
+        } as Project;
     }
 
     /** Public: returns only visible (non-hidden) projects */
-    async findAll(sortBy: 'views' | 'default' = 'default'): Promise<Project[]> {
+    async findAll(sortBy: 'views' | 'default' = 'default', limit: number = 50, offset: number = 0): Promise<Project[]> {
         const query = db.select().from(projectsTable)
             .where(eq(projectsTable.isHidden, false));
 
@@ -35,14 +24,16 @@ export class ProjectRepository {
             query.orderBy(asc(projectsTable.displayOrder));
         }
 
-        const results = await query;
+        const results = await query.limit(limit).offset(offset);
         return results.map(p => this.transformProject(p as any));
     }
 
     /** Admin: returns ALL projects including hidden ones */
-    async findAllAdmin(): Promise<Project[]> {
+    async findAllAdmin(limit: number = 100, offset: number = 0): Promise<Project[]> {
         const results = await db.select().from(projectsTable)
-            .orderBy(asc(projectsTable.displayOrder));
+            .orderBy(asc(projectsTable.displayOrder))
+            .limit(limit)
+            .offset(offset);
         return results.map(p => this.transformProject(p));
     }
 

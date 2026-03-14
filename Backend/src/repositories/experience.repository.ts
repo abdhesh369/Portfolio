@@ -9,13 +9,13 @@ export class ExperienceRepository {
     private transformExperience(exp: DbExperience): Experience {
         return {
             ...exp,
-            period: exp.period ?? undefined,
-            endDate: exp.endDate ?? undefined,
-        };
+        } as Experience;
     }
 
-    async findAll(): Promise<Experience[]> {
-        const results = await db.select().from(experiencesTable);
+    async findAll(limit: number = 50, offset: number = 0): Promise<Experience[]> {
+        const results = await db.select().from(experiencesTable)
+            .limit(limit)
+            .offset(offset);
         return results.map(exp => this.transformExperience(exp));
     }
 

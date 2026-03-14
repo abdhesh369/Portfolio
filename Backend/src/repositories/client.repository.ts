@@ -5,8 +5,11 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
 export class ClientRepository {
-    async findAll(): Promise<Client[]> {
-        const results = await db.select().from(clientsTable).orderBy(desc(clientsTable.createdAt));
+    async findAll(limit: number = 50, offset: number = 0): Promise<Client[]> {
+        const results = await db.select().from(clientsTable)
+            .orderBy(desc(clientsTable.createdAt))
+            .limit(limit)
+            .offset(offset);
         return results as Client[];
     }
 
@@ -16,20 +19,29 @@ export class ClientRepository {
     }
 
     async findByToken(token: string): Promise<Client | null> {
-        // Since tokens are hashed, we can't query by token directly.
-        // For a small number of clients (portfolio scale), we fetch active ones and verify.
-        const activeClients = await db.select().from(clientsTable).where(eq(clientsTable.status, "active"));
+        // Fast O(1) lookup using SHA-256 tokenHash
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        
+        const [client] = await db.select().from(clientsTable)
+            .where(eq(clientsTable.tokenHash, tokenHash))
+            .limit(1);
 
-        for (const client of activeClients) {
-            if (!client.token) continue;
+        if (client && client.status === "active") return client as Client;
 
-            // Support both hashed (new) and plain text (legacy) tokens
-            const isMatch = client.token.startsWith("$2")
-                ? await bcrypt.compare(token, client.token)
-                : client.token === token;
+        // Fallback for legacy clients without tokenHash
+        const legacyClients = await db.select().from(clientsTable)
+            .where(eq(clientsTable.status, "active"));
 
-            if (isMatch) return client as Client;
+        for (const c of legacyClients) {
+            if (!c.token || c.tokenHash !== null) continue; // Skip if it already has a hash
+            
+            // Only support bcrypt legacy, plain-text is purged
+            if (!c.token.startsWith("$2")) continue;
+            
+            const isMatch = await bcrypt.compare(token, c.token);
+            if (isMatch) return c as Client;
         }
+        
         return null;
     }
 
@@ -37,8 +49,14 @@ export class ClientRepository {
         const rawToken = crypto.randomUUID();
         const salt = await bcrypt.genSalt(10);
         const hashedToken = await bcrypt.hash(rawToken, salt);
+        const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
-        const [inserted] = await db.insert(clientsTable).values({ ...data, token: hashedToken }).returning();
+        const [inserted] = await db.insert(clientsTable).values({ 
+            ...data, 
+            token: hashedToken,
+            tokenHash
+        }).returning();
+        
         if (!inserted) throw new Error("Failed to create client");
 
         return { ...(inserted as Client), rawToken };
@@ -54,9 +72,10 @@ export class ClientRepository {
         const rawToken = crypto.randomUUID();
         const salt = await bcrypt.genSalt(10);
         const hashedToken = await bcrypt.hash(rawToken, salt);
+        const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
         const [updated] = await db.update(clientsTable)
-            .set({ token: hashedToken })
+            .set({ token: hashedToken, tokenHash })
             .where(eq(clientsTable.id, id))
             .returning();
 
@@ -69,10 +88,12 @@ export class ClientRepository {
     }
 
     // Client Projects
-    async findProjectsByClientId(clientId: number): Promise<ClientProject[]> {
+    async findProjectsByClientId(clientId: number, limit: number = 50, offset: number = 0): Promise<ClientProject[]> {
         const results = await db.select().from(clientProjectsTable)
             .where(eq(clientProjectsTable.clientId, clientId))
-            .orderBy(desc(clientProjectsTable.createdAt));
+            .orderBy(desc(clientProjectsTable.createdAt))
+            .limit(limit)
+            .offset(offset);
         return results as ClientProject[];
     }
 
@@ -94,10 +115,12 @@ export class ClientRepository {
     }
 
     // Client Feedback
-    async findFeedbackByProjectId(clientProjectId: number): Promise<ClientFeedback[]> {
+    async findFeedbackByProjectId(clientProjectId: number, limit: number = 50, offset: number = 0): Promise<ClientFeedback[]> {
         const results = await db.select().from(clientFeedbackTable)
             .where(eq(clientFeedbackTable.clientProjectId, clientProjectId))
-            .orderBy(desc(clientFeedbackTable.createdAt));
+            .orderBy(desc(clientFeedbackTable.createdAt))
+            .limit(limit)
+            .offset(offset);
         return results.map(r => ({
             ...r,
             attachments: r.attachments || []

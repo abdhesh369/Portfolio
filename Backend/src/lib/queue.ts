@@ -21,7 +21,7 @@ function getRedisConnection() {
 }
 
 // bullmq bundles its own ioredis — cast via the ConnectionOptions shape it actually expects
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis version mismatch; pinned in root overrides
+ 
 function toBullMQConnection(r: ReturnType<typeof getRedisConnection>) {
     return r as unknown as import("bullmq").ConnectionOptions;
 }

@@ -263,8 +263,13 @@ export const clientsTable = pgTable("clients", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   company: varchar("company", { length: 255 }),
   token: varchar("token", { length: 255 }).notNull().unique(),
+  tokenHash: varchar("tokenHash", { length: 255 }).unique(), // SHA-256 for O(1) matching
   status: varchar("status", { length: 50 }).$type<"active" | "inactive">().notNull().default("active"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => {
+  return {
+    tokenHashIdx: index("clients_token_hash_idx").on(table.tokenHash),
+  };
 });
 
 export const clientProjectsTable = pgTable("client_projects", {

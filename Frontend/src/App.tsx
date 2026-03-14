@@ -40,9 +40,17 @@ class ChunkErrorBoundary extends Component<
       /importing a module script failed/i.test(error.message);
 
     if (isChunkError && !this.state.retrying) {
-      this.setState({ retrying: true });
-      // Hard reload picks up the freshly deployed chunks
-      setTimeout(() => window.location.reload(), 500);
+      const retryCount = parseInt(sessionStorage.getItem("chunk-retry-count") || "0", 10);
+      if (retryCount < 3) {
+        sessionStorage.setItem("chunk-retry-count", (retryCount + 1).toString());
+        this.setState({ retrying: true });
+        // Longer delay to allow for CDN propagation / Render cold start
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        // Stop retrying after 3 attempts to avoid infinite loops on real outages
+        this.setState({ hasError: true, retrying: false });
+        sessionStorage.removeItem("chunk-retry-count");
+      }
     }
   }
 

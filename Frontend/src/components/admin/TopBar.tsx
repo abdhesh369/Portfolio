@@ -72,7 +72,7 @@ export default function TopBar({
                             onClick={() => onNavigate?.("overview")}
                             className="flex items-center gap-2 group cursor-pointer hover:text-purple-400 transition-all"
                         >
-                            <span className="opacity-40 group-hover:opacity-100">CONFIG_ENGINE</span>
+                            <span className="opacity-70 group-hover:opacity-100">CONFIG_ENGINE</span>
                         </button>
                         <ChevronRight size={14} className="opacity-20 translate-y-[1px] text-[var(--admin-text-primary)]" />
                         <button 

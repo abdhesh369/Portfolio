@@ -182,7 +182,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                         color: 'var(--foreground-hex, #e2e8f0)',
                                     }}
                                     labelFormatter={(v: ReactNode) => `Date: ${formatDate(v as string)}`}
-                                    formatter={(value: number | undefined) => [value != null ? value.toLocaleString() : '0', "Views"]}
+                                    formatter={(value: unknown) => [typeof value === 'number' ? value.toLocaleString() : '0', "Views"]}
                                 />
                                 <Area
                                     type="monotone"

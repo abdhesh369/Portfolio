@@ -123,7 +123,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             </div>
 
             {/* Neumorphic Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
                 <StatCard
                     label="Active Projects"
                     value={projects?.length ?? 0}
@@ -195,7 +195,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             </div>
 
             {/* Quick Actions Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
                 {[
                     { label: "+ New Project", icon: FolderKanban, tab: "projects" as const, color: "text-blue-500" },
                     { label: "+ New Article", icon: PenTool, tab: "articles" as const, color: "text-emerald-500" },
@@ -228,7 +228,12 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {/* Interactive System Console - Repositioned higher for visibility */}
+            <div className="animate-in slide-in-from-bottom-6 duration-1000">
+                <TerminalConsole onNavigate={onNavigate} />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
                 {/* Activity Feed Section */}
                 <div className="lg:col-span-2">
                     <ActivityFeed activities={activities} onFetchAll={() => onNavigate?.("messages")} />
@@ -267,11 +272,6 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {/* Interactive System Console */}
-            <div className="animate-in slide-in-from-bottom-6 duration-1000" style={{ animationDelay: '600ms' }}>
-                <TerminalConsole onNavigate={onNavigate} />
             </div>
         </div>
     );

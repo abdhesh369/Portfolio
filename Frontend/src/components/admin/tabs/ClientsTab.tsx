@@ -434,7 +434,7 @@ export const ClientsTab: React.FC = () => {
         },
         onError: (err: any) => {
             setRegeneratingId(null);
-            let description = err instanceof Error ? err.message : "An error occurred";
+            const description = err instanceof Error ? err.message : "An error occurred";
             toast({ title: "Regeneration Failed", description, variant: "destructive" });
         }
     });

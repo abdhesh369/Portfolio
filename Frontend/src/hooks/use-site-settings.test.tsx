@@ -57,4 +57,26 @@ describe("useSiteSettings hook", () => {
             body: JSON.stringify(mockSettings),
         });
     });
+
+    it("handles 500 server error when fetching settings", async () => {
+        vi.mocked(apiFetch).mockRejectedValueOnce(new Error("Internal Server Error"));
+
+        const { result } = renderHook(() => useSiteSettings(), {
+            wrapper: createWrapper(),
+        });
+
+        await waitFor(() => expect(result.current.isError).toBe(true));
+        expect(result.current.error).toBeInstanceOf(Error);
+        expect((result.current.error as Error).message).toBe("Internal Server Error");
+    });
+
+    it("handles update failure correctly", async () => {
+        vi.mocked(apiFetch).mockRejectedValueOnce(new Error("Update failed"));
+
+        const { result } = renderHook(() => useUpdateSiteSettings(), {
+            wrapper: createWrapper(),
+        });
+
+        await expect(result.current.mutateAsync({ isOpenToWork: false })).rejects.toThrow("Update failed");
+    });
 });

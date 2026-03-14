@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, ChevronRight, X, Send
+    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, ChevronRight, X, Send, Rocket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -138,7 +138,7 @@ export default function Sidebar({
                                     alt="Logo"
                                 />
                             ) : (
-                                <span className="font-black text-xl text-purple-500 z-10 tracking-tighter">{brandInitial}</span>
+                                <Rocket className="w-5 h-5 text-purple-500 z-10" />
                             )}
                         </div>
                     </div>

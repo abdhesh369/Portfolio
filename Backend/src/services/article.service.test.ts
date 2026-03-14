@@ -1,36 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ---- Mock dependencies ----
-const {
-    mockFindAll, mockFindBySlug, mockFindById, mockFindByIds,
-    mockCreate, mockUpdate, mockDelete, mockBulkDelete,
-    mockFindRelated, mockIncrementViewCount,
-} = vi.hoisted(() => ({
-    mockFindAll: vi.fn(),
-    mockFindBySlug: vi.fn(),
-    mockFindById: vi.fn(),
-    mockFindByIds: vi.fn(),
-    mockCreate: vi.fn(),
-    mockUpdate: vi.fn(),
-    mockDelete: vi.fn(),
-    mockBulkDelete: vi.fn(),
-    mockFindRelated: vi.fn(),
-    mockIncrementViewCount: vi.fn(),
-}));
+const mockArticleRepository = {
+    findAll: vi.fn(),
+    findBySlug: vi.fn(),
+    findById: vi.fn(),
+    findByIds: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    bulkDelete: vi.fn(),
+    findRelated: vi.fn(),
+    incrementViewCount: vi.fn(),
+    addReaction: vi.fn(),
+    search: vi.fn(),
+};
 
 vi.mock("../repositories/article.repository.js", () => ({
-    articleRepository: {
-        findAll: mockFindAll,
-        findBySlug: mockFindBySlug,
-        findById: mockFindById,
-        findByIds: mockFindByIds,
-        create: mockCreate,
-        update: mockUpdate,
-        delete: mockDelete,
-        bulkDelete: mockBulkDelete,
-        findRelated: mockFindRelated,
-        incrementViewCount: mockIncrementViewCount,
-    },
+    articleRepository: mockArticleRepository,
 }));
 
 const { mockCacheGetOrSet, mockCacheInvalidate, mockCacheKey, mockCacheTrack, mockCacheInvalidateTracked } = vi.hoisted(() => ({
@@ -102,11 +89,11 @@ describe("ArticleService", () => {
 
         it("calls repository when cache misses", async () => {
             mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
-            mockFindAll.mockResolvedValue([MOCK_ARTICLE]);
+            mockArticleRepository.findAll.mockResolvedValue([MOCK_ARTICLE]);
 
             const result = await service.getAll("published");
 
-            expect(mockFindAll).toHaveBeenCalledWith("published");
+            expect(mockArticleRepository.findAll).toHaveBeenCalledWith("published");
             expect(result).toEqual([MOCK_ARTICLE]);
         });
     });
@@ -124,17 +111,17 @@ describe("ArticleService", () => {
 
         it("calls repository on cache miss", async () => {
             mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
-            mockFindBySlug.mockResolvedValue(MOCK_ARTICLE);
+            mockArticleRepository.findBySlug.mockResolvedValue(MOCK_ARTICLE);
 
             const result = await service.getBySlug("test-article");
 
-            expect(mockFindBySlug).toHaveBeenCalledWith("test-article");
+            expect(mockArticleRepository.findBySlug).toHaveBeenCalledWith("test-article");
             expect(result).toEqual(MOCK_ARTICLE);
         });
 
         it("returns null when article not found", async () => {
             mockCacheGetOrSet.mockImplementation(async (_key, _ttl, fetcher) => fetcher());
-            mockFindBySlug.mockResolvedValue(null);
+            mockArticleRepository.findBySlug.mockResolvedValue(null);
 
             const result = await service.getBySlug("nonexistent");
 
@@ -144,7 +131,7 @@ describe("ArticleService", () => {
 
     describe("create", () => {
         it("creates an article and invalidates cache", async () => {
-            mockCreate.mockResolvedValue(MOCK_ARTICLE);
+            mockArticleRepository.create.mockResolvedValue(MOCK_ARTICLE);
 
             const data = {
                 title: MOCK_ARTICLE.title,
@@ -158,7 +145,7 @@ describe("ArticleService", () => {
             };
             const result = await service.create(data as any);
 
-            expect(mockCreate).toHaveBeenCalled();
+            expect(mockArticleRepository.create).toHaveBeenCalled();
             expect(mockCacheInvalidateTracked).toHaveBeenCalled();
             expect(result).toEqual(MOCK_ARTICLE);
         });
@@ -167,18 +154,18 @@ describe("ArticleService", () => {
     describe("update", () => {
         it("updates matching article and invalidates cache", async () => {
             const updated = { ...MOCK_ARTICLE, title: "Updated" };
-            mockFindById.mockResolvedValue(MOCK_ARTICLE);
-            mockUpdate.mockResolvedValue(updated);
+            mockArticleRepository.findById.mockResolvedValue(MOCK_ARTICLE);
+            mockArticleRepository.update.mockResolvedValue(updated);
 
             const result = await service.update(1, { title: "Updated" });
 
-            expect(mockUpdate).toHaveBeenCalled();
+            expect(mockArticleRepository.update).toHaveBeenCalled();
             expect(mockCacheInvalidateTracked).toHaveBeenCalled();
             expect(result.title).toBe("Updated");
         });
 
         it("throws when article does not exist", async () => {
-            mockFindById.mockResolvedValue(null);
+            mockArticleRepository.findById.mockResolvedValue(null);
 
             await expect(service.update(999, { title: "X" })).rejects.toThrow(
                 "Article with id 999 not found"
@@ -188,12 +175,12 @@ describe("ArticleService", () => {
 
     describe("delete", () => {
         it("deletes article and invalidates cache", async () => {
-            mockFindById.mockResolvedValue(MOCK_ARTICLE);
-            mockDelete.mockResolvedValue(undefined);
+            mockArticleRepository.findById.mockResolvedValue(MOCK_ARTICLE);
+            mockArticleRepository.delete.mockResolvedValue(undefined);
 
             await service.delete(1);
 
-            expect(mockDelete).toHaveBeenCalledWith(1);
+            expect(mockArticleRepository.delete).toHaveBeenCalledWith(1);
             expect(mockCacheInvalidateTracked).toHaveBeenCalled();
             expect(mockCacheInvalidate).toHaveBeenCalledWith(expect.stringContaining("test-article"));
         });
@@ -201,12 +188,12 @@ describe("ArticleService", () => {
 
     describe("bulkDelete", () => {
         it("bulk deletes articles and invalidates cache", async () => {
-            mockFindByIds.mockResolvedValue([MOCK_ARTICLE]);
-            mockBulkDelete.mockResolvedValue(undefined);
+            mockArticleRepository.findByIds.mockResolvedValue([MOCK_ARTICLE]);
+            mockArticleRepository.bulkDelete.mockResolvedValue(undefined);
 
             await service.bulkDelete([1]);
 
-            expect(mockBulkDelete).toHaveBeenCalledWith([1]);
+            expect(mockArticleRepository.bulkDelete).toHaveBeenCalledWith([1]);
             expect(mockCacheInvalidateTracked).toHaveBeenCalled();
             expect(mockCacheInvalidate).toHaveBeenCalled();
         });
@@ -214,11 +201,11 @@ describe("ArticleService", () => {
 
     describe("incrementViewCount", () => {
         it("delegates to repository without touching cache", async () => {
-            mockIncrementViewCount.mockResolvedValue(undefined);
+            mockArticleRepository.incrementViewCount.mockResolvedValue(undefined);
 
             await service.incrementViewCount(1);
 
-            expect(mockIncrementViewCount).toHaveBeenCalledWith(1);
+            expect(mockArticleRepository.incrementViewCount).toHaveBeenCalledWith(1);
             expect(mockCacheInvalidate).not.toHaveBeenCalled();
         });
     });

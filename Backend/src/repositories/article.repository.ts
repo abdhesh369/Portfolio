@@ -6,17 +6,23 @@ import type { InferInsertModel } from "drizzle-orm";
 type DbInsertArticle = InferInsertModel<typeof articlesTable>;
 
 export class ArticleRepository {
-    async findAll(status?: Article["status"]): Promise<Article[]> {
+    async findAll(status?: Article["status"], limit: number = 50, offset: number = 0): Promise<Article[]> {
         const baseQuery = status
             ? db.select().from(articlesTable).where(eq(articlesTable.status, status))
             : db.select().from(articlesTable);
-        const results = await baseQuery.orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt));
+        
+        const results = await baseQuery
+            .orderBy(desc(articlesTable.publishedAt), desc(articlesTable.createdAt))
+            .limit(limit)
+            .offset(offset);
+            
         if (results.length === 0) return [];
 
         // Batch fetch all tags for the articles
+        const ids = results.map(a => a.id);
         const allTags = await db.select()
             .from(articleTagsTable)
-            .where(inArray(articleTagsTable.articleId, results.map(a => a.id)));
+            .where(inArray(articleTagsTable.articleId, ids));
 
         const tagsMap = new Map<number, string[]>();
         for (const t of allTags) {
@@ -102,12 +108,6 @@ export class ArticleRepository {
             return {
                 ...inserted,
                 tags: tags || [],
-                authorId: inserted.authorId ?? undefined,
-                featuredImage: inserted.featuredImage ?? undefined,
-                featuredImageAlt: inserted.featuredImageAlt ?? undefined,
-                excerpt: inserted.excerpt ?? undefined,
-                metaTitle: inserted.metaTitle ?? undefined,
-                metaDescription: inserted.metaDescription ?? undefined,
                 reactions: inserted.reactions || {},
             };
         });
@@ -139,12 +139,6 @@ export class ArticleRepository {
             return {
                 ...updated,
                 tags: currentTags.map(t => t.tag),
-                authorId: updated.authorId ?? undefined,
-                featuredImage: updated.featuredImage ?? undefined,
-                featuredImageAlt: updated.featuredImageAlt ?? undefined,
-                excerpt: updated.excerpt ?? undefined,
-                metaTitle: updated.metaTitle ?? undefined,
-                metaDescription: updated.metaDescription ?? undefined,
                 reactions: updated.reactions || {},
             };
         });
