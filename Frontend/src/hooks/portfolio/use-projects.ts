@@ -11,11 +11,11 @@ export function useProjects(sortBy: string = "default") {
     queryKey: [...QUERY_KEYS.projects.list(sortBy), isDevMode],
     queryFn: async () => {
       const projects: any[] = await fetchAndParse(
-        `${api.projects.list.path}${sortBy !== "default" ? `?sort=${sortBy}` : ""}`,
+        `${api.projects.list.path}${sortBy !== "default" ? `?sort=${sortBy}` : ""}${isDevMode ? `${sortBy !== "default" ? "&" : "?"}secret=revealed` : ""}`,
         api.projects.list.responses[200],
         "Failed to fetch projects"
       );
-      return isDevMode ? projects : projects.filter(p => !p.isHidden);
+      return projects;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

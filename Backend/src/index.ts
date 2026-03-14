@@ -352,20 +352,10 @@ async function startServer() {
 
     // ── 2.2. Ensure schema compatibility for production safety ──
 
-    // Controlled seeding: Skip in production unless explicitly forced
-    const shouldSeed = process.env.NODE_ENV !== "production" || process.env.FORCE_SEED === "true";
-
-    if (shouldSeed) {
-      logger.info({ context: "startup" }, "📍 Seeding Database...");
-      try {
-        await seedDatabase();
-        logger.info({ context: "startup" }, "✓ Seeding complete");
-      } catch (err) {
-        logger.warn({ context: "startup", error: err }, `⚠️ Seeding failed`);
-      }
-    } else {
-      logger.info({ context: "startup" }, "ℹ️ Skipping auto-seeding in production environment");
-    }
+    // Controlled seeding: REMOVED from application startup for production safety.
+    // Seeding should be performed as a separate build step or CLI command to prevent 
+    // accidental data loss (A5).
+    logger.info({ context: "startup" }, "ℹ️ Auto-seeding check skipped. Use 'npm run seed' for manual data initialization.");
 
     // ── 3. Register API routes ──
     logger.info({ context: "startup" }, "📍 Registering API routes...");

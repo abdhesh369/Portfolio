@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, createRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { isAuthenticated, createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { logger } from "../lib/logger.js";
@@ -62,21 +62,17 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    // Generate short-lived access token (15 minutes)
-    const token = jwt.sign(
-        { role: "admin" },
-        env.JWT_SECRET,
-        { expiresIn: "15m" }
-    );
+    // Generate JWT access token
+    const accessToken = createAccessToken();
 
     // Generate stateless JWT refresh token (validated by signature, not Redis)
     const refreshToken = createRefreshToken();
-    await storeRefreshToken(refreshToken); // optional Redis revocation entry
+    // await storeRefreshToken(refreshToken); // REMOVED: P0 Logic fix. Stateless JWTs don't need "tracking" in Redis.
 
     const isProd = getIsProd(req);
 
     // Set HttpOnly access token cookie (15 min)
-    res.cookie("auth_token", token, {
+    res.cookie("auth_token", accessToken, {
         httpOnly: true,
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
@@ -176,28 +172,41 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         return res.json({ success: false, message: "No refresh token provided" });
     }
 
-    // validateRefreshToken now verifies the JWT signature (stateless, no Redis needed)
+    // 1. Validate the old token (verifies signature and checks Redis blacklist)
     const isValid = await validateRefreshToken(refreshToken);
 
     if (!isValid) {
+        // SECURITY: If a valid-looking JWT is reused after revocation, 
+        // it might indicate a theft. In high-sec apps, we might revoke the 
+        // entire family here. For now, we just reject.
         return res.json({ success: false, message: "Invalid or expired refresh token" });
     }
 
-    // Issue new short-lived access token
-    const accessToken = jwt.sign(
-        { role: "admin" },
-        env.JWT_SECRET,
-        { expiresIn: "15m" }
-    );
-
+    // 2. ROTATE: Revoke the old refresh token immediately (A3)
+    await revokeRefreshToken(refreshToken);
+    
+    // 3. Issue a new pair, keeping the family ID (fid) for continued rotation tracking
+    const decodedToken = jwt.decode(refreshToken) as { fid?: string } | null;
+    const newAccessToken = createAccessToken();
+    const newRefreshToken = createRefreshToken(decodedToken?.fid);
+    
     const isProd = getIsProd(req);
 
-    res.cookie("auth_token", accessToken, {
+    // 4. Set new cookies
+    res.cookie("auth_token", newAccessToken, {
         httpOnly: true,
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
         path: "/",
         maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.cookie("refresh_token", newRefreshToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     const newCsrfToken = generateCsrfToken();
@@ -206,10 +215,14 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
         path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match login TTL)
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    res.json({ success: true, message: "Token refreshed", csrfToken: newCsrfToken });
+    res.json({ 
+        success: true, 
+        message: "Token refreshed successfully", 
+        csrfToken: newCsrfToken 
+    });
 }));
 
 /**

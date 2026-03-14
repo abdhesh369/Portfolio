@@ -160,9 +160,9 @@ const SECTION_MAP: Record<string, React.ReactNode> = {
   guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
   contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
-  "live-activity": <LiveActivityTicker />,
-  "reading-list": <ReadingList />,
-  "github-heatmap": <GithubHeatmap />,
+  "live-activity": <SafeSection name="Live Activity"><LiveActivityTicker /></SafeSection>,
+  "reading-list": <SafeSection name="Reading List"><ReadingList /></SafeSection>,
+  "github-heatmap": <SafeSection name="Github Heatmap"><GithubHeatmap /></SafeSection>,
 };
 
 export default function Home() {

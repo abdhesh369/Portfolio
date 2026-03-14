@@ -63,12 +63,24 @@ export function initQueues() {
 
     logger.info({ context: "queue" }, "📍 Initializing BullMQ queues and workers...");
 
+    const defaultJobOptions = {
+        attempts: 5,
+        backoff: {
+            type: "exponential",
+            delay: 1000,
+        },
+        removeOnComplete: true,
+        removeOnFail: false, // Keep failed jobs for manual inspection
+    };
+
     emailQueue = new Queue("email", {
-        connection: toBullMQConnection(getRedisConnection())
+        connection: toBullMQConnection(getRedisConnection()),
+        defaultJobOptions
     });
 
     scopeQueue = new Queue("scope", {
-        connection: toBullMQConnection(getRedisConnection())
+        connection: toBullMQConnection(getRedisConnection()),
+        defaultJobOptions
     });
 
     emailWorker = new Worker("email", async (job: Job) => {

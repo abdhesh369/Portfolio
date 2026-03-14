@@ -126,10 +126,30 @@ export class CacheService {
     static async clearAll(): Promise<void> {
         if (!redis) return;
         try {
-            await redis.flushdb();
-            logger.info({ context: "cache" }, "Redis cache flushed");
+            // SECURITY: Avoid flushdb() as it wipes security blacklists (A2).
+            // PERFORMANCE: Use SCAN instead of KEYS to avoid blocking the Redis server (P1).
+            const namespaces = [
+                "article:*", "project:*", "skill:*", "experience:*", 
+                "testimonial:*", "guestbook:*", "settings:*", "mindset:*",
+                "chat:*", "analytics:*"
+            ];
+            
+            for (const pattern of namespaces) {
+                let cursor = "0";
+                do {
+                    // Scan for keys matching the pattern in batches of 100
+                    const [nextCursor, keys] = await redis.scan(cursor, "MATCH", pattern, "COUNT", 100);
+                    cursor = nextCursor;
+                    
+                    if (keys.length > 0) {
+                        await redis.del(...keys);
+                    }
+                } while (cursor !== "0");
+            }
+            
+            logger.info({ context: "cache" }, "Safe targeted cache cleared via SCAN");
         } catch (err) {
-            logger.error({ context: "cache", error: err }, "Redis flush failed");
+            logger.error({ context: "cache", error: err }, "Safe cache clear failed");
             throw err;
         }
     }

@@ -16,9 +16,9 @@ services:
       - key: REDIS_URL
         sync: false
       - key: JWT_SECRET
-        generateValue: true
+        sync: false # Set manually once in Render dashboard to prevent session mass-invalidation
       - key: JWT_REFRESH_SECRET
-        generateValue: true
+        sync: false # Set manually once in Render dashboard
       - key: FRONTEND_URL
         sync: false # Set to your Frontend URL after first deployment
       - key: BACKEND_RENDER_URL

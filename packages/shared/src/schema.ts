@@ -1,6 +1,5 @@
 import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType } from "drizzle-orm/pg-core";
 import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 
 const tsvectorType = customType<{ data: string }>({
@@ -471,52 +470,18 @@ export const subscribersTable = pgTable("subscribers", {
 });
 
 // ================= DRIZZLE-ZOD BASE SCHEMAS =================
-
-export const selectProjectSchema = createSelectSchema(projectsTable);
-export const insertProjectSchema = createInsertSchema(projectsTable);
-
-export const selectSkillSchema = createSelectSchema(skillsTable);
-export const insertSkillSchema = createInsertSchema(skillsTable);
-
-export const selectSkillConnectionSchema = createSelectSchema(skillConnectionsTable);
-export const insertSkillConnectionSchema = createInsertSchema(skillConnectionsTable);
-
-export const selectExperienceSchema = createSelectSchema(experiencesTable);
-export const insertExperienceSchema = createInsertSchema(experiencesTable);
-
-export const selectMessageSchema = createSelectSchema(messagesTable);
-export const insertMessageSchema = createInsertSchema(messagesTable);
+// Note: Internal table schemas are NOT exported to avoid leaking DB structure (A5).
+// Use the manually defined API schemas instead.
 
 export const auditLogSchema = z.object({
   id: z.number(),
-  action: z.enum(["CREATE", "UPDATE", "DELETE", "OTHER"]),
+  action: z.enum(["CREATE", "UPDATE", "DELETE", "LOGIN_SUCCESS", "LOGIN_FAILED", "LOGOUT", "OTHER"]),
   entity: z.string().min(1).max(50),
   entityId: z.number().nullable().optional(),
   oldValues: z.record(z.unknown()).nullable().optional(),
   newValues: z.record(z.unknown()).nullable().optional(),
   createdAt: z.coerce.date(),
 });
-
-export const selectMindsetSchema = createSelectSchema(mindsetTable);
-export const insertMindsetSchema = createInsertSchema(mindsetTable);
-
-export const selectEmailTemplateSchema = createSelectSchema(emailTemplatesTable);
-export const insertEmailTemplateSchema = createInsertSchema(emailTemplatesTable);
-
-export const selectSeoSettingsSchema = createSelectSchema(seoSettingsTable);
-export const insertSeoSettingsSchema = createInsertSchema(seoSettingsTable);
-
-export const selectArticleSchema = createSelectSchema(articlesTable);
-export const insertArticleSchema = createInsertSchema(articlesTable);
-
-export const selectArticleTagSchema = createSelectSchema(articleTagsTable);
-export const insertArticleTagSchema = createInsertSchema(articleTagsTable);
-
-export const selectServiceSchema = createSelectSchema(servicesTable);
-export const insertServiceSchema = createInsertSchema(servicesTable);
-
-export const selectSubscriberSchema = createSelectSchema(subscribersTable);
-export const insertSubscriberSchema = createInsertSchema(subscribersTable);
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -557,8 +522,8 @@ function sanitizeCss(css: string | null | undefined): string | null {
     .replace(/@namespace\b/gi, '/* namespace-stripped */');
 }
 
-export const selectScopeRequestSchema = createSelectSchema(scopeRequestsTable);
-export const insertScopeRequestSchema = createInsertSchema(scopeRequestsTable);
+
+// Note: Internal table schemas are NOT exported to avoid leaking DB structure.
 
 export const scopeRequestSchema = z.object({
   id: z.number(),

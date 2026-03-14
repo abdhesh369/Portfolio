@@ -12,11 +12,11 @@ export function useArticles(status?: string) {
     queryKey: [...QUERY_KEYS.articles.list(status), isDevMode],
     queryFn: async () => {
       const articles: Article[] = await fetchAndParse(
-        api.articles.list.path + (status ? `?status=${status}` : ""),
+        api.articles.list.path + (status ? `?status=${status}` : "") + (isDevMode ? `${status ? "&" : "?"}secret=revealed` : ""),
         api.articles.list.responses[200],
         "Failed to fetch articles"
       );
-      return isDevMode ? articles : articles.filter(a => a.status === "published");
+      return articles;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

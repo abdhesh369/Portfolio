@@ -22,6 +22,14 @@ export class ProjectService {
     }
 
     /**
+     * Retrieves all projects including hidden ones.
+     */
+    async getAllAdmin(): Promise<Project[]> {
+        const key = CacheService.key(FEATURE, LIST_NAMESPACE, "admin");
+        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAllAdmin());
+    }
+
+    /**
      * Retrieves a single project by its ID.
      * @param id - The project ID
      * @returns The matching project or null if not found

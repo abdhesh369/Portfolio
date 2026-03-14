@@ -7,7 +7,6 @@ import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { parseIntParam } from "../lib/params.js";
 
-const router = Router();
 
 import { validateBody } from "../middleware/validate.js";
 import { cachePublic } from "../middleware/cache.js";
@@ -23,12 +22,15 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req: Request, res: Response) => {
       const sortSchema = z.enum(["views", "default"]).optional().default("default");
       const sortBy = sortSchema.parse(req.query.sort);
-      const projects = await projectService.getAll(sortBy);
+      const isSecretMode = req.query.secret === "revealed";
+
+      const projects = isSecretMode
+        ? await projectService.getAllAdmin()
+        : await projectService.getAll(sortBy);
+
       res.json(projects);
     })
   );
-
-  // Static named routes BEFORE dynamic :id routes
 
   // POST /projects - Create project
   app.post(
@@ -108,8 +110,11 @@ export function registerProjectRoutes(app: Router) {
     asyncHandler(async (req, res) => {
       const id = parseIntParam(res, req.params.id, "project ID");
             if (id === null) return;
+      
+      const isSecretMode = req.query.secret === "revealed";
       const project = await projectService.getById(id);
-      if (!project) {
+      
+      if (!project || (project.isHidden && !isSecretMode)) {
         res.status(404).json({ success: false, message: "Project not found" });
         return;
       }
