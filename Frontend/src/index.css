@@ -381,10 +381,6 @@
       linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
   }
-
-  .cyber-badge {
-    @apply px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5;
-  }
 }
 
 /* ==================== CUSTOM SCROLLBAR ==================== */
@@ -417,17 +413,6 @@
 
 @layer utilities {
 
-  /* Text Gradient */
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right,
-        hsl(var(--primary)),
-        hsl(263 70% 60%),
-        hsl(239 84% 67%));
-    background-size: 200% 200%;
-    animation: gradient-x 15s ease infinite;
-  }
-
   /* Gradient Backgrounds */
   .bg-gradient-primary {
     background: linear-gradient(135deg,
@@ -435,31 +420,13 @@
         hsl(270 100% 65%)); /* More vibrant purple for better contrast */
   }
 
-  .bg-gradient-secondary {
-    background: linear-gradient(135deg,
-        hsl(var(--secondary)),
-        hsl(var(--muted)));
-  }
-
   /* Animations */
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
 
-  .animate-pulse-slow {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in forwards;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out forwards;
-  }
-
-  .animate-slide-down {
-    animation: slideDown 0.5s ease-out forwards;
   }
 
   /* Utilities */
@@ -477,27 +444,6 @@
 
   /* ---- Micro-Interactions (Fix #12) ---- */
 
-  /* Button shimmer on hover */
-  .btn-shimmer {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-shimmer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .btn-shimmer:hover::after {
-    left: 120%;
-  }
-
   /* Card hover glow (brand gradient) */
   .card-glow-hover {
     position: relative;
@@ -513,15 +459,9 @@
   .text-shadow-glow {
     text-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.15);
   }
-
-  /* Premium Tilt Animation */
+  /* Premium Tilt Animation */
   .animate-tilt {
     animation: tilt 10s infinite linear;
-  }
-
-  /* Glitch Glow */
-  .glitch-glow {
-    animation: glitch-glow 4s infinite;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
@@ -540,22 +480,7 @@
 
 /* ==================== KEYFRAME ANIMATIONS ==================== */
 
-@keyframes gradient-x {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -576,38 +501,18 @@
   }
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 @keyframes scan {
   from { transform: translateY(-100%); }
   to { transform: translateY(100%); }
 }
 
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== PRINT STYLES ==================== */
@@ -625,7 +530,6 @@
 /* ==================== REDUCED MOTION ==================== */
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -634,129 +538,6 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* ==================== SKILL TREE STYLES ==================== */
-
-:root {
-  /* Skill Tree Colors */
-  --skill-cyan: 188 100% 50%;
-  --skill-magenta: 300 100% 50%;
-  --skill-purple: 270 100% 60%;
-  --skill-dark: 240 50% 8%;
-}
-
-/* Skill tree specific animations */
-@keyframes glow-pulse {
-
-  0%,
-  100% {
-    filter: drop-shadow(0 0 10px currentColor);
-    opacity: 0.8;
-  }
-
-  50% {
-    filter: drop-shadow(0 0 25px currentColor);
-    opacity: 1;
-  }
-}
-
-@keyframes crystal-shimmer {
-
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: translateY(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translateY(-2px);
-  }
-}
-
-@keyframes particle-drift {
-  0% {
-    transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(-100px) translateX(20px);
-    opacity: 0;
-  }
-}
-
-@keyframes hexagon-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
-}
-
-/* Hexagon clip path utility */
-.clip-hexagon {
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
-/* Glow utilities for skill tree */
-.glow-cyan {
-  box-shadow: 0 0 20px hsl(var(--skill-cyan) / 0.5),
-    0 0 40px hsl(var(--skill-cyan) / 0.3),
-    inset 0 0 20px hsl(var(--skill-cyan) / 0.1);
-}
-
-.glow-purple {
-  box-shadow: 0 0 20px hsl(var(--skill-purple) / 0.5),
-    0 0 40px hsl(var(--skill-purple) / 0.3),
-    inset 0 0 20px hsl(var(--skill-purple) / 0.1);
-}
-
-.glow-magenta {
-  box-shadow: 0 0 20px hsl(var(--skill-magenta) / 0.5),
-    0 0 40px hsl(var(--skill-magenta) / 0.3),
-    inset 0 0 20px hsl(var(--skill-magenta) / 0.1);
-}
-
-/* Glass panel for skill tree stats */
-.skill-glass-panel {
-  background: linear-gradient(135deg,
-      rgba(20, 20, 40, 0.8) 0%,
-      rgba(40, 20, 60, 0.6) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(100, 100, 150, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* Skill tree text glow */
-.text-glow-cyan {
-  text-shadow: 0 0 10px hsl(var(--skill-cyan)),
-    0 0 20px hsl(var(--skill-cyan) / 0.5);
 }
 
 /* ==================== SYNTAX HIGHLIGHTING (HLJS) ==================== */

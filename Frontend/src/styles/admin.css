@@ -90,13 +90,6 @@
   border-radius: 16px;
 }
 
-/* Glassmorphism Utility */
-.glass-panel {
-  background: rgba(13, 13, 26, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
 
 /* Technical Inputs */
 .admin-input {
@@ -250,9 +243,7 @@ h6 {
   color: var(--admin-text-primary);
 }
 
-.text-satoshi {
-  font-family: var(--font-body);
-}
+
 
 /* Animations */
 @keyframes float-technical {
