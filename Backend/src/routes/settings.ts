@@ -5,6 +5,7 @@ import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { validateBody } from "../middleware/validate.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 const router = Router();
 
@@ -69,6 +70,7 @@ export function registerSettingsRoutes(app: Router) {
             const newSettings = await settingsService.updateSettings(req.body);
 
             recordAudit("UPDATE", "site_settings", newSettings.id, oldSettings, req.body);
+            syncSeedData("siteSettings", newSettings);
 
             res.json({
                 success: true,

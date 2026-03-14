@@ -6,6 +6,7 @@ import { parseIntParam } from "../lib/params.js";
 import { cachePublic } from "../middleware/cache.js";
 import { experienceService } from "../services/experience.service.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 export function registerExperienceRoutes(app: Router) {
     // GET /experiences - Get all experiences
@@ -42,6 +43,7 @@ export function registerExperienceRoutes(app: Router) {
             const data = insertExperienceApiSchema.parse(req.body);
             const experience = await experienceService.create(data);
             recordAudit("CREATE", "experience", experience.id, null, data as Record<string, unknown>);
+            syncSeedData("experiences", experience);
             res.status(201).json({
                 success: true,
                 message: "Experience created successfully",
@@ -60,6 +62,7 @@ export function registerExperienceRoutes(app: Router) {
             const data = insertExperienceApiSchema.partial().parse(req.body);
             const experience = await experienceService.update(id, data);
             recordAudit("UPDATE", "experience", id, null, data as Record<string, unknown>);
+            syncSeedData("experiences", experience);
             res.json({
                 success: true,
                 message: "Experience updated successfully",

@@ -9,6 +9,7 @@ import { parseIntParam } from "../lib/params.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 export function registerSkillRoutes(app: Router) {
     // GET /api/skills/connections - List all skill connections
@@ -55,6 +56,7 @@ export function registerSkillRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const skill = await skillService.create(req.body);
             recordAudit("CREATE", "skill", skill.id, null, req.body);
+            syncSeedData("skills", skill);
             res.status(201).json({
                 success: true,
                 message: "Skill created successfully",
@@ -73,6 +75,7 @@ export function registerSkillRoutes(app: Router) {
             if (id === null) return;
             const skill = await skillService.update(id, req.body);
             recordAudit("UPDATE", "skill", id, null, req.body);
+            syncSeedData("skills", skill);
             res.json({
                 success: true,
                 message: "Skill updated successfully",

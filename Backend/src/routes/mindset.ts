@@ -7,6 +7,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { validateBody } from "../middleware/validate.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 export function registerMindsetRoutes(app: Router) {
     // GET /api/mindset - Get mindset data
@@ -27,6 +28,7 @@ export function registerMindsetRoutes(app: Router) {
         asyncHandler(async (req, res) => {
             const mindset = await mindsetService.create(req.body);
             recordAudit("CREATE", "mindset", mindset.id, null, req.body as Record<string, unknown>);
+            syncSeedData("mindsets", mindset);
             res.status(201).json({
                 success: true,
                 message: "Mindset principle created successfully",
@@ -64,6 +66,7 @@ export function registerMindsetRoutes(app: Router) {
             if (id === null) return;
             const mindset = await mindsetService.update(id, req.body);
             recordAudit("UPDATE", "mindset", id, null, req.body as Record<string, unknown>);
+            syncSeedData("mindsets", mindset);
             res.json({
                 success: true,
                 message: "Mindset principle updated successfully",
@@ -85,4 +88,3 @@ export function registerMindsetRoutes(app: Router) {
         })
     );
 }
-

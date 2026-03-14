@@ -7,6 +7,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { validateBody } from "../middleware/validate.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 export function registerEmailTemplateRoutes(app: Router) {
     // GET /email-templates - List all templates (admin only)
@@ -48,6 +49,7 @@ export function registerEmailTemplateRoutes(app: Router) {
 
             // Audit log (A4)
             recordAudit("CREATE", "email_template", template.id, null, req.body);
+            syncSeedData("emailTemplates", template);
 
             res.status(201).json({
                 success: true,
@@ -69,6 +71,7 @@ export function registerEmailTemplateRoutes(app: Router) {
 
             // Audit log (A4)
             recordAudit("UPDATE", "email_template", id, null, req.body);
+            syncSeedData("emailTemplates", template);
 
             res.json({
                 success: true,

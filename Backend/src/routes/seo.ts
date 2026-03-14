@@ -7,6 +7,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 
 const router = Router();
 
@@ -50,6 +51,7 @@ router.post(
 
         // Audit log (A3)
         recordAudit("CREATE", "seo", settings.id, null, data);
+        syncSeedData("seoSettings", settings);
 
         res.status(201).json({
             success: true,
@@ -71,6 +73,7 @@ router.patch(
 
         // Audit log (A3)
         recordAudit("UPDATE", "seo", id, null, data);
+        syncSeedData("seoSettings", updated);
 
         res.json({
             success: true,

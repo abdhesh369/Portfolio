@@ -11,6 +11,7 @@ import { parseIntParam } from "../lib/params.js";
 import { validateBody } from "../middleware/validate.js";
 import { cachePublic } from "../middleware/cache.js";
 import { recordAudit } from "../lib/audit.js";
+import { syncSeedData } from "../lib/sync-seed.js";
 import { logger } from "../lib/logger.js";
 import { redis } from "../lib/redis.js";
 
@@ -157,6 +158,7 @@ export function registerProjectRoutes(app: Router) {
             if (id === null) return;
       const project = await projectService.update(id, req.body);
       recordAudit("UPDATE", "project", id, null, req.body);
+      syncSeedData("projects", project);
       res.json({
         success: true,
         message: "Project updated successfully",
