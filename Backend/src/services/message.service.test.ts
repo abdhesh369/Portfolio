@@ -68,8 +68,8 @@ describe("MessageService", () => {
                 email: "bot@spam.com",
                 message: "Buy stuff",
                 subject: "Spam",
-                website: "http://spam.com", // honeypot filled
-            };
+                _bnt_id: "bot_detection_triggered", // honeypot filled
+            } as any;
 
             await expect(service.create(input)).rejects.toThrow("Message rejected");
             expect(mockCreate).not.toHaveBeenCalled();

@@ -27,7 +27,6 @@ const BackToTop = lazy(() => import("@/components/BackToTop"));
 const SectionReveal = lazy(() => import("@/components/SectionReveal"));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
 import { GithubHeatmap } from "@/components/GithubHeatmap";
-import { CurrentlyBuildingTicker } from "@/components/CurrentlyBuildingTicker";
 import { ReadingList } from "@/components/ReadingList";
 import { StressTest } from "@/components/StressTest";
 import { LiveActivityTicker } from "@/components/LiveActivityTicker";
@@ -162,6 +161,8 @@ const SECTION_MAP: Record<string, React.ReactNode> = {
   contact: <SafeSection name="Contact"><Contact /></SafeSection>,
   "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
   "live-activity": <LiveActivityTicker />,
+  "reading-list": <ReadingList />,
+  "github-heatmap": <GithubHeatmap />,
 };
 
 export default function Home() {
@@ -172,9 +173,9 @@ export default function Home() {
 
   // Define persona-specific order overrides
   const PERSONA_ORDERS: Record<string, string[]> = {
-    recruiter: ['hero', 'live-activity', 'experience', 'skills', 'about', 'projects', 'testimonials', 'stress-test', 'contact', 'reading-list'],
-    client: ['hero', 'live-activity', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
-    developer: ['hero', 'live-activity', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
+    recruiter: ['hero', 'live-activity', 'github-heatmap', 'experience', 'skills', 'about', 'projects', 'testimonials', 'stress-test', 'contact', 'reading-list'],
+    client: ['hero', 'live-activity', 'github-heatmap', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
+    developer: ['hero', 'live-activity', 'github-heatmap', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
   };
 
   // Build section order: admin-saved order takes priority, fall back to defaults
@@ -272,11 +273,6 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         
-        <div className="section-container pb-20">
-          <GithubHeatmap />
-          <ReadingList />
-        </div>
-
         <ShortcutHint />
 
         {sectionOrder

@@ -15,6 +15,16 @@ vi.mock("../repositories/client.repository.js", () => ({
         updateProject: vi.fn(),
         findFeedbackByProjectId: vi.fn(),
         createFeedback: vi.fn(),
+        regenerateToken: vi.fn(),
+    },
+}));
+
+vi.mock("./email.service.js", () => ({
+    emailService: {
+        sendClientPortalInvite: vi.fn().mockResolvedValue(undefined),
+        sendProjectUpdateAlert: vi.fn().mockResolvedValue(undefined),
+        sendAdminFeedbackAlert: vi.fn().mockResolvedValue(undefined),
+        sendTestimonialRequest: vi.fn().mockResolvedValue(undefined),
     },
 }));
 
@@ -43,6 +53,7 @@ describe("ClientService", () => {
         it("should call repository.create", async () => {
             const mockCreate = vi.mocked(clientRepository.create);
             const data = { name: "Test", email: "test@example.com" };
+            mockCreate.mockResolvedValue({ ...data, id: 1, rawToken: "tok" } as any);
             await service.createClient(data);
             expect(mockCreate).toHaveBeenCalledWith(data);
         });

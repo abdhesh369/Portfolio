@@ -62,6 +62,10 @@ vi.mock("../middleware/csrf.js", () => ({
     csrfProtection: vi.fn((_req: any, _res: any, next: any) => next()),
 }));
 
+vi.mock("../lib/async-handler.js", () => ({
+    asyncHandler: (fn: any) => fn,
+}));
+
 vi.mock("express-rate-limit", () => ({
     authLimiter: (_req: any, _res: any, next: any) => next(),
 }));
@@ -197,13 +201,14 @@ describe("Auth Routes - Refresh Token Flow", () => {
             expect(ctx.cookies.auth_token).toBeDefined();
         });
 
-        it("returns 401 when no refresh token cookie", async () => {
+        it("returns success: false when no refresh token cookie", async () => {
             const handler = getRouteHandler("post", "/refresh");
             const req = mockReq({ cookies: {} });
             const { res, ctx } = mockRes();
             await handler!(req, res);
 
-            expect(ctx.statusCode).toBe(401);
+            expect(ctx.statusCode).toBe(200);
+            expect(ctx.body.success).toBe(false);
         });
     });
 

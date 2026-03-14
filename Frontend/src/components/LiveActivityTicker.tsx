@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Github, Terminal, GitCommit, FileCode, Plus, Minus, Activity } from "lucide-react";
+import { Github, Terminal, GitCommit, FileCode, Plus, Minus, Activity, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/api-helpers";
 
@@ -106,7 +106,17 @@ export const LiveActivityTicker: React.FC = () => {
 
             {activity.stats && (
                <div className="pt-4 mt-4 border-t border-[#30363d] flex items-center justify-between text-[10px] text-[#8b949e]">
-                  <span>Total Changes: {activity.stats.total}</span>
+                  <div className="flex items-center gap-4">
+                     <span>Total Changes: {activity.stats.total}</span>
+                     <a 
+                       href={`https://github.com/${activity.repo}`} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-[#58a6ff] hover:underline flex items-center gap-1"
+                     >
+                       View Repository <ExternalLink className="w-2.5 h-2.5" />
+                     </a>
+                  </div>
                   <div className="flex items-center gap-2">
                     <div className="w-32 h-1.5 rounded-full bg-[#30363d] overflow-hidden flex">
                         <div 
