@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { renderHook, waitFor, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { useVisitorCount } from "./use-visitor-count";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -10,9 +10,9 @@ class MockEventSource {
     onmessage: ((ev: MessageEvent) => void) | null = null;
     addEventListener = vi.fn();
     close = vi.fn();
+    static latestInstance: MockEventSource | null = null;
     constructor(_url: string | URL, _options?: Record<string, unknown>) {
-        // Use a microtask to fire onopen so it's more predictable than setTimeout
-        queueMicrotask(() => { if (this.onopen) this.onopen(new Event("open")); });
+        MockEventSource.latestInstance = this;
     }
 }
 vi.stubGlobal("EventSource", MockEventSource);
@@ -23,7 +23,7 @@ global.fetch = vi.fn();
 describe("useVisitorCount", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.useFakeTimers();
+        MockEventSource.latestInstance = null;
     });
 
     afterEach(() => {
@@ -32,7 +32,7 @@ describe("useVisitorCount", () => {
 
     it("should initialize with 0 and connect to SSE", async () => {
         const { result } = renderHook(() => useVisitorCount());
-        await waitFor(() => expect(result.current.count).toBe(0));
+        expect(result.current.count).toBe(0);
     });
 
     it("should update count when receiving SSE message", async () => {
@@ -44,37 +44,24 @@ describe("useVisitorCount", () => {
                     if (event === "count") countListener = cb;
                 });
             }
-            close = vi.fn();
         };
         vi.stubGlobal("EventSource", CustomMock);
 
         const { result } = renderHook(() => useVisitorCount());
 
-        // Simulate SSE message
         act(() => {
             if (countListener) {
                 countListener({ data: JSON.stringify({ count: 42 }) });
             }
         });
 
-        await waitFor(() => expect(result.current.count).toBe(42));
+        expect(result.current.count).toBe(42);
         vi.stubGlobal("EventSource", MockEventSource);
     });
 
-    it("should fallback to polling on SSE error", async () => {
-        const CustomMock = class extends MockEventSource {
-            constructor(url: string | URL, options?: Record<string, unknown>) {
-                super(url, options);
-                setTimeout(() => {
-                    act(() => {
-                        if (this.onerror) this.onerror(new Event("error"));
-                    });
-                }, 0);
-            }
-            close = vi.fn();
-        };
-        vi.stubGlobal("EventSource", CustomMock);
-
+    it("should fallback to polling on SSE error after retries", async () => {
+        vi.useFakeTimers();
+        
         vi.mocked(global.fetch).mockResolvedValue({
             ok: true,
             json: async () => ({ count: 10 })
@@ -82,16 +69,28 @@ describe("useVisitorCount", () => {
 
         const { result } = renderHook(() => useVisitorCount());
 
-        // Fast-forward through retries one by one to avoid infinite loops if it misbehaves
-        for (let i = 0; i < 5; i++) {
+        // We need 4 failures to switch to polling
+        for (let i = 0; i < 4; i++) {
             act(() => {
-                vi.advanceTimersByTime(11000);
+                if (MockEventSource.latestInstance?.onerror) {
+                    MockEventSource.latestInstance.onerror(new Event("error"));
+                }
             });
-            await Promise.resolve();
+
+            act(() => {
+                vi.runOnlyPendingTimers();
+            });
         }
 
-        await waitFor(() => expect(result.current.isPolling).toBe(true));
+        // Wait for fetch to resolve
+        await act(async () => {
+            await Promise.resolve();
+        });
+
+        expect(result.current.isPolling).toBe(true);
         expect(result.current.count).toBe(10);
+        
+        vi.useRealTimers();
         vi.stubGlobal("EventSource", MockEventSource);
     });
 });

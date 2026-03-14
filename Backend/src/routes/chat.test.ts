@@ -63,7 +63,8 @@ describe("buildSystemPrompt", () => {
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleArticles).then(f) } as any)
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleProjects).then(f) } as any)
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleSkills).then(f) } as any)
-            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleExperiences).then(f) } as any);
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleExperiences).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([{ personalName: "Abdhesh" }]).then(f) } as any);
 
         const result = await buildSystemPrompt();
 
@@ -82,7 +83,8 @@ describe("buildSystemPrompt", () => {
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any)
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([{ title: "BigProject", description: longDesc }]).then(f) } as any)
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any)
-            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any);
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([]).then(f) } as any)
+            .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([{ personalName: "Abdhesh" }]).then(f) } as any);
 
         const result = await buildSystemPrompt();
 

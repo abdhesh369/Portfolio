@@ -25,8 +25,8 @@ describe("getIsProd", () => {
 
   it("returns true when RENDER env var is set", () => {
     process.env.RENDER = "true";
-    expect(getIsProd()).toBe(false); // no NODE_ENV=production
-    // but with req:
+    expect(getIsProd()).toBe(true); 
+    // and also with req:
     expect(getIsProd(mockReq())).toBe(true);
   });
 

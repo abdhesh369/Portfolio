@@ -202,13 +202,15 @@ export const registerChatRoutes = (router: Router) => {
     // POST /api/v1/chat/save-session - Save a chat session to logs
     router.post("/chat/save-session", asyncHandler(async (req: Request, res: Response) => {
         const schema = z.object({
+            sessionId: z.string().default(() => `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
             history: z.array(z.any()),
             sessionMetadata: z.any().optional(),
         });
 
-        const { history, sessionMetadata } = schema.parse(req.body);
+        const { sessionId, history, sessionMetadata } = schema.parse(req.body);
 
         const log = await chatRepository.create({
+            sessionId,
             messages: history,
             metadata: sessionMetadata || {},
         });
