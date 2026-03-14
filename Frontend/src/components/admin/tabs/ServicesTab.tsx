@@ -11,6 +11,9 @@ const emptyService = {
   tagsInput: "",
   displayOrder: 0,
   isFeatured: false,
+  priceMin: null as number | null,
+  priceMax: null as number | null,
+  ctaUrl: "",
 };
 
 import type { AdminTabProps } from "./types";
@@ -46,6 +49,9 @@ export function ServicesTab(_props: AdminTabProps) {
       category: editing.category,
       displayOrder: editing.displayOrder ?? 0,
       isFeatured: Boolean(editing.isFeatured),
+      priceMin: editing.priceMin ? Number(editing.priceMin) : null,
+      priceMax: editing.priceMax ? Number(editing.priceMax) : null,
+      ctaUrl: editing.ctaUrl || null,
       tags,
     };
 
@@ -115,24 +121,34 @@ export function ServicesTab(_props: AdminTabProps) {
             onChange={(v) => setEditing(prev => prev ? { ...prev, tagsInput: v } : null)}
             placeholder="backend, scaling, architecture"
           />
-          <div className="grid md:grid-cols-2 gap-10">
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-10">
             <FormField
-              label="Display Order"
+              label="Minimum Price ($)"
               type="number"
-              value={String(editing.displayOrder ?? 0)}
+              value={editing.priceMin?.toString() || ""}
               onChange={(v) =>
-                setEditing(prev => prev ? { ...prev, displayOrder: Number(v) || 0 } : null)
+                setEditing(prev => prev ? { ...prev, priceMin: v ? Number(v) : null } : null)
               }
             />
-            <div className="pt-8">
-              <FormCheckbox
-                label="Highlight as featured service"
-                checked={Boolean(editing.isFeatured)}
-                onChange={(checked) =>
-                  setEditing(prev => prev ? { ...prev, isFeatured: checked } : null)
-                }
-              />
-            </div>
+            <FormField
+              label="Maximum Price ($)"
+              type="number"
+              value={editing.priceMax?.toString() || ""}
+              onChange={(v) =>
+                setEditing(prev => prev ? { ...prev, priceMax: v ? Number(v) : null } : null)
+              }
+            />
+            <FormField
+              label="CTA URL (Booking Link)"
+              value={editing.ctaUrl || ""}
+              onChange={(v) =>
+                setEditing(prev => prev ? { ...prev, ctaUrl: v } : null)
+              }
+              placeholder="https://cal.com/..."
+            />
           </div>
 
           <div className="flex gap-6 pt-6 border-t border-black/5">
@@ -189,6 +205,8 @@ export function ServicesTab(_props: AdminTabProps) {
                 <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">{svc.category}</p>
                 <p className="text-[9px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest mt-1">
                   Order_Index: {svc.displayOrder ?? 0}
+                  {svc.priceMin && ` | Starting_At: $${svc.priceMin}`}
+                  {svc.ctaUrl && ` | Has_Booking_Link`}
                 </p>
                 <p className="text-xs text-[var(--admin-text-secondary)] mt-4 line-clamp-2 leading-relaxed">
                   {svc.summary}
