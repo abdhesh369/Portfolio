@@ -2,16 +2,21 @@ import { api } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import { usePersona } from "../use-persona";
 
 export function useProjects(sortBy: string = "default") {
+  const { isDevMode } = usePersona();
+
   return useQuery({
-    queryKey: QUERY_KEYS.projects.list(sortBy),
-    queryFn: () =>
-      fetchAndParse(
+    queryKey: [...QUERY_KEYS.projects.list(sortBy), isDevMode],
+    queryFn: async () => {
+      const projects: any[] = await fetchAndParse(
         `${api.projects.list.path}${sortBy !== "default" ? `?sort=${sortBy}` : ""}`,
         api.projects.list.responses[200],
         "Failed to fetch projects"
-      ),
+      );
+      return isDevMode ? projects : projects.filter(p => !p.isHidden);
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

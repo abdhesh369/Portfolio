@@ -899,3 +899,36 @@
 .api-viewer pre.scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 100, 140, 0.5);
 }
+/* Dev Mode Global Transformation */
+.dev-mode-active {
+  --primary: 142 70% 50% !important; /* Hacker green */
+  --primary-rgb: 34, 197, 94 !important;
+  --primary-glow: rgba(34, 197, 94, 0.4) !important;
+  cursor: crosshair !important;
+}
+
+.dev-mode-active::before {
+  content: 'SYSTEM_DEV_MODE // UNRESTRICTED_ACCESS';
+  position: fixed;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: monospace;
+  font-size: 8px;
+  font-weight: 900;
+  color: #22c55e;
+  z-index: 9999;
+  letter-spacing: 0.5em;
+  pointer-events: none;
+  text-shadow: 0 0 10px #22c55e;
+  opacity: 0.5;
+}
+
+.dev-mode-active .nm-flat, 
+.dev-mode-active .nm-inset,
+.dev-mode-active .nm-button {
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  box-shadow: none !important;
+}
+

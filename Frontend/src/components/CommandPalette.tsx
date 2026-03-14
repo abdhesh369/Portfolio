@@ -10,6 +10,7 @@ import {
 import { useLocation } from "wouter";
 import { m, AnimatePresence } from "framer-motion";
 import { useProjects, useArticles, useAuth } from "@/hooks/use-portfolio";
+import { usePersona } from "@/hooks/use-persona";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useTheme } from "@/components/theme-provider";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,7 @@ export function CommandPalette() {
   const { isAuthenticated } = useAuth();
   const { data: settings } = useSiteSettings();
   const { toast } = useToast();
+  const { toggleDevMode } = usePersona();
 
   const { data: projects = [] } = useProjects();
   const { data: articles = [] } = useArticles("published");
@@ -160,6 +162,21 @@ export function CommandPalette() {
       setTimeout(() => setQuery(""), 200);
     }
   }, [open]);
+
+  // Secret command triggers
+  useEffect(() => {
+    const lowerQuery = query.toLowerCase().trim();
+    if (lowerQuery === "sudo dev-mode" || lowerQuery === "/hack") {
+      toggleDevMode(true);
+      setQuery("");
+      setOpen(false);
+      toast({ title: "Dev Mode Activated", description: "You found the secret entry. System transformation initiated." });
+    } else if (lowerQuery === "sudo logout") {
+      toggleDevMode(false);
+      setQuery("");
+      setOpen(false);
+    }
+  }, [query, toggleDevMode, toast]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -13,6 +13,7 @@ import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
 import { sanitizeCss } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
+import { PersonaSelector } from "@/components/PersonaSelector";
 
 // ─── Chunk-Load Error Boundary ────────────────────────────────────────────
 // Catches React.lazy() failures (network blips, Render redeployment with
@@ -531,7 +532,8 @@ function App() {
               <DeferredChatbot />
               <ReloadPrompt />
               <InstallPrompt />
-              <Toaster />
+               <Toaster />
+              <PersonaSelector />
               <CommandPalette />
               <TerminalOverlay />
             </LazyMotion>
