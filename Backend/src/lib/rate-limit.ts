@@ -107,3 +107,13 @@ export const aiLimiter = createLimiter({
     message: "AI request limit exceeded, please try again in a minute",
     keyPrefix: "ai",
 });
+
+/**
+ * Portal limiter: 10 requests per minute
+ */
+export const portalLimiter = createLimiter({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: "Portal access limit exceeded, please try again in a minute",
+    keyPrefix: "portal",
+});

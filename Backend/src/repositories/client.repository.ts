@@ -76,6 +76,11 @@ export class ClientRepository {
         return results as ClientProject[];
     }
 
+    async findProjectById(id: number): Promise<ClientProject | null> {
+        const [result] = await db.select().from(clientProjectsTable).where(eq(clientProjectsTable.id, id)).limit(1);
+        return (result as ClientProject) ?? null;
+    }
+
     async createProject(data: { clientId: number; title: string; status?: "not_started" | "in_progress" | "review" | "completed"; deadline?: Date; notes?: string }): Promise<ClientProject> {
         const [inserted] = await db.insert(clientProjectsTable).values(data).returning();
         if (!inserted) throw new Error("Failed to create client project");
@@ -99,7 +104,7 @@ export class ClientRepository {
         })) as ClientFeedback[];
     }
 
-    async createFeedback(data: { clientProjectId: number; clientId: number; message: string }): Promise<ClientFeedback> {
+    async createFeedback(data: { clientProjectId: number; clientId: number; message: string; isAdmin?: boolean }): Promise<ClientFeedback> {
         const [inserted] = await db.insert(clientFeedbackTable).values(data).returning();
         if (!inserted) throw new Error("Failed to create feedback");
         return inserted as ClientFeedback;

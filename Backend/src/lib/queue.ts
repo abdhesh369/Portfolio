@@ -116,6 +116,32 @@ export function initQueues() {
                 throw new Error(`Failed to send email: ${error.message}`);
             }
             return data;
+        } else if (type === "admin-notification") {
+            const { to, subject, html } = payload;
+            const { data, error } = await resend.emails.send({
+                from: env.CONTACT_EMAIL, 
+                to: to || env.ADMIN_EMAIL,
+                subject,
+                html
+            });
+
+            if (error) {
+                throw new Error(`Failed to send admin notification: ${error.message}`);
+            }
+            return data;
+        } else if (type === "client-notification") {
+            const { to, subject, html } = payload;
+            const { data, error } = await resend.emails.send({
+                from: env.CONTACT_EMAIL,
+                to,
+                subject,
+                html
+            });
+
+            if (error) {
+                throw new Error(`Failed to send client notification: ${error.message}`);
+            }
+            return data;
         } else if (type === "auto-reply") {
             const { message } = payload;
             

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar } from 'lucide-react';
+import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar, Edit2, Save } from 'lucide-react';
 import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
@@ -18,21 +18,70 @@ interface ClientProject {
 interface ClientFeedback {
     id: number;
     message: string;
+    isAdmin: boolean;
     createdAt: string;
 }
 
 const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
+    const queryClient = useQueryClient();
+    const { toast } = useToast();
+    const [replyText, setReplyText] = useState("");
+    const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
+
     const { data: projects = [], isLoading } = useQuery({
         queryKey: ['admin-client-projects', clientId],
         queryFn: () => apiFetch(`/api/v1/admin/clients/${clientId}/projects`).then(res => res.data)
     });
 
-    const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
-
     const { data: feedback = [], isLoading: loadingFeedback } = useQuery({
         queryKey: ['admin-client-feedback', expandedProjectId],
         queryFn: () => expandedProjectId ? apiFetch(`/api/v1/admin/client-projects/${expandedProjectId}/feedback`).then(res => res.data) : Promise.resolve([]),
         enabled: !!expandedProjectId
+    });
+
+    const replyMutation = useMutation({
+        mutationFn: (data: { projectId: number, message: string }) => 
+            apiFetch(`/api/v1/admin/client-projects/${data.projectId}/feedback`, { 
+                method: 'POST', 
+                body: JSON.stringify({ message: data.message }) 
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-client-feedback', expandedProjectId] });
+            setReplyText("");
+            toast({ title: "Sent", description: "Admin reply sent successfully." });
+        }
+    });
+
+    const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
+    const [editForm, setEditForm] = useState<{ status: string; deadline: string }>({ status: '', deadline: '' });
+    const [showCreateProject, setShowCreateProject] = useState(false);
+    const [createProjectForm, setCreateProjectForm] = useState({ title: '', status: 'not_started', deadline: '', notes: '' });
+
+    const updateProjectMutation = useMutation({
+        mutationFn: (data: { id: number; status: string; deadline?: string }) => 
+            apiFetch(`/api/v1/admin/client-projects/${data.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-client-projects', clientId] });
+            setEditingProjectId(null);
+            toast({ title: "Updated", description: "Project updated successfully." });
+        }
+    });
+
+    const createProjectMutation = useMutation({
+        mutationFn: (data: typeof createProjectForm) => 
+            apiFetch(`/api/v1/admin/client-projects`, {
+                method: 'POST',
+                body: JSON.stringify({ ...data, clientId, deadline: data.deadline ? new Date(data.deadline).toISOString() : undefined })
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-client-projects', clientId] });
+            setShowCreateProject(false);
+            setCreateProjectForm({ title: '', status: 'not_started', deadline: '', notes: '' });
+            toast({ title: "Created", description: "New project assigned successfully." });
+        }
     });
 
     if (isLoading) return <div className="p-4 text-xs text-muted-foreground animate-pulse">Loading projects...</div>;
@@ -41,6 +90,27 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
         return <div className="p-4 text-xs text-muted-foreground italic">No projects assigned to this client yet.</div>;
     }
 
+    const handleSendReply = (projectId: number) => {
+        if (!replyText.trim()) return;
+        replyMutation.mutate({ projectId, message: replyText });
+    };
+
+    const startEditing = (project: ClientProject) => {
+        setEditingProjectId(project.id);
+        setEditForm({ 
+            status: project.status, 
+            deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '' 
+        });
+    };
+
+    const handleSaveUpdate = (id: number) => {
+        updateProjectMutation.mutate({ 
+            id, 
+            status: editForm.status, 
+            deadline: editForm.deadline ? new Date(editForm.deadline).toISOString() : undefined 
+        });
+    };
+
     return (
         <div className="space-y-3 p-4 bg-slate-900/40 rounded-xl border border-slate-800/80 mt-4 animate-in fade-in slide-in-from-top-2">
             <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
@@ -48,57 +118,155 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
             </h4>
             {projects.map((project: ClientProject) => {
                 const isExpanded = expandedProjectId === project.id;
+                const isEditing = editingProjectId === project.id;
+                
                 return (
                     <div key={project.id} className={cn("border border-slate-800/60 rounded-lg overflow-hidden transition-all", isExpanded ? "bg-slate-900/80" : "bg-slate-950/30 hover:bg-slate-900/50")}>
-                        <button 
-                            onClick={() => setExpandedProjectId(isExpanded ? null : project.id)}
-                            className="w-full flex items-center justify-between p-3 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
-                        >
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-                                <span className="font-bold text-sm text-slate-200">{project.title}</span>
-                                <span className={cn(
-                                    "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm border w-fit",
-                                    project.status === 'completed' ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/10" :
-                                    project.status === 'in_progress' ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/10" :
-                                    project.status === 'review' ? "text-amber-400 border-amber-500/20 bg-amber-500/10" :
-                                    "text-slate-400 border-slate-500/20 bg-slate-500/10"
-                                )}>
-                                    {project.status.replace('_', ' ')}
-                                </span>
+                        <div className="w-full flex items-center p-3">
+                            <button 
+                                onClick={() => setExpandedProjectId(isExpanded ? null : project.id)}
+                                className="flex-1 flex items-center justify-between text-left focus:outline-none"
+                            >
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                                    <span className="font-bold text-sm text-slate-200">{project.title}</span>
+                                    {!isEditing && (
+                                        <span className={cn(
+                                            "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm border w-fit",
+                                            project.status === 'completed' ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/10" :
+                                            project.status === 'in_progress' ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/10" :
+                                            project.status === 'review' ? "text-amber-400 border-amber-500/20 bg-amber-500/10" :
+                                            "text-slate-400 border-slate-500/20 bg-slate-500/10"
+                                        )}>
+                                            {project.status.replace('_', ' ')}
+                                        </span>
+                                    )}
+                                </div>
+                            </button>
+                            
+                            <div className="flex items-center gap-2 ml-4">
+                                {!isEditing ? (
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); startEditing(project); }}
+                                        className="p-1.5 hover:bg-slate-800 rounded-md text-slate-500 hover:text-indigo-400 transition-colors"
+                                        title="Edit project"
+                                    >
+                                        <Edit2 size={12} />
+                                    </button>
+                                ) : (
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleSaveUpdate(project.id); }}
+                                        disabled={updateProjectMutation.isPending}
+                                        className="p-1.5 hover:bg-emerald-500/20 rounded-md text-emerald-500 transition-colors"
+                                        title="Save changes"
+                                    >
+                                        <Save size={12} />
+                                    </button>
+                                )}
+                                <div className="text-muted-foreground ml-1">
+                                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                </div>
                             </div>
-                            <div className="text-muted-foreground">
-                                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </div>
+
+                        {isEditing && (
+                            <div className="px-3 pb-3 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Status</label>
+                                    <select 
+                                        value={editForm.status}
+                                        onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 appearance-none"
+                                    >
+                                        <option value="not_started">Not Started</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="review">Review</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Deadline</label>
+                                    <input 
+                                        type="date"
+                                        value={editForm.deadline}
+                                        onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 color-scheme-dark"
+                                    />
+                                </div>
+                                <div className="sm:col-span-2 flex justify-end gap-2 mt-1">
+                                    <button 
+                                        onClick={() => setEditingProjectId(null)}
+                                        className="text-[10px] text-slate-500 hover:text-slate-300 font-bold uppercase tracking-widest"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
                             </div>
-                        </button>
+                        )}
 
                         {isExpanded && (
                             <div className="px-3 pb-3 pt-1 border-t border-slate-800/50 animate-in slide-in-from-top-1">
-                                {project.deadline && (
+                                {project.deadline && !isEditing && (
                                     <div className="flex items-center gap-2 text-[10px] text-slate-500/80 font-mono mb-3 uppercase font-bold tracking-widest">
                                         <Calendar size={10} /> Deadline: {formatDate(project.deadline)}
                                     </div>
                                 )}
                                 
-                                <div className="space-y-2 mt-4">
+                                <div className="space-y-4 mt-4">
                                     <h5 className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-widest">
-                                        <MessageSquare size={10} /> Client Feedback
+                                        <MessageSquare size={10} /> Feedback Timeline
                                     </h5>
                                     
                                     {loadingFeedback ? (
                                          <div className="text-xs text-muted-foreground animate-pulse pl-4">Loading feedback...</div>
-                                    ) : feedback.length === 0 ? (
-                                        <div className="text-xs text-slate-500 italic pl-4 border-l-2 border-slate-800 py-1">No feedback submitted yet.</div>
                                     ) : (
-                                        <div className="space-y-3">
-                                            {(feedback as ClientFeedback[]).map(f => (
-                                                <div key={f.id} className="bg-slate-950/50 border border-slate-800/80 p-3 rounded-lg relative">
-                                                    <div className="absolute -left-[17px] top-4 w-4 h-[1px] bg-slate-800" />
-                                                    <div className="text-xs text-slate-300 whitespace-pre-wrap">{f.message}</div>
-                                                    <div className="mt-2 text-[9px] text-slate-500/80 font-mono flex items-center gap-1 uppercase font-bold">
-                                                        <Clock size={8} /> {formatDate(f.createdAt)}
-                                                    </div>
+                                        <div className="space-y-4">
+                                            {feedback.length === 0 ? (
+                                                <div className="text-xs text-slate-500 italic pl-4 border-l-2 border-slate-800 py-1">No feedback submitted yet.</div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {(feedback as ClientFeedback[]).map(f => (
+                                                        <div key={f.id} className={cn(
+                                                            "p-3 rounded-xl relative border max-w-[90%] transition-all",
+                                                            f.isAdmin 
+                                                                ? "bg-indigo-500/10 border-indigo-500/20 ml-auto rounded-tr-none" 
+                                                                : "bg-slate-950/50 border-slate-800/80 mr-auto rounded-tl-none"
+                                                        )}>
+                                                            <div className={cn(
+                                                                "text-[8px] font-black uppercase tracking-tighter mb-1",
+                                                                f.isAdmin ? "text-indigo-400" : "text-slate-500"
+                                                            )}>
+                                                                {f.isAdmin ? "YOU (ADMIN)" : "CLIENT"}
+                                                            </div>
+                                                            <div className="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">{f.message}</div>
+                                                            <div className="mt-2 text-[8px] text-slate-500/60 font-mono flex items-center gap-1 uppercase font-bold">
+                                                                <Clock size={8} /> {formatDate(f.createdAt)}
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
+                                            )}
+
+                                            {/* Admin Reply Input */}
+                                            <div className="pt-4 border-t border-slate-800/40">
+                                                <div className="flex gap-2">
+                                                    <textarea 
+                                                        value={replyText}
+                                                        onChange={(e) => setReplyText(e.target.value)}
+                                                        placeholder="Write a reply..."
+                                                        className="w-full bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-600 resize-none h-20"
+                                                    />
+                                                </div>
+                                                <div className="flex justify-end mt-2">
+                                                    <AdminButton 
+                                                        onClick={() => handleSendReply(project.id)}
+                                                        isLoading={replyMutation.isPending}
+                                                        icon={Zap}
+                                                        className="nm-button text-[10px] px-4 py-2 rounded-lg text-indigo-400 font-bold uppercase tracking-widest hover:text-indigo-300 h-8"
+                                                    >
+                                                        Send Reply
+                                                    </AdminButton>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -107,6 +275,79 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                     </div>
                 );
             })}
+
+            {/* Create Project Form */}
+            <div className="mt-4 pt-4 border-t border-slate-800/40">
+                {!showCreateProject ? (
+                    <button 
+                        onClick={() => setShowCreateProject(true)}
+                        className="w-full py-3 rounded-lg border border-dashed border-slate-800 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group flex items-center justify-center gap-2"
+                    >
+                        <Plus size={14} className="text-slate-500 group-hover:text-indigo-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-indigo-400">Assign New Project</span>
+                    </button>
+                ) : (
+                    <div className="bg-slate-950/50 border border-indigo-500/20 rounded-xl p-4 animate-in slide-in-from-bottom-2">
+                        <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-[10px] font-black uppercase tracking-widest text-indigo-400">New Project Details</h5>
+                            <button onClick={() => setShowCreateProject(false)} className="text-slate-500 hover:text-white"><X size={14} /></button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="sm:col-span-2 space-y-1">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Project Title</label>
+                                <input 
+                                    type="text"
+                                    value={createProjectForm.title}
+                                    onChange={(e) => setCreateProjectForm({ ...createProjectForm, title: e.target.value })}
+                                    placeholder="e.g. Website Overhaul v2"
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Initial Status</label>
+                                <select 
+                                    value={createProjectForm.status}
+                                    onChange={(e) => setCreateProjectForm({ ...createProjectForm, status: e.target.value })}
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 appearance-none"
+                                >
+                                    <option value="not_started">Not Started</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="review">Review</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Deadline</label>
+                                <input 
+                                    type="date"
+                                    value={createProjectForm.deadline}
+                                    onChange={(e) => setCreateProjectForm({ ...createProjectForm, deadline: e.target.value })}
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 color-scheme-dark"
+                                />
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Notes (Optional)</label>
+                                <textarea 
+                                    value={createProjectForm.notes}
+                                    onChange={(e) => setCreateProjectForm({ ...createProjectForm, notes: e.target.value })}
+                                    placeholder="Technical details, links, etc."
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 resize-none h-20"
+                                />
+                            </div>
+                        </div>
+                        <div className="mt-4 flex justify-end gap-3">
+                            <AdminButton 
+                                onClick={() => createProjectMutation.mutate(createProjectForm)}
+                                isLoading={createProjectMutation.isPending}
+                                icon={Zap}
+                                className="nm-button text-[10px] px-6 py-2.5 rounded-lg text-emerald-400 font-bold uppercase tracking-widest hover:text-emerald-300 h-9"
+                            >
+                                Create Project
+                            </AdminButton>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

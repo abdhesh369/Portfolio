@@ -155,6 +155,13 @@
       "when": 1773408001000,
       "tag": "0021_fix_column_mismatches",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1773436356106,
+      "tag": "0022_woozy_firestar",
+      "breakpoints": true
     }
   ]
 }

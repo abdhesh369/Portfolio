@@ -279,6 +279,7 @@ export const clientFeedbackTable = pgTable("client_feedback", {
   clientProjectId: integer("clientProjectId").notNull().references(() => clientProjectsTable.id, { onDelete: "cascade" }),
   clientId: integer("clientId").notNull().references(() => clientsTable.id, { onDelete: "cascade" }),
   message: text("message").notNull(),
+  isAdmin: boolean("isAdmin").notNull().default(false),
   attachments: jsonb("attachments").$type<string[]>().default([]),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

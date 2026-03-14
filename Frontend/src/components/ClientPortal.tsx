@@ -18,6 +18,13 @@ interface DashboardData {
     projects: ClientProject[];
 }
 
+interface ClientFeedback {
+    id: number;
+    message: string;
+    isAdmin: boolean;
+    createdAt: string;
+}
+
 const STATUS_CONFIG: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
     not_started: { icon: <Circle size={14} />, color: '#6b7280', label: 'Not Started' },
     in_progress: { icon: <Loader2 size={14} className="animate-spin" />, color: '#3b82f6', label: 'In Progress' },
@@ -33,7 +40,31 @@ export const ClientPortal: React.FC = () => {
     const [selectedProject, setSelectedProject] = useState<number | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [feedbackList, setFeedbackList] = useState<ClientFeedback[]>([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
     const feedbackRef = useRef<HTMLDivElement>(null);
+
+    const fetchFeedback = async (projectId: number) => {
+        setLoadingHistory(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/v1/portal/feedback/${projectId}`, {
+                headers: { 'x-client-token': token }
+            });
+            if (!res.ok) throw new Error('Failed to fetch feedback history');
+            const result = await res.json();
+            setFeedbackList(result.data || []);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingHistory(false);
+        }
+    };
+
+    React.useEffect(() => {
+        if (selectedProject) {
+            fetchFeedback(selectedProject);
+        }
+    }, [selectedProject]);
 
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -88,7 +119,7 @@ export const ClientPortal: React.FC = () => {
             }
             toast({ title: 'Feedback sent successfully' });
             setFeedbackMsg('');
-            // Optional: refresh dashboard or project feedback list
+            await fetchFeedback(selectedProject);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to send feedback';
             toast({ variant: "destructive", title: errorMessage });
@@ -249,8 +280,51 @@ export const ClientPortal: React.FC = () => {
                                         </span>
                                     </h4>
                                     <p className="text-slate-400 text-sm mb-8 max-w-2xl">
-                                        Found a bug? Have a new idea? Or just want to say hi? Add your thoughts below and I'll get an immediate notification.
+                                        Found a bug? Have a new idea? Or just want to say hi? Add your thoughts below and I'll get back to you as soon as possible.
                                     </p>
+
+                                    <div className="space-y-6 mb-10 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {loadingHistory ? (
+                                            <div className="flex flex-col gap-4">
+                                                {[1, 2].map(i => (
+                                                    <div key={i} className="h-16 w-full bg-slate-900 animate-pulse rounded-xl border border-slate-800" />
+                                                ))}
+                                            </div>
+                                        ) : feedbackList.length === 0 ? (
+                                            <div className="text-center py-10 px-6 border-2 border-dashed border-slate-800 rounded-3xl">
+                                                <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-600">
+                                                    <MessageSquare size={20} />
+                                                </div>
+                                                <p className="text-slate-500 text-sm font-medium">No messages yet. Start the conversation!</p>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col gap-4">
+                                                {feedbackList.map((f) => (
+                                                    <div
+                                                        key={f.id}
+                                                        className={`flex flex-col gap-1 max-w-[85%] ${f.isAdmin ? "self-start" : "self-end items-end"
+                                                            }`}
+                                                    >
+                                                        <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm border ${f.isAdmin
+                                                                ? "bg-slate-900 border-slate-800 text-slate-200 rounded-tl-none"
+                                                                : "bg-indigo-600 border-indigo-500 text-white rounded-tr-none"
+                                                            }`}>
+                                                            {f.message}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 px-1">
+                                                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-500">
+                                                                {f.isAdmin ? "ABDHE (ADMIN)" : "YOU"}
+                                                            </span>
+                                                            <span className="text-[10px] font-mono text-slate-600">•</span>
+                                                            <span className="text-[10px] font-mono text-slate-600 uppercase">
+                                                                {formatDate(f.createdAt)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
 
                                     <div className="relative group">
                                         <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition-opacity" />

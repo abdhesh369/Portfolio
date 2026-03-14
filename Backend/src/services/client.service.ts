@@ -1,5 +1,6 @@
 import { clientRepository } from "../repositories/client.repository.js";
 import type { Client, ClientProject, ClientFeedback } from "@portfolio/shared";
+import { emailService } from "./email.service.js";
 
 export class ClientService {
     async getAllClients(): Promise<Client[]> {
@@ -15,7 +16,20 @@ export class ClientService {
     }
 
     async createClient(data: { name: string; email: string; company?: string }): Promise<Client & { rawToken: string }> {
-        return clientRepository.create(data);
+        const client = await clientRepository.create(data);
+        
+        // Send invitation email
+        try {
+            await emailService.sendClientPortalInvite({
+                clientName: client.name,
+                clientEmail: client.email,
+                rawToken: client.rawToken
+            });
+        } catch (err) {
+            console.error("Failed to send client portal invite:", err);
+        }
+        
+        return client;
     }
 
     async updateClient(id: number, data: Partial<{ name: string; email: string; company: string; status: "active" | "inactive" }>): Promise<Client> {
@@ -23,7 +37,23 @@ export class ClientService {
     }
 
     async regenerateClientToken(id: number): Promise<string> {
-        return clientRepository.regenerateToken(id);
+        const rawToken = await clientRepository.regenerateToken(id);
+        
+        // Send new token alert email
+        try {
+            const client = await this.getClientById(id);
+            if (client) {
+                await emailService.sendClientPortalInvite({
+                    clientName: client.name,
+                    clientEmail: client.email,
+                    rawToken
+                });
+            }
+        } catch (err) {
+            console.error("Failed to send client portal token regeneration notice:", err);
+        }
+        
+        return rawToken;
     }
 
     async deleteClient(id: number): Promise<void> {
@@ -40,7 +70,31 @@ export class ClientService {
     }
 
     async updateClientProject(id: number, data: Partial<{ title: string; status: "not_started" | "in_progress" | "review" | "completed"; deadline: Date; notes: string }>): Promise<ClientProject> {
-        return clientRepository.updateProject(id, data);
+        const oldProject = await this.getClientProjectById(id);
+        const updated = await clientRepository.updateProject(id, data);
+        
+        // Notify client if status changed
+        if (data.status && oldProject && oldProject.status !== data.status) {
+            try {
+                const client = await this.getClientById(updated.clientId);
+                if (client) {
+                    await emailService.sendProjectUpdateAlert({
+                        clientName: client.name,
+                        clientEmail: client.email,
+                        projectTitle: updated.title,
+                        newStatus: data.status
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to send project status update alert:", err);
+            }
+        }
+        
+        return updated;
+    }
+
+    async getClientProjectById(id: number): Promise<ClientProject | null> {
+        return clientRepository.findProjectById(id);
     }
 
     // Feedback
@@ -48,8 +102,27 @@ export class ClientService {
         return clientRepository.findFeedbackByProjectId(clientProjectId);
     }
 
-    async submitFeedback(data: { clientProjectId: number; clientId: number; message: string }): Promise<ClientFeedback> {
-        return clientRepository.createFeedback(data);
+    async submitFeedback(data: { clientProjectId: number; clientId: number; message: string; isAdmin?: boolean }): Promise<ClientFeedback> {
+        const feedback = await clientRepository.createFeedback(data);
+        
+        // Notify admin of new client feedback
+        if (!data.isAdmin) {
+            try {
+                const client = await this.getClientById(data.clientId);
+                const project = await this.getClientProjectById(data.clientProjectId);
+                if (client && project) {
+                    await emailService.sendAdminFeedbackAlert({
+                        clientName: client.name,
+                        projectTitle: project.title,
+                        message: data.message
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to send admin feedback alert:", err);
+            }
+        }
+        
+        return feedback;
     }
 
     // Portal dashboard

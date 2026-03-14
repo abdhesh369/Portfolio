@@ -6,6 +6,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { validateBody } from "../middleware/validate.js";
 import { insertClientApiSchema, insertClientProjectApiSchema, insertClientFeedbackApiSchema } from "@portfolio/shared";
+import { portalLimiter } from "../lib/rate-limit.js";
 
 export function registerClientRoutes(app: Router) {
     // ========== ADMIN ROUTES ==========
@@ -119,12 +120,38 @@ export function registerClientRoutes(app: Router) {
             res.json({ success: true, data: feedback });
         })
     );
+    
+    // POST /admin/client-projects/:id/feedback — send admin reply
+    app.post(
+        "/admin/client-projects/:id/feedback",
+        isAuthenticated,
+        asyncHandler(async (req: Request, res: Response) => {
+            const id = parseIntParam(res, req.params.id, "ID");
+            if (id === null) return;
+            
+            const project = await clientService.getClientProjectById(id);
+            if (!project) {
+                return res.status(404).json({ success: false, message: "Project not found" });
+            }
+            
+            const feedback = await clientService.submitFeedback({
+                clientProjectId: id,
+                clientId: project.clientId,
+                message: req.body.message,
+                isAdmin: true,
+            });
+            
+            recordAudit("CREATE", "client_feedback", feedback.id, null, { isAdmin: true });
+            res.status(201).json({ success: true, data: feedback });
+        })
+    );
 
     // ========== CLIENT PORTAL ROUTES (token-based auth) ==========
 
     // GET /portal/dashboard — client dashboard
     app.get(
         "/portal/dashboard",
+        portalLimiter,
         asyncHandler(async (req: Request, res: Response) => {
             const token = req.headers["x-client-token"] as string;
             if (!token) { res.status(401).json({ success: false, message: "Client token required" }); return; }
@@ -138,6 +165,7 @@ export function registerClientRoutes(app: Router) {
     // POST /portal/feedback — submit feedback
     app.post(
         "/portal/feedback",
+        portalLimiter,
         validateBody(insertClientFeedbackApiSchema),
         asyncHandler(async (req: Request, res: Response) => {
             const token = req.headers["x-client-token"] as string;
@@ -163,6 +191,7 @@ export function registerClientRoutes(app: Router) {
     // GET /portal/feedback/:projectId — get feedback for a project
     app.get(
         "/portal/feedback/:projectId",
+        portalLimiter,
         asyncHandler(async (req: Request, res: Response) => {
             const token = req.headers["x-client-token"] as string;
             if (!token) { res.status(401).json({ success: false, message: "Client token required" }); return; }
