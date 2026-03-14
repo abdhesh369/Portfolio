@@ -8,7 +8,7 @@ This is a monorepo containing both the state-of-the-art cyberpunk frontend exper
 
 | Component | Description | Technologies |
 | :--- | :--- | :--- |
-| **[Frontend](./Frontend/README.md)** | An immersive, HUD-style interactive experience featuring glow effects, particle systems, and complex framer-motion animations. | React 19, Vite 8, Tailwind CSS, Framer Motion, Radix UI |
+| **[Frontend](./Frontend/README.md)** | An immersive, HUD-style interactive experience featuring glow effects, particle systems, and complex framer-motion animations. | React 19, Vite 7, Tailwind CSS, Framer Motion, Radix UI |
 | **[Backend](./Backend/README.md)** | A scalable, type-safe RESTful API integrating a relational database to power dynamic portfolio content. | Node.js, Express, TypeScript, PostgreSQL 16 (Neon), Drizzle ORM, Zod |
 
 ### 🚀 Getting Started
@@ -43,4 +43,3 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 Designed and Developed by [Abdhesh Sah](mailto:abdheshshah111@gmail.com)
-# Portfolio1

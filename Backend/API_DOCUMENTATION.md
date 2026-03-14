@@ -101,7 +101,7 @@ Default: `http://localhost:5000` (or `process.env.PORT`)
 ### 1. Submit a Message
 - **Path**: `/api/messages`
 - **Method**: `POST`
-- **Description**: Submits a contact form message. Triggers an email notification if Gmail is configured.
+- **Description**: Submits a contact form message. Triggers a background job for email notification via Resend.
 - **Request Body**:
   ```json
   {
@@ -144,7 +144,7 @@ Default: `http://localhost:5000` (or `process.env.PORT`)
 
 ## 🤖 Chatbot API (AI Assistant)
 
-The portfolio includes an AI-powered assistant driven by **OpenRouter** (Default: `nvidia/nemotron-nano-12b-v2-vl:free`).
+The portfolio includes an AI-powered assistant driven by **Google Gemini** (Default: `gemini-1.5-flash-latest`).
 
 ### 1. Send a Message to AI
 - **Path**: `/api/chat`

@@ -12,7 +12,7 @@ RUN npm ci
 # Copy tsconfig and source files
 COPY tsconfig.json ./
 COPY src/ ./src/
-COPY shared/ ./shared/
+COPY packages/shared/ ./packages/shared/
 
 # Build the application
 RUN npm run build

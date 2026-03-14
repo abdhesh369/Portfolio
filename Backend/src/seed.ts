@@ -250,6 +250,14 @@ export async function seedDatabase() {
 // Run only when executed directly (not when imported)
 const isMainModule = process.argv[1]?.replace(/\\/g, '/').includes('seed');
 if (isMainModule) {
+  const isProduction = process.env.NODE_ENV === "production";
+  const forceSeed = process.env.FORCE_SEED === "true";
+
+  if (isProduction && forceSeed) {
+    logger.error({ context: "seed" }, "CRITICAL: FORCE_SEED=true is prohibited in production to prevent data loss. Aborting.");
+    process.exit(1);
+  }
+
   seedDatabase()
     .then(() => {
       logger.info({ context: "seed" }, "Seeding complete. Exiting...");

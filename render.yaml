@@ -4,7 +4,7 @@ services:
     name: portfolio-backend
     runtime: node
     plan: free
-    region: singapore # Adjust based on your primary audience
+    region: singapore
     buildCommand: npm install && npm run build:backend
     startCommand: npm run start -w Backend
     healthCheckPath: /health
@@ -53,8 +53,8 @@ services:
   - type: static
     name: portfolio-frontend
     runtime: static
-    buildCommand: npm install && npm run build:frontend
     publishDir: Frontend/dist
+    buildCommand: npm run build:frontend
     envVars:
       - key: VITE_API_URL
         fromService:

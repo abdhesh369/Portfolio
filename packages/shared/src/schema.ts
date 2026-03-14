@@ -510,16 +510,15 @@ function isValidUrl(url: string | null | undefined): boolean {
 function sanitizeCss(css: string | null | undefined): string | null {
   if (!css) return null;
 
+  // Rejection-based approach > Sanitization-based approach
+  // We neutralize high-risk keywords that enable XSS, data exfiltration, or remote resource loading.
   return css
-    .replace(/url\b\s*\(/gi, '/* url-stripped */')
-    .replace(/@import\b/gi, '/* import-stripped */')
-    .replace(/expression\b\s*\(/gi, '/* expression-stripped */')
-    .replace(/javascript\s*:/gi, '/* js-stripped */')
-    .replace(/vbscript\s*:/gi, '/* vbs-stripped */')
-    .replace(/-moz-binding\b/gi, '/* binding-stripped */')
-    .replace(/@font-face\b/gi, '/* font-face-stripped */')
-    .replace(/@charset\b/gi, '/* charset-stripped */')
-    .replace(/@namespace\b/gi, '/* namespace-stripped */');
+    .replace(/url\s*\(/gi, '/* url-neutralized */')
+    .replace(/@import/gi, '/* import-neutralized */')
+    .replace(/expression\s*\(/gi, '/* expression-neutralized */')
+    .replace(/javascript\s*:/gi, '/* js-neutralized */')
+    .replace(/content\s*:\s*['"]/gi, '/* content-neutralized */') // Prevents content injection
+    .replace(/-moz-binding/gi, '/* binding-neutralized */');
 }
 
 

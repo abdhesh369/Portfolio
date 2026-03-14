@@ -6,7 +6,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              Frontend (React 19 + Vite 8)        │
+│              Frontend (React 19 + Vite 7)        │
 │  Netlify / Cloudflare Pages                      │
 │  ┌─────────┐ ┌───────────┐ ┌──────────────────┐ │
 │  │ wouter  │ │ TanStack  │ │ framer-motion    │ │
@@ -130,7 +130,8 @@ Client                          Server                          Redis
 
 1. Read `refresh_token` cookie
 2. SHA-256 hash it, validate against Redis key `refresh:{hash}`
-3. Issue new 15-min access token cookie (refresh token is NOT rotated)
+3. Issue new 15-min access token cookie.
+4. **Rotate Refresh Token**: Generate a new refresh token, hash it, update Redis, and clear the old family member (RTR).
 
 ### Logout Flow (`POST /api/auth/logout`)
 
@@ -157,7 +158,7 @@ Client                          Server                          Redis
 | Queue Name | `"email"` |
 | Redis Connection | Dedicated ioredis instances (separate from app singleton) |
 | Activation | Always in dev; requires `REDIS_URL` in production |
-| Retry | BullMQ default (0 retries) |
+| Retry | 5 attempts (Exponential Backoff) |
 | Worker | Inline (same process) |
 
 ### Job Types

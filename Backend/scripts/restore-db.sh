@@ -19,19 +19,23 @@ if [ ! -f "$BACKUP_FILE" ]; then
     exit 1
 fi
 
-# Read .env
+# Extract DATABASE_URL securely without xargs (which mangles special characters)
 if [ -f ../.env ]; then
-    export $(cat ../.env | grep -v '^#' | xargs)
+    DATABASE_URL=$(grep -E '^DATABASE_URL=' ../.env | cut -d '=' -f2-)
 fi
 
-# Extract credentials
-DB_USER=$(echo $DATABASE_URL | sed -n 's|.*://\([^:]*\):.*|\1|p')
-DB_PASS=$(echo $DATABASE_URL | sed -n 's|.*://[^:]*:\([^@]*\)@.*|\1|p')
-DB_HOST=$(echo $DATABASE_URL | sed -n 's|.*://[^@]*@\([^:]*\):.*|\1|p')
-DB_PORT=$(echo $DATABASE_URL | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
-DB_NAME=$(echo $DATABASE_URL | sed -n 's|.*/\([^?]*\).*|\1|p')
+# Fallback to system env if not in .env
+if [ -z "$DATABASE_URL" ]; then
+    DATABASE_URL=$DATABASE_URL
+fi
 
-export PGPASSWORD=$DB_PASS
+if [ -z "$DATABASE_URL" ]; then
+    echo "❌ Error: DATABASE_URL not found in .env or system environment"
+    exit 1
+fi
+
+# Display basic info safely
+DB_NAME=$(echo "$DATABASE_URL" | sed 's|.*/||' | cut -d '?' -f1)
 
 echo "⚠️  WARNING: This will REPLACE ALL DATA in database: $DB_NAME"
 echo "Backup file: $BACKUP_FILE"
@@ -45,8 +49,9 @@ fi
 
 echo "📥 Restoring database from backup..."
 
-# Decompress and restore
-gunzip -c "$BACKUP_FILE" | psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME
+# Decompress and restore using the full connection string (avoids brittle manual parsing)
+# Use -v ON_ERROR_STOP=1 to ensure the script fails if psql encounters an error
+gunzip -c "$BACKUP_FILE" | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
 
 echo "✅ Database restored successfully!"
 echo "🔄 Please restart your backend server"
