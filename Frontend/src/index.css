@@ -459,7 +459,8 @@
   .text-shadow-glow {
     text-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.15);
   }
-  /* Premium Tilt Animation */
+
+  /* Premium Tilt Animation */
   .animate-tilt {
     animation: tilt 10s infinite linear;
   }
@@ -744,3 +745,14 @@
   box-shadow: none !important;
 }
 
+/* Z-Index Layers */
+:root {
+  --z-negative: -1;
+  --z-base: 0;
+  --z-dock: 100;
+  --z-nav: 200;
+  --z-modal: 500;
+  --z-toast: 1000;
+  --z-tooltip: 1100;
+  --z-highest: 9999;
+}
