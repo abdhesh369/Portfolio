@@ -132,6 +132,21 @@ export class ClientService {
         const projects = await clientRepository.findProjectsByClientId(clientId);
         return { client, projects };
     }
+
+    async requestTestimonial(clientId: number, projectId: number): Promise<void> {
+        const client = await this.getClientById(clientId);
+        const project = await this.getClientProjectById(projectId);
+        
+        if (!client || !project) {
+            throw new Error("Client or project not found");
+        }
+        
+        await emailService.sendTestimonialRequest({
+            clientName: client.name,
+            clientEmail: client.email,
+            projectTitle: project.title
+        });
+    }
 }
 
 export const clientService = new ClientService();

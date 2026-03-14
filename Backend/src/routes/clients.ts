@@ -121,7 +121,7 @@ export function registerClientRoutes(app: Router) {
         })
     );
     
-    // POST /admin/client-projects/:id/feedback — send admin reply
+    // POST /admin/clients/:id/feedback — send admin reply
     app.post(
         "/admin/client-projects/:id/feedback",
         isAuthenticated,
@@ -143,6 +143,26 @@ export function registerClientRoutes(app: Router) {
             
             recordAudit("CREATE", "client_feedback", feedback.id, null, { isAdmin: true });
             res.status(201).json({ success: true, data: feedback });
+        })
+    );
+
+    // POST /admin/clients/:id/request-testimonial
+    app.post(
+        "/admin/clients/:id/request-testimonial",
+        isAuthenticated,
+        asyncHandler(async (req: Request, res: Response) => {
+            const clientId = parseIntParam(res, req.params.id, "Client ID");
+            if (clientId === null) return;
+            
+            const { projectId } = req.body;
+            if (!projectId) {
+                return res.status(400).json({ success: false, message: "Project ID is required" });
+            }
+
+            await clientService.requestTestimonial(clientId, projectId);
+            recordAudit("OTHER", "testimonial_request", clientId, null, { projectId });
+
+            res.json({ success: true, message: "Testimonial request sent" });
         })
     );
 

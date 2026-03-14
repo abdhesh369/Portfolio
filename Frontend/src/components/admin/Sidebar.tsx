@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useAdminSubscribers } from "@/hooks/use-portfolio";
 
 interface SidebarProps {
     collapsed: boolean;
@@ -75,6 +76,7 @@ export default function Sidebar({
     unreadCount = 0
 }: SidebarProps) {
     const { data: settings } = useSiteSettings();
+    const { data: subscribers } = useAdminSubscribers();
     const [avatarError, setAvatarError] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -212,6 +214,8 @@ export default function Sidebar({
                                     const isActive = activeTab === item.key;
                                     const Icon = item.icon;
                                     const isMessages = item.key === 'messages';
+                                    const isNewsletter = item.key === 'newsletter';
+                                    const badgeCount = isMessages ? unreadCount : (isNewsletter ? (subscribers?.length || 0) : 0);
 
                                     return (
                                         <button
@@ -237,8 +241,11 @@ export default function Sidebar({
                                                 <Icon size={isActive ? 20 : 18} strokeWidth={isActive ? 2.5 : 2} />
                                                 
                                                 {/* Notification Dot (Collapsed) */}
-                                                {collapsed && isMessages && unreadCount > 0 && (
-                                                    <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-pink-600 rounded-full border-2 border-[var(--nm-bg)]" />
+                                                {collapsed && badgeCount > 0 && (
+                                                    <span className={cn(
+                                                        "absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[var(--nm-bg)]",
+                                                        isMessages ? "bg-pink-600" : "bg-emerald-500"
+                                                    )} />
                                                 )}
                                             </div>
 
@@ -251,9 +258,12 @@ export default function Sidebar({
                                                 </span>
                                             )}
 
-                                            {!collapsed && isMessages && unreadCount > 0 && (
-                                                <span className="ml-2 px-2 py-0.5 nm-inset rounded-lg text-[9px] font-black text-pink-500 animate-pulse">
-                                                    {unreadCount}
+                                            {!collapsed && badgeCount > 0 && (
+                                                <span className={cn(
+                                                    "ml-2 px-2 py-0.5 nm-inset rounded-lg text-[9px] font-black",
+                                                    isMessages ? "text-pink-500 animate-pulse" : "text-emerald-500"
+                                                )}>
+                                                    {badgeCount}
                                                 </span>
                                             )}
 

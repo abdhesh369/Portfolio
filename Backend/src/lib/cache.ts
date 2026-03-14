@@ -119,4 +119,18 @@ export class CacheService {
             logger.error({ context: "cache", setKey, keyToTrack, error: err }, "Redis tracking failed");
         }
     }
+
+    /**
+     * Clear all cached data (Flush Database)
+     */
+    static async clearAll(): Promise<void> {
+        if (!redis) return;
+        try {
+            await redis.flushdb();
+            logger.info({ context: "cache" }, "Redis cache flushed");
+        } catch (err) {
+            logger.error({ context: "cache", error: err }, "Redis flush failed");
+            throw err;
+        }
+    }
 }

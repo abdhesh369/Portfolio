@@ -27,6 +27,7 @@ export function SubscribersTab(_props: AdminTabProps) {
     const [isBroadcasting, setIsBroadcasting] = useState(false);
     const [broadcastData, setBroadcastData] = useState({ subject: "", body: "" });
     const [isSending, setIsSending] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
     const filtered = subscribers?.filter(s => 
         s.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -102,6 +103,11 @@ export function SubscribersTab(_props: AdminTabProps) {
         try {
             await apiFetch(`/api/v1/subscribers/${id}`, { method: "DELETE" });
             toast({ title: "Subscriber terminated" });
+            setSelectedIds(prev => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
             refetch();
         } catch (err) {
             toast({ 
@@ -109,6 +115,51 @@ export function SubscribersTab(_props: AdminTabProps) {
                 description: err instanceof Error ? err.message : "Internal error", 
                 variant: "destructive" 
             });
+        }
+    };
+
+    const toggleSelection = (id: number) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.size === filtered.length) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(filtered.map(s => s.id)));
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Are you sure you want to terminate ${selectedIds.size} subscribers?`)) return;
+        
+        try {
+            for (const id of selectedIds) {
+                await apiFetch(`/api/v1/subscribers/${id}`, { method: "DELETE" });
+            }
+            toast({ title: "Bulk termination complete", description: `${selectedIds.size} records removed.` });
+            setSelectedIds(new Set());
+            refetch();
+        } catch (err) {
+            toast({ title: "Bulk action partially failed", variant: "destructive" });
+        }
+    };
+
+    const handleBulkUnsubscribe = async () => {
+        try {
+            for (const id of selectedIds) {
+                await apiFetch(`/api/v1/subscribers/${id}/unsubscribe`, { method: "POST" });
+            }
+            toast({ title: "Bulk unsubscribe complete" });
+            setSelectedIds(new Set());
+            refetch();
+        } catch (err) {
+            toast({ title: "Bulk action partially failed", variant: "destructive" });
         }
     };
 
@@ -176,6 +227,17 @@ export function SubscribersTab(_props: AdminTabProps) {
                         <table className="w-full text-left">
                             <thead className="bg-black/20 text-[10px] font-black uppercase tracking-[.2em] text-[var(--admin-text-muted)]">
                                 <tr>
+                                    <th className="px-8 py-6 w-10">
+                                        <button 
+                                            onClick={toggleSelectAll}
+                                            className={cn(
+                                                "w-5 h-5 nm-inset rounded-md flex items-center justify-center transition-all",
+                                                selectedIds.size === filtered.length && filtered.length > 0 ? "text-purple-500" : "text-transparent"
+                                            )}
+                                        >
+                                            <CheckCircle2 size={12} />
+                                        </button>
+                                    </th>
                                     <th className="px-8 py-6">Subscriber</th>
                                     <th className="px-8 py-6">Status</th>
                                     <th className="px-8 py-6">Source</th>
@@ -185,7 +247,21 @@ export function SubscribersTab(_props: AdminTabProps) {
                             </thead>
                             <tbody className="divide-y divide-[var(--nm-light)]">
                                 {filtered.map((s) => (
-                                    <tr key={s.id} className="group hover:bg-white/[0.02] transition-colors">
+                                    <tr key={s.id} className={cn(
+                                        "group hover:bg-white/[0.02] transition-colors",
+                                        selectedIds.has(s.id) && "bg-purple-500/5"
+                                    )}>
+                                        <td className="px-8 py-6">
+                                            <button 
+                                                onClick={() => toggleSelection(s.id)}
+                                                className={cn(
+                                                    "w-5 h-5 nm-inset rounded-md flex items-center justify-center transition-all",
+                                                    selectedIds.has(s.id) ? "text-purple-500" : "text-transparent hover:text-purple-500/30"
+                                                )}
+                                            >
+                                                <CheckCircle2 size={12} />
+                                            </button>
+                                        </td>
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 nm-inset rounded-xl flex items-center justify-center text-slate-500">
@@ -231,6 +307,52 @@ export function SubscribersTab(_props: AdminTabProps) {
                     </div>
                 </div>
             )}
+
+            {/* Bulk Actions Toolbar */}
+            <AnimatePresence>
+                {selectedIds.size > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 50 }}
+                        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90] nm-flat px-8 py-4 rounded-2xl border border-purple-500/30 flex items-center gap-8 shadow-2xl"
+                    >
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">Selected_Targets</span>
+                            <span className="text-sm font-bold text-slate-200">{selectedIds.size} Subscribers</span>
+                        </div>
+                        <div className="h-8 w-px bg-[var(--nm-light)]" />
+                        <div className="flex items-center gap-4">
+                            <AdminButton 
+                                variant="secondary" 
+                                size="sm" 
+                                icon={X} 
+                                onClick={handleBulkUnsubscribe}
+                                className="text-amber-500 h-10 px-4"
+                            >
+                                Unsubscribe
+                            </AdminButton>
+                            <AdminButton 
+                                variant="danger" 
+                                size="sm" 
+                                icon={Trash2} 
+                                onClick={handleBulkDelete}
+                                className="h-10 px-4"
+                            >
+                                Terminate_All
+                            </AdminButton>
+                            <AdminButton 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => setSelectedIds(new Set())}
+                                className="h-10 px-4"
+                            >
+                                Deselect
+                            </AdminButton>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Broadcast Modal */}
             <AnimatePresence>

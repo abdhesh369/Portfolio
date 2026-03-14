@@ -1,9 +1,10 @@
-import { useProjects, useSkills, useExperiences, useMessages } from "@/hooks/use-portfolio";
+import { useProjects, useSkills, useExperiences, useMessages, useAnalyticsSummary, useAdminSubscribers, useArticles, useAdminGuestbook } from "@/hooks/use-portfolio";
 import { formatTime, formatTimeAgo } from "@/lib/utils/date";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { apiFetch } from "@/lib/api-helpers";
 import {
-    Rocket, Mail, Zap, Briefcase, Plus, Activity, ChevronRight, PenTool, FolderKanban, Palette
+    Rocket, Mail, Zap, Briefcase, Plus, Activity, ChevronRight, PenTool, FolderKanban, Palette,
+    Eye, Users, StickyNote, Signature
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatCard from "../StatCard";
@@ -26,10 +27,19 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
     const { data: skills } = useSkills();
     const { data: experiences } = useExperiences();
     const { data: messages = [] } = useMessages();
+    const { data: analytics } = useAnalyticsSummary();
+    const { data: subscribers } = useAdminSubscribers();
+    const { data: articles } = useArticles();
+    const { data: guestbook } = useAdminGuestbook();
 
     const [healthData, setHealthData] = useState<HealthData | null>(null);
     const [healthLoading, setHealthLoading] = useState(true);
+    const [notes, setNotes] = useState(() => localStorage.getItem("admin_quick_notes") || "");
     const abortRef = useRef<AbortController | null>(null);
+
+    useEffect(() => {
+        localStorage.setItem("admin_quick_notes", notes);
+    }, [notes]);
 
     const fetchHealth = useCallback(async () => {
         abortRef.current?.abort();
@@ -137,16 +147,50 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                     delay="200ms"
                 />
                 <StatCard
+                    label="Page Views"
+                    value={analytics?.totalViews ?? 0}
+                    icon={Eye}
+                    trend={{ 
+                        value: "Last 30d", 
+                        isUp: true,
+                        label: "Organic"
+                    }}
+                    delay="300ms"
+                />
+                <StatCard
+                    label="Subscribers"
+                    value={subscribers?.length ?? 0}
+                    icon={Users}
+                    delay="400ms"
+                />
+                <StatCard
+                    label="Published Articles"
+                    value={articles?.length ?? 0}
+                    icon={PenTool}
+                    delay="500ms"
+                />
+               <StatCard
+                    label="Pending Guestbook"
+                    value={guestbook?.filter(g => !g.isApproved).length ?? 0}
+                    icon={Signature}
+                    trend={{
+                        value: guestbook?.some(g => !g.isApproved) ? "Pending" : "Clean",
+                        isUp: !guestbook?.some(g => !g.isApproved),
+                        label: "Moderation"
+                    }}
+                    delay="600ms"
+                />
+                <StatCard
                     label="Core Skills"
                     value={skills?.length ?? 0}
                     icon={Zap}
-                    delay="300ms"
+                    delay="700ms"
                 />
                 <StatCard
                     label="Exp Entries"
                     value={experiences?.length ?? 0}
                     icon={Briefcase}
-                    delay="400ms"
+                    delay="800ms"
                 />
             </div>
 
@@ -191,7 +235,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                 </div>
 
                 {/* Heartbeat Monitoring */}
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-10">
                     <SystemStatus
                         apiHealth={healthLoading ? "loading" : (healthData?.status || "unreachable")}
                         database={healthLoading ? "checking" : (healthData?.database || "unknown")}
@@ -200,12 +244,34 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
                         lastChecked={healthData?.timestamp ? formatTime(healthData.timestamp) : undefined}
                         onRefresh={fetchHealth}
                     />
+
+                    {/* Quick Notes Widget */}
+                    <div className="nm-flat p-6 rounded-3xl space-y-4 group">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center text-amber-500">
+                                <StickyNote size={16} />
+                            </div>
+                            <h4 className="text-xs font-black text-[var(--admin-text-primary)] uppercase tracking-widest italic">Quick_Notes</h4>
+                        </div>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Type something here... (Auto-saves to localStorage)"
+                            className="w-full h-32 bg-transparent border-none outline-none text-xs font-medium text-[var(--admin-text-secondary)] resize-none custom-scrollbar nm-inset p-4 rounded-xl placeholder:opacity-50"
+                        />
+                        <div className="flex justify-between items-center px-1">
+                            <span className="text-[8px] font-bold text-[var(--admin-text-muted)] uppercase tracking-widest">
+                                Persistent_Memory_Active
+                            </span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Interactive System Console */}
             <div className="animate-in slide-in-from-bottom-6 duration-1000" style={{ animationDelay: '600ms' }}>
-                <TerminalConsole />
+                <TerminalConsole onNavigate={onNavigate} />
             </div>
         </div>
     );

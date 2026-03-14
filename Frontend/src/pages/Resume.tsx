@@ -1,10 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { m } from "framer-motion";
 import { Download, Mail, Globe, Github, Linkedin, MapPin, ExternalLink, Printer } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { apiFetch } from "@/lib/api-helpers";
+import { Loader2, Sparkles, FileText, ChevronRight, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AdminButton } from "@/components/admin/AdminShared";
 
 export default function Resume() {
     const { data: settings } = useSiteSettings();
@@ -12,6 +17,12 @@ export default function Resume() {
     const { data: skills = [] } = useSkills();
     const { data: projects = [] } = useProjects();
     const resumeRef = useRef<HTMLDivElement>(null);
+    const { toast } = useToast();
+
+    const [activeTab, setActiveTab] = useState<'resume' | 'cover-letter'>('resume');
+    const [jobDescription, setJobDescription] = useState("");
+    const [generatedLetter, setGeneratedLetter] = useState("");
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const githubDisplay = settings?.socialGithub
         ? settings.socialGithub.replace(/^https?:\/\//, "").replace(/\/$/, "")
@@ -25,6 +36,27 @@ export default function Resume() {
         window.print();
     };
 
+    const handleGenerate = async () => {
+        if (!jobDescription.trim() || jobDescription.length < 50) {
+            toast({ title: "Input Required", description: "Please paste a detailed job description (min 50 chars).", variant: "destructive" });
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const res = await apiFetch("/api/v1/cover-letter/generate", {
+                method: "POST",
+                body: JSON.stringify({ jobDescription })
+            });
+            setGeneratedLetter(res.letter);
+            toast({ title: "Generated!", description: "Your custom cover letter is ready." });
+        } catch (err: any) {
+            toast({ title: "Failed", description: err.message || "AI was unable to generate the letter.", variant: "destructive" });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     if (!settings) return null;
 
     return (
@@ -32,27 +64,54 @@ export default function Resume() {
             {/* Toolbar - Hidden when printing */}
             <div className="max-w-4xl mx-auto mb-8 flex flex-wrap items-center justify-between gap-4 print:hidden">
                 <div className="flex flex-col">
-                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 italic font-display">Resume Preview</h1>
-                    <p className="text-sm text-neutral-500">Recruiter-ready printable version</p>
+                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 italic font-display">Career_Toolkit</h1>
+                    <p className="text-sm text-neutral-500">Recruiter-ready documents powered by AI</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={() => window.location.href = "/"}
-                    >
-                        Go Home
-                    </Button>
-                    <Button
-                        onClick={handlePrint}
-                        className="bg-primary text-primary-foreground font-bold shadow-lg"
-                    >
-                        <Printer className="w-4 h-4 mr-2" />
-                        Print / Save as PDF
-                    </Button>
+                    <div className="nm-inset p-1 rounded-xl flex gap-1 mr-4">
+                        <button 
+                            onClick={() => setActiveTab('resume')}
+                            className={cn(
+                                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                                activeTab === 'resume' ? "bg-white dark:bg-neutral-800 text-primary shadow-sm" : "text-neutral-500 hover:text-neutral-300"
+                            )}
+                        >
+                            Resume
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('cover-letter')}
+                            className={cn(
+                                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+                                activeTab === 'cover-letter' ? "bg-white dark:bg-neutral-800 text-primary shadow-sm" : "text-neutral-500 hover:text-neutral-300"
+                            )}
+                        >
+                            <Sparkles size={10} /> Smart_Letter
+                        </button>
+                    </div>
+                    {activeTab === 'resume' ? (
+                        <Button
+                            onClick={handlePrint}
+                            className="bg-primary text-primary-foreground font-bold shadow-lg"
+                        >
+                            <Printer className="w-4 h-4 mr-2" />
+                            Print / Save as PDF
+                        </Button>
+                    ) : (
+                        generatedLetter && (
+                            <Button
+                                onClick={handlePrint}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg"
+                            >
+                                <Printer className="w-4 h-4 mr-2" />
+                                Print Letter
+                            </Button>
+                        )
+                    )}
                 </div>
             </div>
 
-            {/* Resume Content */}
+            {activeTab === 'resume' ? (
+                /* Resume Content */
             <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -193,6 +252,83 @@ export default function Resume() {
                     </p>
                 </footer>
             </m.div>
+            ) : (
+                /* Cover Letter Generator UI */
+                <m.div 
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="max-w-4xl mx-auto space-y-8"
+                >
+                    <div className="nm-flat rounded-3xl p-8 border border-primary/10">
+                        <div className="flex flex-col md:flex-row gap-8">
+                            <div className="flex-1 space-y-6">
+                                <div className="space-y-2">
+                                    <h3 className="text-lg font-bold flex items-center gap-2 text-neutral-800 dark:text-neutral-100">
+                                        <FileText className="text-primary" size={20} /> Paste Job Description
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">AI will analyze requirements and match them with your specific projects and skills.</p>
+                                </div>
+                                <textarea 
+                                    value={jobDescription}
+                                    onChange={(e) => setJobDescription(e.target.value)}
+                                    placeholder="Paste the job posting here... e.g. We are looking for a Senior React Engineer with experience in PostgreSQL and AWS..."
+                                    className="w-full h-64 bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none font-sans leading-relaxed"
+                                />
+                                <AdminButton 
+                                    onClick={handleGenerate}
+                                    isLoading={isGenerating}
+                                    icon={Sparkles}
+                                    className="w-full py-6 rounded-2xl text-xs font-black uppercase tracking-[0.2em] bg-primary text-white shadow-xl hover:scale-[1.02] transition-transform active:scale-95"
+                                >
+                                    Generate_Tailored_Letter
+                                </AdminButton>
+                            </div>
+
+                            <div className="w-full md:w-80 space-y-6">
+                                <div className="nm-inset rounded-2xl p-6 space-y-4">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">How_it_works</h4>
+                                    <ul className="space-y-4">
+                                        {[
+                                            "Reads your actual DB projects",
+                                            "Matches skills with JD",
+                                            "Writes in your professional voice",
+                                            "Ready for instant printing"
+                                        ].map((step, i) => (
+                                            <li key={i} className="flex items-start gap-3 text-[11px] text-neutral-600 dark:text-neutral-400">
+                                                <div className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 mt-0.5 font-bold">{i+1}</div>
+                                                {step}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+                                    <p className="text-[10px] text-amber-500 font-bold leading-relaxed uppercase tracking-tighter">
+                                        Tip: The more detailed the Job Description, the better the matching results.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {generatedLetter && (
+                        <m.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white text-black p-[20mm] shadow-2xl relative overflow-hidden print:shadow-none print:p-0 print:m-0 mx-auto"
+                            style={{ width: '210mm' }}
+                        >
+                            <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-neutral-800">
+                                {generatedLetter}
+                            </div>
+                            <div className="mt-20 pt-8 border-t border-neutral-50 text-center print:hidden">
+                                <p className="text-[10px] text-neutral-300 font-mono tracking-widest uppercase">
+                                    Tailored by Portfolio AI // {new Date().getFullYear()}
+                                </p>
+                            </div>
+                        </m.div>
+                    )}
+                </m.div>
+            )}
 
             {/* Print Styles */}
             <style dangerouslySetInnerHTML={{ __html: `

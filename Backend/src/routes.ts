@@ -26,6 +26,7 @@ import { registerReviewRoutes } from "./routes/review.js";
 import { registerCaseStudyRoutes } from "./routes/case-studies.js";
 import { registerClientRoutes } from "./routes/clients.js";
 import { registerSketchpadRoutes } from "./routes/sketchpad.js";
+import { registerCoverLetterRoutes } from "./routes/cover-letter.js";
 import subscribersRouter from "./routes/subscribers.js";
 import ogRouter from "./routes/og.js";
 import searchRouter from "./routes/search.js";
@@ -88,6 +89,8 @@ export function registerRoutes(app: Express) {
   registerClientRoutes(v1Router);
   // MF-5: Sketchpad
   registerSketchpadRoutes(v1Router);
+  // MF-6: AI Cover Letter
+  registerCoverLetterRoutes(v1Router);
 
   // Admin audit log
   v1Router.use("/admin", auditLogRoutes);

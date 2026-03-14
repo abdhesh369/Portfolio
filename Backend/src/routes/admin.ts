@@ -7,6 +7,7 @@ import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
 import { SubscriberService } from "../services/subscriber.service.js";
 import { emailService } from "../services/email.service.js";
+import { CacheService } from "../lib/cache.js";
 import { z } from "zod";
 
 const subscriberService = new SubscriberService();
@@ -117,6 +118,32 @@ export function registerAdminRoutes(app: Router) {
                 message: `Broadcast queued for ${subscribers.length} subscribers.`,
                 count: subscribers.length
             });
+        })
+    );
+
+    // POST /api/v1/admin/cache/clear - Clear system cache
+    app.post(
+        "/admin/cache/clear",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            logger.info({ context: "admin-tools", user: typeof req.user === 'object' ? req.user.email : undefined }, "Clearing system cache");
+
+            try {
+                await CacheService.clearAll();
+                recordAudit("OTHER", "cache_clear", undefined, null, { triggeredBy: typeof req.user === 'object' ? req.user.email : undefined });
+
+                res.json({
+                    success: true,
+                    message: "System cache cleared successfully"
+                });
+            } catch (error: unknown) {
+                logger.error({ context: "admin-tools", error }, "Cache clear failed");
+                res.status(500).json({
+                    success: false,
+                    message: "Failed to clear cache",
+                    details: error instanceof Error ? error.message : "Unknown error"
+                });
+            }
         })
     );
 }

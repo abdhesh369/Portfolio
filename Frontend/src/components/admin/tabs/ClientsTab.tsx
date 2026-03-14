@@ -85,6 +85,20 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
         }
     });
 
+    const requestTestimonialMutation = useMutation({
+        mutationFn: (projectId: number) => 
+            apiFetch(`/api/v1/admin/clients/${clientId}/request-testimonial`, {
+                method: 'POST',
+                body: JSON.stringify({ projectId })
+            }),
+        onSuccess: () => {
+            toast({ title: "Request Sent", description: "Testimonial request email sent to client." });
+        },
+        onError: (err: any) => {
+            toast({ title: "Request Failed", description: err.message || "Failed to send request", variant: "destructive" });
+        }
+    });
+
     if (isLoading) return <div className="p-4 text-xs text-muted-foreground animate-pulse">Loading projects...</div>;
     
     if (projects.length === 0) {
@@ -163,6 +177,16 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                                         <Save size={12} />
                                     </button>
                                 )}
+                                {project.status === 'completed' && (
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); requestTestimonialMutation.mutate(project.id); }}
+                                        disabled={requestTestimonialMutation.isPending}
+                                        className="p-1.5 hover:bg-emerald-500/20 rounded-md text-emerald-400 transition-colors"
+                                        title="Request Testimonial"
+                                    >
+                                        <Mail size={12} />
+                                    </button>
+                                )}
                                 <div className="text-muted-foreground ml-1">
                                     {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                 </div>
@@ -208,7 +232,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                             <div className="px-3 pb-3 pt-1 border-t border-slate-800/50 animate-in slide-in-from-top-1">
                                 {project.deadline && !isEditing && (
                                     <div className="flex items-center gap-2 text-[10px] text-slate-500/80 font-mono mb-3 uppercase font-bold tracking-widest">
-                                        <Calendar size={10} /> Deadline: {formatDate(project.deadline)}
+                                        <Calendar size={10} /> Deadline: {project.deadline ? formatDate(project.deadline) : "N/A"}
                                     </div>
                                 )}
                                 
@@ -240,7 +264,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                                                             </div>
                                                             <div className="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">{f.message}</div>
                                                             <div className="mt-2 text-[8px] text-slate-500/60 font-mono flex items-center gap-1 uppercase font-bold">
-                                                                <Clock size={8} /> {formatDate(f.createdAt)}
+                                                                <Clock size={8} /> {f.createdAt ? formatDate(f.createdAt) : "Recently"}
                                                             </div>
                                                         </div>
                                                     ))}
