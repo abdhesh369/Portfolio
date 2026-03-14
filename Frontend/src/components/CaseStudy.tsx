@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, Calendar, ArrowLeft } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
 import { formatDate } from '@/lib/utils/date';
+import { QUERY_KEYS } from '@/lib/query-keys';
 
 interface CaseStudyData {
     id: number;
@@ -18,7 +19,7 @@ interface CaseStudyData {
 
 export const CaseStudyList: React.FC = () => {
     const { data: studies = [], isLoading } = useQuery({
-        queryKey: ['case-studies'],
+        queryKey: QUERY_KEYS.caseStudies.all,
         queryFn: () => apiFetch('/case-studies'),
     });
 
@@ -65,7 +66,7 @@ export const CaseStudyList: React.FC = () => {
 
 export const CaseStudyViewer: React.FC<{ slug: string }> = ({ slug }) => {
     const { data, isLoading, error } = useQuery({
-        queryKey: ['case-study', slug],
+        queryKey: QUERY_KEYS.caseStudies.detail(slug),
         queryFn: async () => {
             const res = await apiFetch(`/case-studies/${slug}`);
             return res?.data as CaseStudyData;

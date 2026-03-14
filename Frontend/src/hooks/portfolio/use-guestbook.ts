@@ -4,10 +4,11 @@ import { apiFetch } from "@/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
 import type { InsertGuestbookEntry, GuestbookEntry } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useGuestbook() {
     return useQuery<GuestbookEntry[]>({
-        queryKey: ["guestbook"],
+        queryKey: QUERY_KEYS.guestbook.all,
         queryFn: () =>
             fetchAndParse(
                 api.guestbook.list.path,
@@ -33,8 +34,8 @@ export function useSubmitGuestbook() {
             return result.data;
         },
         onMutate: async (newEntry) => {
-            await queryClient.cancelQueries({ queryKey: ["guestbook"] });
-            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(["guestbook"]);
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.guestbook.all });
+            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(QUERY_KEYS.guestbook.all);
 
             if (previousEntries) {
                 const optimisticEntry: GuestbookEntry = {
@@ -45,14 +46,14 @@ export function useSubmitGuestbook() {
                     createdAt: new Date(),
                     reactions: {},
                 };
-                queryClient.setQueryData<GuestbookEntry[]>(["guestbook"], [optimisticEntry, ...previousEntries]);
+                queryClient.setQueryData<GuestbookEntry[]>(QUERY_KEYS.guestbook.all, [optimisticEntry, ...previousEntries]);
             }
 
             return { previousEntries };
         },
         onError: (err: any, _newEntry, context) => {
             if (context?.previousEntries) {
-                queryClient.setQueryData(["guestbook"], context.previousEntries);
+                queryClient.setQueryData(QUERY_KEYS.guestbook.all, context.previousEntries);
             }
             toast({
                 title: "Failed to submit entry",
@@ -61,7 +62,7 @@ export function useSubmitGuestbook() {
             });
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.all });
         },
         onSuccess: () => {
             toast({
@@ -73,7 +74,7 @@ export function useSubmitGuestbook() {
 }
 export function useAdminGuestbook() {
     return useQuery<GuestbookEntry[]>({
-        queryKey: ["guestbook", "admin"],
+        queryKey: QUERY_KEYS.guestbook.admin,
         queryFn: () =>
             fetchAndParse(
                 api.guestbook.adminList.path,
@@ -97,7 +98,7 @@ export function useApproveGuestbook() {
             return api.guestbook.approve.responses[200].parse(res);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.all });
             toast({
                 title: "Entry approved",
                 description: "The guestbook entry is now visible on the site.",
@@ -125,7 +126,7 @@ export function useDeleteGuestbook() {
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.all });
             toast({
                 title: "Entry deleted",
                 description: "The guestbook entry has been removed.",
@@ -156,12 +157,12 @@ export function useReactToGuestbook() {
             return result.data;
         },
         onMutate: async ({ id, emoji }) => {
-            await queryClient.cancelQueries({ queryKey: ["guestbook"] });
-            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(["guestbook"]);
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.guestbook.all });
+            const previousEntries = queryClient.getQueryData<GuestbookEntry[]>(QUERY_KEYS.guestbook.all);
 
             if (previousEntries) {
                 queryClient.setQueryData<GuestbookEntry[]>(
-                    ["guestbook"],
+                    QUERY_KEYS.guestbook.all,
                     previousEntries.map((entry) => {
                         if (entry.id === id) {
                             const reactions = { ...(entry.reactions as Record<string, number> || {}) };
@@ -177,11 +178,11 @@ export function useReactToGuestbook() {
         },
         onError: (_err, _variables, context) => {
             if (context?.previousEntries) {
-                queryClient.setQueryData(["guestbook"], context.previousEntries);
+                queryClient.setQueryData(QUERY_KEYS.guestbook.all, context.previousEntries);
             }
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ["guestbook"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.all });
         },
     });
 }

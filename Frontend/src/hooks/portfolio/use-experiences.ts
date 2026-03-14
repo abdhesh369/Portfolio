@@ -1,10 +1,11 @@
 import { api } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useExperiences() {
   return useQuery({
-    queryKey: ["experiences"],
+    queryKey: QUERY_KEYS.experiences.all,
     queryFn: () =>
       fetchAndParse(
         api.experiences.list.path,

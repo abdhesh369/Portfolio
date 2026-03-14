@@ -9,6 +9,7 @@ import { apiFetch } from '@/lib/api-helpers';
 import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/date";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 interface CaseStudyData {
     id: number;
@@ -32,29 +33,29 @@ export const CaseStudiesTab: React.FC<AdminTabProps> = () => {
     const queryClient = useQueryClient();
 
     const { data: studies = [], isLoading } = useQuery({
-        queryKey: ['admin-case-studies'],
+        queryKey: QUERY_KEYS.caseStudies.admin,
         queryFn: () => apiFetch('/api/v1/admin/case-studies'),
     });
 
     const { data: projects = [] } = useQuery({
-        queryKey: ['admin-projects'],
+        queryKey: QUERY_KEYS.projects.admin,
         queryFn: () => apiFetch('/api/v1/projects'),
     });
 
     const generateMutation = useMutation({
         mutationFn: (projectId: number) => apiFetch(`/api/v1/case-studies/generate/${projectId}`, { method: 'POST' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.caseStudies.admin }),
     });
 
     const toggleStatusMutation = useMutation({
         mutationFn: ({ id, status }: { id: number; status: string }) =>
             apiFetch(`/api/v1/case-studies/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.caseStudies.admin }),
     });
 
     const deleteMutation = useMutation({
         mutationFn: (id: number) => apiFetch(`/api/v1/case-studies/${id}`, { method: 'DELETE' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-case-studies'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.caseStudies.admin }),
     });
 
     return (

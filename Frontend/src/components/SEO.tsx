@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { apiFetch } from "@/lib/api-helpers";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 interface SeoProps {
     slug?: string;
@@ -31,7 +32,7 @@ export function SEO({
 }: SeoProps) {
     const [location] = useLocation();
     const { data: seoSettings } = useQuery({
-        queryKey: ["seo", slug],
+        queryKey: QUERY_KEYS.seo(slug),
         queryFn: async () => {
             if (!slug) return null;
             return apiFetch(`/api/v1/seo/${slug}`);
@@ -52,7 +53,8 @@ export function SEO({
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
-    const canonicalUrl = seoSettings?.canonicalUrl || `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}${location}`;
+    const siteUrl = import.meta.env.VITE_SITE_URL;
+    const canonicalUrl = seoSettings?.canonicalUrl || (siteUrl ? `${siteUrl}${location}` : undefined);
 
     const safeJsonLd = (data: Record<string, unknown>) => {
         return JSON.stringify(data)
@@ -69,7 +71,7 @@ export function SEO({
             <meta name="description" content={description} />
             {keywords && <meta name="keywords" content={keywords} />}
             {noindex && <meta name="robots" content="noindex,nofollow" />}
-            <link rel="canonical" href={canonicalUrl} />
+            {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
             {prev && <link rel="prev" href={prev} />}
             {next && <link rel="next" href={next} />}
 
@@ -81,7 +83,7 @@ export function SEO({
                 content={seoSettings?.ogDescription || description}
             />
             <meta property="og:image" content={image} />
-            <meta property="og:url" content={canonicalUrl} />
+            {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
 
             {/* Twitter */}
             <meta name="twitter:card" content={twitterCard} />

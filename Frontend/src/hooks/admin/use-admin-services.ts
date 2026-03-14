@@ -3,6 +3,7 @@ import { api, interpolatePath, type Service } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useServices } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useAdminServices() {
     const { refetch } = useServices();
@@ -10,7 +11,7 @@ export function useAdminServices() {
 
     const createMutation = useAdminMutation({
         route: api.services.create,
-        queryKeyToInvalidate: ["services"],
+        queryKeyToInvalidate: QUERY_KEYS.services.all,
         successTitle: "Service created",
         successDescription: "The service has been added successfully.",
         mutationFn: async (data: Partial<Service>) => {
@@ -24,20 +25,20 @@ export function useAdminServices() {
 
     const updateMutation = useAdminMutation({
         route: api.services.update,
-        queryKeyToInvalidate: ["services"],
+        queryKeyToInvalidate: QUERY_KEYS.services.all,
         successTitle: "Service updated",
         successDescription: "The service details have been saved.",
         onMutate: async ({ id, data }) => {
-            await queryClient.cancelQueries({ queryKey: ["services"] });
-            const previousServices = queryClient.getQueryData<Service[]>(["services"]);
-            queryClient.setQueryData<Service[]>(["services"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.services.all });
+            const previousServices = queryClient.getQueryData<Service[]>(QUERY_KEYS.services.all);
+            queryClient.setQueryData<Service[]>(QUERY_KEYS.services.all, (old) =>
                 old ? old.map((s) => (s.id === id ? { ...s, ...data } : s)) : []
             );
             return { previousServices };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousServices) {
-                queryClient.setQueryData(["services"], context.previousServices);
+                queryClient.setQueryData(QUERY_KEYS.services.all, context.previousServices);
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: Partial<Service> }) => {
@@ -51,20 +52,20 @@ export function useAdminServices() {
 
     const deleteMutation = useAdminMutation({
         route: api.services.delete,
-        queryKeyToInvalidate: ["services"],
+        queryKeyToInvalidate: QUERY_KEYS.services.all,
         successTitle: "Service deleted",
         successDescription: "The service has been removed.",
         onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: ["services"] });
-            const previousServices = queryClient.getQueryData<Service[]>(["services"]);
-            queryClient.setQueryData<Service[]>(["services"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.services.all });
+            const previousServices = queryClient.getQueryData<Service[]>(QUERY_KEYS.services.all);
+            queryClient.setQueryData<Service[]>(QUERY_KEYS.services.all, (old) =>
                 old ? old.filter((s) => s.id !== id) : []
             );
             return { previousServices };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousServices) {
-                queryClient.setQueryData(["services"], context.previousServices);
+                queryClient.setQueryData(QUERY_KEYS.services.all, context.previousServices);
             }
         },
         mutationFn: async (id: number) => {

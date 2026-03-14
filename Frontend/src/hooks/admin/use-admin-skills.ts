@@ -3,6 +3,7 @@ import { api, interpolatePath, type Skill } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useSkills } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useAdminSkills() {
     const queryClient = useQueryClient();
@@ -10,7 +11,7 @@ export function useAdminSkills() {
 
     const createMutation = useAdminMutation({
         route: api.skills.create,
-        queryKeyToInvalidate: ["skills"],
+        queryKeyToInvalidate: QUERY_KEYS.skills.all,
         successTitle: "Skill created",
         successDescription: "The skill has been added successfully.",
         mutationFn: async (data: Partial<Skill>) => {
@@ -35,16 +36,16 @@ export function useAdminSkills() {
             return api.skills.update.responses[200].parse(res);
         },
         onMutate: async ({ id, data }) => {
-            await queryClient.cancelQueries({ queryKey: ["skills"] });
-            const previous = queryClient.getQueryData<Skill[]>(["skills"]);
-            queryClient.setQueryData<Skill[]>(["skills"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.skills.all });
+            const previous = queryClient.getQueryData<Skill[]>(QUERY_KEYS.skills.all);
+            queryClient.setQueryData<Skill[]>(QUERY_KEYS.skills.all, (old) =>
                 old ? old.map((p) => (p.id === id ? { ...p, ...data } : p)) : []
             );
             return { previous };
         },
         onError: (_err, _vars, context) => {
             if (context?.previous) {
-                queryClient.setQueryData(["skills"], context.previous);
+                queryClient.setQueryData(QUERY_KEYS.skills.all, context.previous);
             }
         },
     });
@@ -60,16 +61,16 @@ export function useAdminSkills() {
             });
         },
         onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: ["skills"] });
-            const previous = queryClient.getQueryData<Skill[]>(["skills"]);
-            queryClient.setQueryData<Skill[]>(["skills"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.skills.all });
+            const previous = queryClient.getQueryData<Skill[]>(QUERY_KEYS.skills.all);
+            queryClient.setQueryData<Skill[]>(QUERY_KEYS.skills.all, (old) =>
                 old ? old.filter((p) => p.id !== id) : []
             );
             return { previous };
         },
         onError: (_err, _vars, context) => {
             if (context?.previous) {
-                queryClient.setQueryData(["skills"], context.previous);
+                queryClient.setQueryData(QUERY_KEYS.skills.all, context.previous);
             }
         },
     });

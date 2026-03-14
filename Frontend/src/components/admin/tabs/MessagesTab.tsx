@@ -10,6 +10,7 @@ import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/date";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function MessagesTab() {
     const { data: messagesData, isLoading } = useMessages();
@@ -31,7 +32,7 @@ export function MessagesTab() {
             });
             toast({ title: "Messages deleted" });
             setSelectedIds([]);
-            queryClient.invalidateQueries({ queryKey: ["messages"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.messages.all });
         } catch (err: unknown) {
             toast({ title: "Bulk delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         }
@@ -41,7 +42,7 @@ export function MessagesTab() {
         if (!confirm("Delete this message?")) return;
         try {
             await apiFetch(`/api/v1/messages/${id}`, { method: "DELETE" });
-            queryClient.invalidateQueries({ queryKey: ["messages"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.messages.all });
             toast({ title: "Message deleted" });
         } catch (err: unknown) {
             toast({ title: "Delete failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
@@ -92,7 +93,7 @@ export function MessagesTab() {
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-nm-accent/50" />
                     </div>
                     <AdminButton
-                        onClick={() => queryClient.invalidateQueries({ queryKey: ["messages"] })}
+                        onClick={() => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.messages.all })}
                         variant="secondary"
                         icon={RefreshCw}
                         className="w-14 h-14 rounded-2xl nm-button flex items-center justify-center text-admin-text-secondary hover:text-nm-accent"

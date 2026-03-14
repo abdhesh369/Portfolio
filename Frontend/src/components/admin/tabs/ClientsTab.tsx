@@ -6,6 +6,7 @@ import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/component
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
+import { QUERY_KEYS } from '@/lib/query-keys';
 
 interface ClientProject {
     id: number;
@@ -29,12 +30,12 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
     const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
 
     const { data: projects = [], isLoading } = useQuery({
-        queryKey: ['admin-client-projects', clientId],
+        queryKey: QUERY_KEYS.clients.projects(clientId),
         queryFn: () => apiFetch(`/api/v1/admin/clients/${clientId}/projects`).then(res => res.data)
     });
 
     const { data: feedback = [], isLoading: loadingFeedback } = useQuery({
-        queryKey: ['admin-client-feedback', expandedProjectId],
+        queryKey: QUERY_KEYS.clients.feedback(expandedProjectId!),
         queryFn: () => expandedProjectId ? apiFetch(`/api/v1/admin/client-projects/${expandedProjectId}/feedback`).then(res => res.data) : Promise.resolve([]),
         enabled: !!expandedProjectId
     });
@@ -46,7 +47,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                 body: JSON.stringify({ message: data.message }) 
             }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-client-feedback', expandedProjectId] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clients.feedback(expandedProjectId!) });
             setReplyText("");
             toast({ title: "Sent", description: "Admin reply sent successfully." });
         }
@@ -64,7 +65,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                 body: JSON.stringify(data)
             }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-client-projects', clientId] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clients.projects(clientId) });
             setEditingProjectId(null);
             toast({ title: "Updated", description: "Project updated successfully." });
         }
@@ -77,7 +78,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
                 body: JSON.stringify({ ...data, clientId, deadline: data.deadline ? new Date(data.deadline).toISOString() : undefined })
             }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-client-projects', clientId] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clients.projects(clientId) });
             setShowCreateProject(false);
             setCreateProjectForm({ title: '', status: 'not_started', deadline: '', notes: '' });
             toast({ title: "Created", description: "New project assigned successfully." });
@@ -373,14 +374,14 @@ export const ClientsTab: React.FC = () => {
     const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
 
     const { data: clients = [], isLoading } = useQuery({
-        queryKey: ['admin-clients'],
+        queryKey: QUERY_KEYS.clients.all,
         queryFn: () => apiFetch('/api/v1/admin/clients'),
     });
 
     const createMutation = useMutation({
         mutationFn: (data: typeof form) => apiFetch('/api/v1/admin/clients', { method: 'POST', body: JSON.stringify(data) }),
         onSuccess: (res) => { 
-            queryClient.invalidateQueries({ queryKey: ['admin-clients'] }); 
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clients.all }); 
             setShowForm(false); 
             setForm({ name: '', email: '', company: '' }); 
             setNewToken(res.rawToken);
@@ -397,7 +398,7 @@ export const ClientsTab: React.FC = () => {
 
     const deleteMutation = useMutation({
         mutationFn: (id: number) => apiFetch(`/api/v1/admin/clients/${id}`, { method: 'DELETE' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-clients'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clients.all }),
     });
 
     const regenerateMutation = useMutation({
@@ -413,13 +414,6 @@ export const ClientsTab: React.FC = () => {
             toast({ title: "Regeneration Failed", description, variant: "destructive" });
         }
     });
-
-    const copyToken = (client: ClientData) => {
-        navigator.clipboard.writeText(client.token);
-        setCopiedId(client.id);
-        toast({ title: "Copied", description: "Token hash copied to clipboard." });
-        setTimeout(() => setCopiedId(null), 2000);
-    };
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-10 pb-24">
@@ -534,15 +528,7 @@ export const ClientsTab: React.FC = () => {
                             </div>
 
                             <div className="flex items-center gap-2 shrink-0">
-                                <AdminButton
-                                    onClick={() => copyToken(client)}
-                                    variant="secondary"
-                                    icon={copiedId === client.id ? Check : Copy}
-                                    iconClassName={copiedId === client.id ? "text-emerald-500" : ""}
-                                    className="nm-button w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
-                                    title="Copy portal token"
-                                >
-                                </AdminButton>
+
                                 <AdminButton
                                     onClick={() => {
                                         if (window.confirm(`Are you sure you want to delete client "${client.name}"? They will lose access to the portal permanently.`)) {
@@ -627,7 +613,7 @@ export const ClientsTab: React.FC = () => {
                             <AdminButton
                                 onClick={() => {
                                     navigator.clipboard.writeText(newToken);
-                                    toast({ title: "Copied", description: "Token copied to clipboard." });
+                                    toast({ title: "Copied", description: "Portal token copied to clipboard." });
                                 }}
                                 variant="primary"
                                 icon={Copy}

@@ -1,10 +1,11 @@
 import { api } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useSkills() {
   return useQuery({
-    queryKey: ["skills"],
+    queryKey: QUERY_KEYS.skills.all,
     queryFn: () =>
       fetchAndParse(
         api.skills.list.path,
@@ -17,7 +18,7 @@ export function useSkills() {
 
 export function useSkillConnections() {
   return useQuery({
-    queryKey: ["skill-connections"],
+    queryKey: QUERY_KEYS.skills.connections,
     queryFn: () =>
       fetchAndParse(
         api.skills.connections.path,
@@ -30,7 +31,7 @@ export function useSkillConnections() {
 
 export function useMindset() {
   return useQuery({
-    queryKey: ["mindset"],
+    queryKey: QUERY_KEYS.mindset.all,
     queryFn: () =>
       fetchAndParse(
         api.mindset.list.path,

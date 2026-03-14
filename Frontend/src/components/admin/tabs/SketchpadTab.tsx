@@ -6,6 +6,7 @@ import { apiFetch } from '@/lib/api-helpers';
 import { Badge } from "@/components/ui/badge";
 import { AdminButton, LoadingSkeleton, EmptyState, FormField } from "@/components/admin/AdminShared";
 import { formatDate } from '@/lib/utils/date';
+import { QUERY_KEYS } from '@/lib/query-keys';
 
 interface SketchpadSessionData {
     id: number;
@@ -21,7 +22,7 @@ export const SketchpadTab: React.FC = () => {
     const [newTitle, setNewTitle] = useState('');
 
     const { data: sessions = [], isLoading } = useQuery({
-        queryKey: ['admin-sketchpad'],
+        queryKey: QUERY_KEYS.sketchpad.admin,
         queryFn: () => apiFetch('/api/v1/admin/sketchpad/sessions'),
     });
 
@@ -29,7 +30,7 @@ export const SketchpadTab: React.FC = () => {
         mutationKey: ['create-sketchpad-session'],
         mutationFn: (title: string) => apiFetch('/api/v1/sketchpad/sessions', { method: 'POST', body: JSON.stringify({ title }) }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.sketchpad.admin });
             setNewTitle('');
         },
     });
@@ -37,13 +38,13 @@ export const SketchpadTab: React.FC = () => {
     const archiveMutation = useMutation({
         mutationKey: ['archive-sketchpad-session'],
         mutationFn: (id: number) => apiFetch(`/api/v1/sketchpad/sessions/${id}/archive`, { method: 'PUT' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.sketchpad.admin }),
     });
 
     const deleteMutation = useMutation({
         mutationKey: ['delete-sketchpad-session'],
         mutationFn: (id: number) => apiFetch(`/api/v1/sketchpad/sessions/${id}`, { method: 'DELETE' }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-sketchpad'] }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.sketchpad.admin }),
     });
 
     return (

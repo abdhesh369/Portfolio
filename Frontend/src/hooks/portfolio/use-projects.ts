@@ -1,10 +1,11 @@
 import { api } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useProjects(sortBy: string = "default") {
   return useQuery({
-    queryKey: ["projects", sortBy],
+    queryKey: QUERY_KEYS.projects.list(sortBy),
     queryFn: () =>
       fetchAndParse(
         `${api.projects.list.path}${sortBy !== "default" ? `?sort=${sortBy}` : ""}`,
@@ -17,7 +18,7 @@ export function useProjects(sortBy: string = "default") {
 
 export function useProjectById(id: number | null) {
   return useQuery({
-    queryKey: ["project", id],
+    queryKey: QUERY_KEYS.projects.detail(id),
     queryFn: () =>
       fetchAndParse(
         api.projects.get.path.replace(":id", id?.toString() || ""),

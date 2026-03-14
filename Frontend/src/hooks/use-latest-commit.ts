@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@portfolio/shared";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export const useLatestCommit = () => {
     return useQuery({
-        queryKey: ["latest-commit"],
+        queryKey: QUERY_KEYS.github.latestCommit,
         queryFn: async () => {
             const response = await fetch(api.github.latestCommit.path);
             if (!response.ok) {

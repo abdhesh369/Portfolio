@@ -760,7 +760,7 @@ export const insertMessageApiSchema = z.object({
   projectType: z.string().max(100).optional(),
   budget: z.string().max(100).optional(),
   timeline: z.string().max(100).optional(),
-  website: z.string().optional(), // Honeypot field for spam prevention
+  _fax: z.string().optional(), // Honeypot field for spam prevention
 });
 
 export const guestbookSchema = z.object({

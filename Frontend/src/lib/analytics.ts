@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api-helpers";
+import * as Sentry from "@sentry/react";
 
 export type AnalyticsEvent = {
     type: string;
@@ -39,7 +40,7 @@ export async function trackEvent(event: AnalyticsEvent) {
             window.gtag("event", event.type, event);
         }
     } catch (err) {
-        console.warn("Analytics tracking failed:", err);
+        Sentry.captureException(err, { tags: { context: "analytics" } });
     }
 }
 

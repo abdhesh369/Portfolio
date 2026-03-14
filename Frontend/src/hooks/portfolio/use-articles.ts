@@ -2,10 +2,11 @@ import { api } from "@portfolio/shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import type { Article } from "@portfolio/shared/schema";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useArticles(status?: string) {
   return useQuery({
-    queryKey: ["articles", status],
+    queryKey: QUERY_KEYS.articles.list(status),
     queryFn: () =>
       fetchAndParse(
         api.articles.list.path + (status ? `?status=${status}` : ""),
@@ -18,7 +19,7 @@ export function useArticles(status?: string) {
 
 export function useArticle(slug: string) {
   return useQuery({
-    queryKey: ["article", slug],
+    queryKey: QUERY_KEYS.articles.detail(slug),
     queryFn: () =>
       fetchAndParse(
         api.articles.get.path.replace(":slug", slug),
@@ -32,7 +33,7 @@ export function useArticle(slug: string) {
 
 export function useArticleSearch(query: string) {
   return useQuery<Article[]>({
-    queryKey: ["articles", "search", query],
+    queryKey: QUERY_KEYS.articles.search(query),
     queryFn: async () => {
       const { apiFetch } = await import("@/lib/api-helpers");
       return await apiFetch(`/api/v1/articles/search?q=${encodeURIComponent(query)}`);
@@ -44,7 +45,7 @@ export function useArticleSearch(query: string) {
 }
 export function useArticleReactions(slug: string) {
   return useQuery({
-    queryKey: ["article-reactions", slug],
+    queryKey: QUERY_KEYS.articles.reactions(slug),
     queryFn: async () => {
       const { apiFetch } = await import("@/lib/api-helpers");
       const article = await fetchAndParse(
@@ -72,9 +73,9 @@ export function useReactToArticle() {
     },
     onSuccess: (data, variables) => {
       // Invalidate both reactions and the main article query
-      queryClient.invalidateQueries({ queryKey: ["article-reactions"] });
-      queryClient.invalidateQueries({ queryKey: ["article"] });
-      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.articles.all });
+
+
     },
   });
 }

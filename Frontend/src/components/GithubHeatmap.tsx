@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Github, Info, ExternalLink } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 interface ContributionDay {
     date: string;
@@ -19,8 +20,8 @@ interface ContributionData {
 
 export const GithubHeatmap: React.FC = () => {
     const { data: settings } = useSiteSettings();
-    const { data, isLoading } = useQuery<ContributionData>({
-        queryKey: ["github-contributions"],
+    const { data, isLoading, isError } = useQuery<ContributionData>({
+        queryKey: QUERY_KEYS.github.contributions,
         queryFn: async () => {
             const response = await fetch("/api/v1/github/contributions");
             if (!response.ok) throw new Error("Failed to fetch contributions");
@@ -37,7 +38,21 @@ export const GithubHeatmap: React.FC = () => {
         );
     }
 
-    if (!data || !data.contributions) return null;
+    if (isError) {
+        return (
+            <div className="w-full md:h-48 p-8 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl flex flex-col items-center justify-center gap-4 text-center">
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <Github className="w-6 h-6 text-red-400 opacity-50" />
+                </div>
+                <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-white/80">Unable to load GitHub activity</h3>
+                    <p className="text-xs text-white/40">The contributions API is temporarily unavailable. Check back later.</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!data?.contributions) return null;
 
     // Filter last 12 months or just enough to fill a nice grid
     // The API usually returns a full year

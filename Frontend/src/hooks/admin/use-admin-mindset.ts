@@ -3,6 +3,7 @@ import { api, interpolatePath, type Mindset } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useMindset } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useAdminMindset() {
     const { refetch } = useMindset();
@@ -10,7 +11,7 @@ export function useAdminMindset() {
 
     const createMutation = useAdminMutation({
         route: api.mindset.create,
-        queryKeyToInvalidate: ["mindset"],
+        queryKeyToInvalidate: QUERY_KEYS.mindset.all,
         successTitle: "Principle created",
         successDescription: "The mindset principle has been added successfully.",
         mutationFn: async (data: Partial<Mindset>) => {
@@ -28,16 +29,16 @@ export function useAdminMindset() {
         successTitle: "Principle updated",
         successDescription: "The mindset principle has been updated successfully.",
         onMutate: async ({ id, data }) => {
-            await queryClient.cancelQueries({ queryKey: ["mindset"] });
-            const previousMindset = queryClient.getQueryData<Mindset[]>(["mindset"]);
-            queryClient.setQueryData<Mindset[]>(["mindset"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.mindset.all });
+            const previousMindset = queryClient.getQueryData<Mindset[]>(QUERY_KEYS.mindset.all);
+            queryClient.setQueryData<Mindset[]>(QUERY_KEYS.mindset.all, (old) =>
                 old ? old.map((m) => (m.id === id ? { ...m, ...data } : m)) : []
             );
             return { previousMindset };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousMindset) {
-                queryClient.setQueryData(["mindset"], context.previousMindset);
+                queryClient.setQueryData(QUERY_KEYS.mindset.all, context.previousMindset);
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: Partial<Mindset> }) => {
@@ -51,20 +52,20 @@ export function useAdminMindset() {
 
     const deleteMutation = useAdminMutation({
         route: api.mindset.delete,
-        queryKeyToInvalidate: ["mindset"],
+        queryKeyToInvalidate: QUERY_KEYS.mindset.all,
         successTitle: "Principle deleted",
         successDescription: "The mindset principle has been removed.",
         onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: ["mindset"] });
-            const previousMindset = queryClient.getQueryData<Mindset[]>(["mindset"]);
-            queryClient.setQueryData<Mindset[]>(["mindset"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.mindset.all });
+            const previousMindset = queryClient.getQueryData<Mindset[]>(QUERY_KEYS.mindset.all);
+            queryClient.setQueryData<Mindset[]>(QUERY_KEYS.mindset.all, (old) =>
                 old ? old.filter((m) => m.id !== id) : []
             );
             return { previousMindset };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousMindset) {
-                queryClient.setQueryData(["mindset"], context.previousMindset);
+                queryClient.setQueryData(QUERY_KEYS.mindset.all, context.previousMindset);
             }
         },
         mutationFn: async (id: number) => {

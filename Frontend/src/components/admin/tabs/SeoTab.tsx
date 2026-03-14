@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus, Pencil, Trash2, Save, Globe, Search, Monitor, Share2, X, ChevronRight, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiFetch } from "@/lib/api-helpers";
 import { FormField, FormTextarea, FormSelect, FormCheckbox, LoadingSkeleton, EmptyState, AdminButton } from "../AdminShared";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 import type { AdminTabProps } from "./types";
 
@@ -15,7 +16,7 @@ export function SeoTab(_props: AdminTabProps) {
     const [editingSeo, setEditingSeo] = useState<SeoSettings | null>(null);
 
     const { data: seoSettingsList, isLoading } = useQuery<SeoSettings[]>({
-        queryKey: ["seo-settings"],
+        queryKey: QUERY_KEYS.seoSettings,
         queryFn: async () => {
             return apiFetch("/api/v1/seo");
         },
@@ -26,7 +27,7 @@ export function SeoTab(_props: AdminTabProps) {
             return apiFetch("/api/v1/seo", { method: "POST", body: JSON.stringify(data) });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seoSettings });
             setIsEditing(false);
             setEditingSeo(null);
             toast({ title: "Success", description: "SEO settings created successfully" });
@@ -41,7 +42,7 @@ export function SeoTab(_props: AdminTabProps) {
             return apiFetch(`/api/v1/seo/${id}`, { method: "PATCH", body: JSON.stringify(data) });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seoSettings });
             setIsEditing(false);
             setEditingSeo(null);
             toast({ title: "Success", description: "SEO settings updated successfully" });
@@ -56,7 +57,7 @@ export function SeoTab(_props: AdminTabProps) {
             await apiFetch(`/api/v1/seo/${id}`, { method: "DELETE" });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seoSettings });
             toast({ title: "Success", description: "SEO settings deleted successfully" });
         },
         onError: (error: Error) => {

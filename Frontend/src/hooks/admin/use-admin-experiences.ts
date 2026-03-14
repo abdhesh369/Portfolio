@@ -3,6 +3,7 @@ import { api, interpolatePath, type Experience } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useExperiences } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useAdminExperiences() {
     const { refetch } = useExperiences();
@@ -10,7 +11,7 @@ export function useAdminExperiences() {
 
     const createMutation = useAdminMutation({
         route: api.experiences.create,
-        queryKeyToInvalidate: ["experiences"],
+        queryKeyToInvalidate: QUERY_KEYS.experiences.all,
         successTitle: "Experience created",
         successDescription: "The experience has been added successfully.",
         mutationFn: async (data: Partial<Experience>) => {
@@ -28,16 +29,16 @@ export function useAdminExperiences() {
         successTitle: "Experience updated",
         successDescription: "The experience details have been saved.",
         onMutate: async ({ id, data }) => {
-            await queryClient.cancelQueries({ queryKey: ["experiences"] });
-            const previousExperiences = queryClient.getQueryData<Experience[]>(["experiences"]);
-            queryClient.setQueryData<Experience[]>(["experiences"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.experiences.all });
+            const previousExperiences = queryClient.getQueryData<Experience[]>(QUERY_KEYS.experiences.all);
+            queryClient.setQueryData<Experience[]>(QUERY_KEYS.experiences.all, (old) =>
                 old ? old.map((e) => (e.id === id ? { ...e, ...data } : e)) : []
             );
             return { previousExperiences };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousExperiences) {
-                queryClient.setQueryData(["experiences"], context.previousExperiences);
+                queryClient.setQueryData(QUERY_KEYS.experiences.all, context.previousExperiences);
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: Partial<Experience> }) => {
@@ -51,20 +52,20 @@ export function useAdminExperiences() {
 
     const deleteMutation = useAdminMutation({
         route: api.experiences.delete,
-        queryKeyToInvalidate: ["experiences"],
+        queryKeyToInvalidate: QUERY_KEYS.experiences.all,
         successTitle: "Experience deleted",
         successDescription: "The experience has been removed.",
         onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: ["experiences"] });
-            const previousExperiences = queryClient.getQueryData<Experience[]>(["experiences"]);
-            queryClient.setQueryData<Experience[]>(["experiences"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.experiences.all });
+            const previousExperiences = queryClient.getQueryData<Experience[]>(QUERY_KEYS.experiences.all);
+            queryClient.setQueryData<Experience[]>(QUERY_KEYS.experiences.all, (old) =>
                 old ? old.filter((e) => e.id !== id) : []
             );
             return { previousExperiences };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousExperiences) {
-                queryClient.setQueryData(["experiences"], context.previousExperiences);
+                queryClient.setQueryData(QUERY_KEYS.experiences.all, context.previousExperiences);
             }
         },
         mutationFn: async (id: number) => {
@@ -76,7 +77,7 @@ export function useAdminExperiences() {
 
     const bulkDeleteMutation = useAdminMutation({
         route: api.experiences.bulkDelete,
-        queryKeyToInvalidate: ["experiences"],
+        queryKeyToInvalidate: QUERY_KEYS.experiences.all,
         successTitle: "Experiences deleted",
         successDescription: "Selected experiences have been removed.",
         mutationFn: async (ids: number[]) => {

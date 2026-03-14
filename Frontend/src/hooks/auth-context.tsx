@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [queryClient]);
 
     const login = (userData?: AuthUser) => {
-        localStorage.removeItem("auth_last_exit");
+        localStorage.removeItem("portfolio_admin_last_exit");
         if (userData) setUser(userData);
         setIsAuthenticated(true);
         queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsAuthenticated(false);
             setUser(null);
-            localStorage.removeItem("auth_last_exit");
+            localStorage.removeItem("portfolio_admin_last_exit");
             queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
         }
     }, [queryClient]);
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const TIMEOUT_MS = 5 * 60 * 1000;
 
         const checkTimeout = () => {
-            const lastExit = localStorage.getItem("auth_last_exit");
+            const lastExit = localStorage.getItem("portfolio_admin_last_exit");
             if (lastExit) {
                 const elapsed = Date.now() - parseInt(lastExit, 10);
                 if (elapsed > TIMEOUT_MS) {
@@ -99,10 +99,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const handleExit = () => {
             if (document.visibilityState === 'hidden') {
-                localStorage.setItem("auth_last_exit", Date.now().toString());
+                localStorage.setItem("portfolio_admin_last_exit", Date.now().toString());
             } else {
                 if (!checkTimeout()) {
-                    localStorage.removeItem("auth_last_exit");
+                    localStorage.removeItem("portfolio_admin_last_exit");
                 }
             }
         };

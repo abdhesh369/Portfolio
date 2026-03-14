@@ -1,10 +1,11 @@
 import { api } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useTestimonials() {
   return useQuery({
-    queryKey: ["testimonials"],
+    queryKey: QUERY_KEYS.testimonials.all,
     queryFn: () =>
       fetchAndParse(
         api.testimonials.list.path,

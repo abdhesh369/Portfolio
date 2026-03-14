@@ -4,10 +4,11 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useMessages() {
   return useQuery({
-    queryKey: ["messages"],
+    queryKey: QUERY_KEYS.messages.all,
     queryFn: () =>
       fetchAndParse(
         api.messages.list.path,

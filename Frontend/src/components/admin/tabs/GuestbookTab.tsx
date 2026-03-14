@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { formatDate } from "@/lib/utils/date";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function GuestbookTab() {
     const { data: entriesData, isLoading } = useAdminGuestbook();
@@ -35,12 +36,12 @@ export function GuestbookTab() {
 
     const handleApprove = async (id: number) => {
         await approveMutation.mutateAsync(id);
-        queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] });
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.admin });
     };
 
     const handleDeleteConfirm = async (id: number) => {
         await deleteMutation.mutateAsync(id);
-        queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] });
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.admin });
         setIsDeletingId(null);
     };
 
@@ -75,7 +76,7 @@ export function GuestbookTab() {
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 opacity-50" />
                     </div>
                     <AdminButton
-                        onClick={() => queryClient.invalidateQueries({ queryKey: ["guestbook", "admin"] })}
+                        onClick={() => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.guestbook.admin })}
                         variant="secondary"
                         icon={RefreshCw}
                         className="w-14 h-14 rounded-2xl nm-button flex items-center justify-center text-[var(--admin-text-secondary)]"

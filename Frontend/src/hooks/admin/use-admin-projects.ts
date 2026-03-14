@@ -3,6 +3,7 @@ import { api, interpolatePath, type Project } from "@portfolio/shared";
 import { apiFetch } from "@/lib/api-helpers";
 import { useProjects } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function useAdminProjects() {
     const { refetch } = useProjects();
@@ -10,7 +11,7 @@ export function useAdminProjects() {
 
     const createMutation = useAdminMutation({
         route: api.projects.create,
-        queryKeyToInvalidate: ["projects"],
+        queryKeyToInvalidate: QUERY_KEYS.projects.all,
         successTitle: "Project created",
         successDescription: "The project has been added successfully.",
         mutationFn: async (data: Partial<Project>) => {
@@ -28,16 +29,16 @@ export function useAdminProjects() {
         successTitle: "Project updated",
         successDescription: "The project details have been saved.",
         onMutate: async ({ id, data }) => {
-            await queryClient.cancelQueries({ queryKey: ["projects"] });
-            const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
-            queryClient.setQueryData<Project[]>(["projects"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.projects.all });
+            const previousProjects = queryClient.getQueryData<Project[]>(QUERY_KEYS.projects.all);
+            queryClient.setQueryData<Project[]>(QUERY_KEYS.projects.all, (old) =>
                 old ? old.map((p) => (p.id === id ? { ...p, ...data } : p)) : []
             );
             return { previousProjects };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousProjects) {
-                queryClient.setQueryData(["projects"], context.previousProjects);
+                queryClient.setQueryData(QUERY_KEYS.projects.all, context.previousProjects);
             }
         },
         mutationFn: async ({ id, data }: { id: number; data: Partial<Project> }) => {
@@ -55,16 +56,16 @@ export function useAdminProjects() {
         successTitle: "Project deleted",
         successDescription: "The project has been removed.",
         onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: ["projects"] });
-            const previousProjects = queryClient.getQueryData<Project[]>(["projects"]);
-            queryClient.setQueryData<Project[]>(["projects"], (old) =>
+            await queryClient.cancelQueries({ queryKey: QUERY_KEYS.projects.all });
+            const previousProjects = queryClient.getQueryData<Project[]>(QUERY_KEYS.projects.all);
+            queryClient.setQueryData<Project[]>(QUERY_KEYS.projects.all, (old) =>
                 old ? old.filter((p) => p.id !== id) : []
             );
             return { previousProjects };
         },
         onError: (_err, _vars, context) => {
             if (context?.previousProjects) {
-                queryClient.setQueryData(["projects"], context.previousProjects);
+                queryClient.setQueryData(QUERY_KEYS.projects.all, context.previousProjects);
             }
         },
         mutationFn: async (id: number) => {

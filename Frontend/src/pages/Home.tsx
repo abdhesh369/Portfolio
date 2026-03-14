@@ -149,7 +149,7 @@ export default function Home() {
   useHashScroll();
 
   // section mapping to components
-  const SECTION_MAP: Record<string, React.ReactNode> = {
+  const SECTION_MAP = useMemo<Record<string, React.ReactNode>>(() => ({
     about: <SafeSection name="About"><About /></SafeSection>,
     skills: <SafeSection name="Skills"><Skills /></SafeSection>,
     whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
@@ -161,7 +161,7 @@ export default function Home() {
     testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
     guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
     contact: <SafeSection name="Contact"><Contact /></SafeSection>,
-  };
+  }), []);
   // Build section order: admin-saved order takes priority, fall back to defaults
   // Always ensures any new sections from DEFAULT_SECTION_ORDER are included
   const sectionOrder = useMemo(() => {
@@ -207,10 +207,10 @@ export default function Home() {
             name: settings?.personalName || "Abdhesh Sah",
             url: import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np",
             sameAs: [
-              "https://github.com/abdhesh369",
-              "https://www.linkedin.com/in/abdhesh369",
-              "https://x.com/abdhesh369",
-            ],
+              settings?.socialGithub,
+              settings?.socialLinkedin,
+              settings?.socialTwitter,
+            ].filter(Boolean) as string[],
             jobTitle: settings?.personalTitle || "Full-Stack Engineer",
             worksFor: {
               "@type": "Organization",

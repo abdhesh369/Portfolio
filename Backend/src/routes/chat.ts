@@ -5,7 +5,7 @@ import { z } from "zod";
 import rateLimit from "express-rate-limit";
 import DOMPurify from 'isomorphic-dompurify';
 import { eq, and } from "drizzle-orm";
-import { articlesTable, projectsTable, skillsTable, experiencesTable } from "@portfolio/shared";
+import { articlesTable, projectsTable, skillsTable, experiencesTable, siteSettingsTable } from "@portfolio/shared";
 import { db } from "../db.js";
 import { env } from "../env.js";
 import { redis } from "../lib/redis.js";
@@ -43,7 +43,7 @@ export async function buildSystemPrompt(): Promise<string> {
     }
 
     // Cache miss — fetch from DB (filtered to avoid data leaks)
-    const [articles, projects, skills, experiences] = await Promise.all([
+    const [articles, projects, skills, experiences, settingsRows] = await Promise.all([
         db.select().from(articlesTable).where(eq(articlesTable.status, "published")),
         db.select().from(projectsTable).where(
             and(
@@ -53,14 +53,16 @@ export async function buildSystemPrompt(): Promise<string> {
         ),
         db.select().from(skillsTable),
         db.select().from(experiencesTable),
+        db.select({ personalName: siteSettingsTable.personalName }).from(siteSettingsTable).limit(1),
     ]);
 
+    const ownerName = settingsRows[0]?.personalName || "Abdhesh";
 
     const truncate = (text: string, maxLen = 200) =>
         text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
 
-    const systemPrompt = `You are an AI assistant for Abdhesh's professional portfolio.
-            Your goal is to answer questions about Abdhesh based on the following information:
+    const systemPrompt = `You are an AI assistant for ${ownerName}'s professional portfolio.
+            Your goal is to answer questions about ${ownerName} based on the following information:
             - Skills: ${skills.slice(0, 30).map(s => s.name).join(", ")}
             - Projects: ${projects.slice(0, 10).map(p => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
             - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
