@@ -47,10 +47,17 @@ export function CommandPalette() {
       }
     };
 
+    const handleDevMode = () => {
+      toggleDevMode(true);
+      toast({ title: "Dev Mode Activated", description: "Voice command recognized. System transformation initiated." });
+    };
+
     window.addEventListener(TOGGLE_COMMAND_PALETTE, handleToggle);
+    window.addEventListener('activate-dev-mode', handleDevMode);
     document.addEventListener("keydown", down);
     return () => {
       window.removeEventListener(TOGGLE_COMMAND_PALETTE, handleToggle);
+      window.removeEventListener('activate-dev-mode', handleDevMode);
       document.removeEventListener("keydown", down);
     };
   }, []);

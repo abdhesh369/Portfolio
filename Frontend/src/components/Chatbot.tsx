@@ -231,7 +231,7 @@ export function Chatbot() {
                                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-card shadow-[0_0_8px_#10b981]" />
                                 </div>
                                 <div>
-                                    <h3 id="chatbot-title" className="font-mono font-black text-[11px] tracking-[0.2em] text-cyan-400 uppercase">SYS.TERMINAL // CORE_V2</h3>
+                                    <h3 id="chatbot-title" className="font-mono font-black text-[11px] tracking-[0.2em] text-cyan-400 uppercase">SYS.DIGITAL_TWIN // {settings?.personalName?.toUpperCase() || "ABDHESH"}</h3>
                                     <p className="text-[9px] font-mono text-gray-500 tracking-wider flex items-center gap-2 mt-1 uppercase">
                                         <span className="inline-block w-1.5 h-[1px] bg-cyan-500/50"></span>
                                         SECURE_UPLINK.ACTIVE

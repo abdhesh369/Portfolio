@@ -29,6 +29,8 @@ const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ defau
 import { GithubHeatmap } from "@/components/GithubHeatmap";
 import { CurrentlyBuildingTicker } from "@/components/CurrentlyBuildingTicker";
 import { ReadingList } from "@/components/ReadingList";
+import { StressTest } from "@/components/StressTest";
+import { LiveActivityTicker } from "@/components/LiveActivityTicker";
 
 
 // Skeleton loading states that match section shapes
@@ -158,6 +160,8 @@ const SECTION_MAP: Record<string, React.ReactNode> = {
   testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
   guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
   contact: <SafeSection name="Contact"><Contact /></SafeSection>,
+  "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
+  "live-activity": <LiveActivityTicker />,
 };
 
 export default function Home() {
@@ -168,31 +172,43 @@ export default function Home() {
 
   // Define persona-specific order overrides
   const PERSONA_ORDERS: Record<string, string[]> = {
-    recruiter: ['hero', 'experience', 'skills', 'about', 'projects', 'testimonials', 'contact'],
-    client: ['hero', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'contact'],
-    developer: ['hero', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'contact'],
+    recruiter: ['hero', 'live-activity', 'experience', 'skills', 'about', 'projects', 'testimonials', 'stress-test', 'contact', 'reading-list'],
+    client: ['hero', 'live-activity', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
+    developer: ['hero', 'live-activity', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
   };
 
   // Build section order: admin-saved order takes priority, fall back to defaults
   // Always ensures any new sections from DEFAULT_SECTION_ORDER are included
-  const sectionOrder = useMemo(() => {
-    // 1. Start with persona override if it exists, otherwise admin order, otherwise defaults
-    const personaOrder = persona !== 'default' ? PERSONA_ORDERS[persona] : null;
-    const adminOrder = settings?.sectionOrder as string[] | undefined;
-    
-    const baseOrder = personaOrder ? [...personaOrder] : (adminOrder?.length ? [...adminOrder] : [...DEFAULT_SECTION_ORDER]);
+    const sectionOrder = useMemo(() => {
+        // 1. Start with persona override if it exists, otherwise admin order, otherwise defaults
+        const personaOrder = persona !== 'default' ? PERSONA_ORDERS[persona] : null;
+        const adminOrder = settings?.sectionOrder as string[] | undefined;
+        
+        const baseOrder = personaOrder ? [...personaOrder] : (adminOrder?.length ? [...adminOrder] : [...DEFAULT_SECTION_ORDER]);
 
-    // 2. Append any sections from defaults that aren't already in the base order
-    DEFAULT_SECTION_ORDER.forEach((id: string) => {
-      if (!baseOrder.includes(id)) {
-        baseOrder.push(id);
-      }
-    });
+        // 2. Append any sections from defaults that aren't already in the base order
+        DEFAULT_SECTION_ORDER.forEach((id: string) => {
+          if (!baseOrder.includes(id)) {
+            baseOrder.push(id);
+          }
+        });
 
-    // 3. Always ensure hero is first
-    const withoutHero = baseOrder.filter((id: string) => id !== "hero");
-    return ["hero", ...withoutHero];
-  }, [settings?.sectionOrder, persona]);
+        // 3. Always ensure new v8 features are present for the "wow" factor
+        if (!baseOrder.includes('stress-test')) baseOrder.push('stress-test');
+        if (!baseOrder.includes('live-activity')) {
+          // Insert live-activity after hero
+          const heroIndex = baseOrder.indexOf('hero');
+          if (heroIndex !== -1) {
+            baseOrder.splice(heroIndex + 1, 0, 'live-activity');
+          } else {
+            baseOrder.unshift('live-activity');
+          }
+        }
+
+        // 4. Always ensure hero is first
+        const withoutHero = baseOrder.filter((id: string) => id !== "hero");
+        return ["hero", ...withoutHero];
+    }, [settings?.sectionOrder, persona]);
 
 
   const sectionVisibility = (settings?.sectionVisibility as Record<string, boolean>) || {};
@@ -255,7 +271,6 @@ export default function Home() {
 
       <main id="main-content">
         <Hero />
-        <CurrentlyBuildingTicker />
         
         <div className="section-container pb-20">
           <GithubHeatmap />

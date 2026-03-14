@@ -112,6 +112,54 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
     }
 }));
 
+githubRoutes.get("/activity/latest", cachePublic(300), asyncHandler(async (_req, res) => {
+    try {
+        if (!env.GITHUB_USERNAME) {
+            return res.status(503).json({ message: "GitHub username not configured" });
+        }
+
+        const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
+        const pushEvent = Array.isArray(events) ? events.find((e: any) => e.type === "PushEvent") : null;
+
+        if (!pushEvent || !pushEvent.payload.commits[0]) {
+            return res.json({ status: "idle" });
+        }
+
+        const latestCommit = pushEvent.payload.commits[0];
+        const repoName = pushEvent.repo.name;
+
+        // Fetch detailed commit info
+        const headers: Record<string, string> = {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "Portfolio-Backend",
+            ...(env.GITHUB_TOKEN ? { "Authorization": `token ${env.GITHUB_TOKEN}` } : {})
+        };
+        
+        const commitResponse = await fetch(`https://api.github.com/repos/${repoName}/commits/${latestCommit.sha}`, { headers });
+        if (!commitResponse.ok) throw new Error("Failed to fetch commit details");
+        
+        const details = await commitResponse.json() as any;
+        
+        res.json({
+            status: "active",
+            repo: repoName,
+            message: latestCommit.message,
+            sha: latestCommit.sha.substring(0, 7),
+            date: pushEvent.created_at,
+            files: (details.files || []).slice(0, 3).map((f: any) => ({
+                filename: f.filename,
+                additions: f.additions,
+                deletions: f.deletions,
+                status: f.status
+            })),
+            stats: details.stats
+        });
+    } catch (error) {
+        logger.error({ context: "github-detail", error }, "Error fetching latest commit detail");
+        res.status(502).json({ status: "error" });
+    }
+}));
+
 githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req, res) => {
     try {
         if (!env.GITHUB_USERNAME) {

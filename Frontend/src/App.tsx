@@ -14,6 +14,7 @@ import { useTheme } from "@/components/theme-provider";
 import { sanitizeCss } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PersonaSelector } from "@/components/PersonaSelector";
+import { VoiceControl } from "@/components/VoiceControl";
 
 // ─── Chunk-Load Error Boundary ────────────────────────────────────────────
 // Catches React.lazy() failures (network blips, Render redeployment with
@@ -534,6 +535,7 @@ function App() {
               <InstallPrompt />
                <Toaster />
               <PersonaSelector />
+              <VoiceControl />
               <CommandPalette />
               <TerminalOverlay />
             </LazyMotion>

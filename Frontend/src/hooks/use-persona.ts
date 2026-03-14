@@ -38,6 +38,13 @@ export function usePersona() {
         }
     }, [isDevMode]);
 
+    // Handle global dev-mode activation events (e.g., from Voice Control)
+    useEffect(() => {
+        const handleActivate = () => toggleDevMode(true);
+        window.addEventListener('activate-dev-mode', handleActivate);
+        return () => window.removeEventListener('activate-dev-mode', handleActivate);
+    }, [toggleDevMode]);
+
     return {
         persona,
         setPersona,

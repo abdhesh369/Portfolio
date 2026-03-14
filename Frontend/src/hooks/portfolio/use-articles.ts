@@ -3,16 +3,21 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import type { Article } from "@portfolio/shared/schema";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import { usePersona } from "../use-persona";
 
 export function useArticles(status?: string) {
+  const { isDevMode } = usePersona();
+
   return useQuery({
-    queryKey: QUERY_KEYS.articles.list(status),
-    queryFn: () =>
-      fetchAndParse(
+    queryKey: [...QUERY_KEYS.articles.list(status), isDevMode],
+    queryFn: async () => {
+      const articles: Article[] = await fetchAndParse(
         api.articles.list.path + (status ? `?status=${status}` : ""),
         api.articles.list.responses[200],
         "Failed to fetch articles"
-      ),
+      );
+      return isDevMode ? articles : articles.filter(a => a.status === "published");
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
@@ -74,8 +79,6 @@ export function useReactToArticle() {
     onSuccess: (data, variables) => {
       // Invalidate both reactions and the main article query
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.articles.all });
-
-
     },
   });
 }

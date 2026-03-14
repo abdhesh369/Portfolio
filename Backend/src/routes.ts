@@ -13,6 +13,7 @@ import { registerServiceRoutes } from "./routes/services.js";
 import seoRoutes from "./routes/seo.js";
 import sitemapRoutes from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
+import { debugRouter } from "./routes/debug.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
 import { registerChatRoutes } from "./routes/chat.js";
 import { registerSettingsRoutes } from "./routes/settings.js";
@@ -55,6 +56,7 @@ export function registerRoutes(app: Express) {
   v1Router.use("/og", ogRouter);
   v1Router.use("/search", searchRouter);
   v1Router.use("/reading-list", readingListRouter);
+  v1Router.use("/debug", debugRouter);
 
   // CSP violation reporting route
   v1Router.post(
