@@ -1,20 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Command, Wand2, Volume2, Search, ArrowRight, X } from "lucide-react";
+import { Mic, Volume2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-const COMMANDS = {
-  PROJECTS: ["projects", "project", "work", "portfolio"],
-  SKILLS: ["skills", "skill", "stack", "technology"],
-  EXPERIENCE: ["experience", "career", "job", "history"],
-  CONTACT: ["contact", "message", "hire", "email"],
-  DEV_MODE: ["hacker mode", "dev mode", "hack", "sudo dev mode"],
-  HOME: ["home", "top", "main", "start"],
-  RESUME: ["resume", "cv"],
-  SEARCH: ["search", "find"],
-};
+/** Voice command routing map — add new commands here, not in handleCommand */
+const VOICE_ROUTES: Array<{ keywords: string[]; path: string; feedback: string }> = [
+  { keywords: ["projects", "project", "work", "portfolio"], path: "/#projects", feedback: "Navigating to Projects" },
+  { keywords: ["skills", "skill", "stack", "technology"], path: "/#skills", feedback: "Navigating to Skills" },
+  { keywords: ["experience", "career", "job", "history"], path: "/#experience", feedback: "Navigating to Experience" },
+  { keywords: ["contact", "message", "hire", "email"], path: "/#contact", feedback: "Navigating to Contact" },
+  { keywords: ["home", "top", "main", "start"], path: "/", feedback: "Navigating to Home" },
+  { keywords: ["resume", "cv"], path: "/resume", feedback: "Opening Resume" },
+  { keywords: ["search", "find"], path: "/search", feedback: "Opening Search" },
+];
+
+const DEV_MODE_KEYWORDS = ["hacker mode", "dev mode", "hack", "sudo dev mode"];
 
 export function VoiceControl() {
   const [isListening, setIsListening] = useState(false);
@@ -23,21 +25,21 @@ export function VoiceControl() {
   const [lastCommand, setLastCommand] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       setIsSupported(false);
       return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false; // We want to process one command at a time
+    const recognition = new SpeechRecognitionCtor();
+    recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-US";
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const current = event.resultIndex;
       const result = event.results[current][0].transcript.toLowerCase();
       setTranscript(result);
@@ -47,8 +49,10 @@ export function VoiceControl() {
       }
     };
 
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error", event.error);
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      if (import.meta.env.DEV) {
+        console.error("Speech recognition error", event.error);
+      }
       setIsListening(false);
       if (event.error === 'not-allowed') {
         toast({
@@ -67,62 +71,31 @@ export function VoiceControl() {
   }, []);
 
   const handleCommand = useCallback((text: string) => {
-    const findMatch = (cmdList: string[]) => cmdList.some(cmd => text.includes(cmd));
+    // Check navigation routes via data-driven lookup (OCP-compliant)
+    const match = VOICE_ROUTES.find(route => route.keywords.some(kw => text.includes(kw)));
 
-    let executed = false;
-    let feedback = "";
-
-    if (findMatch(COMMANDS.PROJECTS)) {
-      setLocation("/#projects");
-      feedback = "Navigating to Projects";
-      executed = true;
-    } else if (findMatch(COMMANDS.SKILLS)) {
-      setLocation("/#skills");
-      feedback = "Navigating to Skills";
-      executed = true;
-    } else if (findMatch(COMMANDS.EXPERIENCE)) {
-      setLocation("/#experience");
-      feedback = "Navigating to Experience";
-      executed = true;
-    } else if (findMatch(COMMANDS.CONTACT)) {
-      setLocation("/#contact");
-      feedback = "Navigating to Contact";
-      executed = true;
-    } else if (findMatch(COMMANDS.HOME)) {
-      setLocation("/");
-      feedback = "Navigating to Home";
-      executed = true;
-    } else if (findMatch(COMMANDS.RESUME)) {
-      setLocation("/resume");
-      feedback = "Opening Resume";
-      executed = true;
-    } else if (findMatch(COMMANDS.SEARCH)) {
-      setLocation("/search");
-      feedback = "Opening Search";
-      executed = true;
-    } else if (findMatch(COMMANDS.DEV_MODE)) {
-        // Dev mode is usually a secret, but voice can trigger it if they know the command
-        // We trigger it via a custom event that CommandPalette or App can listen to
-        window.dispatchEvent(new CustomEvent('activate-dev-mode'));
-        feedback = "Dev Mode Activated";
-        executed = true;
-    }
-
-    if (executed) {
-      setLastCommand(feedback);
-      toast({
-        title: "Voice Command Recognized",
-        description: feedback,
-        duration: 2000,
-      });
+    if (match) {
+      setLocation(match.path);
+      setLastCommand(match.feedback);
+      toast({ title: "Voice Command Recognized", description: match.feedback, duration: 2000 });
       setTimeout(() => setLastCommand(null), 3000);
-    } else {
-        toast({
-            title: "Command Not Recognized",
-            description: `I heard: "${text}". Try saying "Projects" or "Contact".`,
-            variant: "destructive"
-        });
+      return;
     }
+
+    // Special: Dev Mode activation
+    if (DEV_MODE_KEYWORDS.some(kw => text.includes(kw))) {
+      window.dispatchEvent(new CustomEvent('activate-dev-mode'));
+      setLastCommand("Dev Mode Activated");
+      toast({ title: "Voice Command Recognized", description: "Dev Mode Activated", duration: 2000 });
+      setTimeout(() => setLastCommand(null), 3000);
+      return;
+    }
+
+    toast({
+      title: "Command Not Recognized",
+      description: `I heard: "${text}". Try saying "Projects" or "Contact".`,
+      variant: "destructive"
+    });
   }, [setLocation, toast]);
 
   const toggleListening = () => {
@@ -171,7 +144,7 @@ export function VoiceControl() {
             </div>
             {lastCommand && (
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
-                    <Check size={14} />
+                    <CheckIcon size={14} />
                     Done
                 </div>
             )}
@@ -212,7 +185,8 @@ export function VoiceControl() {
   );
 }
 
-function Check({ size, className }: { size?: number, className?: string }) {
+/** Decorative check icon — aria-hidden since adjacent text provides meaning */
+function CheckIcon({ size, className }: { size?: number, className?: string }) {
     return (
         <svg 
             width={size || 24} 
@@ -224,6 +198,7 @@ function Check({ size, className }: { size?: number, className?: string }) {
             strokeLinecap="round" 
             strokeLinejoin="round" 
             className={className}
+            aria-hidden="true"
         >
             <polyline points="20 6 9 17 4 12" />
         </svg>

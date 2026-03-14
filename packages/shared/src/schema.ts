@@ -457,7 +457,7 @@ export const chatConversationsTable = pgTable("chat_conversations", {
   id: serial("id").primaryKey(),
   sessionId: varchar("sessionId", { length: 255 }).notNull(),
   messages: jsonb("messages").$type<{ role: "user" | "assistant"; content: string }[]>().notNull().default([]),
-  metadata: jsonb("metadata").$type<Record<string, any>>().notNull().default({}),
+  metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({}),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

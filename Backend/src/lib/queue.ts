@@ -5,6 +5,8 @@ import { env } from "../env.js";
 import { logger } from "./logger.js";
 import { isLocalRedisUrl, formatRedisUrlForLog } from "./redis.js";
 import { createScopeWorker } from "../workers/scope.worker.js";
+import { escapeHtml } from "./escape.js";
+import { emailTemplateService } from "../services/email-template.service.js";
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
@@ -36,16 +38,95 @@ export let scopeQueue: Queue | null = null;
 export let emailWorker: Worker | null = null;
 export let scopeWorker: Worker | null = null;
 
-import { emailTemplateService } from "../services/email-template.service.js";
+/** Shared Resend client — instantiated once when queues initialize, not per-job */
+let resend: Resend | null = null;
 
-function escapeHtml(text: string): string {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+/** Simple in-memory template cache (Finding #16) */
+let templateCache: any[] | null = null;
+let lastTemplateFetch = 0;
+const TEMPLATE_CACHE_TTL = 60 * 1000; // 1 minute
+
+async function getCachedTemplates() {
+    const now = Date.now();
+    if (!templateCache || (now - lastTemplateFetch > TEMPLATE_CACHE_TTL)) {
+        templateCache = await emailTemplateService.getAll();
+        lastTemplateFetch = now;
+    }
+    return templateCache;
 }
+
+interface EmailParams {
+    from: string;
+    to: string;
+    subject: string;
+    html: string;
+    attachments?: any[];
+}
+
+/** Strategy Pattern for different email types (Finding #15) */
+const EMAIL_STRATEGIES: Record<string, (payload: any) => Promise<EmailParams> | EmailParams> = {
+    "contact-notification": (payload) => ({
+        from: env.CONTACT_EMAIL,
+        to: payload.targetEmail,
+        subject: `Portfolio Message: ${escapeHtml(payload.message.subject || "No Subject")}`,
+        html: `
+            <h3>New Message from Portfolio</h3>
+            <p><strong>Name:</strong> ${escapeHtml(payload.message.name)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(payload.message.email)}</p>
+            <p><strong>Subject:</strong> ${escapeHtml(payload.message.subject || "")}</p>
+            <hr/>
+            <p><strong>Message:</strong></p>
+            <p style="white-space: pre-wrap;">${escapeHtml(payload.message.message)}</p>
+        `,
+    }),
+    "admin-reply": (payload) => ({
+        from: env.CONTACT_EMAIL,
+        to: payload.to,
+        subject: payload.subject,
+        html: payload.html,
+    }),
+    "admin-notification": (payload) => ({
+        from: env.CONTACT_EMAIL,
+        to: payload.to || env.ADMIN_EMAIL,
+        subject: payload.subject,
+        html: payload.html,
+        attachments: payload.attachments,
+    }),
+    "client-notification": (payload) => ({
+        from: env.CONTACT_EMAIL,
+        to: payload.to,
+        subject: payload.subject,
+        html: payload.html,
+        attachments: payload.attachments,
+    }),
+    "auto-reply": async (payload) => {
+        const { message } = payload;
+        const templates = await getCachedTemplates();
+        const dynamicTemplate = templates.find(t => 
+            t.name.toLowerCase().includes('auto-reply') || 
+            t.name.toLowerCase().includes('inquiry')
+        );
+
+        let subject = "Thank you for reaching out!";
+        let html = `
+            <p>Hi ${escapeHtml(message.name)},</p>
+            <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
+            <p>Best regards,<br/>Portfolio Admin</p>
+        `;
+
+        if (dynamicTemplate) {
+            subject = dynamicTemplate.subject;
+            html = dynamicTemplate.body.replace(/\{name\}/g, escapeHtml(message.name));
+        }
+
+        return {
+            from: env.CONTACT_EMAIL,
+            to: message.email,
+            subject,
+            html,
+        };
+    }
+};
 
 export function initQueues() {
     if (isProd && (!hasRedisUrl || isProdLocalRedis)) {
@@ -83,112 +164,31 @@ export function initQueues() {
         defaultJobOptions
     });
 
+    // Instantiate Resend client once for the lifetime of the worker
+    if (env.RESEND_API_KEY) {
+        resend = new Resend(env.RESEND_API_KEY);
+    }
+
     emailWorker = new Worker("email", async (job: Job) => {
         const { type, payload } = job.data;
 
-        if (!env.RESEND_API_KEY) {
+        if (!resend) {
             logger.warn({ context: "queue" }, "Skipping email: RESEND_API_KEY not set");
             return;
         }
 
-        const resend = new Resend(env.RESEND_API_KEY);
-
-        if (type === "contact-notification") {
-            const { message, targetEmail } = payload;
-
-            const { data, error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL,
-                to: targetEmail,
-                subject: `Portfolio Message: ${escapeHtml(message.subject || "No Subject")}`,
-                html: `
-                <h3>New Message from Portfolio</h3>
-                <p><strong>Name:</strong> ${escapeHtml(message.name)}</p>
-                <p><strong>Email:</strong> ${escapeHtml(message.email)}</p>
-                <p><strong>Subject:</strong> ${escapeHtml(message.subject || "")}</p>
-                <hr/>
-                <p><strong>Message:</strong></p>
-                <p style="white-space: pre-wrap;">${escapeHtml(message.message)}</p>
-                `,
-            });
-
-            if (error) {
-                throw new Error(`Failed to send email: ${error.message}`);
-            }
-            return data;
-        } else if (type === "admin-reply") {
-            const { to, subject, html } = payload;
-            const { data, error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL,
-                to,
-                subject,
-                html
-            });
-
-            if (error) {
-                throw new Error(`Failed to send email: ${error.message}`);
-            }
-            return data;
-        } else if (type === "admin-notification") {
-            const { to, subject, html, attachments } = payload;
-            const { data, error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL, 
-                to: to || env.ADMIN_EMAIL,
-                subject,
-                html,
-                attachments
-            });
-
-            if (error) {
-                throw new Error(`Failed to send admin notification: ${error.message}`);
-            }
-            return data;
-        } else if (type === "client-notification") {
-            const { to, subject, html, attachments } = payload;
-            const { data, error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL,
-                to,
-                subject,
-                html,
-                attachments
-            });
-
-            if (error) {
-                throw new Error(`Failed to send client notification: ${error.message}`);
-            }
-            return data;
-        } else if (type === "auto-reply") {
-            const { message } = payload;
-            
-            // Try to find a dynamic template
-            const templates = await emailTemplateService.getAll();
-            const dynamicTemplate = templates.find(t => t.name.toLowerCase().includes('auto-reply') || t.name.toLowerCase().includes('inquiry'));
-
-            let subject = "Thank you for reaching out!";
-            let html = `
-                <p>Hi ${escapeHtml(message.name)},</p>
-                <p>Thank you for your message. I have received it and will get back to you as soon as possible.</p>
-                <p>Best regards,<br/>Portfolio Admin</p>
-            `;
-
-            if (dynamicTemplate) {
-                subject = dynamicTemplate.subject;
-                html = dynamicTemplate.body.replace(/\{name\}/g, escapeHtml(message.name));
-            }
-
-            const { data, error } = await resend.emails.send({
-                from: env.CONTACT_EMAIL,
-                to: message.email,
-                subject,
-                html
-            });
-
-            if (error) {
-                throw new Error(`Failed to send auto-reply email: ${error.message}`);
-            }
-            return data;
-        } else {
+        const strategy = EMAIL_STRATEGIES[type];
+        if (!strategy) {
             throw new Error(`Unknown job type: ${type}`);
         }
+
+        const params = await strategy(payload);
+        const { data, error } = await resend.emails.send(params);
+
+        if (error) {
+            throw new Error(`Failed to send ${type}: ${error.message}`);
+        }
+        return data;
     }, {
         connection: toBullMQConnection(getRedisConnection())
     });

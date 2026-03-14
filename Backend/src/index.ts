@@ -60,7 +60,7 @@ app.use("/api/v1", globalLimiter);
 
 // Harden CORS
 app.use(
-  cors((req: Request, callback: (err: Error | null, options?: any) => void) => {
+  cors((req: Request, callback: (err: Error | null, options?: cors.CorsOptions) => void) => {
     const origin = req.header("Origin");
 
     // Allow non-browser requests (health checks, monitoring, cURL) — they have no Origin
@@ -72,7 +72,7 @@ app.use(
           path: req.path,
           secFetch,
           userAgent: req.header("user-agent"),
-          requestId: (req as any).id
+          requestId: req.id
         }, "Browser-like request missing Origin header");
 
         return callback(null, { origin: false });
@@ -111,7 +111,7 @@ app.use(
           "'self'",
           "https://www.googletagmanager.com",
           "https://infird.com",
-          (_req, res: any) => `'nonce-${res.locals.nonce}'`
+          (_req, res) => `'nonce-${(res as any).locals.nonce}'`
         ],
         "object-src": ["'none'"],
         "connect-src": [
@@ -133,7 +133,7 @@ app.use(
           "'self'",
           "https://fonts.googleapis.com",
           "https://api.fontshare.com",
-          (_req, res: any) => `'nonce-${res.locals.nonce}'`
+          (req, res) => `'nonce-${(res as any).locals.nonce}'`
         ],
         "font-src": ["'self'", "https://fonts.gstatic.com", "https://cdn.fontshare.com"],
         "frame-ancestors": ["'none'"],

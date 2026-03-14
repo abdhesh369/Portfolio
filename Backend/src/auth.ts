@@ -70,11 +70,19 @@ export function createRefreshToken(familyId?: string): string {
 /**
  * Validates a refresh token JWT and checks against the revocation list.
  */
+interface RefreshTokenPayload {
+    role: string;
+    type: string;
+    fid: string;
+    iat: number;
+    exp: number;
+}
+
 export async function validateRefreshToken(token: string): Promise<boolean> {
     // 1. Verify signature and expiry
-    let decoded: any;
+    let decoded: RefreshTokenPayload;
     try {
-        decoded = jwt.verify(token, env.JWT_REFRESH_SECRET);
+        decoded = jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
     } catch {
         return false;
     }
@@ -162,11 +170,6 @@ export async function checkAuthStatus(req: Request): Promise<boolean> {
 /**
  * Middleware to check for admin authentication via JWT or API Key
  */
-interface JWTPayload {
-    role: string;
-    iat?: number;
-    exp?: number;
-}
 
 
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {

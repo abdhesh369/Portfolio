@@ -2,228 +2,215 @@ import { emailQueue } from "../lib/queue.js";
 import { env } from "../env.js";
 import { logger } from "../lib/logger.js";
 import { escapeHtml } from "../lib/escape.js";
+import type { ScopeRequest } from "@portfolio/shared";
+
+type NotificationType = "admin-notification" | "client-notification";
+
+/** 
+ * Precise interface for AI-generated project estimations 
+ */
+export interface EstimationResult {
+    summary: string;
+    hours: { min: number; max: number };
+    cost: { min: number; max: number; currency: string };
+    milestones: Array<{ title: string; duration: string; description: string }>;
+    techSuggestions: string[];
+}
+
+interface EmailPayload {
+    to: string;
+    subject: string;
+    html: string;
+    attachments?: Array<{
+        filename: string;
+        content: string;
+        encoding: "base64";
+        contentType: string;
+    }>;
+}
 
 export class EmailService {
     /**
-     * Notify admin when a client submits new feedback
+     * Private helper to dry up queue additions and enforce standard payloads
      */
-    async sendAdminFeedbackAlert(data: { clientName: string; projectTitle: string; message: string }) {
+    private async enqueue(jobName: string, type: NotificationType, payload: EmailPayload) {
         if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping admin alert");
+            logger.warn({ jobName }, "Email queue not initialized, skipping email");
             return;
         }
 
-        await emailQueue.add("portal-feedback-alert", {
-            type: "admin-notification",
-            payload: {
-                to: env.ADMIN_EMAIL,
-                subject: `NEW FEEDBACK: ${data.clientName} - ${data.projectTitle}`,
-                html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <h2 style="color: #4f46e5; margin-top: 0;">New Client Feedback</h2>
-                        <p style="font-size: 14px; color: #64748b;">A client has submitted new feedback on the portal.</p>
-                        
-                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Client</p>
-                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.clientName)}</p>
-                            
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Project</p>
-                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.projectTitle)}</p>
-                            
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Message</p>
-                            <p style="margin: 5px 0 0 0; color: #334155; white-space: pre-wrap;">${escapeHtml(data.message)}</p>
-                        </div>
-                        
-                        <div style="margin-top: 30px; text-align: center;">
-                            <a href="${env.FRONTEND_URL}/admin/clients" 
-                               style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                                View in Admin Panel
-                            </a>
-                        </div>
-                    </div>
-                `
+        // attachment size guard (10MB) to prevent worker OOM
+        if (payload.attachments) {
+            const totalSize = payload.attachments.reduce((acc, att) => acc + (att.content.length * 0.75), 0);
+            if (totalSize > 10 * 1024 * 1024) {
+                logger.error({ jobName, totalSize }, "Attachment size exceeds 10MB limit, rejecting job");
+                throw new Error("Attachment size limit exceeded");
             }
+        }
+
+        await emailQueue.add(jobName, { type, payload });
+    }
+
+    async sendAdminFeedbackAlert(data: { clientName: string; projectTitle: string; message: string }) {
+        await this.enqueue("portal-feedback-alert", "admin-notification", {
+            to: env.ADMIN_EMAIL,
+            subject: `NEW FEEDBACK: ${data.clientName} - ${data.projectTitle}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h2 style="color: #4f46e5; margin-top: 0;">New Client Feedback</h2>
+                    <p style="font-size: 14px; color: #64748b;">A client has submitted new feedback on the portal.</p>
+                    
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Client</p>
+                        <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.clientName)}</p>
+                        
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Project</p>
+                        <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.projectTitle)}</p>
+                        
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Message</p>
+                        <p style="margin: 5px 0 0 0; color: #334155; white-space: pre-wrap;">${escapeHtml(data.message)}</p>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="${env.FRONTEND_URL}/admin/clients" 
+                           style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            View in Admin Panel
+                        </a>
+                    </div>
+                </div>
+            `
         });
     }
 
-    /**
-     * Send portal invitation or token regeneration alert to client
-     */
     async sendClientPortalInvite(data: { clientName: string; clientEmail: string; rawToken: string }) {
-        if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping client invite");
-            return;
-        }
-
         const portalUrl = `${env.FRONTEND_URL}/portal`;
 
-        await emailQueue.add("portal-invite", {
-            type: "client-notification",
-            payload: {
-                to: data.clientEmail,
-                subject: "Your Client Portal Access Token",
-                html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <h2 style="color: #4f46e5; margin-top: 0;">Portal Access</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
-                        <p style="font-size: 14px; color: #64748b;">Your project dashboard token has been generated. You can use this to securely access your project updates and provide feedback.</p>
-                        
-                        <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center;">
-                            <p style="margin: 0 0 10px 0; font-size: 12px; font-weight: bold; color: #64748b; text-transform: uppercase;">Access Token</p>
-                            <code style="font-size: 18px; font-weight: bold; color: #0f172a; letter-spacing: 1px; display: block; word-break: break-all;">${data.rawToken}</code>
-                        </div>
-                        
-                        <p style="font-size: 13px; color: #ef4444; font-weight: bold; margin-bottom: 25px;">IMPORTANT: Please copy this token and keep it safe. For security reasons, it cannot be recovered if lost.</p>
-                        
-                        <div style="text-align: center;">
-                            <a href="${portalUrl}" 
-                               style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                                Open Client Portal
-                            </a>
-                        </div>
-                        
-                        <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center;">
-                            This is an automated message. Please do not reply directly.
-                        </p>
+        await this.enqueue("portal-invite", "client-notification", {
+            to: data.clientEmail,
+            subject: "Your Client Portal Access Token",
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h2 style="color: #4f46e5; margin-top: 0;">Portal Access</h2>
+                    <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
+                    <p style="font-size: 14px; color: #64748b;">Your project dashboard token has been generated. You can use this to securely access your project updates and provide feedback.</p>
+                    
+                    <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center;">
+                        <p style="margin: 0 0 10px 0; font-size: 12px; font-weight: bold; color: #64748b; text-transform: uppercase;">Access Token</p>
+                        <code style="font-size: 18px; font-weight: bold; color: #0f172a; letter-spacing: 1px; display: block; word-break: break-all;">${data.rawToken}</code>
                     </div>
-                `
-            }
+                    
+                    <p style="font-size: 13px; color: #ef4444; font-weight: bold; margin-bottom: 25px;">IMPORTANT: Please copy this token and keep it safe. For security reasons, it cannot be recovered if lost.</p>
+                    
+                    <div style="text-align: center;">
+                        <a href="${portalUrl}" 
+                           style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            Open Client Portal
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center;">
+                        This is an automated message. Please do not reply directly.
+                    </p>
+                </div>
+            `
         });
     }
 
-    /**
-     * Notify client when project status changes
-     */
     async sendProjectUpdateAlert(data: { clientName: string; clientEmail: string; projectTitle: string; newStatus: string }) {
-        if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping project update alert");
-            return;
-        }
-
-        await emailQueue.add("project-update", {
-            type: "client-notification",
-            payload: {
-                to: data.clientEmail,
-                subject: `Project Update: ${data.projectTitle}`,
-                html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <h2 style="color: #4f46e5; margin-top: 0;">Project Update</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
-                        <p style="font-size: 14px; color: #64748b;">There has been an update to your project: <strong>${escapeHtml(data.projectTitle)}</strong></p>
-                        
-                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">New Status</span>
-                            <span style="background: #4f46e5; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: bold; text-transform: uppercase;">${escapeHtml(data.newStatus.replace('_', ' '))}</span>
-                        </div>
-                        
-                        <div style="margin-top: 30px; text-align: center;">
-                            <a href="${env.FRONTEND_URL}/portal" 
-                               style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                                View in Portal
-                            </a>
-                        </div>
+        await this.enqueue("project-update", "client-notification", {
+            to: data.clientEmail,
+            subject: `Project Update: ${data.projectTitle}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h2 style="color: #4f46e5; margin-top: 0;">Project Update</h2>
+                    <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
+                    <p style="font-size: 14px; color: #64748b;">There has been an update to your project: <strong>${escapeHtml(data.projectTitle)}</strong></p>
+                    
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">New Status</span>
+                        <span style="background: #4f46e5; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: bold; text-transform: uppercase;">${escapeHtml(data.newStatus.replace(/_/g, ' '))}</span>
                     </div>
-                `
-            }
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="${env.FRONTEND_URL}/portal" 
+                           style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            View in Portal
+                        </a>
+                    </div>
+                </div>
+            `
         });
     }
 
-    /**
-     * Send a newsletter broadcast to a subscriber
-     */
     async sendBroadcast(data: { to: string; subject: string; html: string }) {
-        if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping broadcast");
-            return;
-        }
-
-        await emailQueue.add("newsletter-broadcast", {
-            type: "admin-notification",
-            payload: {
-                to: data.to,
-                subject: data.subject,
-                html: data.html
-            }
+        await this.enqueue("newsletter-broadcast", "admin-notification", {
+            to: data.to,
+            subject: data.subject,
+            html: data.html
         });
     }
 
-    /**
-     * Send project scope estimate PDF to client
-     */
-    async sendScopeEstimate(data: { name: string; email: string; estimation: any; pdfBuffer: Buffer }) {
-        if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping scope estimate");
-            return;
+    async sendScopeEstimate(data: { name: string; email: string; estimation: EstimationResult; pdfBuffer: Buffer }) {
+        if (!Buffer.isBuffer(data.pdfBuffer)) {
+            throw new Error("Invalid attachment: pdfBuffer must be a Buffer");
         }
 
-        await emailQueue.add("scope-estimate", {
-            type: "client-notification",
-            payload: {
-                to: data.email,
-                subject: `Project Estimation: ${data.name}`,
-                html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <h2 style="color: #4f46e5; margin-top: 0;">Project Estimation</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.name)},</p>
-                        <p style="font-size: 14px; color: #64748b;">Your project estimation has been generated by our AI assistant. Please find the detailed PDF report attached.</p>
-                        
-                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Estimation Summary</p>
-                            <p style="margin: 5px 0 0 0; color: #334155;">${escapeHtml(data.estimation.summary)}</p>
-                        </div>
-                        
-                        <p style="margin-top: 30px; font-size: 12px; color: #94a3b8; text-align: center;">
-                            If you have any questions, feel free to reply to this email or use the contact form on my portfolio.
-                        </p>
+        const safeName = data.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'project';
+        
+        await this.enqueue("scope-estimate", "client-notification", {
+            to: data.email,
+            subject: `Project Estimation: ${data.name}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h2 style="color: #4f46e5; margin-top: 0;">Project Estimation</h2>
+                    <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.name)},</p>
+                    <p style="font-size: 14px; color: #64748b;">Your project estimation has been generated by our AI assistant. Please find the detailed PDF report attached.</p>
+                    
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Estimation Summary</p>
+                        <p style="margin: 5px 0 0 0; color: #334155;">${escapeHtml(data.estimation.summary)}</p>
                     </div>
-                `,
-                attachments: [
-                    {
-                        filename: `Estimation_${data.name.replace(/\s+/g, "_")}.pdf`,
-                        content: data.pdfBuffer.toString("base64"),
-                        encoding: "base64",
-                        contentType: "application/pdf"
-                    }
-                ]
-            }
+                    
+                    <p style="margin-top: 30px; font-size: 12px; color: #94a3b8; text-align: center;">
+                        If you have any questions, feel free to reply to this email or use the contact form on my portfolio.
+                    </p>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: `Estimation_${safeName}.pdf`,
+                    content: data.pdfBuffer.toString("base64"),
+                    encoding: "base64",
+                    contentType: "application/pdf"
+                }
+            ]
         });
     }
 
-    /**
-     * Send testimonial request to a client
-     */
     async sendTestimonialRequest(data: { clientName: string; clientEmail: string; projectTitle: string }) {
-        if (!emailQueue) {
-            logger.warn("Email queue not initialized, skipping testimonial request");
-            return;
-        }
-
         const testimonialUrl = `${env.FRONTEND_URL}/testimonials/new?client=${encodeURIComponent(data.clientName)}&project=${encodeURIComponent(data.projectTitle)}`;
 
-        await emailQueue.add("testimonial-request", {
-            type: "client-notification",
-            payload: {
-                to: data.clientEmail,
-                subject: `Would you like to leave a testimonial for ${data.projectTitle}?`,
-                html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <h2 style="color: #4f46e5; margin-top: 0;">Testimonial Request</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
-                        <p style="font-size: 14px; color: #64748b;">It was a pleasure working with you on <strong>${escapeHtml(data.projectTitle)}</strong>. I'd love to hear your feedback and would be honored if you could leave a short testimonial about our collaboration.</p>
-                        
-                        <div style="margin-top: 30px; text-align: center;">
-                            <a href="${testimonialUrl}" 
-                               style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                                Leave a Testimonial
-                            </a>
-                        </div>
-                        
-                        <p style="margin-top: 30px; font-size: 12px; color: #94a3b8; text-align: center;">
-                            Thank you for your time and for trusting me with your project!
-                        </p>
+        await this.enqueue("testimonial-request", "client-notification", {
+            to: data.clientEmail,
+            subject: `Would you like to leave a testimonial for ${data.projectTitle}?`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h2 style="color: #4f46e5; margin-top: 0;">Testimonial Request</h2>
+                    <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
+                    <p style="font-size: 14px; color: #64748b;">It was a pleasure working with you on <strong>${escapeHtml(data.projectTitle)}</strong>. I'd love to hear your feedback and would be honored if you could leave a short testimonial about our collaboration.</p>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="${testimonialUrl}" 
+                           style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            Leave a Testimonial
+                        </a>
                     </div>
-                `
-            }
+                    
+                    <p style="margin-top: 30px; font-size: 12px; color: #94a3b8; text-align: center;">
+                        Thank you for your time and for trusting me with your project!
+                    </p>
+                </div>
+            `
         });
     }
 }

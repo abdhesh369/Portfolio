@@ -5,7 +5,7 @@ import { desc, eq, and, gte, sql, type InferInsertModel, type InferSelectModel }
 type DbAuditLog = InferSelectModel<typeof auditLogTable>;
 type DbInsertAuditLog = InferInsertModel<typeof auditLogTable>;
 
-export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "OTHER";
+export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN_SUCCESS" | "LOGIN_FAILED" | "LOGOUT" | "OTHER";
 
 export interface AuditLogEntry {
   action: AuditAction;

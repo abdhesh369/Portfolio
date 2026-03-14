@@ -14,6 +14,26 @@ import { authLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
 
+/** DRY cookie options generator (Finding #6) */
+function getCookieOptions(isProd: boolean, maxAge: number): {
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: "none" | "lax";
+    path: string;
+    maxAge: number;
+} {
+    return {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        path: "/",
+        maxAge,
+    };
+}
+
+const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000;         // 15 minutes
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 
 /**
  * Constant-time string comparison to prevent timing attacks.
@@ -58,7 +78,7 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         // Delay to further prevent brute-force attacks
         await new Promise(resolve => setTimeout(resolve, 1000));
         logger.warn({ context: "auth", ip: req.ip }, "Failed login attempt");
-        recordAudit("LOGIN_FAILED" as any, "auth", undefined, null, { ip: req.ip });
+        recordAudit("LOGIN_FAILED", "auth", undefined, null, { ip: req.ip });
         return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
@@ -72,35 +92,20 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     const isProd = getIsProd(req);
 
     // Set HttpOnly access token cookie (15 min)
-    res.cookie("auth_token", accessToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    });
+    res.cookie("auth_token", accessToken, getCookieOptions(isProd, ACCESS_TOKEN_MAX_AGE));
 
     // Set HttpOnly refresh token cookie (7 days)
-    res.cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("refresh_token", refreshToken, getCookieOptions(isProd, REFRESH_TOKEN_MAX_AGE));
 
     // Set readable CSRF cookie (NOT httpOnly so frontend JS can read it)
     const csrfToken = generateCsrfToken();
     res.cookie("csrf_token", csrfToken, {
+        ...getCookieOptions(isProd, REFRESH_TOKEN_MAX_AGE),
         httpOnly: false,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches refresh token)
     });
 
     logger.info({ context: "auth", ip: req.ip }, "Admin login");
-    recordAudit("LOGIN_SUCCESS" as any, "auth", undefined, null, { ip: req.ip });
+    recordAudit("LOGIN_SUCCESS", "auth", undefined, null, { ip: req.ip });
 
     res.json({ success: true, message: "Login successful", csrfToken });
 }));
@@ -193,29 +198,13 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     const isProd = getIsProd(req);
 
     // 4. Set new cookies
-    res.cookie("auth_token", newAccessToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.cookie("refresh_token", newRefreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("auth_token", newAccessToken, getCookieOptions(isProd, ACCESS_TOKEN_MAX_AGE));
+    res.cookie("refresh_token", newRefreshToken, getCookieOptions(isProd, REFRESH_TOKEN_MAX_AGE));
 
     const newCsrfToken = generateCsrfToken();
     res.cookie("csrf_token", newCsrfToken, {
+        ...getCookieOptions(isProd, REFRESH_TOKEN_MAX_AGE),
         httpOnly: false,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.json({ 
@@ -252,24 +241,9 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
     const isProd = getIsProd(req);
 
     // Always clear all cookies regardless of token validity
-    res.clearCookie("auth_token", {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/"
-    });
-    res.clearCookie("refresh_token", {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/"
-    });
-    res.clearCookie("csrf_token", {
-        httpOnly: false,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        path: "/"
-    });
+    res.clearCookie("auth_token", getCookieOptions(isProd, 0));
+    res.clearCookie("refresh_token", getCookieOptions(isProd, 0));
+    res.clearCookie("csrf_token", { ...getCookieOptions(isProd, 0), httpOnly: false });
 
     res.json({
         success: true,
