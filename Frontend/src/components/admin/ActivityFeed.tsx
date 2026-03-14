@@ -81,7 +81,7 @@ export default function ActivityFeed({ activities, loading, onFetchAll }: Activi
                                             </p>
                                         )}
                                     </div>
-                                    <div className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-500 text-indigo-500">
+                                    <div className="w-8 h-8 nm-inset rounded-lg flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transform translate-x-0 md:translate-x-4 md:group-hover:translate-x-0 transition-all duration-500 text-indigo-500">
                                         <ChevronRight size={14} />
                                     </div>
                                 </div>

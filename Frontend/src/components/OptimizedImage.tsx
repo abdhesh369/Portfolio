@@ -1,6 +1,8 @@
 import { m, HTMLMotionProps } from "framer-motion";
 import { getOptimizedImageUrl } from "@/lib/image-utils";
 import { cn } from "@/lib/utils";
+import { User, ImageOff } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface OptimizedImageProps extends HTMLMotionProps<"img"> {
     width?: number;
@@ -26,6 +28,13 @@ export function OptimizedImage({
     className,
     ...props
 }: OptimizedImageProps) {
+    const [error, setError] = useState(false);
+
+    // Reset error when src changes
+    useEffect(() => {
+        setError(false);
+    }, [src]);
+
     const optimizedSrc = src ? getOptimizedImageUrl(src, { width, height, quality, crop, gravity }) : src;
 
     let srcSet: string | undefined = undefined;
@@ -41,12 +50,30 @@ export function OptimizedImage({
         srcSet = `${src1x} 1x, ${src2x} 2x`;
     }
 
+    if (error || !src) {
+        const IsAvatar = alt?.toLowerCase().includes("avatar") || alt?.toLowerCase().includes("portrait") || alt?.toLowerCase().includes("author");
+        const Icon = IsAvatar ? User : ImageOff;
+        
+        return (
+            <div 
+                className={cn(
+                    "bg-secondary/20 flex items-center justify-center shrink-0", 
+                    className
+                )}
+                {...(props as any)}
+            >
+                <Icon className="w-1/3 h-1/3 text-muted-foreground/40" />
+            </div>
+        );
+    }
+
     return (
         <m.img
             src={optimizedSrc}
             srcSet={srcSet}
             alt={alt}
             loading="lazy"
+            onError={() => setError(true)}
             className={cn("bg-secondary/20 flex shrink-0", className)}
             {...props}
         />

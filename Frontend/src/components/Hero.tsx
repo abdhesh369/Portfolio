@@ -158,7 +158,7 @@ const ProfileCard = ({ settings }: { settings: SiteSettings | undefined | null }
           width={800}
           height={800}
           loading="eager"
-          className="absolute inset-0 w-full h-full object-cover opacity-85 mix-blend-luminosity grayscale-[30%] hover:grayscale-0 transition-all duration-700"
+          className="absolute inset-0 w-full h-full object-cover opacity-90 grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
         />
 
         {/* HUD Overlay */}

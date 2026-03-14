@@ -6,7 +6,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";
 import { useState, useEffect } from "react";
-import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy } from "lucide-react";
+import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AvailabilityCalendar } from "./AvailabilityCalendar";
 import { ScopeWizard } from "./ScopeWizard";
@@ -91,29 +91,47 @@ const CyberInput = ({
 };
 
 // Data Card
-const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.ElementType; label: string; value: string; href?: string; delay: number }) => (
-  <m.div
-    initial={fadeLeft.initial}
-    whileInView={fadeLeft.animate}
-    viewport={{ once: true }}
-    transition={{ delay }}
-    className="group"
-  >
-    <a
-      href={href}
-      className={`flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-foreground/[0.02] hover:bg-foreground/[0.05] hover:border-cyan-500/30 transition-all ${!href && 'pointer-events-none'}`}
+const DataCard = ({ icon: Icon, label, value, href, delay }: { icon: React.ElementType; label: string; value: string; href?: string; delay: number }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleAction = (e: React.MouseEvent) => {
+    if (href && href !== "#") return; // Let links be links
+    
+    e.preventDefault();
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <m.div
+      initial={fadeLeft.initial}
+      whileInView={fadeLeft.animate}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="group"
     >
-      <div className="p-3 bg-cyan-500/10 rounded-lg text-cyan-400 group-hover:scale-110 transition-transform">
-        <Icon className="w-5 h-5" />
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono mb-0.5">{label}</p>
-        <p className="text-sm font-medium text-foreground truncate font-mono">{value}</p>
-      </div>
-      {href && <Copy className="w-4 h-4 text-muted-foreground group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" aria-hidden="true" />}
-    </a>
-  </m.div>
-);
+      <a
+        href={href}
+        onClick={handleAction}
+        className={`flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-foreground/[0.02] hover:bg-foreground/[0.05] hover:border-cyan-500/30 transition-all ${!href && 'pointer-events-none'}`}
+      >
+        <div className="p-3 bg-cyan-500/10 rounded-lg text-cyan-400 group-hover:scale-110 transition-transform">
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono mb-0.5">{label}</p>
+          <p className="text-sm font-medium text-foreground truncate font-mono">{value}</p>
+        </div>
+        {copied ? (
+          <Check className="w-4 h-4 text-green-400 animate-in zoom-in" />
+        ) : (
+          href && <Copy className="w-4 h-4 text-muted-foreground group-hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100" aria-hidden="true" />
+        )}
+      </a>
+    </m.div>
+  );
+};
 
 export default function Contact() {
   const [showSuccess, setShowSuccess] = useState(false);
