@@ -4,12 +4,14 @@ import { redis } from "../lib/redis.js";
 import { db } from "../db.js";
 import { projectsTable } from "@portfolio/shared/schema";
 import { count } from "drizzle-orm";
+import { isAuthenticated } from "../auth.js";
 
 export const debugRouter = Router();
 
 // GET /api/v1/debug/performance - Returns live performance metrics
 debugRouter.get(
   "/performance",
+  isAuthenticated,
   asyncHandler(async (req, res) => {
     const start = Date.now();
     
@@ -49,6 +51,7 @@ debugRouter.get(
 // POST /api/v1/debug/stress - Simulates load
 debugRouter.post(
   "/stress",
+  isAuthenticated,
   asyncHandler(async (req, res) => {
     const { clients = 50 } = req.body;
     

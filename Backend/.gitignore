@@ -33,3 +33,5 @@ test_storage*.txt
 check_db.ts
 seed_extra.ts
 test-connection.ts
+eslint-report.json
+*.eslint-report.json

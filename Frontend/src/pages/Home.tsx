@@ -226,14 +226,14 @@ export default function Home() {
 
       <SEO
         slug="home"
-        title={settings?.personalName ? `${settings.personalName} - Portfolio` : "Abdhesh Sah - Full-Stack Engineer Portfolio"}
-        description={settings?.personalBio || "Portfolio of Abdhesh Sah, a Full Stack Developer specializing in modern web technologies."}
+        title={settings?.personalName ? `${settings.personalName} - Portfolio` : "Your Name - Full-Stack Engineer Portfolio"}
+        description={settings?.personalBio || "Portfolio of Your Name, a Full Stack Developer specializing in modern web technologies."}
         structuredData={[
           {
             "@context": "https://schema.org",
             "@type": "Person",
-            name: settings?.personalName || "Abdhesh Sah",
-            url: import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np",
+            name: settings?.personalName || "Your Name",
+            url: import.meta.env.VITE_SITE_URL || "https://yourportfolio.com",
             sameAs: [
               settings?.socialGithub,
               settings?.socialLinkedin,
@@ -254,13 +254,13 @@ export default function Home() {
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: `${settings?.personalName || "Abdhesh Sah"} Portfolio`,
-            url: import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np",
+            name: `${settings?.personalName || "Your Name"} Portfolio`,
+            url: import.meta.env.VITE_SITE_URL || "https://yourportfolio.com",
             potentialAction: {
               "@type": "SearchAction",
               target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog?q={search_term_string}`
+                urlTemplate: `${import.meta.env.VITE_SITE_URL || "https://yourportfolio.com"}/blog?q={search_term_string}`
               },
               "query-input": "required name=search_term_string"
             }
