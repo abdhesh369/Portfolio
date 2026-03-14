@@ -7,10 +7,66 @@ import { useToast } from "@/hooks/use-toast";
 import {
     Quote, Plus, Trash2, Edit3, X, User,
     Linkedin, Building2, Briefcase,
-    Save, Hash, Users, MessageSquareQuote
+    Save, Hash, Users, MessageSquareQuote, Mail
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
+
+function TestimonialRequestModal({ onClose }: { onClose: () => void }) {
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState({ clientName: "", clientEmail: "", projectTitle: "" });
+
+    async function send() {
+        setLoading(true);
+        try {
+            await apiFetch("/api/v1/testimonials/request", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            toast({ title: "Request Sent", description: `Testimonial request sent to ${data.clientEmail}` });
+            onClose();
+        } catch (err) {
+            toast({ title: "Failed to send request", variant: "destructive" });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative w-full max-w-md nm-flat p-8 rounded-3xl space-y-8"
+            >
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-black text-[var(--admin-text-primary)] uppercase italic tracking-tighter">
+                        Request_Testimonial
+                    </h3>
+                    <AdminButton onClick={onClose} variant="secondary" icon={X} size="sm" className="nm-button w-10 h-10 rounded-xl" />
+                </div>
+
+                <div className="space-y-6">
+                    <FormField label="Client_Name" value={data.clientName} onChange={(v) => setData(d => ({ ...d, clientName: v }))} placeholder="Identity" />
+                    <FormField label="Client_Email" value={data.clientEmail} onChange={(v) => setData(d => ({ ...d, clientEmail: v }))} placeholder="protocol@domain.com" />
+                    <FormField label="Project_Context" value={data.projectTitle} onChange={(v) => setData(d => ({ ...d, projectTitle: v }))} placeholder="Project Name" />
+                </div>
+
+                <AdminButton 
+                    onClick={send} 
+                    variant="primary" 
+                    icon={Mail} 
+                    disabled={loading || !data.clientEmail}
+                    className="nm-button nm-button-primary w-full h-14 text-[10px] font-black uppercase tracking-widest"
+                >
+                    {loading ? "Transmitting..." : "Send_Invitation"}
+                </AdminButton>
+            </motion.div>
+        </div>
+    );
+}
 
 const empty = {
     name: "",
@@ -29,6 +85,7 @@ export function TestimonialsTab(_props: AdminTabProps) {
     const { data: testimonials, refetch } = useTestimonials();
     const { toast } = useToast();
     const [editing, setEditing] = useState<(typeof empty & { id?: number }) | null>(null);
+    const [requestModal, setRequestModal] = useState(false);
 
     function startCreate() {
         setEditing({ ...empty });
@@ -233,15 +290,29 @@ export function TestimonialsTab(_props: AdminTabProps) {
                     </p>
                 </div>
 
-                <AdminButton
-                    onClick={startCreate}
-                    variant="primary"
-                    icon={Plus}
-                    className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
-                >
-                    New_Entry
-                </AdminButton>
+                <div className="flex gap-4">
+                    <AdminButton
+                        onClick={() => setRequestModal(true)}
+                        variant="secondary"
+                        icon={Mail}
+                        className="nm-button h-14 px-8 text-[12px] font-black uppercase tracking-[0.25em] text-indigo-400"
+                    >
+                        Request
+                    </AdminButton>
+                    <AdminButton
+                        onClick={startCreate}
+                        variant="primary"
+                        icon={Plus}
+                        className="nm-button nm-button-primary h-14 px-10 text-[12px] font-black uppercase tracking-[0.25em]"
+                    >
+                        New_Entry
+                    </AdminButton>
+                </div>
             </div>
+
+            <AnimatePresence>
+                {requestModal && <TestimonialRequestModal onClose={() => setRequestModal(false)} />}
+            </AnimatePresence>
 
             {/* List */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

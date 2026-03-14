@@ -1,6 +1,8 @@
 import { m } from 'framer-motion';
-import { X, BookOpen } from 'lucide-react';
+import { X, BookOpen, ThumbsUp, Loader2 } from 'lucide-react';
 import { SkillNode } from './SkillTypes';
+import { useEndorseSkill } from '@/hooks/portfolio/use-skills';
+import { useState } from 'react';
 
 interface SkillTooltipProps {
     node: SkillNode;
@@ -11,6 +13,9 @@ export const SkillTooltip = ({
     node,
     onClose
 }: SkillTooltipProps) => {
+    const [isEndorsed, setIsEndorsed] = useState(false);
+    const endorseMutation = useEndorseSkill();
+
     const statusColors = {
         Core: { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/50' },
         Comfortable: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/50' },
@@ -102,6 +107,40 @@ export const SkillTooltip = ({
                         </span>
                         <p className="text-muted-foreground text-sm mt-1 italic">{node.proof}</p>
                     </div>
+                </div>
+
+                {/* Endorsement Section */}
+                <div className="mt-6 flex items-center justify-between gap-4">
+                    <div className="flex flex-col">
+                        <span className="text-sm font-bold text-foreground">
+                            {node.endorsements || 0}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
+                            Endorsements
+                        </span>
+                    </div>
+                    
+                    <button
+                        onClick={() => {
+                            if (!isEndorsed) {
+                                endorseMutation.mutate(Number(node.id));
+                                setIsEndorsed(true);
+                            }
+                        }}
+                        disabled={isEndorsed || endorseMutation.isPending}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+                            isEndorsed 
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                            : 'bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 hover:scale-[1.02] active:scale-[0.98]'
+                        }`}
+                    >
+                        {endorseMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <ThumbsUp className={`w-4 h-4 ${isEndorsed ? 'fill-current' : ''}`} />
+                        )}
+                        {isEndorsed ? 'Endorsed' : 'Endorse Skill'}
+                    </button>
                 </div>
 
                 {/* Category tag */}

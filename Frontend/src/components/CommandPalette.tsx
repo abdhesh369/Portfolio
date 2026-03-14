@@ -4,12 +4,15 @@ import { Input } from "@/components/ui/input";
 import { 
   Search, FileText, Code, FolderGit2, ArrowRight, Home, 
   Mail, Palette, Briefcase, Star, Layers, MessageSquare,
-  LayoutDashboard, Users, Settings, Database
+  LayoutDashboard, Users, Settings, Database, Zap, Download,
+  Copy
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { m, AnimatePresence } from "framer-motion";
 import { useProjects, useArticles, useAuth } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useTheme } from "@/components/theme-provider";
+import { useToast } from "@/hooks/use-toast";
 import { TOGGLE_COMMAND_PALETTE } from "@/hooks/use-command-palette";
 
 export function CommandPalette() {
@@ -19,6 +22,8 @@ export function CommandPalette() {
   const [, setLocation] = useLocation();
   const { setTheme, theme } = useTheme();
   const { isAuthenticated } = useAuth();
+  const { data: settings } = useSiteSettings();
+  const { toast } = useToast();
 
   const { data: projects = [] } = useProjects();
   const { data: articles = [] } = useArticles("published");
@@ -53,8 +58,18 @@ export function CommandPalette() {
     const staticCommands = [
       { id: "home", title: "Go Home", type: "navigation" as const, icon: Home, href: "/" },
       { id: "projects-nav", title: "Browse Projects", type: "navigation" as const, icon: FolderGit2, href: "/#projects" },
-      { id: "contact-nav", title: "Get in Touch", type: "navigation" as const, icon: Mail, href: "/#contact" },
+      { id: "skills-nav", title: "Jump to Skills", type: "navigation" as const, icon: Zap, href: "/#skills" },
       { id: "experience-nav", title: "Jump to Experience", type: "navigation" as const, icon: Briefcase, href: "/#experience" },
+      { id: "contact-nav", title: "Get in Touch", type: "navigation" as const, icon: Mail, href: "/#contact" },
+      { id: "copy-email", title: "Copy Email Address", type: "action" as const, icon: Copy, action: () => {
+        const email = settings?.socialEmail || "contact@portfolio.dev";
+        navigator.clipboard.writeText(email);
+        toast({ title: "Email Copied", description: email });
+      }},
+      { id: "download-resume", title: "Download Resume", type: "action" as const, icon: Download, action: () => {
+        if (settings?.resumeUrl) window.open(settings.resumeUrl, '_blank');
+        else toast({ title: "Resume Not Available", description: "No resume link configured in settings.", variant: "destructive" });
+      }},
       { id: "testimonials-nav", title: "View Testimonials", type: "navigation" as const, icon: Star, href: "/#testimonials" },
       { id: "stack-nav", title: "Modern Tech Stack", type: "navigation" as const, icon: Layers, href: "/#stack" },
       { id: "guestbook-nav", title: "Sign Guestbook", type: "navigation" as const, icon: MessageSquare, href: "/guestbook" },

@@ -21,11 +21,15 @@ export async function trackEvent(event: AnalyticsEvent) {
 
     try {
         const userAgent = navigator.userAgent;
+        const urlParams = new URLSearchParams(window.location.search);
+        const referral = urlParams.get("ref");
+
         const info = {
             path: window.location.pathname,
             browser: getBrowser(userAgent),
             os: getOS(userAgent),
             device: /Mobi|Android/i.test(userAgent) ? "mobile" : "desktop",
+            referral: referral,
             ...event,
         };
 

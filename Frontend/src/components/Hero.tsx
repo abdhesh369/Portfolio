@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useLatestCommit } from "@/hooks/use-latest-commit";
+import { formatTimeAgo } from "@/lib/utils/date";
 import { useTheme } from "./theme-provider";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import type { SiteSettings } from "@portfolio/shared";
@@ -403,6 +405,7 @@ export default function Hero() {
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
               {showBanner && <OpenToWorkBanner settings={settings} />}
+              <GitHubStatusBadge />
               <LiveVisitorCount />
             </div>
 
@@ -604,6 +607,33 @@ export default function Hero() {
     </section>
   );
 }
+
+const GitHubStatusBadge = () => {
+  const { data: commitData, isLoading } = useLatestCommit();
+
+  if (isLoading || !commitData || commitData.repo === "N/A") return null;
+
+  return (
+    <m.a
+      href={commitData.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 1.1 }}
+      className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-2 group/gh-status transition-colors hover:bg-blue-500/20"
+    >
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+      </span>
+      <span>
+        Last Commit: {formatTimeAgo(commitData.date)} in {commitData.repo}
+      </span>
+      <ExternalLink className="w-2.5 h-2.5 opacity-50 group-hover/gh-status:opacity-100 transition-opacity" />
+    </m.a>
+  );
+};
 
 function SocialLink({ href, icon: Icon, label }: { href: string, icon: React.ElementType, label: string }) {
   return (

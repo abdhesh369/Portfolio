@@ -23,12 +23,16 @@ export function AnalyticsTracker() {
         const trackPageView = async () => {
             try {
                 const userAgent = navigator.userAgent;
+                const urlParams = new URLSearchParams(window.location.search);
+                const referral = urlParams.get("ref");
+                
                 const info = {
                     type: "page_view",
                     path: location,
                     browser: getBrowser(userAgent),
                     os: getOS(userAgent),
                     device: /Mobi|Android/i.test(userAgent) ? "mobile" : "desktop",
+                    referral: referral,
                 };
 
                 await fetch(`${API_BASE_URL}/api/v1/analytics/track`, {

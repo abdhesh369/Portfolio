@@ -28,6 +28,8 @@ import { registerClientRoutes } from "./routes/clients.js";
 import { registerSketchpadRoutes } from "./routes/sketchpad.js";
 import subscribersRouter from "./routes/subscribers.js";
 import ogRouter from "./routes/og.js";
+import searchRouter from "./routes/search.js";
+import readingListRouter from "./routes/reading-list.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
 import { logger } from "./lib/logger.js";
@@ -50,6 +52,8 @@ export function registerRoutes(app: Express) {
   v1Router.use("/scope", scopeRoutes);
   v1Router.use("/", subscribersRouter);
   v1Router.use("/og", ogRouter);
+  v1Router.use("/search", searchRouter);
+  v1Router.use("/reading-list", readingListRouter);
 
   // CSP violation reporting route
   v1Router.post(

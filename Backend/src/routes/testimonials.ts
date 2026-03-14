@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { z } from "zod";
 import { insertTestimonialApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -6,6 +7,7 @@ import { parseIntParam } from "../lib/params.js";
 import { cachePublic } from "../middleware/cache.js";
 import { testimonialService } from "../services/testimonial.service.js";
 import { recordAudit } from "../lib/audit.js";
+import { emailService } from "../services/email.service.js";
 
 export function registerTestimonialRoutes(app: Router) {
     // GET /testimonials - public list
@@ -78,6 +80,26 @@ export function registerTestimonialRoutes(app: Router) {
             await testimonialService.delete(id);
             recordAudit("DELETE", "testimonial", id, null, null);
             res.status(204).send();
+        })
+    );
+
+    // POST /testimonials/request - admin request testimonial from client
+    app.post(
+        "/testimonials/request",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const schema = z.object({
+                clientName: z.string(),
+                clientEmail: z.string().email(),
+                projectTitle: z.string()
+            });
+            const data = schema.parse(req.body);
+            await emailService.sendTestimonialRequest(data);
+            recordAudit("OTHER", "testimonial_request", undefined, null, data);
+            res.json({
+                success: true,
+                message: "Testimonial request sent successfully"
+            });
         })
     );
 }

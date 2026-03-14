@@ -5,62 +5,94 @@ import { logger } from '../lib/logger.js';
 // Define styles for PDF
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    padding: 50,
     fontFamily: 'Helvetica',
     fontSize: 10,
     color: '#334155',
+    backgroundColor: '#ffffff',
   },
   header: {
-    marginBottom: 20,
-    borderBottom: '1pt solid #e2e8f0',
-    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+    borderBottom: '2pt solid #4f46e5',
+    paddingBottom: 15,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4f46e5',
-  },
-  subtitle: {
-    fontSize: 12,
-    color: '#64748b',
-    marginTop: 4,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 14,
+  brandName: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#1e293b',
-    marginBottom: 8,
-    textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  docType: {
+    fontSize: 10,
+    color: '#64748b',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+  titleSection: {
+    marginBottom: 25,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 11,
+    color: '#64748b',
+  },
+  section: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#4f46e5',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    borderLeft: '3pt solid #4f46e5',
+    paddingLeft: 10,
   },
   summaryText: {
     lineHeight: 1.6,
+    color: '#475569',
   },
-  table: {
-    display: 'flex',
-    width: 'auto',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 4,
-    marginVertical: 10,
-  },
-  tableRow: {
+  statsContainer: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    gap: 20,
+    marginVertical: 15,
   },
-  tableHeader: {
-    backgroundColor: '#f8fafc',
-    fontSize: 9,
-    fontWeight: 'bold',
-  },
-  tableCell: {
-    padding: 8,
+  statCard: {
     flex: 1,
+    padding: 15,
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+    border: '1pt solid #e2e8f0',
+  },
+  statLabel: {
+    fontSize: 8,
+    color: '#64748b',
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  statValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1e293b',
+  },
+  milestoneItem: {
+    marginBottom: 15,
+    paddingLeft: 10,
+    borderLeft: '1pt solid #e2e8f0',
+  },
+  milestoneHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 3,
   },
   milestoneTitle: {
     fontWeight: 'bold',
@@ -72,16 +104,30 @@ const styles = StyleSheet.create({
     color: '#4f46e5',
     fontWeight: 'bold',
   },
+  milestoneDesc: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#64748b',
+  },
+  techBadge: {
+    fontSize: 9,
+    color: '#4f46e5',
+    backgroundColor: '#eff6ff',
+    padding: '4 8',
+    borderRadius: 4,
+    marginRight: 5,
+    marginBottom: 5,
+  },
   footer: {
     position: 'absolute',
     bottom: 40,
-    left: 40,
-    right: 40,
+    left: 50,
+    right: 50,
     textAlign: 'center',
     fontSize: 8,
     color: '#94a3b8',
     borderTop: '1pt solid #f1f5f9',
-    paddingTop: 10,
+    paddingTop: 15,
   },
 });
 
@@ -101,8 +147,13 @@ const EstimateDocument = ({ data }: { data: EstimateData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.title}>Project Scope Estimate</Text>
-        <Text style={styles.subtitle}>Prepared for: {data.name} | {data.projectType}</Text>
+        <Text style={styles.brandName}>ABDHE.DEV</Text>
+        <Text style={styles.docType}>Project Scope Estimate</Text>
+      </View>
+
+      <View style={styles.titleSection}>
+        <Text style={styles.title}>{data.projectType}</Text>
+        <Text style={styles.subtitle}>Prepared for {data.name} • {new Date().toLocaleDateString()}</Text>
       </View>
 
       <View style={styles.section}>
@@ -111,46 +162,53 @@ const EstimateDocument = ({ data }: { data: EstimateData }) => (
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Budget & Timeline</Text>
-        <View style={styles.table}>
-          <View style={[styles.tableRow, styles.tableHeader]}>
-            <Text style={styles.tableCell}>Item</Text>
-            <Text style={{ ...styles.tableCell, textAlign: 'right' }}>Estimation</Text>
+        <Text style={styles.sectionTitle}>High-Level Estimation</Text>
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Timeline Range</Text>
+            <Text style={styles.statValue}>{data.estimation.hours.min} - {data.estimation.hours.max} Hours</Text>
           </View>
-          <View style={styles.tableRow}>
-            <Text style={styles.tableCell}>Estimated Hours</Text>
-            <Text style={{ ...styles.tableCell, textAlign: 'right' }}>{data.estimation.hours.min} - {data.estimation.hours.max} hrs</Text>
-          </View>
-          <View style={[styles.tableRow, { borderBottomWidth: 0 }]}>
-            <Text style={styles.tableCell}>Estimated Cost</Text>
-            <Text style={{ ...styles.tableCell, textAlign: 'right', color: '#4f46e5', fontWeight: 'bold' }}>
-               {data.estimation.cost.min.toLocaleString()} - {data.estimation.cost.max.toLocaleString()} {data.estimation.cost.currency}
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Budget Indication</Text>
+            <Text style={styles.statValue}>
+              {data.estimation.cost.min.toLocaleString()} - {data.estimation.cost.max.toLocaleString()} {data.estimation.cost.currency}
             </Text>
           </View>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Project Milestones</Text>
+        <Text style={styles.sectionTitle}>Proposed Milestones</Text>
         {data.estimation.milestones.map((m, i) => (
-          <View key={i} style={{ marginBottom: 12 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+          <View key={i} style={styles.milestoneItem}>
+            <View style={styles.milestoneHeader}>
               <Text style={styles.milestoneTitle}>{m.title}</Text>
               <Text style={styles.milestoneDuration}>{m.duration}</Text>
             </View>
-            <Text style={{ fontSize: 9, lineHeight: 1.4 }}>{m.description}</Text>
+            <Text style={styles.milestoneDesc}>{m.description}</Text>
           </View>
         ))}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recommended Tech Stack</Text>
-        <Text style={styles.summaryText}>{data.estimation.techSuggestions.join(' • ')}</Text>
+        <Text style={styles.sectionTitle}>Technical Recommendations</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          {data.estimation.techSuggestions.map((tech, i) => (
+            <Text key={i} style={styles.techBadge}>{tech}</Text>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.section, { marginTop: 20, padding: 15, backgroundColor: '#f0f9ff', borderRadius: 8 }]}>
+        <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#0369a1', marginBottom: 5 }}>Next Steps & Discovery</Text>
+        <Text style={{ fontSize: 9, lineHeight: 1.5, color: '#0c4a6e' }}>
+          This automated estimate serves as a baseline for our technical discovery. To proceed, we should schedule a 30-minute deep-dive call to refine these requirements and finalize the architectural approach.
+        </Text>
       </View>
 
       <Text style={styles.footer}>
-        This estimate was generated by AI based on the provided project description.
-        Final scope and pricing may vary upon detailed technical discovery.
+        ABDHE.DEV | Confidential Project Estimate | Generated by AI discovery engine.
+        Final pricing is subject to technical discovery and signed master service agreement.
       </Text>
     </Page>
   </Document>

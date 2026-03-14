@@ -27,6 +27,7 @@ const SectionReveal = lazy(() => import("@/components/SectionReveal"));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
 import { GithubHeatmap } from "@/components/GithubHeatmap";
 import { CurrentlyBuildingTicker } from "@/components/CurrentlyBuildingTicker";
+import { ReadingList } from "@/components/ReadingList";
 
 
 // Skeleton loading states that match section shapes
@@ -249,6 +250,7 @@ export default function Home() {
         
         <div className="section-container pb-20">
           <GithubHeatmap />
+          <ReadingList />
         </div>
 
         <ShortcutHint />

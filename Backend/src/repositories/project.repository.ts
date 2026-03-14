@@ -55,6 +55,15 @@ export class ProjectRepository {
         return result ? this.transformProject(result as any) : null;
     }
 
+    async findBySlug(slug: string): Promise<Project | null> {
+        const [result] = await db
+            .select()
+            .from(projectsTable)
+            .where(eq(projectsTable.slug, slug))
+            .limit(1);
+        return result ? this.transformProject(result as any) : null;
+    }
+
     async create(data: InsertProject): Promise<Project> {
         const articleData: DbInsertProject = {
             ...data,

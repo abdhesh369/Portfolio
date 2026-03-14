@@ -18,10 +18,6 @@ let fontBuffer: ArrayBuffer | null = null;
 async function getFont() {
     if (fontBuffer) return fontBuffer;
     
-    // We'll try to find a system font or use a bundled one if we had one.
-    // For now, let's use a public URL or a common system path if we were on Linux.
-    // Since we are on Windows, we might have Inter or Segoe UI.
-    // But for consistency, let's fetch a robust font.
     try {
         const fontUrl = "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff";
         const response = await fetch(fontUrl);
@@ -34,11 +30,7 @@ async function getFont() {
     }
 }
 
-router.get("/", asyncHandler(async (req, res) => {
-    const title = (req.query.title as string) || "Abdhesh Sah";
-    const description = (req.query.description as string) || "Full Stack Developer & Software Engineer";
-    const type = (req.query.type as string) || "portfolio";
-
+async function generateOgImage(res: any, title: string, description: string, type: string) {
     try {
         const fontData = await getFont();
 
@@ -132,6 +124,31 @@ router.get("/", asyncHandler(async (req, res) => {
         logger.error({ error }, "OG Image generation failed");
         res.status(500).send("Internal Server Error");
     }
+}
+
+// Default OG generation via query params
+router.get("/", asyncHandler(async (req, res) => {
+    const title = (req.query.title as string) || "Abdhesh Sah";
+    const description = (req.query.description as string) || "Full Stack Developer & Software Engineer";
+    const type = (req.query.type as string) || "portfolio";
+    await generateOgImage(res, title, description, type);
+}));
+
+import { projectService } from "../services/project.service.js";
+import { articleService } from "../services/article.service.js";
+
+// GET /og/project/:slug
+router.get("/project/:slug", asyncHandler(async (req, res) => {
+    const project = await projectService.getBySlug(req.params.slug);
+    if (!project) return res.status(404).send("Project not found");
+    await generateOgImage(res, project.title, project.summary || project.description, "Project Case Study");
+}));
+
+// GET /og/article/:slug
+router.get("/article/:slug", asyncHandler(async (req, res) => {
+    const article = await articleService.getBySlug(req.params.slug);
+    if (!article) return res.status(404).send("Article not found");
+    await generateOgImage(res, article.title, article.excerpt || "Read more on my blog", "Tech Article");
 }));
 
 export default router;

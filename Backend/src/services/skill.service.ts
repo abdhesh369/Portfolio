@@ -77,6 +77,17 @@ export class SkillService {
         }
     }
 
+    /**
+     * Increments the endorsement counter for a skill.
+     * @param id - The skill ID to endorse
+     * @returns The updated skill
+     */
+    async endorse(id: number): Promise<Skill> {
+        const skill = await skillRepository.endorse(id);
+        await this.invalidateCache(id);
+        return skill;
+    }
+
     private async invalidateCache(id?: number) {
         try {
             const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);

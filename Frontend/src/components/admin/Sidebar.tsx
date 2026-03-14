@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
     Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, ChevronRight, X
+    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, ChevronRight, X, Send
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -48,6 +48,7 @@ const NAV_GROUPS = [
     {
         label: "PUBLISHING",
         items: [
+            { key: "newsletter", label: "Newsletter", icon: Send },
             { key: "seo", label: "SEO Settings", icon: Search },
             { key: "templates", label: "Email Templates", icon: FileText },
             { key: "case-studies", label: "Case Studies", icon: BookOpen },

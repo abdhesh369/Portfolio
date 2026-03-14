@@ -32,6 +32,16 @@ export class ProjectService {
     }
 
     /**
+     * Retrieves a single project by its URL slug.
+     * @param slug - The URL-friendly slug identifier
+     * @returns The matching project or null if not found
+     */
+    async getBySlug(slug: string): Promise<Project | null> {
+        const key = CacheService.key(FEATURE, ITEM_NAMESPACE, slug);
+        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findBySlug(slug));
+    }
+
+    /**
      * Creates a new project and invalidates related caches.
      * @param data - The project data to create
      * @returns The newly created project

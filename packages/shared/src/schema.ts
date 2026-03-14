@@ -64,6 +64,7 @@ export const skillsTable = pgTable("skills", {
   mastery: integer("mastery").notNull().default(0),
   x: real("x").notNull().default(50),
   y: real("y").notNull().default(50),
+  endorsements: integer("endorsements").notNull().default(0),
 });
 
 export const skillConnectionsTable = pgTable("skill_connections", {
@@ -113,6 +114,7 @@ export const analyticsTable = pgTable("analytics", {
   device: varchar("device", { length: 50 }), // mobile, desktop
   country: varchar("country", { length: 100 }),
   city: varchar("city", { length: 100 }),
+  referral: varchar("referral", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => {
   return {
@@ -296,6 +298,15 @@ export const sketchpadSessionsTable = pgTable("sketchpad_sessions", {
   createdBy: varchar("createdBy", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const readingListTable = pgTable("reading_list", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  note: text("note"),
+  type: varchar("type", { length: 50 }).$type<"article" | "video" | "book" | "other">().notNull().default("article"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const testimonialsTable = pgTable("testimonials", {
@@ -655,6 +666,7 @@ export const insertSkillApiSchema = z.object({
   mastery: z.number().min(0).max(100).default(0),
   x: z.number().default(50),
   y: z.number().default(50),
+  endorsements: z.number().default(0),
 });
 
 export const skillConnectionSchema = z.object({
@@ -816,6 +828,7 @@ export const insertAnalyticsSchema = z.object({
   device: z.string().max(50).nullable().optional(),
   country: z.string().max(100).nullable().optional(),
   city: z.string().max(100).nullable().optional(),
+  referral: z.string().max(255).nullable().optional(),
 });
 
 export const emailTemplateSchema = z.object({
@@ -1084,6 +1097,25 @@ export type ChatConversation = InferSelectModel<typeof chatConversationsTable>;
 export type Subscriber = InferSelectModel<typeof subscribersTable>;
 export type InsertSubscriber = InferInsertModel<typeof subscribersTable>;
 export type InsertSubscriberApi = z.infer<typeof insertSubscriberApiSchema>;
+
+export const readingListSchema = z.object({
+  id: z.number(),
+  title: z.string().min(1).max(255),
+  url: z.string().url().max(500),
+  note: z.string().nullable().optional(),
+  type: z.enum(["article", "video", "book", "other"]),
+  createdAt: z.coerce.date(),
+});
+
+export const insertReadingListApiSchema = z.object({
+  title: z.string().min(1).max(255),
+  url: z.string().url().max(500),
+  note: z.string().nullable().optional(),
+  type: z.enum(["article", "video", "book", "other"]).default("article"),
+});
+
+export type ReadingList = z.infer<typeof readingListSchema>;
+export type InsertReadingList = z.infer<typeof insertReadingListApiSchema>;
 
 // Update schemas
 export const updateProjectSchema = insertProjectApiSchema.partial();

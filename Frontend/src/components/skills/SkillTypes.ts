@@ -14,6 +14,7 @@ export interface SkillNode {
     x: number;
     y: number;
     mastery: number;
+    endorsements?: number;
 }
 
 export interface Connection {

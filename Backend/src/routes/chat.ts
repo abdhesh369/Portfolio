@@ -65,7 +65,7 @@ export async function buildSystemPrompt(): Promise<string> {
 
     const systemPrompt = `You are an AI assistant for ${ownerName}'s professional portfolio.
             Your goal is to answer questions about ${ownerName} based on the following information:
-            - Skills: ${skills.slice(0, 30).map(s => s.name).join(", ")}
+            - Skills: ${skills.slice(0, 30).map(s => `${s.name}${s.endorsements ? ` (${s.endorsements} endorsements)` : ""}`).join(", ")}
             - Projects: ${projects.slice(0, 10).map(p => `${p.title}: ${truncate(p.description || "", 200)}`).join("; ")}
             - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
             - Articles: ${articles.slice(0, 10).map(a => a.title).join(", ")}

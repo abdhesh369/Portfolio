@@ -1,4 +1,4 @@
-import { eq, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq, inArray, sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { db } from "../db.js";
 import { skillsTable, type Skill, type InsertSkill } from "@portfolio/shared";
 
@@ -60,6 +60,16 @@ export class SkillRepository {
     async bulkDelete(ids: number[]): Promise<void> {
         if (ids.length === 0) return;
         await db.delete(skillsTable).where(inArray(skillsTable.id, ids));
+    }
+
+    async endorse(id: number): Promise<Skill> {
+        const [updated] = await db
+            .update(skillsTable)
+            .set({ endorsements: sql`${skillsTable.endorsements} + 1` })
+            .where(eq(skillsTable.id, id))
+            .returning();
+        if (!updated) throw new Error(`Skill with id ${id} not found`);
+        return this.transformSkill(updated);
     }
 }
 

@@ -1,7 +1,8 @@
 import { api } from "@portfolio/shared";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import { API_BASE_URL } from "@/lib/api-helpers";
 
 export function useSkills() {
   return useQuery({
@@ -13,6 +14,22 @@ export function useSkills() {
         "Failed to fetch skills"
       ),
     staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+export function useEndorseSkill() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (skillId: number) => {
+      const res = await fetch(`${API_BASE_URL}/api/v1/skills/${skillId}/endorse`, {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to endorse skill");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.skills.all });
+    },
   });
 }
 
