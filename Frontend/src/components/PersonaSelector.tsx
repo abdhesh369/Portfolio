@@ -58,8 +58,8 @@ export function PersonaSelector() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(true)}
                 className={cn(
-                    "fixed bottom-24 right-8 z-[60] p-4 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl group transition-all duration-500",
-                    persona !== 'default' && "border-primary/40 ring-4 ring-primary/10"
+                    "fixed bottom-24 left-8 z-[var(--z-dock)] p-4 rounded-2xl glass-cyber group",
+                    persona !== 'default' && "neon-border ring-4 ring-primary/10"
                 )}
             >
                 <div className="relative flex items-center gap-3">
@@ -82,7 +82,7 @@ export function PersonaSelector() {
             {/* Selection Modal */}
             <AnimatePresence>
                 {isOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4">
                         <m.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}

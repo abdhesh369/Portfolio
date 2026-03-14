@@ -948,7 +948,7 @@
   font-size: 8px;
   font-weight: 900;
   color: #22c55e;
-  z-index: 9999;
+  z-index: var(--z-nav);
   letter-spacing: 0.5em;
   pointer-events: none;
   text-shadow: 0 0 10px #22c55e;

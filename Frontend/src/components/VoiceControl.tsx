@@ -140,14 +140,14 @@ export function VoiceControl() {
   if (!isSupported) return null;
 
   return (
-    <div className="fixed bottom-32 right-8 z-[60] flex flex-col items-end gap-3 pointer-events-none">
+    <div className="fixed bottom-32 left-8 z-[var(--z-dock)] flex flex-col items-start gap-3 pointer-events-none">
       <AnimatePresence>
         {(isListening || transcript) && (
           <m.div
-            initial={{ opacity: 0, x: 20, scale: 0.9 }}
+            initial={{ opacity: 0, x: -20, scale: 0.9 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 20, scale: 0.9 }}
-            className="pointer-events-auto flex items-center gap-4 bg-background/60 backdrop-blur-xl border border-primary/20 p-4 rounded-2xl shadow-2xl min-w-[200px]"
+            exit={{ opacity: 0, x: -20, scale: 0.9 }}
+            className="pointer-events-auto flex items-center gap-4 glass-cyber p-4 rounded-2xl min-w-[200px]"
           >
             <div className="relative">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">

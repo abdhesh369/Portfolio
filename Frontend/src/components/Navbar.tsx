@@ -122,10 +122,11 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-500 ease-in-out ${scrolled
+      className={`fixed w-full transition-all duration-500 ease-in-out ${scrolled
         ? "bg-background/80 backdrop-blur-md border-b border-border shadow-lg shadow-cyan-500/5"
         : "bg-transparent"
         } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+      style={{ zIndex: 'var(--z-nav)' }}
     >
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

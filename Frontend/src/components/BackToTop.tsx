@@ -27,7 +27,7 @@ export default function BackToTop() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.5, y: 20 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className="fixed bottom-8 right-24 z-[100]"
+                    className="fixed bottom-8 left-8 z-[var(--z-floating)]"
                 >
                     <div className="relative group">
                         {/* Progress Ring */}

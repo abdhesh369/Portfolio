@@ -480,7 +480,8 @@ function GlobalLoadingIndicator() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed top-0 left-0 right-0 z-[10000] pointer-events-none"
+          className="fixed top-0 left-0 right-0 pointer-events-none"
+          style={{ zIndex: 'var(--z-max)' }}
         >
           <div className="h-1 w-full bg-primary/20 overflow-hidden relative">
             {reducedMotion ? (

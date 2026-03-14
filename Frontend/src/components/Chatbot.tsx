@@ -159,8 +159,11 @@ export function Chatbot() {
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed right-4 sm:right-6 z-50 group pointer-events-auto"
-                        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
+                        className="fixed right-4 sm:right-6 group pointer-events-auto"
+                        style={{ 
+                            bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))',
+                            zIndex: 'var(--z-floating)'
+                        }}
                         aria-label="Initialize AI Assistant"
                     >
                         {/* Outer Pulsing Ring */}
@@ -210,15 +213,18 @@ export function Chatbot() {
                         initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                         exit={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
-                        className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-card/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
-                        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
+                        className="fixed right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[85vh] flex flex-col bg-card/95 backdrop-blur-[40px] border border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
+                        style={{ 
+                            bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))',
+                            zIndex: 'var(--z-chatbot)'
+                        }}
                     >
                         {/* Sci-Fi Accent Lines */}
                         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50 z-20" />
                         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent opacity-50 z-20" />
 
                         {/* Cyber Grid Background */}
-                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none z-0" />
+                        <div className="absolute inset-0 cyber-grid-bg opacity-[0.03] pointer-events-none z-0" />
 
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/5 bg-white/[0.01] relative z-10">
