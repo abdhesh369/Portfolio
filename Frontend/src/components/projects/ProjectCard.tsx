@@ -3,8 +3,9 @@ import { m, useReducedMotion } from "framer-motion";
 import { type Project } from "@portfolio/shared/schema";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { staggerChild } from "@/lib/animation";
-import { ExternalLink, Github, ArrowRight, Folder, Eye, Zap, Cpu, Layers, Terminal, Sparkles } from "lucide-react";
+import { ExternalLink, Github, ArrowRight, Folder, Eye, Sparkles, Flame } from "lucide-react";
 import { Link } from "wouter";
+import { CodeRoastModal } from "./CodeRoastModal";
 
 interface ProjectCardProps {
   project: Project;
@@ -21,23 +22,9 @@ const categoryColors: Record<string, { glow: string; text: string; bg: string }>
   Web: { glow: 'rgba(59, 130, 246, 0.5)', text: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
 };
 
-// Tech colors
-const techColors: Record<string, string> = {
-  React: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
-  "Node.js": "bg-green-500/15 text-green-400 border-green-500/30",
-  TypeScript: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  JavaScript: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-  Python: "bg-yellow-600/15 text-yellow-500 border-yellow-600/30",
-};
 
-const techIcons: Record<string, React.ReactNode> = {
-  React: <CodeIcon className="w-3 h-3" />,
-  "Node.js": <Cpu className="w-3 h-3" />,
-  TypeScript: <Layers className="w-3 h-3" />,
-  Python: <Terminal className="w-3 h-3" />,
-};
 
-function CodeIcon(props: any) {
+function CodeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -62,6 +49,7 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [roastOpen, setRoastOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -84,7 +72,8 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
   const catColor = categoryColors[project.category] || categoryColors.Utility;
 
   return (
-    <Link href={`/project/${project.id}`}>
+    <>
+      <Link href={`/project/${project.id}`}>
       <m.div
         ref={cardRef}
         layout
@@ -235,10 +224,32 @@ export function ProjectCard({ project, showPinBadge = true, priority = false }: 
                   <ExternalLink className="w-4 h-4" />
                 </a>
               )}
+
+              <div className="flex-1" />
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setRoastOpen(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-all text-[10px] font-bold group/roast"
+              >
+                <Flame className="w-3.5 h-3.5 group-hover:animate-bounce" />
+                AI ROAST
+              </button>
             </div>
           </div>
         </div>
       </m.div>
     </Link>
+
+    <CodeRoastModal 
+      projectId={project.id} 
+      projectTitle={project.title}
+      isOpen={roastOpen}
+      onClose={() => setRoastOpen(false)}
+    />
+    </>
   );
 }

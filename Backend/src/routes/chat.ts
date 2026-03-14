@@ -230,4 +230,77 @@ export const registerChatRoutes = (router: Router) => {
             data: logs
         });
     }));
+
+    // POST /api/v1/chat/hire — AI hiring conversation for project discovery
+    router.post("/chat/hire", chatLimiter, validateBody(chatSchema), asyncHandler(async (req: Request, res: Response) => {
+        let openrouter: OpenRouter;
+        try {
+            openrouter = getOpenRouterClient();
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Chat service unavailable";
+            logger.error({ context: "chat-hire" }, message);
+            return res.status(500).json({ message });
+        }
+
+        const validatedData: z.infer<typeof chatSchema> = req.body;
+
+        const systemPrompt = `You are a professional hiring assistant for a freelance developer's portfolio.
+Your job is to understand what the client needs and collect their project details naturally through conversation.
+
+CONVERSATION FLOW:
+1. Greet warmly and ask what they want to build
+2. Ask about timeline (when they need it)
+3. Ask about budget range (Under $500 / $500-$2000 / $2000+)
+4. Ask for their name and email (to send a detailed response)
+5. Summarize what you collected and confirm
+
+RULES:
+- Ask ONE question at a time
+- Keep responses SHORT (2-3 sentences max)
+- Be friendly but professional
+- When you have name, email, project description, budget, timeline → respond with EXACTLY this JSON on its own line:
+  COLLECTED:{"name":"...","email":"...","subject":"...","message":"...","projectType":"...","budget":"...","timeline":"..."}
+- Do not mention this JSON format to the user
+- After the JSON line, write a warm closing message`;
+
+        // Map internal history
+        const allMessages = validatedData.messages.map(msg => ({
+            role: (msg.role === "model" ? "assistant" : "user") as "assistant" | "user",
+            content: msg.parts.map(p => p.text).join("\n")
+        }));
+        const messages = allMessages.slice(-MAX_CHAT_MESSAGES);
+
+        // Prepend system prompt
+        const finalMessages = [
+            {
+                role: "system" as const,
+                content: systemPrompt
+            },
+            ...messages
+        ];
+
+        // Try models
+        let lastError: unknown = null;
+        for (const model of CHAT_MODELS) {
+            try {
+                const response = await openrouter.chat.send({
+                    chatGenerationParams: {
+                        model,
+                        messages: finalMessages,
+                        stream: false,
+                        max_tokens: 400
+                    }
+                });
+
+                const text = response.choices?.[0]?.message?.content || "No response generated.";
+                return res.json({ message: text });
+            } catch (modelErr: unknown) {
+                lastError = modelErr;
+                logger.warn({ context: "chat-hire", model }, "Model failed, trying next");
+                continue;
+            }
+        }
+
+        throw lastError || new Error("All chat models failed");
+    }));
 };

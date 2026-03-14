@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useAnalyticsSummary, useVitalsSummary } from "../../hooks/use-portfolio";
+import { VisitorGlobe } from "./VisitorGlobe";
 import { formatDate } from "@/lib/utils/date";
 import {
     Eye,
@@ -116,6 +117,11 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
 
     return (
         <div className="space-y-6 admin-animate-in">
+            {/* ─── Visitor Globe ─── */}
+            <div className="admin-panel-card p-0 overflow-hidden">
+                <VisitorGlobe data={topCountries} />
+            </div>
+
             {/* ─── Stat Cards ─── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {stats.map((s) => {

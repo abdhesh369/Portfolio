@@ -9,6 +9,7 @@ vi.mock("@portfolio/shared", () => ({
     projectsTable: "projects",
     skillsTable: "skills",
     experiencesTable: "experiences",
+    siteSettingsTable: { personalName: "personalName" },
 }));
 
 vi.mock("../env.js", () => ({

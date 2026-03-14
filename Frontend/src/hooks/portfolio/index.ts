@@ -1,5 +1,5 @@
 /**
- * Portfolio hooks — domain-separated barrel export.
+ * Portfolio hooks - domain-separated barrel export.
  * All hooks are re-exported here for backwards compatibility.
  */
 export { useProjects, useProjectById } from "./use-projects";
@@ -22,3 +22,4 @@ export { useAdminExperiences } from "../admin/use-admin-experiences";
 export { useAdminServices } from "../admin/use-admin-services";
 export { useAdminSkills } from "../admin/use-admin-skills";
 export { useAdminProjects } from "../admin/use-admin-projects";
+export { useReadingList, type ReadingItem } from "./use-reading-list";

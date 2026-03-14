@@ -10,6 +10,7 @@ import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Cop
 import { Button } from "@/components/ui/button";
 import { AvailabilityCalendar } from "./AvailabilityCalendar";
 import { ScopeWizard } from "./ScopeWizard";
+import { HireMeChat } from "./HireMeChat";
 
 // Cyber Input Component
 const CyberInput = ({
@@ -268,7 +269,9 @@ export default function Contact() {
                   <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
                   <div className="w-3 h-3 rounded-full bg-green-500/50" />
                 </div>
-                <div className="text-[10px] font-mono text-muted-foreground">msg_transmission.exe</div>
+                <div className="text-[10px] font-mono text-muted-foreground">
+                  {formMode === "message" ? "hire_me_bot.exe" : formMode === "wizard" ? "scope_ai.exe" : "project_inquiry.exe"}
+                </div>
               </div>
 
               <div className="p-6 md:p-8 relative">
@@ -316,7 +319,7 @@ export default function Contact() {
                     onClick={() => setFormMode("message")}
                     className={`px-4 py-2.5 sm:py-2 text-[10px] sm:text-xs font-mono uppercase tracking-widest rounded-md transition-all flex-1 sm:flex-none ${formMode === "message" ? "bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]" : "text-muted-foreground hover:text-foreground"}`}
                   >
-                    Standard Message
+                    AI Chat <span className="ml-1 text-[8px] bg-white/10 px-1 rounded">NEW</span>
                   </button>
                   <button
                     onClick={() => setFormMode("project")}
@@ -341,6 +344,15 @@ export default function Contact() {
                       exit={{ opacity: 0, y: -20 }}
                     >
                       <ScopeWizard />
+                    </m.div>
+                  ) : formMode === "message" ? (
+                    <m.div
+                      key="hire-chat"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                    >
+                      <HireMeChat onSuccess={() => setShowSuccess(true)} />
                     </m.div>
                   ) : (
                     <m.div

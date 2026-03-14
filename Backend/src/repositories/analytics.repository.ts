@@ -27,6 +27,11 @@ export interface TopCountry {
     visits: number;
 }
 
+export interface ReferralBreakdown {
+    source: string;
+    count: number;
+}
+
 export interface AnalyticsSummary {
     totalViews: number;
     totalEvents: number;
@@ -34,6 +39,7 @@ export interface AnalyticsSummary {
     topProjects: TopProject[];
     deviceBreakdown: DeviceBreakdown[];
     topCountries: TopCountry[];
+    referralBreakdown: ReferralBreakdown[];
 }
 
 function transformAnalytics(dbAnalytics: DbAnalytics): Analytics {
@@ -88,6 +94,7 @@ export class AnalyticsRepository {
             topProjectsResult,
             deviceResult,
             countriesResult,
+            referralsResult,
         ] = await Promise.all([
             // 1. Total events (all types)
             db.select({ value: count() }).from(analyticsTable),
@@ -148,6 +155,17 @@ export class AnalyticsRepository {
                 .groupBy(analyticsTable.country)
                 .orderBy(desc(count()))
                 .limit(10),
+
+            // 7. Referral breakdown
+            db.select({
+                source: analyticsTable.referral,
+                count: count(),
+            })
+                .from(analyticsTable)
+                .where(sql`${analyticsTable.referral} IS NOT NULL`)
+                .groupBy(analyticsTable.referral)
+                .orderBy(desc(count()))
+                .limit(10),
         ]);
 
         const totalEvents = totalEventsResult[0]?.value ?? 0;
@@ -176,6 +194,10 @@ export class AnalyticsRepository {
             topCountries: countriesResult.map((c) => ({
                 country: c.country ?? "Unknown",
                 visits: c.visits ?? 0,
+            })),
+            referralBreakdown: referralsResult.map((r) => ({
+                source: r.source ?? "unknown",
+                count: r.count ?? 0,
             })),
         };
     }

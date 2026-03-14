@@ -502,6 +502,8 @@ function GlobalLoadingIndicator() {
 }
 
 
+import { TerminalOverlay } from "@/components/TerminalOverlay";
+
 // Main App component
 function App() {
   return (
@@ -531,6 +533,7 @@ function App() {
               <InstallPrompt />
               <Toaster />
               <CommandPalette />
+              <TerminalOverlay />
             </LazyMotion>
           </AuthProvider>
         </ThemeProvider>

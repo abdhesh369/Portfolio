@@ -11,6 +11,7 @@ import { useLatestCommit } from "@/hooks/use-latest-commit";
 import { formatTimeAgo } from "@/lib/utils/date";
 import { useTheme } from "./theme-provider";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { LiveCodeEditor } from "./LiveCodeEditor";
 import type { SiteSettings } from "@portfolio/shared";
 
 // Mouse Follower Gradient
@@ -591,7 +592,14 @@ export default function Hero() {
           </m.div>
 
           {/* Hero Visual */}
-          <ProfileCard settings={settings} />
+          <m.div
+            initial={{ opacity: 0, scale: 0.9, x: 50 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+            className="hidden lg:block h-[500px]"
+          >
+            <LiveCodeEditor />
+          </m.div>
         </div>
 
         {/* Scroll Indicator */}

@@ -1,34 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { useReadingList, type ReadingItem } from "@/hooks/portfolio";
 import { m } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Video, FileText, ExternalLink, Loader2 } from "lucide-react";
 
-interface ReadingItem {
-    id: number;
-    title: string;
-    url: string;
-    note: string | null;
-    type: 'article' | 'video' | 'book';
-    createdAt: string;
-}
-
-const TYPE_ICONS = {
+const TYPE_ICONS: Record<string, React.ReactNode> = {
     article: <FileText className="w-4 h-4" />,
     video: <Video className="w-4 h-4" />,
     book: <BookOpen className="w-4 h-4" />,
 };
 
 export function ReadingList() {
-    const { data: items, isLoading } = useQuery<ReadingItem[]>({
-        queryKey: ["reading-list"],
-        queryFn: async () => {
-            const res = await fetch(`${API_BASE_URL}/api/v1/reading-list`);
-            if (!res.ok) throw new Error("Failed to fetch reading list");
-            return res.json();
-        },
-    });
+    const { data: items, isLoading } = useReadingList();
 
     if (isLoading) {
         return (
@@ -53,7 +36,7 @@ export function ReadingList() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {items.map((item) => (
+                {items.map((item: ReadingItem) => (
                     <m.a
                         key={item.id}
                         href={item.url}
