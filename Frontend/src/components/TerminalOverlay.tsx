@@ -39,13 +39,13 @@ export function TerminalOverlay() {
         e.preventDefault();
         setIsOpen(prev => !prev);
       }
-      if (e.key === "Escape" && isOpen) {
+      if (e.key === "Escape") {
         setIsOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, []);
 
   // Focus input when opened
   useEffect(() => {
@@ -81,7 +81,7 @@ export function TerminalOverlay() {
         break;
 
       case "whoami":
-        addLine(`Identity: ${settings?.personalName || "Abdhesh Sah"}`);
+        addLine(`Identity: ${settings?.personalName || "Portfolio Owner"}`);
         addLine(`Title: ${settings?.personalTitle || "Full Stack Engineer"}`);
         addLine(`Status: ${settings?.availabilityStatus || "Active"}`);
         break;
@@ -175,7 +175,7 @@ export function TerminalOverlay() {
                 <div className="h-4 w-px bg-white/10 mx-2" />
                 <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-widest">
                   <TerminalIcon className="w-3.5 h-3.5" />
-                  root@abdhesh-portfolio:~
+                  root@{(settings?.personalName?.toLowerCase().replace(/\s+/g, "-") || "portfolio")}:~
                 </div>
               </div>
               <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-white transition-colors">

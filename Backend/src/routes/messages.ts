@@ -43,12 +43,15 @@ export function registerMessageRoutes(app: Router) {
         }
     );
 
-    // GET /messages - List all messages (admin only)
     app.get(
         "/messages",
         isAuthenticated,
-        asyncHandler(async (_req, res) => {
-            const messages = await messageService.getAll();
+        asyncHandler(async (req, res) => {
+            const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 100;
+            const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : 0;
+            const messages = await messageService.getAll(limit, offset);
+            // Include pagination metadata in Headers so we don't break JSON array contract if not needed
+            // Or return as array if that's what frontend expects
             res.json(messages);
         })
     );

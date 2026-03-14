@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
+import { z } from "zod";
 import { redis } from "../lib/redis.js";
 import { db } from "../db.js";
 import { projectsTable } from "@portfolio/shared/schema";
@@ -53,7 +54,8 @@ debugRouter.post(
   "/stress",
   isAuthenticated,
   asyncHandler(async (req, res) => {
-    const { clients = 50 } = req.body;
+    const { clients } = z.object({ clients: z.number().int().min(1).max(200).default(50) })
+        .parse(req.body);
     
     // Simulate heavy computational task or multiple DB queries
     // In a real load test, the client would hit the endpoint repeatedly.

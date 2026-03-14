@@ -14,7 +14,7 @@ const router = Router();
 router.get(
     "/",
     asyncHandler(async (_req, res) => {
-        const entries = await db.select().from(readingListTable).orderBy(desc(readingListTable.createdAt));
+        const entries = await db.select().from(readingListTable).orderBy(desc(readingListTable.createdAt)).limit(50);
         res.json(entries);
     })
 );

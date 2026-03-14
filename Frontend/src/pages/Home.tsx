@@ -146,30 +146,32 @@ const ShortcutHint = () => {
   );
 };
 
-// section mapping to components
-const SECTION_MAP: Record<string, React.ReactNode> = {
-  about: <SafeSection name="About"><About /></SafeSection>,
-  skills: <SafeSection name="Skills"><Skills /></SafeSection>,
-  whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
-  services: <SafeSection name="Services"><Services /></SafeSection>,
-  mindset: <SafeSection name="Engineering Mindset"><EngineeringMindset /></SafeSection>,
-  projects: <SafeSection name="Projects"><Projects /></SafeSection>,
-  practice: <SafeSection name="Code and Practice"><CodeAndPractice /></SafeSection>,
-  experience: <SafeSection name="Experience"><Experience /></SafeSection>,
-  testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
-  guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
-  contact: <SafeSection name="Contact"><Contact /></SafeSection>,
-  "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
-  "live-activity": <SafeSection name="Live Activity"><LiveActivityTicker /></SafeSection>,
-  "reading-list": <SafeSection name="Reading List"><ReadingList /></SafeSection>,
-  "github-heatmap": <SafeSection name="Github Heatmap"><GithubHeatmap /></SafeSection>,
-};
+
 
 export default function Home() {
   const { data: settings } = useSiteSettings();
   const { progress } = useScrollStore();
   const { persona } = usePersona();
   useHashScroll();
+
+  // section mapping to components
+  const SECTION_MAP: Record<string, React.ReactNode> = useMemo(() => ({
+    about: <SafeSection name="About"><About /></SafeSection>,
+    skills: <SafeSection name="Skills"><Skills /></SafeSection>,
+    whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
+    services: <SafeSection name="Services"><Services /></SafeSection>,
+    mindset: <SafeSection name="Engineering Mindset"><EngineeringMindset /></SafeSection>,
+    projects: <SafeSection name="Projects"><Projects /></SafeSection>,
+    practice: <SafeSection name="Code and Practice"><CodeAndPractice /></SafeSection>,
+    experience: <SafeSection name="Experience"><Experience /></SafeSection>,
+    testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
+    guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
+    contact: <SafeSection name="Contact"><Contact /></SafeSection>,
+    "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
+    "live-activity": <SafeSection name="Live Activity"><LiveActivityTicker /></SafeSection>,
+    "reading-list": <SafeSection name="Reading List"><ReadingList /></SafeSection>,
+    "github-heatmap": <SafeSection name="Github Heatmap"><GithubHeatmap /></SafeSection>,
+  }), []);
 
   // Define persona-specific order overrides
   const PERSONA_ORDERS: Record<string, string[]> = {
@@ -233,7 +235,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "Person",
             name: settings?.personalName || "Your Name",
-            url: import.meta.env.VITE_SITE_URL || "https://yourportfolio.com",
+            url: import.meta.env.VITE_SITE_URL || undefined,
             sameAs: [
               settings?.socialGithub,
               settings?.socialLinkedin,
@@ -255,12 +257,12 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: `${settings?.personalName || "Your Name"} Portfolio`,
-            url: import.meta.env.VITE_SITE_URL || "https://yourportfolio.com",
+            url: import.meta.env.VITE_SITE_URL || undefined,
             potentialAction: {
               "@type": "SearchAction",
               target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${import.meta.env.VITE_SITE_URL || "https://yourportfolio.com"}/blog?q={search_term_string}`
+                urlTemplate: import.meta.env.VITE_SITE_URL ? `${import.meta.env.VITE_SITE_URL}/blog?q={search_term_string}` : undefined
               },
               "query-input": "required name=search_term_string"
             }

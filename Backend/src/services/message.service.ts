@@ -12,8 +12,8 @@ export class MessageService {
      * Retrieves all messages.
      * @returns Array of message objects
      */
-    async getAll(): Promise<Message[]> {
-        return await messageRepository.findAll();
+    async getAll(limit = 100, offset = 0): Promise<Message[]> {
+        return await messageRepository.findAll(limit, offset);
     }
 
     /**

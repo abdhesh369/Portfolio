@@ -17,8 +17,11 @@ export class MessageRepository {
         } as unknown as Message;
     }
 
-    async findAll(): Promise<Message[]> {
-        const results = await db.select().from(messagesTable).orderBy(desc(messagesTable.createdAt));
+    async findAll(limit = 100, offset = 0): Promise<Message[]> {
+        const results = await db.select().from(messagesTable)
+            .orderBy(desc(messagesTable.createdAt))
+            .limit(limit)
+            .offset(offset);
         return results.map(m => this.transformMessage(m));
     }
 

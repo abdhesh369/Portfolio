@@ -13,20 +13,37 @@ interface Metrics {
   timestamp: number;
 }
 
+interface StressData {
+  success: boolean;
+  message: string;
+  metrics: {
+    avgConcurrentLatency: number;
+    status: "Stable" | "Stressed";
+    loadFactor: number;
+  }
+}
+
 export function StressTest() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [isBreaking, setIsBreaking] = useState(false);
-  const [stressData, setStressData] = useState<any>(null);
+  const [stressData, setStressData] = useState<StressData | null>(null);
   const [history, setHistory] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const data = await apiFetch("/api/v1/debug/performance");
-        if (data.success) {
-          setMetrics(data.metrics);
-          setHistory(prev => [...prev, data.metrics.responseTime].slice(-20));
-        }
+        // Mock backend for public preview to avoid DoS
+        const mockMetrics: Metrics = {
+          responseTime: Math.floor(Math.random() * 50) + 20,
+          redisLatency: Math.floor(Math.random() * 5) + 1,
+          cacheHits: 154201 + Math.floor(Math.random() * 1000),
+          uptime: performance.now() / 1000 + 86400 * 5, // 5 days
+          memory: 150 * 1024 * 1024 + Math.random() * 10 * 1024 * 1024,
+          timestamp: Date.now()
+        };
+        
+        setMetrics(mockMetrics);
+        setHistory(prev => [...prev, mockMetrics.responseTime].slice(-20));
       } catch (err) {
         console.error("Failed to fetch performance metrics", err);
       }
@@ -40,14 +57,18 @@ export function StressTest() {
   const handleStressTest = async () => {
     setIsBreaking(true);
     try {
-      const data = await apiFetch("/api/v1/debug/stress", {
-        method: "POST",
-        body: JSON.stringify({ clients: 50 })
-      });
-      if (data.success) {
-        setStressData(data);
-        setTimeout(() => setStressData(null), 10000);
-      }
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const data: StressData = {
+        success: true,
+        message: "Simulated 50 concurrent users.",
+        metrics: {
+          avgConcurrentLatency: Math.floor(Math.random() * 100) + 150,
+          status: "Stable",
+          loadFactor: 0.5
+        }
+      };
+      setStressData(data);
+      setTimeout(() => setStressData(null), 10000);
     } catch (err) {
       console.error("Stress test failed", err);
     } finally {

@@ -113,6 +113,14 @@ export function VisitorGlobe({ data }: VisitorGlobeProps) {
     const currentContainer = containerRef.current;
     return () => {
       currentContainer?.removeChild(renderer.domElement);
+      renderer.dispose();
+      scene.traverse(obj => {
+          if ((obj as THREE.Mesh).geometry) (obj as THREE.Mesh).geometry.dispose();
+          if ((obj as THREE.Mesh).material) {
+              const mat = (obj as THREE.Mesh).material;
+              Array.isArray(mat) ? mat.forEach(m => m.dispose()) : mat.dispose();
+          }
+      });
       scene.clear();
     };
   }, [data]);

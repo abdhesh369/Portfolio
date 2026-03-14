@@ -58,7 +58,7 @@ describe("ScopeWizard", () => {
             fireEvent.click(typeButton);
         });
 
-        const nextButton = screen.getByText(/NEXT_STEP/i);
+        const nextButton = await screen.findByText(/NEXT_STEP/i);
         await act(async () => {
             fireEvent.click(nextButton);
         });

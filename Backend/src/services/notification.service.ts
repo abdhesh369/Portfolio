@@ -62,7 +62,7 @@ export class NotificationService {
      * Queues a contact notification and auto-reply.
      * Starts execution asynchronously to avoid blocking the HTTP response.
      */
-    public sendContactNotification(message: any, adminEmail?: string) {
+    public sendContactNotification(message: import("@portfolio/shared").Message, adminEmail?: string) {
         const targetEmail = adminEmail || env.ADMIN_EMAIL;
         
         const queueEmail = async () => {

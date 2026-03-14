@@ -56,7 +56,10 @@ export function registerRoutes(app: Express) {
   v1Router.use("/og", ogRouter);
   v1Router.use("/search", searchRouter);
   v1Router.use("/reading-list", readingListRouter);
-  v1Router.use("/debug", debugRouter);
+  
+  if (process.env.NODE_ENV !== "production") {
+    v1Router.use("/debug", debugRouter);
+  }
 
   // CSP violation reporting route
   v1Router.post(

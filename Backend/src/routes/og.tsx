@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Response } from "express";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -30,7 +30,7 @@ async function getFont() {
     }
 }
 
-async function generateOgImage(res: any, title: string, description: string, type: string) {
+async function generateOgImage(res: Response, title: string, description: string, type: string) {
     try {
         const fontData = await getFont();
 
@@ -126,11 +126,15 @@ async function generateOgImage(res: any, title: string, description: string, typ
     }
 }
 
+function sanitizeOgText(raw: string | undefined, maxLen: number): string {
+    return (raw ?? "").replace(/[\x00-\x1F\x7F]/g, "").slice(0, maxLen);
+}
+
 // Default OG generation via query params
 router.get("/", asyncHandler(async (req, res) => {
-    const title = (req.query.title as string) || "Abdhesh Sah";
-    const description = (req.query.description as string) || "Full Stack Developer & Software Engineer";
-    const type = (req.query.type as string) || "portfolio";
+    const title = sanitizeOgText(req.query.title as string, 80) || "Portfolio";
+    const description = sanitizeOgText(req.query.description as string, 160) || "Full Stack Developer & Software Engineer";
+    const type = sanitizeOgText(req.query.type as string, 40) || "portfolio";
     await generateOgImage(res, title, description, type);
 }));
 
