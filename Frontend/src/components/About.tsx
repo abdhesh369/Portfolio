@@ -6,22 +6,7 @@ import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Skeleton } from "@/components/ui/skeleton";
-// ...existing code... (profile image moved to public/images/hero.svg)
 
-// Glitch Text Component
-const GlitchText = ({ text }: { text: string }) => {
-  return (
-    <div className="relative inline-block group">
-      <span className="relative z-10">{text}</span>
-      <span className="absolute top-0 left-0 -z-10 w-full h-full text-cyan-400 opacity-0 group-hover:opacity-70 group-hover:translate-x-[2px] transition-all duration-100">
-        {text}
-      </span>
-      <span className="absolute top-0 left-0 -z-10 w-full h-full text-red-400 opacity-0 group-hover:opacity-70 group-hover:-translate-x-[2px] transition-all duration-100 delay-75">
-        {text}
-      </span>
-    </div>
-  );
-};
 
 // 3D Tilt Card Component
 const TiltCard = ({ children }: { children: React.ReactNode }) => {
@@ -207,7 +192,7 @@ export default function About() {
           <div className="lg:col-span-5 space-y-8 sticky top-24">
             <TiltCard>
               <div
-                className="relative rounded-3xl overflow-hidden border border-border bg-card/80 backdrop-blur-xl group h-full shadow-2xl"
+                className="relative rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-2xl group h-full shadow-2xl"
               >
                 {/* Profile Image Area */}
                 <div className="relative aspect-[4/5] overflow-hidden">

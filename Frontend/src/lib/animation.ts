@@ -246,9 +246,10 @@ export const magneticTransition = {
 };
 
 export const textReveal: Variants = {
-  hidden: { y: "100%" },
+  hidden: { y: "100%", opacity: 0 },
   visible: {
     y: 0,
+    opacity: 1,
     transition: {
       duration: 0.8,
       ease: EASE.reveal,

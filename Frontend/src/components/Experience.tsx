@@ -153,7 +153,6 @@ const TimelineItem = ({
   );
 };
 
-// Section Header with Icon
 const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
   <m.div
     initial={fadeUp.initial}
@@ -175,7 +174,6 @@ const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: React.ElementTyp
   </m.div>
 );
 
-// Current Status Badge
 const CurrentStatusBadge = () => (
   <m.div
     initial={scaleIn.initial}

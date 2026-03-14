@@ -1,8 +1,8 @@
 import { useLocation } from "wouter";
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { fadeUp, scaleIn, scaleInSubtle, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Terminal, Cpu, Globe, Twitter, Instagram, Youtube, Code2, ExternalLink } from "lucide-react";
+import { fadeUp, scaleIn, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Twitter, Instagram, Youtube, Code2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
@@ -50,7 +50,6 @@ const MouseGradient = () => {
   );
 };
 
-// Lightweight rotating text — replaces heavy typewriter-effect library
 const RotatingText = ({ strings }: { strings: string[] }) => {
   const [index, setIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -58,7 +57,6 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
 
   const stringsJson = JSON.stringify(strings);
 
-  // Reset state when strings prop changes
   useEffect(() => {
     setDisplayed("");
     setIsDeleting(false);
@@ -70,10 +68,8 @@ const RotatingText = ({ strings }: { strings: string[] }) => {
     let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && displayed === current) {
-      // pause at full text
       timeout = setTimeout(() => setIsDeleting(true), 2000);
     } else if (isDeleting && displayed === "") {
-      // move to next string
       setIsDeleting(false);
       setIndex((i) => (i + 1) % strings.length);
     } else {
@@ -147,13 +143,16 @@ const CharacterReveal = ({ text, delay = 0, className = "" }: { text: string; de
       {text.split("").map((char, i) => (
         <span key={i} className="overflow-hidden inline-flex">
           <m.span
-            variants={textReveal}
+            variants={{
+                hidden: { y: "110%", opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+            }}
             initial="hidden"
             animate="visible"
             transition={{
-              delay: delay + i * 0.02,
+              delay: delay + i * 0.03,
               duration: 0.8,
-              ease: EASE.premium
+              ease: [0.22, 1, 0.36, 1]
             }}
             className="inline-block"
           >
@@ -207,7 +206,7 @@ export default function Hero() {
   const { data: experiences } = useExperiences();
   const { data: settings } = useSiteSettings();
 
-  const showBanner = settings?.isOpenToWork ?? true; // Default to true if loading or error
+  const showBanner = settings?.isOpenToWork ?? true;
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
