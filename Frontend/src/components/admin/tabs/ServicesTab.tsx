@@ -121,6 +121,23 @@ export function ServicesTab(_props: AdminTabProps) {
             onChange={(v) => setEditing(prev => prev ? { ...prev, tagsInput: v } : null)}
             placeholder="backend, scaling, architecture"
           />
+          <div className="grid md:grid-cols-2 gap-10">
+            <FormField
+              label="Display Order"
+              type="number"
+              value={String(editing.displayOrder ?? 0)}
+              onChange={(v) =>
+                setEditing(prev => prev ? { ...prev, displayOrder: Number(v) || 0 } : null)
+              }
+            />
+            <div className="pt-8">
+              <FormCheckbox
+                label="Highlight as featured service"
+                checked={Boolean(editing.isFeatured)}
+                onChange={(checked) =>
+                  setEditing(prev => prev ? { ...prev, isFeatured: checked } : null)
+                }
+              />
             </div>
           </div>
 
