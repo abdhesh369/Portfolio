@@ -1,14 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, type UseQueryResult } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-helpers";
 import type { SiteSettings, InsertSiteSettings } from "@portfolio/shared";
 import { QUERY_KEYS } from "@/lib/query-keys";
 
-export function useSiteSettings() {
-    return useQuery<SiteSettings>({
+import seedData from "../../../Backend/src/seed-data.json";
+
+export function useSiteSettings(): UseQueryResult<SiteSettings> {
+    const query = useQuery<SiteSettings>({
         queryKey: QUERY_KEYS.settings(),
         queryFn: () => apiFetch("/api/v1/settings"),
         staleTime: 1000 * 60 * 60, // 1 hour
     });
+
+    return {
+        ...query,
+        data: query.data || (seedData.siteSettings as unknown as SiteSettings)
+    } as UseQueryResult<SiteSettings>;
 }
 
 export function useUpdateSiteSettings() {

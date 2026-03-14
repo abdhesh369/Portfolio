@@ -2,7 +2,7 @@ import { useLocation } from "wouter";
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { fadeUp, scaleIn, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
-import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Twitter, Instagram, Youtube, Code2, ExternalLink } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Twitter, Instagram, Youtube, Code2, ExternalLink, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useServerStatus } from "@/hooks/use-server-status";
