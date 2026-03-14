@@ -16,7 +16,17 @@
     "socialLinkedin": "https://linkedin.com/in/username",
     "footerTagline": "Building the future, one line of code at a time.",
     "locationText": "Earth",
-    "isOpenToWork": true
+    "isOpenToWork": true,
+    "colorBackground": "hsl(224, 71%, 4%)",
+    "colorSurface": "hsl(222, 40%, 15%)",
+    "colorPrimary": "hsl(263, 70%, 50%)",
+    "colorSecondary": "hsl(218, 33%, 23%)",
+    "colorAccent": "hsl(263, 70%, 50%)",
+    "colorBorder": "hsl(216, 28%, 28%)",
+    "colorText": "hsl(213, 31%, 91%)",
+    "colorMuted": "hsl(215, 18%, 68%)",
+    "fontDisplay": "Space Grotesk",
+    "fontBody": "Inter"
   },
   "projects": [
     {

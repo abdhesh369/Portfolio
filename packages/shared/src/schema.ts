@@ -403,14 +403,14 @@ export const siteSettingsTable = pgTable("site_settings", {
 
   // Appearance & Typography
   colorBackground: varchar("colorBackground", { length: 50 }).default("hsl(224, 71%, 4%)"),
-  colorSurface: varchar("colorSurface", { length: 50 }).default("hsl(224, 71%, 10%)"),
-  colorPrimary: varchar("colorPrimary", { length: 50 }).default("hsl(263.4, 70%, 50.4%)"),
-  colorSecondary: varchar("colorSecondary", { length: 50 }).default("hsl(215.4, 16.3%, 46.9%)"),
-  colorAccent: varchar("colorAccent", { length: 50 }).default("hsl(263.4, 70%, 50.4%)"),
-  colorBorder: varchar("colorBorder", { length: 50 }).default("hsl(214.3, 31.8%, 91.4%)"),
-  colorText: varchar("colorText", { length: 50 }).default("hsl(222.2, 84%, 95%)"),
-  colorMuted: varchar("colorMuted", { length: 50 }).default("hsl(215.4, 16.3%, 46.9%)"),
-  fontDisplay: varchar("fontDisplay", { length: 255 }).default("Inter"),
+  colorSurface: varchar("colorSurface", { length: 50 }).default("hsl(222, 40%, 15%)"),
+  colorPrimary: varchar("colorPrimary", { length: 50 }).default("hsl(263, 70%, 50%)"),
+  colorSecondary: varchar("colorSecondary", { length: 50 }).default("hsl(218, 33%, 23%)"),
+  colorAccent: varchar("colorAccent", { length: 50 }).default("hsl(263, 70%, 50%)"),
+  colorBorder: varchar("colorBorder", { length: 50 }).default("hsl(216, 28%, 28%)"),
+  colorText: varchar("colorText", { length: 50 }).default("hsl(213, 31%, 91%)"),
+  colorMuted: varchar("colorMuted", { length: 50 }).default("hsl(215, 18%, 68%)"),
+  fontDisplay: varchar("fontDisplay", { length: 255 }).default("Space Grotesk"),
   fontBody: varchar("fontBody", { length: 255 }).default("Inter"),
   customCss: text("customCss"),
 
