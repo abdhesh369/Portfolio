@@ -43,7 +43,11 @@ export function HireMeChat({ onSuccess }: HireMeChatProps) {
 
   // Scroll to bottom on updates
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Only scroll if there's more than just the initial greeting, 
+    // or if we've already started a user interaction (isLoading)
+    if (messages.length > 1 || isLoading) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, isLoading]);
 
   const handleSend = async () => {

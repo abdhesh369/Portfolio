@@ -88,7 +88,7 @@ export function PersonaSelector() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="absolute inset-0 bg-background/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-background/90 backdrop-blur-xl"
                         />
                         
                         <m.div

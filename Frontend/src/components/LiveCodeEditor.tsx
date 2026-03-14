@@ -126,7 +126,7 @@ export function LiveCodeEditor() {
         </pre>
 
         {/* Dynamic Syntax Glow (Simulated) */}
-        <div className="absolute inset-0 pointer-events-none opacity-20">
+        <div className="absolute inset-0 pointer-events-none opacity-10">
            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-cyan-500 rounded-full blur-[80px] animate-pulse" />
            <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-purple-500 rounded-full blur-[80px] animate-pulse delay-700" />
         </div>

@@ -61,12 +61,12 @@ interface ParticleVelocity {
 // ============================================
 
 const DEFAULT_CONFIG: PlexusConfig = {
-    particleCount: 300,
+    particleCount: 180,
     particleSize: 2,
     particleColor: 0xffffff,
     connectionDistance: 150,
     lineColor: 0xffffff,
-    lineOpacity: 0.15,
+    lineOpacity: 0.1,
     cloudSpread: { x: 800, y: 600, z: 400 },
     rotationSpeed: { x: 0.00008, y: 0.00012 },
     parallaxIntensity: 0.0003,
