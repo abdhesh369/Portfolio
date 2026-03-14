@@ -13,7 +13,8 @@ import { formatDate } from "@/lib/utils/date";
 import { QUERY_KEYS } from "@/lib/query-keys";
 
 export function MessagesTab() {
-    const { data: messagesData, isLoading } = useMessages();
+    const [limit, setLimit] = useState(50);
+    const { data: messagesData, isLoading } = useMessages(limit);
     const messages = messagesData ?? [];
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -111,7 +112,7 @@ export function MessagesTab() {
                     <EmptyState icon={Mail} text={searchQuery ? "No matches found in your archives." : "Inbox clean. No incoming transmissions yet."} />
                 </div>
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-6 pb-24">
                     {filtered.map((msg, index) => (
                         <div
                             key={msg.id}
@@ -182,6 +183,18 @@ export function MessagesTab() {
                             </div>
                         </div>
                     ))}
+                    
+                    {filtered.length >= limit && (
+                        <div className="flex justify-center mt-10">
+                            <AdminButton
+                                onClick={() => setLimit(l => l + 50)}
+                                variant="secondary"
+                                className="px-10 h-12 rounded-xl nm-button text-admin-text-secondary hover:text-nm-accent transition-colors font-bold text-xs uppercase tracking-widest"
+                            >
+                                Load Older Transmissions
+                            </AdminButton>
+                        </div>
+                    )}
                 </div>
             )}
 

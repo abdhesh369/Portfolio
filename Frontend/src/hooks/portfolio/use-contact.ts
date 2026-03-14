@@ -6,12 +6,12 @@ import { API_BASE_URL } from "@/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
 import { QUERY_KEYS } from "@/lib/query-keys";
 
-export function useMessages() {
+export function useMessages(limit: number = 100) {
   return useQuery({
-    queryKey: QUERY_KEYS.messages.all,
+    queryKey: [...QUERY_KEYS.messages.all, limit],
     queryFn: () =>
       fetchAndParse(
-        api.messages.list.path,
+        `${api.messages.list.path}?limit=${limit}`,
         api.messages.list.responses[200],
         "Failed to fetch messages"
       ),
