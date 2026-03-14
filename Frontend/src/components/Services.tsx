@@ -141,28 +141,31 @@ export default function Services() {
                 ))}
               </div>
 
-              <div className="pt-2 border-t border-cyan-500/15 flex items-center justify-between text-[11px] text-cyan-200/80">
-                <div className="flex flex-col gap-1">
-                  {svc.priceMin && (
+              <div className="pt-4 border-t border-cyan-500/15 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-[11px] text-cyan-200/80">
+                  {svc.priceMin ? (
                     <span className="font-bold text-cyan-400">
                       Starts at ${svc.priceMin.toLocaleString()}
                     </span>
+                  ) : (
+                    <span className="opacity-60">Custom Pricing</span>
                   )}
-                  {svc.ctaUrl && (
-                    <a 
-                      href={svc.ctaUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="flex items-center gap-1 hover:text-white transition-colors group/cta"
-                    >
-                      Book Session <ChevronRight className="w-3 h-3 group-hover/cta:translate-x-0.5 transition-transform" />
-                    </a>
-                  )}
-                  {!svc.ctaUrl && (
-                    <span className="opacity-60">Ideal for builder–architect hybrid.</span>
-                  )}
+                  {!svc.ctaUrl && <ChevronRight className="w-3 h-3" />}
                 </div>
-                {!svc.ctaUrl && <ChevronRight className="w-3 h-3" />}
+
+                {svc.ctaUrl && (
+                  <m.a
+                    href={svc.ctaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold text-center shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all flex items-center justify-center gap-2 group/btn"
+                  >
+                    Book a 30-min call
+                    <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                  </m.a>
+                )}
               </div>
             </m.div>
           ))}
