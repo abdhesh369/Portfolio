@@ -36,4 +36,6 @@ export {
   useProjectById,
   useSubscribe,
   useUnsubscribe,
+  useAdminSubscribers,
+  useAdminChatLogs,
 } from "./portfolio";

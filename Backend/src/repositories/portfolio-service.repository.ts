@@ -10,6 +10,9 @@ export class PortfolioServiceRepository {
         return {
             ...service,
             tags: (service.tags as string[]) || [],
+            priceMin: service.priceMin || undefined,
+            priceMax: service.priceMax || undefined,
+            ctaUrl: service.ctaUrl || undefined,
         };
     }
 

@@ -27,18 +27,18 @@ export class MessageService {
 
     /**
      * Creates a new message after sanitizing input and checking the honeypot field.
-     * @param data - The message data including optional honeypot _fax field
+     * @param data - The message data including optional honeypot _bnt_id field
      * @returns The newly created message
      * @throws {Error} If the honeypot field is populated (spam detected)
      */
-    async create(data: InsertMessage & { _fax?: string }): Promise<Message> {
+    async create(data: InsertMessage & { _bnt_id?: string }): Promise<Message> {
         // Honeypot check
-        if (data._fax) {
+        if (data._bnt_id) {
             logger.warn({ context: "security", service: "message", email: data.email }, "Spam detected via honeypot field");
             throw new Error("Message rejected");
         }
 
-        const { _fax, ...insertData } = data;
+        const { _bnt_id, ...insertData } = data;
 
         const sanitizedData: InsertMessage = {
             name: this.sanitize(insertData.name),

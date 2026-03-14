@@ -49,11 +49,16 @@ export function SEO({
         seoSettings?.metaDescription ||
         propDescription ||
         `Portfolio of ${displayName}, a Full Stack Developer.`;
-    const image = seoSettings?.ogImage || propImage || settings?.personalAvatar || "/og-image.jpg";
+    const siteUrl = import.meta.env.VITE_SITE_URL;
+    const apiUrl = import.meta.env.VITE_API_URL;
+    
+    // Dynamic OG Image Fallback
+    const dynamicOgUrl = `${apiUrl}/api/v1/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&type=${type}`;
+    
+    const image = seoSettings?.ogImage || propImage || dynamicOgUrl;
     const keywords = seoSettings?.keywords || propKeywords || "";
     const noindex = seoSettings?.noindex ?? propNoindex ?? false;
     const twitterCard = seoSettings?.twitterCard || "summary_large_image";
-    const siteUrl = import.meta.env.VITE_SITE_URL;
     const canonicalUrl = seoSettings?.canonicalUrl || (siteUrl ? `${siteUrl}${location}` : undefined);
 
     const safeJsonLd = (data: Record<string, unknown>) => {

@@ -27,6 +27,7 @@ import { registerCaseStudyRoutes } from "./routes/case-studies.js";
 import { registerClientRoutes } from "./routes/clients.js";
 import { registerSketchpadRoutes } from "./routes/sketchpad.js";
 import subscribersRouter from "./routes/subscribers.js";
+import ogRouter from "./routes/og.js";
 import express from "express";
 import { csrfProtection } from "./middleware/csrf.js";
 import { logger } from "./lib/logger.js";
@@ -48,6 +49,7 @@ export function registerRoutes(app: Express) {
   v1Router.use("/guestbook", guestbookRoutes);
   v1Router.use("/scope", scopeRoutes);
   v1Router.use("/", subscribersRouter);
+  v1Router.use("/og", ogRouter);
 
   // CSP violation reporting route
   v1Router.post(

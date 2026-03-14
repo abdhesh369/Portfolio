@@ -143,25 +143,26 @@ const ShortcutHint = () => {
   );
 };
 
+// section mapping to components
+const SECTION_MAP: Record<string, React.ReactNode> = {
+  about: <SafeSection name="About"><About /></SafeSection>,
+  skills: <SafeSection name="Skills"><Skills /></SafeSection>,
+  whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
+  services: <SafeSection name="Services"><Services /></SafeSection>,
+  mindset: <SafeSection name="Engineering Mindset"><EngineeringMindset /></SafeSection>,
+  projects: <SafeSection name="Projects"><Projects /></SafeSection>,
+  practice: <SafeSection name="Code and Practice"><CodeAndPractice /></SafeSection>,
+  experience: <SafeSection name="Experience"><Experience /></SafeSection>,
+  testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
+  guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
+  contact: <SafeSection name="Contact"><Contact /></SafeSection>,
+};
+
 export default function Home() {
   const { data: settings } = useSiteSettings();
   const { progress } = useScrollStore();
   useHashScroll();
 
-  // section mapping to components
-  const SECTION_MAP = useMemo<Record<string, React.ReactNode>>(() => ({
-    about: <SafeSection name="About"><About /></SafeSection>,
-    skills: <SafeSection name="Skills"><Skills /></SafeSection>,
-    whyhireme: <SafeSection name="Why Hire Me"><WhyHireMe /></SafeSection>,
-    services: <SafeSection name="Services"><Services /></SafeSection>,
-    mindset: <SafeSection name="Engineering Mindset"><EngineeringMindset /></SafeSection>,
-    projects: <SafeSection name="Projects"><Projects /></SafeSection>,
-    practice: <SafeSection name="Code and Practice"><CodeAndPractice /></SafeSection>,
-    experience: <SafeSection name="Experience"><Experience /></SafeSection>,
-    testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
-    guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
-    contact: <SafeSection name="Contact"><Contact /></SafeSection>,
-  }), []);
   // Build section order: admin-saved order takes priority, fall back to defaults
   // Always ensures any new sections from DEFAULT_SECTION_ORDER are included
   const sectionOrder = useMemo(() => {
@@ -210,6 +211,12 @@ export default function Home() {
               settings?.socialGithub,
               settings?.socialLinkedin,
               settings?.socialTwitter,
+              settings?.socialInstagram,
+              settings?.socialStackoverflow,
+              settings?.socialDevto,
+              settings?.socialMedium,
+              settings?.socialYoutube,
+              settings?.socialDiscord,
             ].filter(Boolean) as string[],
             jobTitle: settings?.personalTitle || "Full-Stack Engineer",
             worksFor: {

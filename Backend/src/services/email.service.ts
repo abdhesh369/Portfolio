@@ -127,6 +127,84 @@ export class EmailService {
             }
         });
     }
+
+    /**
+     * Send a newsletter broadcast to a subscriber
+     */
+    async sendBroadcast(data: { to: string; subject: string; html: string }) {
+        if (!emailQueue) {
+            logger.warn("Email queue not initialized, skipping broadcast");
+            return;
+        }
+
+        await emailQueue.add("newsletter-broadcast", {
+            type: "admin-notification",
+            payload: {
+                to: data.to,
+                subject: data.subject,
+                html: data.html
+            }
+        });
+    }
+
+    /**
+     * Send AI scope estimate to client with PDF attachment (optional)
+     */
+    async sendScopeEstimate(data: { name: string; email: string; estimation: any; pdfBuffer?: Buffer }) {
+        if (!emailQueue) {
+            logger.warn("Email queue not initialized, skipping scope estimate");
+            return;
+        }
+
+        await emailQueue.add("scope-estimate", {
+            type: "client-notification",
+            payload: {
+                to: data.email,
+                subject: `Your Project Scope Estimate: ${data.name}`,
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                        <h2 style="color: #4f46e5; margin-top: 0;">Project Estimate Ready</h2>
+                        <p style="font-size: 14px; color: #64748b;">Hello,</p>
+                        <p style="font-size: 14px; color: #64748b;">The AI has completed estimating the scope for your project: <strong>${escapeHtml(data.name)}</strong>.</p>
+                        
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                            <h3 style="margin-top: 0; font-size: 16px;">Summary</h3>
+                            <p style="font-size: 14px; line-height: 1.6; color: #334155;">${escapeHtml(data.estimation.summary)}</p>
+                            
+                            <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 8px 0; font-weight: bold; color: #64748b;">Estimated Hours</td>
+                                    <td style="padding: 8px 0; text-align: right;">${data.estimation.hours.min} - ${data.estimation.hours.max} hrs</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 0; font-weight: bold; color: #64748b;">Estimated Cost</td>
+                                    <td style="padding: 8px 0; text-align: right; color: #4f46e5; font-weight: bold;">
+                                        $${data.estimation.cost.min.toLocaleString()} - $${data.estimation.cost.max.toLocaleString()} ${data.estimation.cost.currency}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <p style="font-size: 14px; color: #64748b;">A detailed PDF version of this estimate is attached to this email.</p>
+                        
+                        <div style="margin-top: 30px; text-align: center;">
+                            <a href="${env.FRONTEND_URL}" 
+                               style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                                Visit My Portfolio
+                            </a>
+                        </div>
+                    </div>
+                `,
+                attachments: data.pdfBuffer ? [
+                    {
+                        filename: `Estimate_${data.name.replace(/\s+/g, '_')}.pdf`,
+                        content: data.pdfBuffer.toString('base64'),
+                        type: 'application/pdf'
+                    }
+                ] : undefined
+            }
+        });
+    }
 }
 
 export const emailService = new EmailService();

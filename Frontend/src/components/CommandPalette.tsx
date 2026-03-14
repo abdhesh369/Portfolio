@@ -1,10 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, FileText, Code, FolderGit2, ArrowRight, Home, Mail, Palette } from "lucide-react";
+import { 
+  Search, FileText, Code, FolderGit2, ArrowRight, Home, 
+  Mail, Palette, Briefcase, Star, Layers, MessageSquare,
+  LayoutDashboard, Users, Settings, Database
+} from "lucide-react";
 import { useLocation } from "wouter";
 import { m, AnimatePresence } from "framer-motion";
-import { useProjects, useArticles, useSkills } from "@/hooks/use-portfolio";
+import { useProjects, useArticles, useAuth } from "@/hooks/use-portfolio";
 import { useTheme } from "@/components/theme-provider";
 import { TOGGLE_COMMAND_PALETTE } from "@/hooks/use-command-palette";
 
@@ -14,6 +18,7 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [, setLocation] = useLocation();
   const { setTheme, theme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   const { data: projects = [] } = useProjects();
   const { data: articles = [] } = useArticles("published");
@@ -49,10 +54,24 @@ export function CommandPalette() {
       { id: "home", title: "Go Home", type: "navigation" as const, icon: Home, href: "/" },
       { id: "projects-nav", title: "Browse Projects", type: "navigation" as const, icon: FolderGit2, href: "/#projects" },
       { id: "contact-nav", title: "Get in Touch", type: "navigation" as const, icon: Mail, href: "/#contact" },
+      { id: "experience-nav", title: "Jump to Experience", type: "navigation" as const, icon: Briefcase, href: "/#experience" },
+      { id: "testimonials-nav", title: "View Testimonials", type: "navigation" as const, icon: Star, href: "/#testimonials" },
+      { id: "stack-nav", title: "Modern Tech Stack", type: "navigation" as const, icon: Layers, href: "/#stack" },
+      { id: "guestbook-nav", title: "Sign Guestbook", type: "navigation" as const, icon: MessageSquare, href: "/guestbook" },
       { id: "theme", title: `Toggle ${theme === "dark" ? "Light" : "Dark"} Theme`, type: "action" as const, icon: Palette, action: () => setTheme(theme === "dark" ? "light" : "dark") },
     ];
 
-    if (!query.trim()) return staticCommands;
+    const adminCommands = isAuthenticated ? [
+      { id: "admin-dash", title: "Admin: Dashboard", type: "admin" as const, icon: LayoutDashboard, href: "/admin" },
+      { id: "admin-subs", title: "Admin: Manage Subscribers", type: "admin" as const, icon: Users, href: "/admin?tab=subscribers" },
+      { id: "admin-chat", title: "Admin: Chat Conversation Logs", type: "admin" as const, icon: MessageSquare, href: "/admin?tab=chat-logs" },
+      { id: "admin-settings", title: "Admin: Site Settings", type: "admin" as const, icon: Settings, href: "/admin?tab=settings" },
+      { id: "admin-audit", title: "Admin: Security Audit Log", type: "admin" as const, icon: Database, href: "/admin?tab=audit" },
+    ] : [];
+
+    const allStatic = [...staticCommands, ...adminCommands];
+
+    if (!query.trim()) return allStatic;
 
     const lowerQuery = query.toLowerCase();
 
@@ -76,10 +95,10 @@ export function CommandPalette() {
         href: `/blog/${a.slug}`,
       }));
 
-    const filteredStatic = staticCommands.filter(c => c.title.toLowerCase().includes(lowerQuery));
+    const filteredStatic = allStatic.filter(c => c.title.toLowerCase().includes(lowerQuery));
 
     return [...filteredStatic, ...filteredProjects, ...filteredArticles].slice(0, 10);
-  }, [query, projects, articles, theme, setTheme]);
+  }, [query, projects, articles, theme, setTheme, isAuthenticated]);
 
   const results = searchResults();
 

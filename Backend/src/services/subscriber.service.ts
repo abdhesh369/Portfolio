@@ -39,4 +39,8 @@ export class SubscriberService {
     async listSubscribers() {
         return await this.subscriberRepository.list();
     }
+
+    async getActiveSubscribers() {
+        return await this.subscriberRepository.findActive();
+    }
 }

@@ -24,8 +24,10 @@ const SettingsTab = lazy(() => import("@/components/admin/tabs/SettingsTab").the
 const CaseStudiesTab = lazy(() => import("@/components/admin/tabs/CaseStudiesTab").then(m => ({ default: m.CaseStudiesTab })));
 const ClientsTab = lazy(() => import("@/components/admin/tabs/ClientsTab").then(m => ({ default: m.ClientsTab })));
 const SketchpadTab = lazy(() => import("@/components/admin/tabs/SketchpadTab").then(m => ({ default: m.SketchpadTab })));
+const SubscribersTab = lazy(() => import("@/components/admin/tabs/SubscribersTab").then(m => ({ default: m.SubscribersTab })));
+const ChatLogTab = lazy(() => import("@/components/admin/tabs/ChatLogTab").then(m => ({ default: m.ChatLogTab })));
 
-type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings" | "case-studies" | "clients" | "sketchpad";
+type Tab = "overview" | "analytics" | "messages" | "templates" | "projects" | "skills" | "experiences" | "services" | "seo" | "articles" | "testimonials" | "guestbook" | "audit" | "mindset" | "customization" | "settings" | "case-studies" | "clients" | "sketchpad" | "subscribers" | "chat-logs";
 
 const TAB_LABELS: Record<Tab, string> = {
     overview: "OVERVIEW",
@@ -47,6 +49,8 @@ const TAB_LABELS: Record<Tab, string> = {
     mindset: "MINDSET",
     customization: "CUSTOMIZATION",
     settings: "SITE SETTINGS",
+    subscribers: "SUBSCRIBERS",
+    "chat-logs": "CHAT LOGS",
 };
 
 export default function AdminDashboard() {
@@ -98,7 +102,9 @@ export default function AdminDashboard() {
                     case 'e': targetTab = 'experiences'; label = "Experiences"; break;
                     case 'n': targetTab = 'analytics'; label = "Analytics"; break;
                     case 's': targetTab = 'settings'; label = "Site Settings"; break;
-                    case '?': setShortcutHint("SHORTCUTS: G+O (Overview), G+M (Messages), G+P (Projects), G+K (Skills), G+A (Articles), G+E (Experiences), G+N (Analytics), G+S (Settings)"); break;
+                    case 'r': targetTab = 'subscribers'; label = "Subscribers"; break;
+                    case 'l': targetTab = 'chat-logs'; label = "Chat Logs"; break;
+                    case '?': setShortcutHint("SHORTCUTS: G+O (Overview), G+M (Messages), G+P (Projects), G+K (Skills), G+A (Articles), G+E (Experiences), G+N (Analytics), G+S (Settings), G+R (Subscribers), G+L (Chat Logs)"); break;
                 }
 
                 if (targetTab) {
@@ -170,6 +176,8 @@ export default function AdminDashboard() {
                     {tab === "case-studies" && <CaseStudiesTab />}
                     {tab === "clients" && <ClientsTab />}
                     {tab === "sketchpad" && <SketchpadTab />}
+                    {tab === "subscribers" && <SubscribersTab />}
+                    {tab === "chat-logs" && <ChatLogTab />}
                     {tab === "mindset" && <MindsetTab />}
                     {tab === "customization" && <CustomizationTab />}
                     {tab === "settings" && <SettingsTab />}

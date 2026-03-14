@@ -4,6 +4,8 @@ import { scopeRepository } from "../repositories/scope.repository.js";
 import { aiClient } from "../lib/ai.js";
 import { env } from "../env.js";
 import { logger } from "../lib/logger.js";
+import { pdfService } from "../services/pdf.service.js";
+import { emailService } from "../services/email.service.js";
 import type { ScopeRequest } from "@portfolio/shared";
 
 /** Strip HTML/XML tags and control chars to prevent prompt injection */
@@ -40,6 +42,26 @@ export function createScopeWorker(connection: Redis) {
                 status: "completed",
                 completedAt: new Date(),
             });
+
+            // Generate and send PDF email
+            try {
+                const pdfBuffer = await pdfService.generateScopeEstimate({
+                    name: request.name,
+                    projectType: request.projectType || "General Web Application",
+                    estimation: estimation!
+                });
+
+                await emailService.sendScopeEstimate({
+                    name: request.name,
+                    email: request.email,
+                    estimation: estimation,
+                    pdfBuffer
+                });
+                logger.info({ requestId }, "Scope estimate PDF sent successfully");
+            } catch (emailError) {
+                logger.error({ emailError, requestId }, "Failed to send scope estimate email/PDF");
+                // We don't fail the whole job if only email fails, but we log it
+            }
 
             logger.info({ requestId }, "Scope estimation completed successfully");
             return estimation;

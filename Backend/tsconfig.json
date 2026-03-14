@@ -19,7 +19,8 @@
     "rootDir": ".",
     "moduleResolution": "NodeNext",
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "jsx": "react-jsx"
   },
   "include": [
     "src"

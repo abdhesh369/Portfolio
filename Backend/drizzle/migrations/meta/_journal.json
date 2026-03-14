@@ -162,6 +162,13 @@
       "when": 1773436356106,
       "tag": "0022_woozy_firestar",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1773471051302,
+      "tag": "0023_swift_shooting_star",
+      "breakpoints": true
     }
   ]
 }

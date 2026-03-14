@@ -22,6 +22,9 @@ export const QUERY_KEYS = {
     subscribers: {
         all: ["subscribers"] as const,
     },
+    chat: {
+        logs: ["admin-chat-logs"] as const,
+    },
     articles: {
         all: ["articles"] as const,
         list: (status?: string) => status ? (["articles", status] as const) : (["articles"] as const),

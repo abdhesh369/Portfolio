@@ -12,6 +12,8 @@ import { redis } from "../lib/redis.js";
 
 import { validateBody } from "../middleware/validate.js";
 import { logger } from "../lib/logger.js";
+import { chatRepository } from "../repositories/chat.repository.js";
+import { isAuthenticated } from "../auth.js";
 
 const MAX_CHAT_MESSAGES = 20; // Sliding window limit to prevent token abuse
 export const CHAT_CACHE_KEY = "chat:system-prompt";
@@ -68,8 +70,7 @@ export async function buildSystemPrompt(): Promise<string> {
             - Experiences: ${experiences.slice(0, 5).map(e => `${e.role} at ${e.organization}`).join("; ")}
             - Articles: ${articles.slice(0, 10).map(a => a.title).join(", ")}
 
-            
-            Keep responses professional, concise, and helpful. If you don't know something, say so politely.`;
+            Keep responses professional, concise, and helpful. If you don't know something about ${ownerName}, say so politely.`;
 
     // Cache the built prompt
     if (redis) {
@@ -196,5 +197,35 @@ export const registerChatRoutes = (router: Router) => {
         }
 
         throw lastError || new Error("All chat models failed");
+    }));
+
+    // POST /api/v1/chat/save-session - Save a chat session to logs
+    router.post("/chat/save-session", asyncHandler(async (req: Request, res: Response) => {
+        const schema = z.object({
+            history: z.array(z.any()),
+            sessionMetadata: z.any().optional(),
+        });
+
+        const { history, sessionMetadata } = schema.parse(req.body);
+
+        const log = await chatRepository.create({
+            messages: history,
+            metadata: sessionMetadata || {},
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Chat session saved",
+            data: { id: log.id }
+        });
+    }));
+
+    // GET /api/v1/chat/admin/logs - Fetch chat logs for admin review
+    router.get("/chat/admin/logs", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+        const logs = await chatRepository.findAll();
+        res.json({
+            success: true,
+            data: logs
+        });
     }));
 };

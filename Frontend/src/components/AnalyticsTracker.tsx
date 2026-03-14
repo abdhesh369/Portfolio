@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { API_BASE_URL } from "@/lib/api-helpers";
+import * as Sentry from "@sentry/react";
 
 // Local cache to prevent double-tracking across remounts within the same session
 let lastTrackedPath: string | null = null;
@@ -37,6 +38,10 @@ export function AnalyticsTracker() {
                 });
             } catch (err) {
                 console.warn("Analytics tracking failed:", err);
+                Sentry.captureException(err, {
+                    tags: { service: "analytics" },
+                    extra: { path: location }
+                });
             }
         };
 

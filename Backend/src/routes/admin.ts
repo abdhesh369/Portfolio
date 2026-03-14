@@ -5,6 +5,11 @@ import { recordAudit } from "../lib/audit.js";
 import { BulkImageService } from "../services/bulk-image.service.js";
 import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
+import { SubscriberService } from "../services/subscriber.service.js";
+import { emailService } from "../services/email.service.js";
+import { z } from "zod";
+
+const subscriberService = new SubscriberService();
 
 export function registerAdminRoutes(app: Router) {
     // POST /api/v1/admin/optimize-images - Scan and optimize all images
@@ -77,6 +82,41 @@ export function registerAdminRoutes(app: Router) {
                     details: message
                 });
             }
+        })
+    );
+
+    // POST /api/v1/admin/subscribers/broadcast - Send newsletter to all active subscribers
+    app.post(
+        "/admin/subscribers/broadcast",
+        isAuthenticated,
+        asyncHandler(async (req, res) => {
+            const { subject, body } = z.object({
+                subject: z.string().min(1).max(255),
+                body: z.string().min(1)
+            }).parse(req.body);
+
+            const subscribers = await subscriberService.getActiveSubscribers();
+            logger.info({ count: subscribers.length }, "Starting newsletter broadcast");
+
+            // Add all to email queue
+            for (const sub of subscribers) {
+                await emailService.sendBroadcast({
+                    to: sub.email,
+                    subject,
+                    html: body // body is expected to be HTML from the frontend composer
+                });
+            }
+
+            recordAudit("OTHER", "newsletter_broadcast", undefined, null, { 
+                subject, 
+                recipientCount: subscribers.length 
+            });
+
+            res.json({
+                success: true,
+                message: `Broadcast queued for ${subscribers.length} subscribers.`,
+                count: subscribers.length
+            });
         })
     );
 }

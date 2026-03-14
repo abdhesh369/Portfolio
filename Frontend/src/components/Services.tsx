@@ -142,8 +142,27 @@ export default function Services() {
               </div>
 
               <div className="pt-2 border-t border-cyan-500/15 flex items-center justify-between text-[11px] text-cyan-200/80">
-                <span>Ideal for teams who need a builder–architect hybrid.</span>
-                <ChevronRight className="w-3 h-3" />
+                <div className="flex flex-col gap-1">
+                  {svc.priceMin && (
+                    <span className="font-bold text-cyan-400">
+                      Starts at ${svc.priceMin.toLocaleString()}
+                    </span>
+                  )}
+                  {svc.ctaUrl && (
+                    <a 
+                      href={svc.ctaUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex items-center gap-1 hover:text-white transition-colors group/cta"
+                    >
+                      Book Session <ChevronRight className="w-3 h-3 group-hover/cta:translate-x-0.5 transition-transform" />
+                    </a>
+                  )}
+                  {!svc.ctaUrl && (
+                    <span className="opacity-60">Ideal for builder–architect hybrid.</span>
+                  )}
+                </div>
+                {!svc.ctaUrl && <ChevronRight className="w-3 h-3" />}
               </div>
             </m.div>
           ))}

@@ -33,4 +33,8 @@ export class SubscriberRepository {
     async list(): Promise<Subscriber[]> {
         return await db.select().from(subscribersTable);
     }
+
+    async findActive(): Promise<Subscriber[]> {
+        return await db.select().from(subscribersTable).where(eq(subscribersTable.status, "active"));
+    }
 }

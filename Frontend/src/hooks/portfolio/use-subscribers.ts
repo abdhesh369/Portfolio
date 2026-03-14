@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { api } from "@portfolio/shared";
 import { toast } from "@/hooks/use-toast";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import type { Subscriber } from "@portfolio/shared/schema";
 
 export function useSubscribe() {
   const queryClient = useQueryClient();
@@ -38,6 +39,16 @@ export function useUnsubscribe() {
     },
     onError: (error: Error) => {
       toast({ variant: "destructive", title: error.message });
+    },
+  });
+}
+
+export function useAdminSubscribers() {
+  return useQuery({
+    queryKey: QUERY_KEYS.subscribers.all,
+    queryFn: async () => {
+      const { apiFetch } = await import("@/lib/api-helpers");
+      return await apiFetch("/api/v1/subscribers") as Subscriber[];
     },
   });
 }

@@ -196,6 +196,9 @@ export const servicesTable = pgTable("services", {
   tags: jsonb("tags").$type<string[]>().notNull(),
   displayOrder: integer("displayOrder").notNull().default(0),
   isFeatured: boolean("isFeatured").notNull().default(false),
+  priceMin: integer("priceMin"),
+  priceMax: integer("priceMax"),
+  ctaUrl: varchar("ctaUrl", { length: 500 }),
 }, (table) => {
   return {
     categoryIdx: index("services_category_idx").on(table.category),
@@ -440,6 +443,14 @@ export const siteSettingsTable = pgTable("site_settings", {
   contactHeading: varchar("contactHeading", { length: 255 }).default("Get In Touch"),
 });
 
+export const chatConversationsTable = pgTable("chat_conversations", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("sessionId", { length: 255 }).notNull(),
+  messages: jsonb("messages").$type<{ role: "user" | "assistant"; content: string }[]>().notNull().default([]),
+  metadata: jsonb("metadata").$type<Record<string, any>>().notNull().default({}),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const subscribersTable = pgTable("subscribers", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
@@ -492,18 +503,6 @@ export const insertArticleTagSchema = createInsertSchema(articleTagsTable);
 
 export const selectServiceSchema = createSelectSchema(servicesTable);
 export const insertServiceSchema = createInsertSchema(servicesTable);
-
-export const selectTestimonialSchema = createSelectSchema(testimonialsTable);
-export const insertTestimonialSchema = createInsertSchema(testimonialsTable);
-
-export const selectAuditLogSchema = createSelectSchema(auditLogTable);
-export const insertAuditLogSchema = createInsertSchema(auditLogTable);
-
-export const selectGuestbookSchema = createSelectSchema(guestbookTable);
-export const insertGuestbookSchema = createInsertSchema(guestbookTable);
-
-export const selectSiteSettingsSchema = createSelectSchema(siteSettingsTable);
-export const insertSiteSettingsSchema = createInsertSchema(siteSettingsTable);
 
 export const selectSubscriberSchema = createSelectSchema(subscribersTable);
 export const insertSubscriberSchema = createInsertSchema(subscribersTable);
@@ -698,6 +697,9 @@ export const serviceSchema = z.object({
   tags: z.array(z.string()).default([]),
   displayOrder: z.number().default(0),
   isFeatured: z.boolean().default(false),
+  priceMin: z.number().int().positive().nullable().optional(),
+  priceMax: z.number().int().positive().nullable().optional(),
+  ctaUrl: z.string().max(500).nullable().optional(),
 });
 
 export const insertExperienceApiSchema = z.object({
@@ -717,6 +719,17 @@ export const insertServiceApiSchema = z.object({
   tags: z.array(z.string()).default([]),
   displayOrder: z.number().default(0),
   isFeatured: z.boolean().default(false),
+  priceMin: z.number().int().positive().nullable().optional(),
+  priceMax: z.number().int().positive().nullable().optional(),
+  ctaUrl: z.string().max(500).nullable().optional(),
+});
+
+export const insertChatConversationApiSchema = z.object({
+  sessionId: z.string().min(1).max(255),
+  messages: z.array(z.object({
+    role: z.enum(["user", "assistant"]),
+    content: z.string().min(1)
+  })).min(1),
 });
 
 export const testimonialSchema = z.object({
@@ -760,7 +773,7 @@ export const insertMessageApiSchema = z.object({
   projectType: z.string().max(100).optional(),
   budget: z.string().max(100).optional(),
   timeline: z.string().max(100).optional(),
-  _fax: z.string().optional(), // Honeypot field for spam prevention
+  _bnt_id: z.string().optional(), // Honeypot field for spam prevention
 });
 
 export const guestbookSchema = z.object({
@@ -1067,6 +1080,7 @@ export type GuestbookEntry = z.infer<typeof guestbookSchema>;
 export type InsertGuestbookEntry = z.infer<typeof insertGuestbookApiSchema>;
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsApiSchema>;
+export type ChatConversation = InferSelectModel<typeof chatConversationsTable>;
 export type Subscriber = InferSelectModel<typeof subscribersTable>;
 export type InsertSubscriber = InferInsertModel<typeof subscribersTable>;
 export type InsertSubscriberApi = z.infer<typeof insertSubscriberApiSchema>;

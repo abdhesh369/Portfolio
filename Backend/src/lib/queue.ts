@@ -117,12 +117,13 @@ export function initQueues() {
             }
             return data;
         } else if (type === "admin-notification") {
-            const { to, subject, html } = payload;
+            const { to, subject, html, attachments } = payload;
             const { data, error } = await resend.emails.send({
                 from: env.CONTACT_EMAIL, 
                 to: to || env.ADMIN_EMAIL,
                 subject,
-                html
+                html,
+                attachments
             });
 
             if (error) {
@@ -130,12 +131,13 @@ export function initQueues() {
             }
             return data;
         } else if (type === "client-notification") {
-            const { to, subject, html } = payload;
+            const { to, subject, html, attachments } = payload;
             const { data, error } = await resend.emails.send({
                 from: env.CONTACT_EMAIL,
                 to,
                 subject,
-                html
+                html,
+                attachments
             });
 
             if (error) {
