@@ -70,3 +70,7 @@ Frontend/*_lint_output.txt
 Backend/check_db.ts
 Backend/seed_extra.ts
 Backend/test-connection.ts
+Backend/src/seed-data.json
+create_test_client.ts
+get_tokens.ts
+*.test_client.ts

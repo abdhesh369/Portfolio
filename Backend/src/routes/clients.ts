@@ -197,8 +197,8 @@ export function registerClientRoutes(app: Router) {
             if (!token) { res.status(401).json({ success: false, message: "Client token required" }); return; }
             const client = await clientService.getClientByToken(token);
             if (!client || client.status !== "active") { res.status(401).json({ success: false, message: "Invalid or inactive client" }); return; }
-            const projectId = parseInt(req.params.projectId, 10);
-            if (isNaN(projectId)) { res.status(400).json({ success: false, message: "Invalid project ID" }); return; }
+            const projectId = parseIntParam(res, req.params.projectId, "project ID");
+            if (projectId === null) return;
 
             // Fix IDOR: verify client owns the project
             const dashboard = await clientService.getPortalDashboard(client.id);

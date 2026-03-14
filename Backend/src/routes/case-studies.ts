@@ -48,11 +48,8 @@ export function registerCaseStudyRoutes(app: Router) {
         isAuthenticated,
         aiLimiter,
         asyncHandler(async (req: Request, res: Response) => {
-            const projectId = parseInt(req.params.projectId, 10);
-            if (isNaN(projectId)) {
-                res.status(400).json({ success: false, message: "Invalid project ID" });
-                return;
-            }
+            const projectId = parseIntParam(res, req.params.projectId, "project ID");
+            if (projectId === null) return;
             const study = await caseStudyService.generate(projectId);
             recordAudit("CREATE", "case_study", study.id, null, { projectId });
             res.status(201).json({ success: true, data: study });

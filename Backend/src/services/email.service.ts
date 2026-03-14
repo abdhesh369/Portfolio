@@ -1,6 +1,7 @@
 import { emailQueue } from "../lib/queue.js";
 import { env } from "../env.js";
 import { logger } from "../lib/logger.js";
+import { escapeHtml } from "../lib/escape.js";
 
 export class EmailService {
     /**
@@ -18,25 +19,25 @@ export class EmailService {
                 to: env.ADMIN_EMAIL,
                 subject: `NEW FEEDBACK: ${data.clientName} - ${data.projectTitle}`,
                 html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 12px;">
+                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
                         <h2 style="color: #4f46e5; margin-top: 0;">New Client Feedback</h2>
                         <p style="font-size: 14px; color: #64748b;">A client has submitted new feedback on the portal.</p>
                         
                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
                             <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Client</p>
-                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${data.clientName}</p>
+                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.clientName)}</p>
                             
                             <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Project</p>
-                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${data.projectTitle}</p>
+                            <p style="margin: 5px 0 15px 0; font-weight: bold; color: #1e293b;">${escapeHtml(data.projectTitle)}</p>
                             
                             <p style="margin: 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">Message</p>
-                            <p style="margin: 5px 0 0 0; color: #334155; white-space: pre-wrap;">${data.message}</p>
+                            <p style="margin: 5px 0 0 0; color: #334155; white-space: pre-wrap;">${escapeHtml(data.message)}</p>
                         </div>
                         
                         <div style="margin-top: 30px; text-align: center;">
                             <a href="${env.FRONTEND_URL}/admin/clients" 
                                style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                               View in Admin Panel
+                                View in Admin Panel
                             </a>
                         </div>
                     </div>
@@ -64,7 +65,7 @@ export class EmailService {
                 html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
                         <h2 style="color: #4f46e5; margin-top: 0;">Portal Access</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${data.clientName},</p>
+                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
                         <p style="font-size: 14px; color: #64748b;">Your project dashboard token has been generated. You can use this to securely access your project updates and provide feedback.</p>
                         
                         <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center;">
@@ -77,7 +78,7 @@ export class EmailService {
                         <div style="text-align: center;">
                             <a href="${portalUrl}" 
                                style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                               Open Client Portal
+                                Open Client Portal
                             </a>
                         </div>
                         
@@ -107,18 +108,18 @@ export class EmailService {
                 html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
                         <h2 style="color: #4f46e5; margin-top: 0;">Project Update</h2>
-                        <p style="font-size: 14px; color: #64748b;">Hello ${data.clientName},</p>
-                        <p style="font-size: 14px; color: #64748b;">There has been an update to your project: <strong>${data.projectTitle}</strong></p>
+                        <p style="font-size: 14px; color: #64748b;">Hello ${escapeHtml(data.clientName)},</p>
+                        <p style="font-size: 14px; color: #64748b;">There has been an update to your project: <strong>${escapeHtml(data.projectTitle)}</strong></p>
                         
                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
                             <span style="font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase;">New Status</span>
-                            <span style="background: #4f46e5; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: bold; text-transform: uppercase;">${data.newStatus.replace('_', ' ')}</span>
+                            <span style="background: #4f46e5; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: bold; text-transform: uppercase;">${escapeHtml(data.newStatus.replace('_', ' '))}</span>
                         </div>
                         
                         <div style="margin-top: 30px; text-align: center;">
                             <a href="${env.FRONTEND_URL}/portal" 
                                style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                               View in Portal
+                                View in Portal
                             </a>
                         </div>
                     </div>

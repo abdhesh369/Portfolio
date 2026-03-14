@@ -1,10 +1,9 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
 import { contactLimiter } from "../lib/rate-limit.js";
 import { messageService } from "../services/message.service.js";
 import { insertMessageApiSchema } from "@portfolio/shared";
-import { api } from "@portfolio/shared";
 import { env } from "../env.js";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -13,21 +12,10 @@ import { emailQueue } from "../lib/queue.js";
 import { logger } from "../lib/logger.js";
 import { recordAudit } from "../lib/audit.js";
 import { parseIntParam } from "../lib/params.js";
-
-function escapeHtml(text: string): string {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
+import { escapeHtml } from "../lib/escape.js";
 import { validateBody } from "../middleware/validate.js";
 import { messageSSE } from "../lib/sse.js";
 import crypto from "crypto";
-
-// Rate Limiter: max 5 requests per 15 minutes
 
 export function registerMessageRoutes(app: Router) {
     // GET /messages/stream - SSE endpoint for real-time message notifications (admin only)
