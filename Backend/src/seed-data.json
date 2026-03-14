@@ -277,6 +277,16 @@
       "y": 70,
       "description": "Code hosting",
       "proof": "All projects"
+    },
+    {
+      "name": "TypeScript",
+      "category": "Foundations",
+      "icon": "Code2",
+      "status": "Advanced",
+      "x": 90,
+      "y": 45,
+      "description": "Superset of JS",
+      "proof": "Backend Sync"
     }
   ],
   "mindsets": [
@@ -352,8 +362,8 @@
     {
       "pageSlug": "home",
       "metaTitle": "Abdhesh Sah | Full-Stack Engineer",
-    "metaDescription": "Portfolio of Abdhesh Sah, a Full-Stack Engineer specializing in React, Node.js, and modern web technologies.",
-    "keywords": "Abdhesh Sah, Full-Stack Engineer, React, Node.js, Portfolio, Web Development",
+      "metaDescription": "Portfolio of Abdhesh Sah, a Full-Stack Engineer specializing in React, Node.js, and modern web technologies.",
+      "keywords": "Abdhesh Sah, Full-Stack Engineer, React, Node.js, Portfolio, Web Development",
       "noindex": false,
       "twitterCard": "summary_large_image"
     },
