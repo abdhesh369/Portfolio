@@ -40,6 +40,9 @@
   --nm-shadow: rgba(0, 0, 0, 0.1);
   --nm-dark: var(--nm-shadow); /* For Tailwind compatibility */
 
+  --nm-topbar-bg: rgba(240, 240, 245, 0.85);
+  --nm-topbar-border: rgba(0, 0, 0, 0.08);
+
   --admin-text-primary: #1e293b;
   --admin-text-secondary: #64748b;
   --admin-text-muted: #94a3b8;
@@ -53,6 +56,9 @@
   --nm-light: rgba(255, 255, 255, 0.03);
   --nm-shadow: rgba(0, 0, 0, 0.6);
   --nm-dark: var(--nm-shadow); /* For Tailwind compatibility */
+
+  --nm-topbar-bg: rgba(5, 5, 9, 0.8);
+  --nm-topbar-border: rgba(255, 255, 255, 0.05);
 
   --admin-text-primary: #ffffff;
   --admin-text-secondary: #94a3b8;
@@ -206,10 +212,10 @@
 }
 
 .topbar-container {
-  background: rgba(5, 5, 9, 0.8);
+  background: var(--nm-topbar-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--nm-topbar-border);
   z-index: 50;
 }
 
