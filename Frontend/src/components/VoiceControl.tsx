@@ -117,7 +117,7 @@ export function VoiceControl() {
   if (!isSupported) return null;
 
   return (
-    <div className="fixed bottom-[8.5rem] left-6 z-[var(--z-dock)] flex flex-col items-start gap-3 pointer-events-none">
+    <div className="fixed bottom-48 left-6 z-[var(--z-dock)] flex flex-col items-start gap-3 pointer-events-none">
       <AnimatePresence>
         {(isListening || transcript) && (
           <m.div

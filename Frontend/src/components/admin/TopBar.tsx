@@ -113,18 +113,18 @@ export default function TopBar({
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => window.open(viewSiteUrl, "_blank")}
-                            className="w-12 h-12 nm-button flex items-center justify-center text-[var(--admin-text-primary)] hover:text-purple-400 group"
+                            className="w-12 h-12 nm-button flex items-center justify-center hover:text-purple-400 group"
                             title="View Site"
                         >
-                            <Globe size={18} className="group-hover:rotate-12 transition-transform" />
+                            <Globe size={18} className="text-[var(--admin-text-primary)] group-hover:rotate-12 transition-transform" />
                         </button>
 
                         <button 
                             onClick={() => onNavigate?.("messages")}
-                            className="w-12 h-12 nm-button relative flex items-center justify-center text-[var(--admin-text-primary)] group hover:text-purple-400"
+                            className="w-12 h-12 nm-button relative flex items-center justify-center group hover:text-purple-400"
                             title="Notifications"
                         >
-                            <Bell size={20} />
+                            <Bell size={20} className="text-[var(--admin-text-primary)]" />
                             {unreadCount > 0 && (
                                 <span className="absolute top-3 right-3 w-5 h-5 bg-pink-600 rounded-full shadow-[0_0_12px_rgba(219,39,119,0.7)] ring-2 ring-[var(--nm-bg)] flex items-center justify-center text-[10px] font-black pointer-events-none animate-in zoom-in duration-300">
                                     {unreadCount}
