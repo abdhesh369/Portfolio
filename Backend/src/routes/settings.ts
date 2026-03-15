@@ -27,8 +27,8 @@ export function registerSettingsRoutes(app: Router) {
             const name = settings.personalName ? `${settings.personalName} | Portfolio` : "Portfolio";
             const shortName = settings.personalName ? settings.personalName.split(" ")[0] : "Portfolio";
             const description = settings.personalBio || "Senior Full-Stack Engineer specializing in high-performance web systems.";
-            const themeColor = settings.colorBackground || "#00B4D8";
-            const bgColor = settings.colorBackground || "#050510";
+            const themeColor = "#00B4D8"; // Default brand color
+            const bgColor = "#050510";    // Matches index.css --background-hex
             
             res.json({
                 name: name,
