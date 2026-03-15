@@ -1,7 +1,6 @@
 import { m } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus, AlertCircle, Zap } from "lucide-react";
-import { OptimizedImage } from "./OptimizedImage";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-helpers";
 import { useToast } from "@/hooks/use-toast";
@@ -231,14 +230,19 @@ export default function CodeAndPractice() {
               <div className="mt-8 pt-8 border-t border-border/50">
                 <div className="relative group">
                   {!reducedMotion && <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>}
-                  <OptimizedImage
+                  <img
                     src={`https://ghchart.rshah.org/00d4ff/${githubUsername}`}
                     alt="GitHub Contribution Graph"
                     width={800}
                     height={128}
-                    className="relative w-full rounded-lg opacity-90 hover:opacity-100 transition-all duration-300 filter hue-rotate-0"
+                    loading="lazy"
+                    crossOrigin="anonymous"
+                    className="relative w-full rounded-lg opacity-90 hover:opacity-100 transition-all duration-300"
                     style={{
                       maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
                     }}
                   />
                 </div>
