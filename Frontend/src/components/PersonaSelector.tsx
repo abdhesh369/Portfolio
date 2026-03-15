@@ -58,7 +58,7 @@ export function PersonaSelector() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(true)}
                 className={cn(
-                    "fixed bottom-24 left-8 z-[var(--z-dock)] p-4 rounded-2xl glass-cyber group",
+                    "fixed bottom-[4.5rem] left-6 z-[var(--z-dock)] p-4 rounded-2xl glass-cyber group",
                     persona !== 'default' && "neon-border ring-4 ring-primary/10"
                 )}
             >

@@ -113,7 +113,7 @@ export default function TopBar({
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => window.open(viewSiteUrl, "_blank")}
-                            className="w-12 h-12 nm-button flex items-center justify-center hover:text-purple-400 group"
+                            className="w-12 h-12 nm-button flex items-center justify-center text-[var(--admin-text-primary)] hover:text-purple-400 group"
                             title="View Site"
                         >
                             <Globe size={18} className="group-hover:rotate-12 transition-transform" />
@@ -121,7 +121,7 @@ export default function TopBar({
 
                         <button 
                             onClick={() => onNavigate?.("messages")}
-                            className="w-12 h-12 nm-button relative group hover:text-purple-400"
+                            className="w-12 h-12 nm-button relative flex items-center justify-center text-[var(--admin-text-primary)] group hover:text-purple-400"
                             title="Notifications"
                         >
                             <Bell size={20} />
