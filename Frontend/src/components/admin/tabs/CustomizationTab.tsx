@@ -28,7 +28,6 @@ import { PersonalBrandingSection } from "../customization/PersonalBrandingSectio
 import { SocialPresenceSection } from "../customization/SocialPresenceSection";
 import { HeroSection } from "../customization/HeroSection";
 import { NavbarSection } from "../customization/NavbarSection";
-import { ThemeSection } from "../customization/ThemeSection";
 import { FooterSection } from "../customization/FooterSection";
 import { SectionLayoutSection } from "../customization/SectionLayoutSection";
 import { ActiveFeaturesSection } from "../customization/ActiveFeaturesSection";
@@ -49,10 +48,6 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
   heroCtaPrimaryUrl: "#projects",
   heroCtaSecondary: "Get In Touch",
   heroCtaSecondaryUrl: "#contact",
-  colorBackground: "hsl(224, 71%, 4%)",
-  colorSurface: "hsl(224, 71%, 10%)",
-  fontDisplay: "Inter",
-  fontBody: "Inter",
   logoText: "Portfolio.Dev",
   heroHeadingLine1: "Start building",
   heroHeadingLine2: "The Future",
@@ -279,11 +274,6 @@ export function CustomizationTab() {
           onToggle={() => toggleSection("navbar")}
         />
 
-        <ThemeSection
-          register={register}
-          isOpen={activeSection === "appearance"}
-          onToggle={() => toggleSection("appearance")}
-        />
 
         <FooterSection
           register={register}

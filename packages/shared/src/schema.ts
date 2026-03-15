@@ -401,18 +401,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   heroCtaSecondary: varchar("heroCtaSecondary", { length: 255 }).default("Get In Touch"),
   heroCtaSecondaryUrl: varchar("heroCtaSecondaryUrl", { length: 500 }).default("#contact"),
 
-  // Appearance & Typography
-  colorBackground: varchar("colorBackground", { length: 50 }).default("hsl(224, 71%, 4%)"),
-  colorSurface: varchar("colorSurface", { length: 50 }).default("hsl(222, 40%, 15%)"),
-  colorPrimary: varchar("colorPrimary", { length: 50 }).default("hsl(263, 70%, 50%)"),
-  colorSecondary: varchar("colorSecondary", { length: 50 }).default("hsl(218, 33%, 23%)"),
-  colorAccent: varchar("colorAccent", { length: 50 }).default("hsl(263, 70%, 50%)"),
-  colorBorder: varchar("colorBorder", { length: 50 }).default("hsl(216, 28%, 28%)"),
-  colorText: varchar("colorText", { length: 50 }).default("hsl(213, 31%, 91%)"),
-  colorMuted: varchar("colorMuted", { length: 50 }).default("hsl(215, 18%, 68%)"),
-  fontDisplay: varchar("fontDisplay", { length: 255 }).default("Space Grotesk"),
-  fontBody: varchar("fontBody", { length: 255 }).default("Inter"),
-  customCss: text("customCss"),
+  // Appearance & Typography (Removed - Now controlled via index.css)
 
   // Branding & Hero (Untangled)
   logoText: varchar("logoText", { length: 255 }).default("Portfolio.Dev"),
@@ -508,23 +497,6 @@ function isValidUrl(url: string | null | undefined): boolean {
   }
 }
 
-/**
- * Sanitizes CSS by neutralizing dangerous constructs like url(), @import, and expressions.
- * This is used for custom CSS injection to prevent XSS and data exfiltration.
- */
-function sanitizeCss(css: string | null | undefined): string | null {
-  if (!css) return null;
-
-  // Rejection-based approach > Sanitization-based approach
-  // We neutralize high-risk keywords that enable XSS, data exfiltration, or remote resource loading.
-  return css
-    .replace(/url\s*\(/gi, '/* url-neutralized */')
-    .replace(/@import/gi, '/* import-neutralized */')
-    .replace(/expression\s*\(/gi, '/* expression-neutralized */')
-    .replace(/javascript\s*:/gi, '/* js-neutralized */')
-    .replace(/content\s*:\s*['"]/gi, '/* content-neutralized */') // Prevents content injection
-    .replace(/-moz-binding/gi, '/* binding-neutralized */');
-}
 
 
 // Note: Internal table schemas are NOT exported to avoid leaking DB structure.
@@ -914,19 +886,7 @@ const siteSettingsBaseSchema = z.object({
   heroCtaSecondary: z.string().max(255).optional(),
   heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
 
-  // Appearance & Typography
-
-  colorBackground: z.string().max(50).nullish(),
-  colorSurface: z.string().max(50).nullish(),
-  colorPrimary: z.string().max(50).nullish(),
-  colorSecondary: z.string().max(50).nullish(),
-  colorAccent: z.string().max(50).nullish(),
-  colorBorder: z.string().max(50).nullish(),
-  colorText: z.string().max(50).nullish(),
-  colorMuted: z.string().max(50).nullish(),
-  fontDisplay: z.string().max(255).nullish(),
-  fontBody: z.string().max(255).nullish(),
-  customCss: z.string().nullable().optional(),
+  // Appearance & Typography (Removed - Now controlled via index.css)
 
   // Navbar Configuration
   navbarLinks: z.array(z.object({

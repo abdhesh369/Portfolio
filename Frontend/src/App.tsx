@@ -11,7 +11,6 @@ import { LazyMotion, m, AnimatePresence } from "framer-motion";
 const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res.default);
 import { pageTransition, withReducedMotion } from "@/lib/animation";
 import { useTheme } from "@/components/theme-provider";
-import { sanitizeCss } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PersonaSelector } from "@/components/PersonaSelector";
 import { VoiceControl } from "@/components/VoiceControl";
@@ -123,189 +122,6 @@ import { ServerStatusBanner } from "./components/ServerStatusBanner";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import type { SiteSettings } from "@portfolio/shared/schema";
 
-// SettingsApplicator: Applies dynamic CSS variables and custom CSS from site settings
-function SettingsApplicator() {
-  const { data: settings } = useSiteSettings() as { data: SiteSettings | undefined };
-
-  useEffect(() => {
-    if (!settings) return;
-
-    const root = document.documentElement;
-
-    // Helper to normalize and convert colors
-    const normalizeHex = (hex: string) => {
-      if (!/^#?([a-f\d]{3}|[a-f\d]{6})$/i.test(hex)) return hex;
-      let normalized = hex.replace("#", "");
-      if (normalized.length === 3) {
-        normalized = normalized.split('').map(c => c + c).join('');
-      }
-      return `#${normalized}`;
-    };
-
-    const hexToRgb = (hex: string) => {
-      const fullHex = normalizeHex(hex);
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
-      return result ?
-        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` :
-        null;
-    };
-
-    const hexToHslComponents = (hex: string) => {
-      // If already HSL, normalize it to components (H S L)
-      if (typeof hex === 'string' && hex.startsWith('hsl')) {
-        const hslMatch = hex.match(/hsl\(\s*([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\s*\)/i);
-        if (hslMatch) {
-          return `${hslMatch[1]} ${hslMatch[2]}% ${hslMatch[3]}%`;
-        }
-        // Fallback for modern HSL format without commas
-        const hslMatchAlt = hex.match(/hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*\)/i);
-        if (hslMatchAlt) {
-          return `${hslMatchAlt[1]} ${hslMatchAlt[2]}% ${hslMatchAlt[3]}%`;
-        }
-        return null;
-      }
-
-      const fullHex = normalizeHex(hex);
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
-      if (!result) return null;
-
-      const r = parseInt(result[1], 16) / 255;
-      const g = parseInt(result[2], 16) / 255;
-      const b = parseInt(result[3], 16) / 255;
-
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h: number, s: number;
-      const l = (max + min) / 2;
-
-      if (max === min) {
-        h = s = 0;
-      } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
-          default: h = 0;
-        }
-        h /= 6;
-      }
-
-      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-    };
-
-    const applyColor = (varName: string, hex?: string | null) => {
-      if (!hex) return;
-      const normalized = normalizeHex(hex);
-      const hsl = hexToHslComponents(normalized);
-      if (hsl) {
-        root.style.setProperty(`--${varName}`, hsl);
-        root.style.setProperty(`--${varName}-hex`, normalized);
-      } else {
-        root.style.setProperty(`--${varName}`, hex);
-      }
-    };
-
-    // Apply theme colors from dynamic settings
-    applyColor("background", settings.colorBackground);
-    applyColor("card", settings.colorSurface);
-    applyColor("secondary", settings.colorSecondary);
-    applyColor("accent", settings.colorAccent);
-    applyColor("border", settings.colorBorder);
-    applyColor("foreground", settings.colorText);
-    applyColor("muted-foreground", settings.colorMuted);
-
-    if (settings.colorPrimary) {
-      const normalized = normalizeHex(settings.colorPrimary);
-      const hsl = hexToHslComponents(normalized);
-      const rgb = hexToRgb(normalized);
-
-      if (hsl) {
-        root.style.setProperty("--primary", hsl);
-        root.style.setProperty("--primary-hsl", hsl);
-        root.style.setProperty("--primary-hex", normalized);
-
-        // Derived versions using HSL for transparency support
-        root.style.setProperty("--primary-muted", `hsl(${hsl} / 0.1)`);
-        root.style.setProperty("--primary-faint", `hsl(${hsl} / 0.05)`);
-      }
-
-      if (rgb) {
-        root.style.setProperty("--primary-rgb", rgb);
-        root.style.setProperty("--primary-rgb-20", `rgba(${rgb}, 0.2)`);
-        root.style.setProperty("--primary-glow", `rgba(${rgb}, 0.3)`);
-      }
-    } else {
-      // Fallbacks if no primary color is set
-      root.style.setProperty("--primary-muted", "hsl(var(--primary) / 0.1)");
-      root.style.setProperty("--primary-faint", "hsl(var(--primary) / 0.05)");
-    }
-
-    // Apply custom CSS if provided
-    if (settings.customCss) {
-      let styleEl = document.getElementById("custom-portfolio-styles");
-      if (!styleEl) {
-        styleEl = document.createElement("style");
-        styleEl.id = "custom-portfolio-styles";
-        document.head.appendChild(styleEl);
-      }
-      styleEl.textContent = sanitizeCss(settings.customCss);
-    }
-  }, [settings]);
-
-  return null;
-}
-
-// SettingsFontLoader: Dynamically loads Google Fonts based on settings
-function SettingsFontLoader() {
-  const { data: settings } = useSiteSettings();
-
-  useEffect(() => {
-    if (!settings) return;
-
-    const fonts = new Set<string>();
-    if (settings.fontDisplay && settings.fontDisplay !== "Inter") {
-      fonts.add(settings.fontDisplay);
-    }
-    if (settings.fontBody && settings.fontBody !== "Inter") {
-      fonts.add(settings.fontBody);
-    }
-
-    if (fonts.size === 0) return;
-
-    // Build Google Fonts URL
-    const fontList = Array.from(fonts)
-      .map(f => f.replace(/\s+/g, "+"))
-      .join("&family=");
-    const fontUrl = `https://fonts.googleapis.com/css2?family=${fontList}&display=swap`;
-
-    // Apply font variables to root unconditionally
-    const root = document.documentElement;
-    if (settings.fontDisplay) {
-      root.style.setProperty("--font-display", `"${settings.fontDisplay}", sans-serif`);
-    }
-    if (settings.fontBody) {
-      root.style.setProperty("--font-body", `"${settings.fontBody}", sans-serif`);
-    }
-
-    // Check if link already exists
-    const existingLink = document.querySelector(`link[href="${fontUrl}"]`);
-    if (existingLink) return;
-
-    // Remove old custom font links to prevent duplicates
-    const oldFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"][data-custom-font="true"]');
-    oldFontLinks.forEach(link => link.remove());
-
-    // Create and inject link tag
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = fontUrl;
-    link.setAttribute("data-custom-font", "true");
-    document.head.appendChild(link);
-  }, [settings]);
-
-  return null;
-}
 
 // Only show PlexusBackground on public routes
 function ConditionalBackground() {
@@ -523,10 +339,6 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
           <AuthProvider>
             <LazyMotion features={loadFramerFeatures}>
-              {/* Apply dynamic settings early */}
-              <SettingsApplicator />
-              <SettingsFontLoader />
-
               <GlobalLoadingIndicator />
 
               <a
