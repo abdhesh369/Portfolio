@@ -25,7 +25,39 @@ export function VoiceControl() {
   const [lastCommand, setLastCommand] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const handleCommandRef = useRef<(text: string) => void>(() => {});
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  const handleCommand = useCallback((text: string) => {
+    const match = VOICE_ROUTES.find(route => route.keywords.some(kw => text.includes(kw)));
+
+    if (match) {
+      setLocation(match.path);
+      setLastCommand(match.feedback);
+      toast({ title: "Voice Command Recognized", description: match.feedback, duration: 2000 });
+      setTimeout(() => setLastCommand(null), 3000);
+      return;
+    }
+
+    if (DEV_MODE_KEYWORDS.some(kw => text.includes(kw))) {
+      window.dispatchEvent(new CustomEvent('activate-dev-mode'));
+      setLastCommand("Dev Mode Activated");
+      toast({ title: "Voice Command Recognized", description: "Dev Mode Activated", duration: 2000 });
+      setTimeout(() => setLastCommand(null), 3000);
+      return;
+    }
+
+    toast({
+      title: "Command Not Recognized",
+      description: `I heard: "${text}". Try saying "Projects" or "Contact".`,
+      variant: "destructive"
+    });
+  }, [setLocation, toast]);
+
+  // Keep ref in sync so the effect closure always calls the latest handler
+  useEffect(() => {
+    handleCommandRef.current = handleCommand;
+  }, [handleCommand]);
 
   useEffect(() => {
     const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -45,7 +77,7 @@ export function VoiceControl() {
       setTranscript(result);
 
       if (event.results[current].isFinal) {
-        handleCommand(result);
+        handleCommandRef.current(result);
       }
     };
 
@@ -69,34 +101,6 @@ export function VoiceControl() {
 
     recognitionRef.current = recognition;
   }, []);
-
-  const handleCommand = useCallback((text: string) => {
-    // Check navigation routes via data-driven lookup (OCP-compliant)
-    const match = VOICE_ROUTES.find(route => route.keywords.some(kw => text.includes(kw)));
-
-    if (match) {
-      setLocation(match.path);
-      setLastCommand(match.feedback);
-      toast({ title: "Voice Command Recognized", description: match.feedback, duration: 2000 });
-      setTimeout(() => setLastCommand(null), 3000);
-      return;
-    }
-
-    // Special: Dev Mode activation
-    if (DEV_MODE_KEYWORDS.some(kw => text.includes(kw))) {
-      window.dispatchEvent(new CustomEvent('activate-dev-mode'));
-      setLastCommand("Dev Mode Activated");
-      toast({ title: "Voice Command Recognized", description: "Dev Mode Activated", duration: 2000 });
-      setTimeout(() => setLastCommand(null), 3000);
-      return;
-    }
-
-    toast({
-      title: "Command Not Recognized",
-      description: `I heard: "${text}". Try saying "Projects" or "Contact".`,
-      variant: "destructive"
-    });
-  }, [setLocation, toast]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
