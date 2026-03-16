@@ -69,7 +69,7 @@
     "resend": "^6.7.0",
     "satori": "^0.25.0",
     "@types/react": "^19.2.10",
-    "zod": "^3.25.76"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/supertest": "^7.2.0",
