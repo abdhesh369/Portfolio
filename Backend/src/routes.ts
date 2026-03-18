@@ -11,7 +11,7 @@ import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerEmailTemplateRoutes } from "./routes/email-templates.js";
 import { registerServiceRoutes } from "./routes/services.js";
 import seoRoutes from "./routes/seo.js";
-import sitemapRoutes from "./routes/sitemap.js";
+import { sitemapRoutes } from "./routes/sitemap.js";
 import { articlesRouter } from "./routes/articles.js";
 import { debugRouter } from "./routes/debug.js";
 import { registerTestimonialRoutes } from "./routes/testimonials.js";
