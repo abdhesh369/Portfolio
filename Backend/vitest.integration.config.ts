@@ -8,5 +8,7 @@ export default defineConfig({
         testTimeout: 30000,
         hookTimeout: 30000,
         setupFiles: ["./src/test/integration-setup.ts"],
+        // Disable parallel execution to prevent database interference
+        fileParallelism: false,
     },
 });

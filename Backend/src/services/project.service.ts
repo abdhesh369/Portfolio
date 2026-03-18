@@ -8,6 +8,7 @@ import { aiClient } from "../lib/ai.js";
 const FEATURE = "project";
 const LIST_NAMESPACE = "list";
 const ITEM_NAMESPACE = "item";
+const TRACKED_KEYS = `${FEATURE}:tracked-keys`;
 const CACHE_TTL = 3600;
 
 export class ProjectService {
@@ -18,7 +19,15 @@ export class ProjectService {
      */
     async getAll(sortBy: 'views' | 'default' = 'default'): Promise<Project[]> {
         const key = CacheService.key(FEATURE, LIST_NAMESPACE, sortBy);
-        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAll(sortBy));
+        const projects = await CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAll(sortBy));
+        
+        try {
+            await CacheService.track(TRACKED_KEYS, key);
+        } catch (err) {
+            logger.error({ err, key }, "Failed to track project list hit");
+        }
+        
+        return projects;
     }
 
     /**
@@ -26,7 +35,15 @@ export class ProjectService {
      */
     async getAllAdmin(): Promise<Project[]> {
         const key = CacheService.key(FEATURE, LIST_NAMESPACE, "admin");
-        return CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAllAdmin());
+        const projects = await CacheService.getOrSet(key, CACHE_TTL, () => projectRepository.findAllAdmin());
+
+        try {
+            await CacheService.track(TRACKED_KEYS, key);
+        } catch (err) {
+            logger.error({ err, key }, "Failed to track project admin list hit");
+        }
+
+        return projects;
     }
 
     /**
@@ -111,16 +128,19 @@ export class ProjectService {
 
     private async invalidateCache(id?: number) {
         try {
-            const listKey = CacheService.key(FEATURE, LIST_NAMESPACE);
-            const keys = [listKey, CHAT_CACHE_KEY];
+            // Use tracked keys to invalidate all list variants (default, views, admin)
+            await CacheService.invalidateTracked(TRACKED_KEYS);
+            await CacheService.invalidate(CHAT_CACHE_KEY);
+            
             if (id !== undefined) {
-                keys.push(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
+                await CacheService.invalidate(CacheService.key(FEATURE, ITEM_NAMESPACE, id));
             }
-            await CacheService.invalidate(...keys);
         } catch (err) {
             logger.error({ err, id, feature: FEATURE }, "Failed to invalidate cache");
         }
     }
+
+
 
     /**
      * Increments the view count for a project.

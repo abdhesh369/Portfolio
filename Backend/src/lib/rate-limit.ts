@@ -22,9 +22,12 @@ const createLimiter = (options: {
         legacyHeaders: false,
         skipSuccessfulRequests: options.skipSuccessfulRequests || false,
         skip: (req) => {
-            // Only bypass rate limiting for localhost requests (development/testing)
-            return req.ip === '127.0.0.1' || req.ip === '::1';
+            // Bypass rate limiting in test environment
+            if (process.env.NODE_ENV === 'test') return true;
+            // Only bypass rate limiting for localhost requests (development)
+            return req.ip === '127.0.0.1' || req.ip === '::1' || req.ip?.includes('127.0.0.1');
         },
+
         store: redis ? new RedisStore({
             sendCommand: async (...args: string[]) => {
                 const [command, ...rest] = args;

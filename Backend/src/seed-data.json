@@ -280,13 +280,16 @@
     },
     {
       "name": "TypeScript",
-      "category": "Foundations",
-      "icon": "Code2",
+      "category": "Languages",
+      "icon": "Code",
       "status": "Advanced",
-      "x": 90,
-      "y": 45,
-      "description": "Superset of JS",
-      "proof": "Backend Sync"
+      "x": 50,
+      "y": 50,
+      "description": "Advanced TS usage",
+      "proof": "Project experience",
+      "id": 1,
+      "mastery": 90,
+      "endorsements": 0
     }
   ],
   "mindsets": [
@@ -343,6 +346,16 @@
       "period": "2023 – Present",
       "startDate": "2023-01-01",
       "description": "Building web applications and automation tools. Learning modern web technologies including React, TypeScript, and Node.js through hands-on projects.",
+      "type": "Experience"
+    },
+    {
+      "id": 1,
+      "role": "Software Engineer",
+      "organization": "Tech Corp",
+      "period": "2020 - Present",
+      "startDate": "2026-03-18T19:09:34.331Z",
+      "endDate": null,
+      "description": "Built amazing things",
       "type": "Experience"
     }
   ],
