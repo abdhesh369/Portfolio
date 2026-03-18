@@ -1,1 +1,2 @@
-ALTER TABLE "client_feedback" ADD COLUMN "isAdmin" boolean DEFAULT false NOT NULL;
+-- Placeholder for missing migration 0022
+SELECT 1;

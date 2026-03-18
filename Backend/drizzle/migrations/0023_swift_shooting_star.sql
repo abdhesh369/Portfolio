@@ -1,11 +1,11 @@
-CREATE TABLE "chat_conversations" (
+CREATE TABLE IF NOT EXISTS "chat_conversations" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"sessionId" varchar(255) NOT NULL,
 	"messages" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "subscribers" (
+CREATE TABLE IF NOT EXISTS "subscribers" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"status" varchar(50) DEFAULT 'active' NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "subscribers" (
 	CONSTRAINT "subscribers_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-ALTER TABLE "client_feedback" ADD COLUMN "isAdmin" boolean DEFAULT false NOT NULL;--> statement-breakpoint
-ALTER TABLE "services" ADD COLUMN "priceMin" integer;--> statement-breakpoint
-ALTER TABLE "services" ADD COLUMN "priceMax" integer;--> statement-breakpoint
-ALTER TABLE "services" ADD COLUMN "ctaUrl" varchar(500);
+ALTER TABLE "client_feedback" ADD COLUMN IF NOT EXISTS "isAdmin" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "services" ADD COLUMN IF NOT EXISTS "priceMin" integer;--> statement-breakpoint
+ALTER TABLE "services" ADD COLUMN IF NOT EXISTS "priceMax" integer;--> statement-breakpoint
+ALTER TABLE "services" ADD COLUMN IF NOT EXISTS "ctaUrl" varchar(500);
