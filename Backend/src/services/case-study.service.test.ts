@@ -21,6 +21,10 @@ vi.mock("./project.service.js", () => ({
     },
 }));
 
+vi.mock("../env.js", () => ({
+    env: { GEMINI_API_KEY: "test-key" },
+}));
+
 // Mock global fetch for Gemini API
 global.fetch = vi.fn();
 
