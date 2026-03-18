@@ -2,9 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import request from "supertest";
 import jwt from "jsonwebtoken";
 
-const { JWT_SECRET } = vi.hoisted(() => ({
-    JWT_SECRET: "integration-test-jwt-secret-key-32chars",
-}));
+
+
 
 // Mock env module before app import
 vi.mock("../env.js", () => ({
