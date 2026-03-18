@@ -10,13 +10,12 @@ import {
     AdminButton, 
     EmptyState, 
     LoadingSkeleton, 
-    FormField, 
-    FormTextarea 
+    FormField
 } from "@/components/admin/AdminShared";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { formatDate } from "@/lib/utils/date";
 import { cn } from "@/lib/utils";
-import type { Subscriber } from "@portfolio/shared/schema";
+// import type { Subscriber } from "@portfolio/shared/schema";
 import type { AdminTabProps } from "./types";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -86,10 +85,10 @@ export function SubscribersTab(_props: AdminTabProps) {
             });
             setIsBroadcasting(false);
             setBroadcastData({ subject: "", body: "" });
-        } catch (err) {
+        } catch (_err) {
             toast({ 
                 title: "Broadcast Failed", 
-                description: err instanceof Error ? err.message : "Internal error", 
+                description: _err instanceof Error ? _err.message : "Internal error", 
                 variant: "destructive" 
             });
         } finally {
@@ -109,10 +108,10 @@ export function SubscribersTab(_props: AdminTabProps) {
                 return next;
             });
             refetch();
-        } catch (err) {
+        } catch (_err) {
             toast({ 
                 title: "Action failed", 
-                description: err instanceof Error ? err.message : "Internal error", 
+                description: _err instanceof Error ? _err.message : "Internal error", 
                 variant: "destructive" 
             });
         }
@@ -145,7 +144,7 @@ export function SubscribersTab(_props: AdminTabProps) {
             toast({ title: "Bulk termination complete", description: `${selectedIds.size} records removed.` });
             setSelectedIds(new Set());
             refetch();
-        } catch (err) {
+        } catch (_err) {
             toast({ title: "Bulk action partially failed", variant: "destructive" });
         }
     };
@@ -158,7 +157,7 @@ export function SubscribersTab(_props: AdminTabProps) {
             toast({ title: "Bulk unsubscribe complete" });
             setSelectedIds(new Set());
             refetch();
-        } catch (err) {
+        } catch (_err) {
             toast({ title: "Bulk action partially failed", variant: "destructive" });
         }
     };

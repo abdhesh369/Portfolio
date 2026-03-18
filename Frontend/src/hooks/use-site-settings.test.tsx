@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, waitFor } from "@testing-library/react";
 import { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 import { apiFetch } from "@/lib/api-helpers";

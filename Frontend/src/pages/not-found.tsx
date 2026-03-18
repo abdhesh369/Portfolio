@@ -230,13 +230,13 @@ function useMiniGame() {
   // Simple collision detection (rough box overlap)
   useEffect(() => {
     if (isGameOver) return;
-    const checkCollisions = () => {
+    // const checkCollisions = () => {
       // Since obstacles animate via CSS/Framer, we'd ideally use requestAnimationFrame
       // For a simple 404 joke, this is usually enough or we just let them "pass"
       // But let's actually make it lose-able if they hover an obstacle. 
       // Obstacle Y is roughly (now - spawnTime) / speed. 
       // Keeping it simpler: just a fun visual for now unless it's easy.
-    };
+    // };
   }, [isGameOver]);
 
   const resetGame = () => {

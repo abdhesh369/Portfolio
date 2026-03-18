@@ -15,7 +15,7 @@ vi.mock("../db.js", () => ({
                 limit: vi.fn(() => mock),
                 offset: vi.fn(() => mock),
                 then: vi.fn((resolve: any) => resolve([])),
-                catch: vi.fn((reject: any) => {}),
+                catch: vi.fn(() => {}),
             };
             return mock;
         }),

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchAndParse } from "./_fetch-helper";
 import { API_BASE_URL } from "@/lib/api-helpers";
 
 export interface ReadingItem {

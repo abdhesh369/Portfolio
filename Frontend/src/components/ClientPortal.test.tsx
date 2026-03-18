@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ClientPortal } from "./ClientPortal";
 import { describe, it, expect, vi, beforeEach } from "vitest";

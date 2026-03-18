@@ -33,6 +33,10 @@ vi.mock("../auth.js", () => ({
     isAuthenticated: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
     asyncHandler: (fn: any) => fn,
 }));
+vi.mock("../lib/rate-limit.js", () => ({
+    portalLimiter: (_req: unknown, _res: unknown, next: (err?: any) => void) => next(),
+    apiLimiter: (_req: unknown, _res: unknown, next: (err?: any) => void) => next(),
+}));
 
 import { registerClientRoutes } from "./clients.js";
 

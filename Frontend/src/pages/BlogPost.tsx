@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "@/components/Navbar";
@@ -8,7 +9,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
 import type { ArticleWithRelated } from "@portfolio/shared/schema";
 import { useRoute } from "wouter";
-import { m, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { m, useScroll, useSpring } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ export default function BlogPost() {
     const [, params] = useRoute("/blog/:slug");
     const slug = params?.slug;
     const { data: article, isLoading, error } = useArticle(slug || "");
-    const { mutate: react } = useReactToArticle();
+    const { mutate: _react } = useReactToArticle();
     const [copied, setCopied] = useState(false);
     const articleRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll();

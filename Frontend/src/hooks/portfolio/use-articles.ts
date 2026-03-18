@@ -52,7 +52,6 @@ export function useArticleReactions(slug: string) {
   return useQuery({
     queryKey: QUERY_KEYS.articles.reactions(slug),
     queryFn: async () => {
-      const { apiFetch } = await import("@/lib/api-helpers");
       const article = await fetchAndParse(
         api.articles.get.path.replace(":slug", slug),
         api.articles.get.responses[200],
@@ -76,9 +75,9 @@ export function useReactToArticle() {
         body: JSON.stringify({ emoji }),
       });
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       // Invalidate both reactions and the main article query
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.articles.all });
+      queryClient.invalidateQueries({ queryKey: ["adminArticles"] });
     },
   });
 }

@@ -3,8 +3,7 @@ import { useAdminSubscribers } from "@/hooks/use-portfolio";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch } from "@/lib/api-helpers";
 import { 
-    Send, FileText, AlertTriangle, Sparkles, Layout, Eye,
-    ExternalLink
+    Send, FileText, AlertTriangle, Sparkles, Layout, Eye
 } from "lucide-react";
 import { 
     AdminButton, 

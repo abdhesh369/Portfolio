@@ -62,6 +62,7 @@ vi.mock("../customization/StickyFormFooter", () => ({
 vi.mock("@/components/admin/AdminShared", () => ({
     LoadingSkeleton: () => <div data-testid="loading">Loading...</div>,
     FloatingLabelInput: ({ label }: { label: string }) => <div data-testid="floating-input">{label}</div>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     AdminButton: ({ children, ...props }: any) => <button data-testid="admin-button" {...props}>{children}</button>,
 }));
 

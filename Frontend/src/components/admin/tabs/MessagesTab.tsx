@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { apiFetch } from "@/lib/api-helpers";
 import { queryClient } from "@/lib/queryClient";
-import { FormField, EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput } from "@/components/admin/AdminShared";
+import { EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput } from "@/components/admin/AdminShared";
 import type { Message, EmailTemplate } from "@portfolio/shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { SeoSettings, InsertSeoSettings } from "@portfolio/shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Pencil, Trash2, Save, Globe, Search, Monitor, Share2, X, ChevronRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, Globe, Search, Monitor, Share2, X, ChevronRight, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiFetch } from "@/lib/api-helpers";
 import { FormField, FormTextarea, FormSelect, FormCheckbox, LoadingSkeleton, EmptyState, AdminButton } from "../AdminShared";
 import { QUERY_KEYS } from "@/lib/query-keys";

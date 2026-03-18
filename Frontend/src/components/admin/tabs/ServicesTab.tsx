@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, type FormEvent } from "react";
 import { useServices, useAdminServices } from "@/hooks/use-portfolio";
 import { FormField, FormTextarea, EmptyState, AdminButton, FormCheckbox } from "@/components/admin/AdminShared";

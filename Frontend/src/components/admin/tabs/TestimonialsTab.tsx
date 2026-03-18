@@ -26,7 +26,7 @@ function TestimonialRequestModal({ onClose }: { onClose: () => void }) {
             });
             toast({ title: "Request Sent", description: `Testimonial request sent to ${data.clientEmail}` });
             onClose();
-        } catch (err) {
+        } catch (_err) {
             toast({ title: "Failed to send request", variant: "destructive" });
         } finally {
             setLoading(false);

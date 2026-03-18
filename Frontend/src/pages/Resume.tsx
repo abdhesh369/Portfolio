@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { m } from "framer-motion";
-import { Download, Mail, Globe, Github, Linkedin, MapPin, ExternalLink, Printer } from "lucide-react";
+import { Mail, Globe, Github, Linkedin, MapPin, Printer } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { apiFetch } from "@/lib/api-helpers";
-import { Loader2, Sparkles, FileText, ChevronRight, Zap } from "lucide-react";
+import { Sparkles, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminButton } from "@/components/admin/AdminShared";
 

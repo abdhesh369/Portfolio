@@ -12,7 +12,7 @@
  *   <motion.div {...withReducedMotion(fadeUp, reducedMotion)} />
  */
 
-import type { Transition, Variant, Variants } from "framer-motion";
+import type { Transition, Variants } from "framer-motion";
 
 // ─── Durations (seconds) ────────────────────────────────────────────────────
 export const DURATION = {

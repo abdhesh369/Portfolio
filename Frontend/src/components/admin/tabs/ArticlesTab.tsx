@@ -146,7 +146,7 @@ export function ArticlesTab(_props: AdminTabProps) {
         if (!editing) return;
         setSaving(true);
 
-        const { id, ...articleData } = editing;
+        const { id: _id, ...articleData } = editing;
         const body = {
             ...articleData,
             tags: tagInput.split(",").map((s) => s.trim()).filter(Boolean),

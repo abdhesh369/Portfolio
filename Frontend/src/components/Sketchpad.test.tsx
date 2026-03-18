@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Sketchpad } from "./Sketchpad";
 import { describe, it, expect, vi, beforeEach } from "vitest";

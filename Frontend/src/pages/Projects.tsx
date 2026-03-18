@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useProjects } from "@/hooks/use-portfolio";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { Search, Folder, Filter, SortAsc, LayoutGrid, Calendar, Eye } from "lucide-react";
+import { Search, Folder, LayoutGrid, Calendar, Eye } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -11,7 +11,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 export default function ProjectsPage() {
   const { data: settings } = useSiteSettings();
   const [sortBy, setSortBy] = useState("default");
-  const { data: projects, isLoading, error } = useProjects(sortBy);
+  const { data: projects, isLoading, error: _error } = useProjects(sortBy);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 

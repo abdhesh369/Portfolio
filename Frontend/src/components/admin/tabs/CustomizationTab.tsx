@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/use-site-settings";

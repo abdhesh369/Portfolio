@@ -1,6 +1,6 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild, fadeIn, hoverScale } from "@/lib/animation";
+import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild } from "@/lib/animation";
 import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";

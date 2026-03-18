@@ -16,7 +16,7 @@ interface SearchResults {
 }
 
 export default function SearchPage() {
-    const [location] = useLocation();
+    const [_location] = useLocation();
     const queryParams = new URLSearchParams(window.location.search);
     const initialQuery = queryParams.get("q") || "";
     const [searchQuery, setSearchQuery] = useState(initialQuery);
