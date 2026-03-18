@@ -93,7 +93,7 @@ async function attemptRefresh(): Promise<boolean> {
  *                When provided, response data is validated and typed automatically.
  *                On validation failure, throws ApiError with detailed contract info.
  */
-export async function apiFetch<T = unknown>(
+export async function apiFetch<T = any>(
     path: string, 
     opts: RequestInit = {},
     schema?: { safeParse: (data: unknown) => { success: boolean; data?: T; error?: { issues: Array<{ path: (string | number)[]; message: string }> } } }
