@@ -475,7 +475,7 @@ export const auditLogSchema = z.object({
   oldValues: z.record(z.unknown()).nullable().optional(),
   newValues: z.record(z.unknown()).nullable().optional(),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 // ================= CUSTOM API SCHEMAS =================
 
@@ -520,7 +520,7 @@ export const scopeRequestSchema = z.object({
   completedAt: z.coerce.date().nullable().optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-});
+}).strict();
 
 export const projectSchema = z.object({
   id: z.number().int().positive(),
@@ -549,7 +549,7 @@ export const projectSchema = z.object({
   summary: z.string().max(500).nullable().default(null),
   createdAt: z.coerce.date().nullable().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
-});
+}).strict();
 
 
 export const insertProjectApiSchema = z.object({
@@ -595,7 +595,7 @@ export const skillSchema = z.object({
   mastery: z.number(),
   x: z.number(),
   y: z.number(),
-});
+}).strict();
 
 export const insertSkillApiSchema = z.object({
   name: z.string().min(1).max(100),
@@ -608,7 +608,7 @@ export const insertSkillApiSchema = z.object({
   x: z.number().default(50),
   y: z.number().default(50),
   endorsements: z.number().default(0),
-});
+}).strict();
 
 export const skillConnectionSchema = z.object({
   id: z.number(),
@@ -622,7 +622,7 @@ export const mindsetSchema = z.object({
   description: z.string().max(5000),
   icon: z.string().max(100),
   tags: z.array(z.string()).default([]),
-});
+}).strict();
 
 export const insertMindsetApiSchema = z.object({
   title: z.string().min(1).max(255),
@@ -640,7 +640,7 @@ export const experienceSchema = z.object({
   endDate: z.coerce.date().nullish(),
   description: z.string().min(1).max(5000),
   type: z.string().max(100),
-});
+}).strict();
 
 export const serviceSchema = z.object({
   id: z.number(),
@@ -653,7 +653,7 @@ export const serviceSchema = z.object({
   priceMin: z.number().int().positive().nullable().optional(),
   priceMax: z.number().int().positive().nullable().optional(),
   ctaUrl: z.string().max(500).nullable().optional(),
-});
+}).strict();
 
 export const insertExperienceApiSchema = z.object({
   role: z.string().min(1).max(200),
@@ -696,7 +696,7 @@ export const testimonialSchema = z.object({
   linkedinUrl: z.string().url().max(500).nullable().optional(),
   displayOrder: z.number().default(0),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertTestimonialApiSchema = z.object({
   name: z.string().min(1).max(255),
@@ -716,7 +716,7 @@ export const messageSchema = z.object({
   subject: z.string().max(500),
   message: z.string().min(1).max(5000),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertMessageApiSchema = z.object({
   name: z.string().min(1).max(255),
@@ -737,7 +737,7 @@ export const guestbookSchema = z.object({
   isApproved: z.boolean(),
   reactions: z.record(z.string(), z.number()).default({}),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertGuestbookApiSchema = z.object({
   name: z.string().min(1).max(255),
@@ -758,7 +758,7 @@ export const analyticsSchema = z.object({
   country: z.string().max(100).nullable().optional(),
   city: z.string().max(100).nullable().optional(),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertAnalyticsSchema = z.object({
   type: z.enum(ANALYTICS_EVENT_TYPES),
@@ -778,7 +778,7 @@ export const emailTemplateSchema = z.object({
   subject: z.string().min(1).max(500),
   body: z.string().min(1).max(10000),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertEmailTemplateApiSchema = z.object({
   name: z.string().min(1).max(255),
@@ -800,7 +800,7 @@ export const seoSettingsSchema = z.object({
   twitterCard: z.string().default("summary_large_image"),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertSeoSettingsApiSchema = z.object({
   pageSlug: z.string().min(1).max(100),
@@ -821,7 +821,7 @@ export const subscriberSchema = z.object({
   status: z.enum(["active", "unsubscribed"]).default("active"),
   source: z.string().max(100).nullable().optional(),
   createdAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertSubscriberApiSchema = z.object({
   email: z.string().email().max(255),
@@ -945,7 +945,7 @@ const siteSettingsBaseSchema = z.object({
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({
   id: z.number(),
   updatedAt: z.coerce.date(),
-});
+}).strict();
 
 export const insertSiteSettingsApiSchema = siteSettingsBaseSchema.partial();
 
@@ -969,7 +969,7 @@ export const articleSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   tags: z.array(z.string()).optional(),
-});
+}).strict();
 
 export const articleWithRelatedSchema = articleSchema.extend({
   relatedArticles: z.array(articleSchema).optional(),

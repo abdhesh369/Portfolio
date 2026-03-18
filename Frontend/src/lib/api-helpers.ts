@@ -84,7 +84,20 @@ async function attemptRefresh(): Promise<boolean> {
     }
 }
 
-export async function apiFetch(path: string, opts: RequestInit = {}) {
+/**
+ * Validated API fetch wrapper.
+ * 
+ * @param path    API path (e.g. "/api/v1/projects")
+ * @param opts    Standard RequestInit options
+ * @param schema  Optional Zod schema for response validation via `.safeParse()`
+ *                When provided, response data is validated and typed automatically.
+ *                On validation failure, throws ApiError with detailed contract info.
+ */
+export async function apiFetch<T = unknown>(
+    path: string, 
+    opts: RequestInit = {},
+    schema?: { safeParse: (data: unknown) => { success: boolean; data?: T; error?: { issues: Array<{ path: (string | number)[]; message: string }> } } }
+): Promise<T> {
     const res = await fetch(`${API_BASE_URL}${path}`, {
         ...opts,
         credentials: 'include',
@@ -111,8 +124,9 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
                 const err = await retryRes.json().catch(() => ({ message: retryRes.statusText }));
                 throw new ApiError(retryRes.status, err.message || `Request failed (${retryRes.status})`, err);
             }
-            if (retryRes.status === 204) return null;
-            return retryRes.json();
+            if (retryRes.status === 204) return null as T;
+            const retryData = await retryRes.json();
+            return validateResponse(retryData, path, schema);
         }
 
         // Refresh failed — notify AuthProvider via event (avoids full page reload)
@@ -124,6 +138,44 @@ export async function apiFetch(path: string, opts: RequestInit = {}) {
         const err = await res.json().catch(() => ({ message: res.statusText }));
         throw new ApiError(res.status, err.message || `Request failed (${res.status})`, err);
     }
-    if (res.status === 204) return null;
-    return res.json();
+    if (res.status === 204) return null as T;
+    const data = await res.json();
+    return validateResponse(data, path, schema);
 }
+
+/**
+ * Validates API response data against an optional Zod schema.
+ * On failure, logs detailed contract violation info and throws ApiError.
+ */
+function validateResponse<T>(
+    data: unknown, 
+    path: string,
+    schema?: { safeParse: (data: unknown) => { success: boolean; data?: T; error?: { issues: Array<{ path: (string | number)[]; message: string }> } } }
+): T {
+    if (!schema) return data as T;
+
+    const result = schema.safeParse(data);
+    if (result.success) {
+        return result.data as T;
+    }
+
+    // Contract violation — detailed reporting
+    const issues = result.error?.issues ?? [];
+    const summary = issues
+        .slice(0, 5)
+        .map(i => `  ${i.path.join(".")}: ${i.message}`)
+        .join("\n");
+
+    const message = `[Contract Violation] ${path}\n${summary}${issues.length > 5 ? `\n  ...and ${issues.length - 5} more` : ""}`;
+
+    if (import.meta.env.DEV) {
+        console.error(message, "\nFull data:", data);
+    }
+
+    throw new ApiError(0, `API contract violation on ${path}: response does not match expected schema`, {
+        contractViolation: true,
+        path,
+        issues,
+    });
+}
+

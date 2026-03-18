@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { apiFetch } from "@/lib/api-helpers";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import { seoSettingsSchema } from "@portfolio/shared";
 
 interface SeoProps {
     slug?: string;
@@ -35,7 +36,7 @@ export function SEO({
         queryKey: QUERY_KEYS.seo(slug),
         queryFn: async () => {
             if (!slug) return null;
-            return apiFetch(`/api/v1/seo/${slug}`);
+            return apiFetch(`/api/v1/seo/${slug}`, {}, seoSettingsSchema);
         },
         enabled: !!slug,
         staleTime: 1000 * 60 * 5, // 5 minutes

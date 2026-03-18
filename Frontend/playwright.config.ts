@@ -63,7 +63,7 @@ export default defineConfig({
     /* Run your local dev server before starting the tests */
     webServer: [
         {
-            command: 'node scripts/mock-backend.js',
+            command: 'npx tsx scripts/mock-backend.ts',
             port: 5000,
             reuseExistingServer: !process.env.CI,
         },
