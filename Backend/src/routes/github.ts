@@ -172,14 +172,33 @@ githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req,
             throw new Error(`GitHub Contributions API error: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        res.json(data);
+        const data = await response.json() as any;
+        
+        // Flatten and map data for frontend
+        const levelMap: Record<string, number> = {
+            "NONE": 0,
+            "FIRST_QUARTILE": 1,
+            "SECOND_QUARTILE": 2,
+            "THIRD_QUARTILE": 3,
+            "FOURTH_QUARTILE": 4
+        };
+
+        const contributions = (data.contributions || []).flat().map((d: any) => ({
+            date: d.date,
+            count: d.contributionCount,
+            level: levelMap[d.contributionLevel] || 0
+        }));
+
+        res.json({
+            total: data.totalContributions || 0,
+            contributions
+        });
     } catch (error) {
         logger.error({ context: "github-contributions", error }, "Error fetching GitHub contributions");
         res.status(502).json({ 
             message: "Unable to fetch contributions", 
             contributions: [],
-            total: {} 
+            total: 0
         });
     }
 }));

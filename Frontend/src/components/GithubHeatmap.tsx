@@ -7,14 +7,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { QUERY_KEYS } from "@/lib/query-keys";
 
-interface ContributionDay {
-    date: string;
-    count: number;
-    level: 0 | 1 | 2 | 3 | 4;
-}
+import { ContributionGrid, ContributionDay } from "./ContributionGrid";
 
 interface ContributionData {
-    total: Record<string, number>;
+    total: number;
     contributions: ContributionDay[];
 }
 
@@ -57,7 +53,7 @@ export const GithubHeatmap: React.FC = () => {
     // Filter last 12 months or just enough to fill a nice grid
     // The API usually returns a full year
     const contributions = data.contributions || [];
-    const totalCount = data.total ? Object.values(data.total).reduce((acc: number, curr: number) => acc + curr, 0) : 0;
+    const totalCount = typeof data.total === 'number' ? data.total : 0;
 
     const getLevelColor = (level: number) => {
         switch (level) {
@@ -105,24 +101,7 @@ export const GithubHeatmap: React.FC = () => {
                     </a>
                 </div>
 
-                <div className="overflow-x-auto pb-4 scrollbar-hide">
-                    <div className="inline-grid grid-rows-7 grid-flow-col gap-1.5 min-w-max">
-                        <TooltipProvider delayDuration={0}>
-                            {contributions.map((day, i) => (
-                                <Tooltip key={day.date}>
-                                    <TooltipTrigger asChild>
-                                        <div 
-                                            className={`w-3 h-3 md:w-3.5 md:h-3.5 rounded-[2px] transition-colors duration-500 ${getLevelColor(day.level)}`}
-                                        />
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top" className="bg-black/90 border-white/20 text-xs py-1 px-2">
-                                        <span className="font-bold">{day.count} contributions</span> on {new Date(day.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </TooltipContent>
-                                </Tooltip>
-                            ))}
-                        </TooltipProvider>
-                    </div>
-                </div>
+                <ContributionGrid contributions={contributions} variant="emerald" />
 
                 <div className="flex items-center justify-between mt-6 text-[10px] text-white/30 uppercase tracking-widest font-semibold">
                     <div className="flex items-center gap-4">

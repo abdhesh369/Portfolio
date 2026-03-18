@@ -8,6 +8,9 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useTheme } from "@/components/theme-provider";
 
 import { formatDate } from "@/lib/utils/date";
+import { ContributionGrid, ContributionDay } from "./ContributionGrid";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 type GitHubEvent = {
   type: string;
@@ -34,6 +37,16 @@ export default function CodeAndPractice() {
 
   const { data: settings } = useSiteSettings();
   const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "abdhesh369";
+
+  const { data: githubData, isLoading: isContributionsLoading } = useQuery<{ total: number, contributions: ContributionDay[] }>({
+    queryKey: QUERY_KEYS.github.contributions,
+    queryFn: async () => {
+      const response = await fetch("/api/v1/github/contributions");
+      if (!response.ok) throw new Error("Failed to fetch contributions");
+      return response.json();
+    },
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+  });
 
   useEffect(() => {
     apiFetch("/api/v1/github/activity")
@@ -228,23 +241,22 @@ export default function CodeAndPractice() {
               </div>
 
               <div className="mt-8 pt-8 border-t border-border/50">
-                <div className="relative group">
+                <div className="relative group min-h-[128px]">
                   {!reducedMotion && <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>}
-                  <img
-                    src={`https://ghchart.rshah.org/00d4ff/${githubUsername}`}
-                    alt="GitHub Contribution Graph"
-                    width={800}
-                    height={128}
-                    loading="lazy"
-                    crossOrigin="anonymous"
-                    className="relative w-full rounded-lg opacity-90 hover:opacity-100 transition-all duration-300"
-                    style={{
-                      maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-                    }}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+                  <div className="relative bg-card/50 rounded-lg p-1">
+                    {isContributionsLoading ? (
+                      <div className="w-full h-32 animate-pulse bg-white/5 rounded-lg flex items-center justify-center">
+                        <Github className="w-8 h-8 text-white/10 animate-bounce" />
+                      </div>
+                    ) : (
+                      githubData?.contributions && (
+                        <ContributionGrid 
+                          contributions={githubData.contributions} 
+                          variant="cyan" 
+                        />
+                      )
+                    )}
+                  </div>
                 </div>
                 <div className="flex justify-between mt-4 text-[10px] text-muted-foreground font-mono">
                   <span>LESS</span>
