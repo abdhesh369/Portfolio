@@ -1,4 +1,4 @@
-CREATE TABLE "case_studies" (
+CREATE TABLE IF NOT EXISTS "case_studies" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"projectId" integer NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE "case_studies" (
 	CONSTRAINT "case_studies_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE "client_feedback" (
+CREATE TABLE IF NOT EXISTS "client_feedback" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"clientProjectId" integer NOT NULL,
 	"clientId" integer NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "client_feedback" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "client_projects" (
+CREATE TABLE IF NOT EXISTS "client_projects" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"clientId" integer NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE "client_projects" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "clients" (
+CREATE TABLE IF NOT EXISTS "clients" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE "clients" (
 	CONSTRAINT "clients_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
-CREATE TABLE "code_reviews" (
+CREATE TABLE IF NOT EXISTS "code_reviews" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"projectId" integer NOT NULL,
 	"content" text NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE "code_reviews" (
 --> statement-breakpoint
 
 
-CREATE TABLE "whiteboard_sessions" (
+CREATE TABLE IF NOT EXISTS "whiteboard_sessions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) DEFAULT 'Untitled Session' NOT NULL,
 	"canvasData" jsonb DEFAULT '{}'::jsonb,
@@ -76,12 +76,12 @@ ALTER TABLE "skill_connections" DROP CONSTRAINT IF EXISTS "skill_connections_to_
 ALTER TABLE "experiences" ALTER COLUMN "period" DROP NOT NULL;--> statement-breakpoint
 ALTER TABLE "experiences" ALTER COLUMN "startDate" SET DEFAULT now();--> statement-breakpoint
 ALTER TABLE "experiences" ALTER COLUMN "startDate" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "projectType" varchar(100);--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "budget" varchar(100);--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "timeline" varchar(100);--> statement-breakpoint
-ALTER TABLE "projects" ADD COLUMN "isHidden" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "messages" ADD COLUMN IF NOT EXISTS "projectType" varchar(100);--> statement-breakpoint
+ALTER TABLE "messages" ADD COLUMN IF NOT EXISTS "budget" varchar(100);--> statement-breakpoint
+ALTER TABLE "messages" ADD COLUMN IF NOT EXISTS "timeline" varchar(100);--> statement-breakpoint
+ALTER TABLE "projects" ADD COLUMN IF NOT EXISTS "isHidden" boolean DEFAULT false NOT NULL;--> statement-breakpoint
 
-ALTER TABLE "skills" ADD COLUMN "mastery" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "skills" ADD COLUMN IF NOT EXISTS "mastery" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
 ALTER TABLE "case_studies" ADD CONSTRAINT "case_studies_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientProjectId_client_projects_id_fk" FOREIGN KEY ("clientProjectId") REFERENCES "public"."client_projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientId_clients_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."clients"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

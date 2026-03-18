@@ -1,4 +1,4 @@
-CREATE TABLE "analytics" (
+CREATE TABLE IF NOT EXISTS "analytics" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"type" varchar(50) NOT NULL,
 	"targetId" integer,
@@ -11,13 +11,13 @@ CREATE TABLE "analytics" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "article_tags" (
+CREATE TABLE IF NOT EXISTS "article_tags" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"articleId" integer NOT NULL,
 	"tag" varchar(100) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "articles" (
+CREATE TABLE IF NOT EXISTS "articles" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"slug" varchar(255) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE "articles" (
 	CONSTRAINT "articles_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE "email_templates" (
+CREATE TABLE IF NOT EXISTS "email_templates" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"subject" varchar(500) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "email_templates" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "experiences" (
+CREATE TABLE IF NOT EXISTS "experiences" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"role" varchar(200) NOT NULL,
 	"organization" varchar(200) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE "experiences" (
 	"type" varchar(100) DEFAULT 'Experience' NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "messages" (
+CREATE TABLE IF NOT EXISTS "messages" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE "messages" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "mindset" (
+CREATE TABLE IF NOT EXISTS "mindset" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"description" text NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE "mindset" (
 	"tags" jsonb NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "projects" (
+CREATE TABLE IF NOT EXISTS "projects" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"description" text NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE "projects" (
 	"role" text
 );
 --> statement-breakpoint
-CREATE TABLE "seo_settings" (
+CREATE TABLE IF NOT EXISTS "seo_settings" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"page_slug" varchar(100) NOT NULL,
 	"meta_title" varchar(60) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE "seo_settings" (
 	CONSTRAINT "seo_settings_page_slug_unique" UNIQUE("page_slug")
 );
 --> statement-breakpoint
-CREATE TABLE "services" (
+CREATE TABLE IF NOT EXISTS "services" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"summary" text NOT NULL,
@@ -118,13 +118,13 @@ CREATE TABLE "services" (
 	"isFeatured" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "skill_connections" (
+CREATE TABLE IF NOT EXISTS "skill_connections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"from_skill_id" integer NOT NULL,
 	"to_skill_id" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "skills" (
+CREATE TABLE IF NOT EXISTS "skills" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"category" varchar(100) NOT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE "skills" (
 	"y" real DEFAULT 50 NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "testimonials" (
+CREATE TABLE IF NOT EXISTS "testimonials" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"role" varchar(255) NOT NULL,
