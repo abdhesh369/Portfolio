@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { fadeIn, staggerContainer, staggerChild } from '@/lib/animation';
+import { staggerContainer, staggerChild } from '@/lib/animation';
 import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
@@ -15,10 +15,10 @@ import { StatPanel, ProficiencyChart, CategorySummary } from './skills/StatPanel
 import { SkillsListView } from './skills/SkillsListView';
 
 export default function SkillsTree() {
-  const { performanceMode, treePerformanceMode, setTreePerformanceMode } = useTheme();
+  const { treePerformanceMode, setTreePerformanceMode } = useTheme();
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
-  const isLowPower = performanceMode === 'low';
+  // const isLowPower = performanceMode === 'low';
 
   const { data: apiSkills } = useSkills();
   const { data: apiConnections } = useSkillConnections();

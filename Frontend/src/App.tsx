@@ -120,7 +120,7 @@ function PageLoader() {
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ServerStatusBanner } from "./components/ServerStatusBanner";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import type { SiteSettings } from "@portfolio/shared/schema";
+
 
 
 // Only show PlexusBackground on public routes

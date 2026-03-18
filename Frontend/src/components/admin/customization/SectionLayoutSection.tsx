@@ -1,5 +1,5 @@
 import React from "react";
-import { UseFormRegister, UseFieldArrayMove, Path, Control, Controller } from "react-hook-form";
+import { UseFieldArrayMove, Path, Control, Controller } from "react-hook-form";
 import { GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent, SensorDescriptor, SensorOptions, DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";

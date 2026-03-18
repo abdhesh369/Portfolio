@@ -8,6 +8,7 @@ vi.mock("../db.js", () => ({
             where: vi.fn().mockReturnThis(),
             orderBy: vi.fn().mockReturnThis(),
             limit: vi.fn().mockReturnThis(),
+            offset: vi.fn().mockReturnThis(),
             then: vi.fn(function (resolve) {
                 return Promise.resolve([]).then(resolve);
             }),

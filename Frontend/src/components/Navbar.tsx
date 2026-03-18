@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Menu, X, Code2, Search } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
-import { CommandPalette } from "./CommandPalette";
+
 import { Button } from "@/components/ui/button";
 import { PerformanceToggle } from "@/components/PerformanceToggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
@@ -34,7 +34,7 @@ export default function Navbar() {
     if (!settings?.navbarLinks || !Array.isArray(settings.navbarLinks)) return DEFAULT_NAV_ITEMS;
     
     // Normalize admin links to handle both `url` and `href` properties (schema mismatch fix)
-    const adminLinks = settings.navbarLinks.map((link: any) => ({
+    const adminLinks = settings.navbarLinks.map((link: { label?: string; href?: string; url?: string }) => ({
       name: link.label || "Link",
       href: link.href || link.url || "#",
     })).filter(link => link.name !== "New Link" && link.name.trim() !== "");

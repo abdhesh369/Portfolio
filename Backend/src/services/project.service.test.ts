@@ -176,7 +176,7 @@ describe("ProjectService", () => {
 
             await service.bulkUpdateStatus([1, 2], "Completed");
 
-            expect(mockBulkUpdateStatus).toHaveBeenCalledWith([1, 2], "published");
+            expect(mockBulkUpdateStatus).toHaveBeenCalledWith([1, 2], "Completed");
             expect(mockCacheInvalidate).toHaveBeenCalled();
         });
     });

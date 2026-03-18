@@ -14,7 +14,7 @@ const defaultFooterNavItems = [
   { name: "Contact", href: "#contact" },
 ];
 
-import { formatDate } from "@/lib/utils/date";
+
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

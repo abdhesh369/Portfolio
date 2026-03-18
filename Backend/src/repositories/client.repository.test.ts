@@ -7,28 +7,32 @@ import bcrypt from "bcryptjs";
 // Mock the database
 vi.mock("../db.js", () => ({
     db: {
-        select: vi.fn(() => ({
-            from: vi.fn(() => ({
-                orderBy: vi.fn(() => []),
-                where: vi.fn(() => ({
-                    limit: vi.fn(() => []),
-                })),
-            })),
-        })),
+        select: vi.fn(() => {
+            const mock: any = {
+                from: vi.fn(() => mock),
+                where: vi.fn(() => mock),
+                orderBy: vi.fn(() => mock),
+                limit: vi.fn(() => mock),
+                offset: vi.fn(() => mock),
+                then: vi.fn((resolve: any) => resolve([])),
+                catch: vi.fn((reject: any) => {}),
+            };
+            return mock;
+        }),
         insert: vi.fn(() => ({
             values: vi.fn(() => ({
-                returning: vi.fn(() => []),
+                returning: vi.fn().mockResolvedValue([]),
             })),
         })),
         update: vi.fn(() => ({
             set: vi.fn(() => ({
                 where: vi.fn(() => ({
-                    returning: vi.fn(() => []),
+                    returning: vi.fn().mockResolvedValue([]),
                 })),
             })),
         })),
         delete: vi.fn(() => ({
-            where: vi.fn(() => []),
+            where: vi.fn().mockResolvedValue([]),
         })),
     },
 }));

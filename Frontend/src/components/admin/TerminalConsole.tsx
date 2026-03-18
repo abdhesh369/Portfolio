@@ -95,7 +95,7 @@ export default function TerminalConsole({ onNavigate }: TerminalConsoleProps) {
                 addLine(`  Messages:    ${messages?.length || 0}`);
                 break;
 
-            case "goto":
+            case "goto": {
                 const target = args[0]?.toLowerCase();
                 if (!target) {
                     addLine("Error: Destination required. Usage: goto <projects|messages|skills|...>", "error");
@@ -104,6 +104,7 @@ export default function TerminalConsole({ onNavigate }: TerminalConsoleProps) {
                     onNavigate(target as TabKey);
                 }
                 break;
+            }
 
             case "clear":
                 setLines([]);
@@ -117,7 +118,7 @@ export default function TerminalConsole({ onNavigate }: TerminalConsoleProps) {
                         await apiFetch("/api/v1/admin/cache/clear", { method: "POST" });
                         addLine("CACHE_SYNC_PURGED_SUCCESSFULLY. [OK]", "success");
                         toast({ title: "Cache Cleared", description: "System cache has been flushed." });
-                    } catch (err) {
+                    } catch (_err) {
                         addLine("CACHE_FLUSH_FAILURE. CHECK_LOGS.", "error");
                     } finally {
                         setIsProcessing(false);

@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CustomizationTab } from "./CustomizationTab";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/use-site-settings";
 import React from "react";
 import { UseQueryResult, UseMutationResult, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { SiteSettings, InsertSiteSettings } from "@portfolio/shared";
-import { fireEvent, waitFor } from "@testing-library/react";
 
 // Mock hooks
 vi.mock("@/hooks/use-site-settings", () => ({

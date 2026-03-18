@@ -50,8 +50,9 @@ export default function Resume() {
             });
             setGeneratedLetter(res.letter);
             toast({ title: "Generated!", description: "Your custom cover letter is ready." });
-        } catch (err: any) {
-            toast({ title: "Failed", description: err.message || "AI was unable to generate the letter.", variant: "destructive" });
+        } catch (err: unknown) {
+            const error = err as Error;
+            toast({ title: "Failed", description: error.message || "AI was unable to generate the letter.", variant: "destructive" });
         } finally {
             setIsGenerating(false);
         }

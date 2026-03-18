@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { fadeUp, scaleIn, fadeIn, floatTransition, SPRING, DURATION, EASE } from "@/lib/animation";
+import { useEffect, useState, useRef } from "react";
+import { fadeUp, fadeIn, DURATION, EASE } from "@/lib/animation";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Twitter, Instagram, Youtube, Code2, ExternalLink, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
@@ -9,8 +9,7 @@ import { useServerStatus } from "@/hooks/use-server-status";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useLatestCommit } from "@/hooks/use-latest-commit";
 import { formatTimeAgo } from "@/lib/utils/date";
-import { useTheme } from "./theme-provider";
-import { OptimizedImage } from "@/components/OptimizedImage";
+
 import { LiveCodeEditor } from "./LiveCodeEditor";
 import type { SiteSettings } from "@portfolio/shared";
 
@@ -135,7 +134,7 @@ const OpenToWorkBanner = ({ settings }: { settings: SiteSettings | undefined | n
 };
 
 import { LiveVisitorCount } from "./LiveVisitorCount";
-import { textReveal, magneticTransition } from "@/lib/animation";
+
 
 const CharacterReveal = ({ text, delay = 0, className = "" }: { text: string; delay?: number, className?: string }) => {
   return (

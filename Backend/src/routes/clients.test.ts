@@ -29,6 +29,10 @@ vi.mock("../services/client.service.js", () => ({
 vi.mock("../lib/audit.js", () => ({ recordAudit: vi.fn() }));
 vi.mock("../middleware/csrf.js", () => ({ csrfProtection: (_req: unknown, _res: unknown, next: (err?: any) => void) => next() }));
 vi.mock("../middleware/validate.js", () => ({ validateBody: () => (_req: unknown, _res: unknown, next: (err?: any) => void) => next() }));
+vi.mock("../auth.js", () => ({
+    isAuthenticated: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
+    asyncHandler: (fn: any) => fn,
+}));
 
 import { registerClientRoutes } from "./clients.js";
 

@@ -60,7 +60,7 @@ export function OptimizedImage({
                     "bg-secondary/20 flex items-center justify-center shrink-0", 
                     className
                 )}
-                {...(props as any)}
+                {...(props as Record<string, unknown>)}
             >
                 <Icon className="w-1/3 h-1/3 text-muted-foreground/40" />
             </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { Activity, Zap, Server, ShieldAlert, CheckCircle2, AlertTriangle, LineChart, Cpu, BarChart3, Database } from "lucide-react";
-import { apiFetch } from "@/lib/api-helpers";
+import { Activity, Zap, Server, ShieldAlert, CheckCircle2, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Metrics {

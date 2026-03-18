@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Trash2, Copy, Check, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar, Edit2, Save } from 'lucide-react';
+import { Users, Plus, Trash2, Copy, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar, Edit2, Save } from 'lucide-react';
 import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
 import { apiFetch } from '@/lib/api-helpers';
 import { cn } from '@/lib/utils';
@@ -94,7 +94,7 @@ const ClientProjectsView: React.FC<{ clientId: number }> = ({ clientId }) => {
         onSuccess: () => {
             toast({ title: "Request Sent", description: "Testimonial request email sent to client." });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             toast({ title: "Request Failed", description: err.message || "Failed to send request", variant: "destructive" });
         }
     });
@@ -392,7 +392,6 @@ export const ClientsTab: React.FC = () => {
     const { toast } = useToast();
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ name: '', email: '', company: '' });
-    const [copiedId, setCopiedId] = useState<number | null>(null);
     const [newToken, setNewToken] = useState<string | null>(null);
     const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
     const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
@@ -411,10 +410,11 @@ export const ClientsTab: React.FC = () => {
             setNewToken(res.rawToken);
             toast({ title: "Success", description: "Client created successfully." });
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
             let description = err instanceof Error ? err.message : "An error occurred";
-            if (err.data && Array.isArray(err.data.errors)) {
-                description += " - " + err.data.errors.map((e: any) => `${e.path}: ${e.message}`).join(", ");
+            const errorData = err as { data?: { errors?: Array<{ path: string; message: string }> } };
+            if (errorData.data && Array.isArray(errorData.data.errors)) {
+                description += " - " + errorData.data.errors.map((e) => `${e.path}: ${e.message}`).join(", ");
             }
             toast({ title: "Creation Failed", description, variant: "destructive" });
         }
@@ -432,7 +432,7 @@ export const ClientsTab: React.FC = () => {
             setRegeneratingId(null);
             toast({ title: "Success", description: "Token regenerated successfully." });
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
             setRegeneratingId(null);
             const description = err instanceof Error ? err.message : "An error occurred";
             toast({ title: "Regeneration Failed", description, variant: "destructive" });

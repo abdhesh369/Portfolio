@@ -36,7 +36,7 @@ export default function CodeAndPractice() {
   const { reducedMotion } = useTheme();
 
   const { data: settings } = useSiteSettings();
-  const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "abdhesh369";
+  // const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "abdhesh369";
 
   const { data: githubData, isLoading: isContributionsLoading } = useQuery<{ total: number, contributions: ContributionDay[] }>({
     queryKey: QUERY_KEYS.github.contributions,

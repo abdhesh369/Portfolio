@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from "react";
+import React, { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -276,7 +276,7 @@ interface FormCheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
     activeColor?: string;
 }
 
-export function FormCheckbox({ label, onChange, checked, activeColor, ...props }: FormCheckboxProps) {
+export function FormCheckbox({ label, onChange, checked, activeColor }: FormCheckboxProps) {
     return (
         <div
             className="flex items-center gap-3 py-2 cursor-pointer group"

@@ -118,7 +118,11 @@ export function VisitorGlobe({ data }: VisitorGlobeProps) {
           if ((obj as THREE.Mesh).geometry) (obj as THREE.Mesh).geometry.dispose();
           if ((obj as THREE.Mesh).material) {
               const mat = (obj as THREE.Mesh).material;
-              Array.isArray(mat) ? mat.forEach(m => m.dispose()) : mat.dispose();
+              if (Array.isArray(mat)) {
+                mat.forEach(m => m.dispose());
+              } else {
+                mat.dispose();
+              }
           }
       });
       scene.clear();

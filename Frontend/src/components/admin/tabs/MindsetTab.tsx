@@ -4,7 +4,7 @@ import { useAdminMindset } from "@/hooks/admin/use-admin-mindset";
 import { FormField, FormTextarea, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
 import type { Mindset } from "@portfolio/shared/schema";
 import {
-    Loader2, Plus, Pencil, Trash2, Brain, Lightbulb,
+    Plus, Pencil, Trash2, Brain, Lightbulb,
     Zap, Anchor, Target, Compass, ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";

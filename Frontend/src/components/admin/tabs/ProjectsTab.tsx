@@ -517,7 +517,7 @@ export function ProjectsTab(_props: AdminTabProps) {
                                     }}
                                     onTogglePin={async (id, current) => {
                                         try {
-                                            await update({ id, data: { isFlagship: !current } as any });
+                                            await update({ id, data: { isFlagship: !current } });
                                         } catch (err) { console.error(err); }
                                     }}
                                     isSelected={selectedIds.includes(p.id)}

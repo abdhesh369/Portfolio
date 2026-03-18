@@ -4,7 +4,7 @@ import { useTestimonials } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { Quote, Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
 import { OptimizedImage } from "./OptimizedImage";
-import { fadeUp, hoverLiftSmall } from "@/lib/animation";
+import { fadeUp } from "@/lib/animation";
 
 export default function Testimonials() {
     const { data: testimonials, isLoading } = useTestimonials();

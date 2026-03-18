@@ -855,6 +855,12 @@ const siteSettingsBaseSchema = z.object({
     title: z.string(),
     description: z.string()
   })).optional(),
+  aboutInfoCards: z.array(z.object({
+    icon: z.string(),
+    label: z.string(),
+    value: z.string(),
+    color: z.enum(["cyan", "purple"]).optional()
+  })).optional(),
 
   // Social Links (10 platforms)
   socialGithub: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),

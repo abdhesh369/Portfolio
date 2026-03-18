@@ -160,7 +160,7 @@ export function AvailabilitySlotsSection({
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {sortedSlots.map((slot, index) => (
+                            {sortedSlots.map((slot) => (
                                 <div
                                     key={slot.id}
                                     className="group flex items-center justify-between p-6 nm-inset rounded-3xl border border-transparent hover:border-white/5 transition-all duration-300"

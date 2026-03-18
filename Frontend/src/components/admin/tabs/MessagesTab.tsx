@@ -343,7 +343,7 @@ function ReplyDialog({ message }: { message: Message }) {
 
                     {/* Compose Area */}
                     <div className="lg:col-span-3 p-10 flex flex-col nm-inset bg-transparent gap-8 overflow-y-auto custom-scrollbar">
-                        <FloatingLabelInput label="COMM_SUBJECT" value={subject} onChange={(e: any) => setSubject(e.target.value)} placeholder="Transmission Subject..." />
+                        <FloatingLabelInput label="COMM_SUBJECT" value={subject} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSubject(e.target.value)} placeholder="Transmission Subject..." />
 
                         <div className="flex-1 flex flex-col space-y-3">
                             <label className="block text-[10px] font-black text-admin-text-secondary uppercase tracking-[0.25em] ml-1">COMM_CONTENT</label>

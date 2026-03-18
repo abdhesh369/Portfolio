@@ -16,6 +16,15 @@ import { useTheme } from "@/components/theme-provider";
 import { useToast } from "@/hooks/use-toast";
 import { TOGGLE_COMMAND_PALETTE } from "@/hooks/use-command-palette";
 
+interface SearchResultItem {
+  id: string;
+  title: string;
+  type: "navigation" | "action" | "project" | "article" | "admin";
+  icon: React.ElementType;
+  href?: string;
+  action?: () => void;
+}
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -39,9 +48,10 @@ export function CommandPalette() {
       }
     };
 
-    const handleToggle = (e: any) => {
-      if (e?.detail?.open !== undefined) {
-        setOpen(e.detail.open);
+    const handleToggle = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent?.detail?.open !== undefined) {
+        setOpen(customEvent.detail.open);
       } else {
         setOpen((o) => !o);
       }
@@ -63,7 +73,7 @@ export function CommandPalette() {
   }, []);
 
   // Filter items based on query
-  const searchResults = useCallback(() => {
+  const searchResults = useCallback((): SearchResultItem[] => {
     const staticCommands = [
       { id: "home", title: "Go Home", type: "navigation" as const, icon: Home, href: "/" },
       { id: "projects-nav", title: "Browse Projects", type: "navigation" as const, icon: FolderGit2, href: "/#projects" },
@@ -131,7 +141,7 @@ export function CommandPalette() {
     setSelectedIndex(0);
   }, [results.length]);
 
-  const handleSelect = useCallback((item: any) => {
+  const handleSelect = useCallback((item: SearchResultItem) => {
     setOpen(false);
     if (item.action) {
       item.action();

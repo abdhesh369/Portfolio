@@ -1,10 +1,10 @@
 import React from "react";
 import { UseFormRegister, useFieldArray, Control } from "react-hook-form";
 import { InsertSiteSettings } from "@portfolio/shared";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, HelpCircle } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface WhyHireMeSectionProps {

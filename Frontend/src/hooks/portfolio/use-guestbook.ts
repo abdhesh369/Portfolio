@@ -51,13 +51,14 @@ export function useSubmitGuestbook() {
 
             return { previousEntries };
         },
-        onError: (err: any, _newEntry, context) => {
+        onError: (err: unknown, _newEntry, context) => {
             if (context?.previousEntries) {
                 queryClient.setQueryData(QUERY_KEYS.guestbook.all, context.previousEntries);
             }
+            const error = err as Error;
             toast({
                 title: "Failed to submit entry",
-                description: err.message || "Something went wrong",
+                description: error.message || "Something went wrong",
                 variant: "destructive",
             });
         },

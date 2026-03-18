@@ -94,14 +94,14 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             <FloatingLabelInput
                                 label="Role *"
                                 value={editing.role || ""}
-                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, role: e.target.value } : null)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEditing(prev => prev ? { ...prev, role: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Senior Frontend Developer"
                             />
                             <FloatingLabelInput
                                 label="Organization *"
                                 value={editing.organization || ""}
-                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, organization: e.target.value } : null)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEditing(prev => prev ? { ...prev, organization: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Google, Amazon, etc."
                             />
@@ -111,7 +111,7 @@ export function ExperiencesTab(_props: AdminTabProps) {
                             <FloatingLabelInput
                                 label="Period * (Label only)"
                                 value={editing.period || ""}
-                                onChange={(e: any) => setEditing(prev => prev ? { ...prev, period: e.target.value } : null)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEditing(prev => prev ? { ...prev, period: e.target.value } : null)}
                                 required
                                 placeholder="e.g. Jan 2020 - Present"
                                 className="nm-flat border-0 shadow-none bg-transparent"

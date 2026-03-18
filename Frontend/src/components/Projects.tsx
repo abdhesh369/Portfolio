@@ -1,9 +1,8 @@
-import { useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useProjects, useAuth } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ArrowRight, Folder, Zap, Cpu } from "lucide-react";
+import { ArrowRight, Folder, Zap } from "lucide-react";
 import { staggerContainer } from "@/lib/animation";
 import { Link } from "wouter";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAdminChatLogs } from "@/hooks/use-portfolio";
-import { MessageSquare, Calendar, ExternalLink, X, User, Bot, Clock, Filter, Trash2, Search } from "lucide-react";
+import { MessageSquare, Calendar, ExternalLink, X, User, Bot, Clock, Filter, Search } from "lucide-react";
 import { 
     AdminButton, 
     EmptyState, 

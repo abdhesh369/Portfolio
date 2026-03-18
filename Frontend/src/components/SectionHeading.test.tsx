@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import type { LucideIcon } from "lucide-react";

@@ -1,9 +1,9 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@portfolio/shared";
+
 import { motion } from "framer-motion";
 import { Github, Info, ExternalLink } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { QUERY_KEYS } from "@/lib/query-keys";
 
@@ -55,16 +55,7 @@ export const GithubHeatmap: React.FC = () => {
     const contributions = data.contributions || [];
     const totalCount = typeof data.total === 'number' ? data.total : 0;
 
-    const getLevelColor = (level: number) => {
-        switch (level) {
-            case 0: return "bg-white/[0.03]";
-            case 1: return "bg-emerald-500/20";
-            case 2: return "bg-emerald-500/40";
-            case 3: return "bg-emerald-500/70";
-            case 4: return "bg-emerald-500";
-            default: return "bg-white/[0.03]";
-        }
-    };
+
 
     return (
         <motion.div

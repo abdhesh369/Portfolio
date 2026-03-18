@@ -29,7 +29,28 @@ vi.mock("drizzle-orm", () => {
     };
 });
 
-// db mock is in setup.ts
+// db mock is usually in setup.ts but we override here for specific behavior
+vi.mock("../db.js", () => ({
+    db: {
+        select: vi.fn(() => {
+            const mock: any = {
+                from: vi.fn(() => mock),
+                where: vi.fn(() => mock),
+                orderBy: vi.fn(() => mock),
+                limit: vi.fn(() => mock),
+                offset: vi.fn(() => mock),
+                groupBy: vi.fn(() => mock),
+                then: vi.fn((resolve: any) => resolve([])),
+            };
+            return mock;
+        }),
+        insert: vi.fn().mockReturnValue({
+            values: vi.fn().mockReturnThis(),
+            returning: vi.fn().mockReturnThis(),
+            then: vi.fn((resolve: any) => resolve([])),
+        }),
+    },
+}));
 
 import { AnalyticsRepository } from "./analytics.repository.js";
 

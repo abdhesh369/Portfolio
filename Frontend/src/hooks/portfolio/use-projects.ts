@@ -1,4 +1,4 @@
-import { api } from "@portfolio/shared";
+import { api, type Project } from "@portfolio/shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
 import { QUERY_KEYS } from "@/lib/query-keys";
@@ -10,11 +10,11 @@ export function useProjects(sortBy: string = "default") {
   return useQuery({
     queryKey: [...QUERY_KEYS.projects.list(sortBy), isDevMode],
     queryFn: async () => {
-      const projects: any[] = await fetchAndParse(
+      const projects = await fetchAndParse(
         `${api.projects.list.path}${sortBy !== "default" ? `?sort=${sortBy}` : ""}${isDevMode ? `${sortBy !== "default" ? "&" : "?"}secret=revealed` : ""}`,
         api.projects.list.responses[200],
         "Failed to fetch projects"
-      );
+      ) as Project[];
       return projects;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes

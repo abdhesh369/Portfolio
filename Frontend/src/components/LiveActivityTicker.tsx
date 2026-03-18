@@ -1,8 +1,8 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
-import { Github, Terminal, GitCommit, FileCode, Plus, Minus, Activity, ExternalLink } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Terminal, GitCommit, FileCode, Plus, Minus, Activity, ExternalLink } from "lucide-react";
+
 import { apiFetch } from "@/lib/api-helpers";
 
 interface CommitFile {

@@ -50,7 +50,7 @@ export function OverviewTab({ onNavigate }: AdminTabProps) {
             const start = performance.now();
             const data = await apiFetch("/api/v1/health", { signal: controller.signal });
             const elapsed = Math.round(performance.now() - start);
-            setHealthData(prev => ({ ...prev, ...data, responseTimeMs: elapsed }));
+            setHealthData(prev => ({ ...(prev || {}), ...data, responseTimeMs: elapsed } as HealthData));
         } catch (err) {
             if (err instanceof DOMException && err.name === "AbortError") return;
             setHealthData({

@@ -19,11 +19,11 @@ interface ReadingItem {
     createdAt: string;
 }
 
-const empty = {
+const empty: { title: string; url: string; note: string; type: 'article' | 'video' | 'book' } = {
     title: "",
     url: "",
     note: "",
-    type: "article" as const,
+    type: "article",
 };
 
 export function ReadingListTab(_props: AdminTabProps) {
@@ -94,7 +94,7 @@ export function ReadingListTab(_props: AdminTabProps) {
                         <FormSelect
                             label="Type"
                             value={editing.type}
-                            onChange={(v) => setEditing(d => d ? { ...d, type: v as any } : null)}
+                            onChange={(v) => setEditing(d => d ? { ...d, type: v as 'article' | 'video' | 'book' } : null)}
                             options={[
                                 { label: "ARTICLE", value: "article" },
                                 { label: "VIDEO", value: "video" },

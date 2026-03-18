@@ -4,7 +4,7 @@ import { InsertSiteSettings } from "@portfolio/shared";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Calendar, Target, Zap } from "lucide-react";
+import { Plus, Trash2, Calendar, Zap } from "lucide-react";
 import { CollapsibleSection } from "./SectionsCommon";
 
 interface AboutSectionProps {

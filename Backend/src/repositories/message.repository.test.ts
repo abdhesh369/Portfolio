@@ -10,13 +10,17 @@ const { mockReturning, mockDeleteWhere, mockValues } = vi.hoisted(() => {
 
 vi.mock("../db.js", () => ({
     db: {
-        select: vi.fn().mockReturnValue({
-            from: vi.fn().mockReturnValue({
-                orderBy: vi.fn().mockResolvedValue([]),
-                where: vi.fn().mockReturnValue({
-                    limit: vi.fn().mockResolvedValue([]),
-                }),
-            }),
+        select: vi.fn(() => {
+            const mock: any = {
+                from: vi.fn(() => mock),
+                where: vi.fn(() => mock),
+                orderBy: vi.fn(() => mock),
+                limit: vi.fn(() => mock),
+                offset: vi.fn(() => mock),
+                groupBy: vi.fn(() => mock),
+                then: vi.fn((resolve: any) => resolve([])),
+            };
+            return mock;
         }),
         insert: vi.fn().mockReturnValue({ values: mockValues }),
         update: vi.fn().mockReturnValue({
@@ -56,11 +60,14 @@ describe("MessageRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
-                from: vi.fn().mockReturnValue({
-                    orderBy: vi.fn().mockResolvedValue(mockResults),
-                }),
-            });
+            const mock: any = {
+                from: vi.fn(() => mock),
+                orderBy: vi.fn(() => mock),
+                limit: vi.fn(() => mock),
+                offset: vi.fn(() => mock),
+                then: (resolve: any) => resolve(mockResults),
+            };
+            (db.select as any).mockReturnValueOnce(mock);
 
             const result = await repo.findAll();
 
@@ -74,11 +81,14 @@ describe("MessageRepository", () => {
             ];
 
             const { db } = await import("../db.js");
-            (db.select as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
-                from: vi.fn().mockReturnValue({
-                    orderBy: vi.fn().mockResolvedValue(mockResults),
-                }),
-            });
+            const mock: any = {
+                from: vi.fn(() => mock),
+                orderBy: vi.fn(() => mock),
+                limit: vi.fn(() => mock),
+                offset: vi.fn(() => mock),
+                then: (resolve: any) => resolve(mockResults),
+            };
+            (db.select as any).mockReturnValueOnce(mock);
 
             const result = await repo.findAll();
 

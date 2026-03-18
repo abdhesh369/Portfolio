@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { type Article, type Project, type Skill } from "@portfolio/shared";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { API_BASE_URL } from "@/lib/api-helpers";
@@ -9,9 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 
 interface SearchResults {
-    projects: any[];
-    articles: any[];
-    skills: any[];
+    projects: Project[];
+    articles: Article[];
+    skills: Skill[];
 }
 
 export default function SearchPage() {
@@ -139,7 +140,7 @@ export default function SearchPage() {
                                         >
                                             {skill.name}
                                             <span className="ml-2 text-muted-foreground text-xs">
-                                                {skill.endorsements} endorsements
+                                                {skill.mastery}% mastery
                                             </span>
                                         </Badge>
                                     ))}

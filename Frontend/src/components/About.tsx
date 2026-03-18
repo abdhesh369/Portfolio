@@ -1,6 +1,6 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, fadeLeft, scaleIn, scaleInSubtle, staggerContainer, staggerChild } from "@/lib/animation";
+import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild, fadeIn, hoverScale } from "@/lib/animation";
 import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -101,7 +101,7 @@ const AnimatedCounter = ({ value, suffix = "", label, icon: Icon }: { value: num
 };
 
 // Holographic Info Card
-const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: React.ElementType; label: string; value: string; delay: number, color?: "cyan" | "purple" }) => {
+const InfoCard = ({ icon: Icon, label, value, color = "cyan" }: { icon: React.ElementType; label: string; value: string; color?: "cyan" | "purple" }) => {
   return (
     <m.div
       variants={staggerChild}
@@ -127,7 +127,7 @@ const InfoCard = ({ icon: Icon, label, value, delay, color = "cyan" }: { icon: R
 };
 
 // Timeline Node
-const TimelineItem = ({ year, title, description, delay }: { year: string; title: string; description: string; delay: number }) => (
+const TimelineItem = ({ year, title, description }: { year: string; title: string; description: string }) => (
   <m.div
     variants={staggerChild}
     className="relative pl-8 pb-12 last:pb-0 group"
@@ -161,7 +161,7 @@ export default function About() {
   const { data: projects, isLoading: projectsLoading } = useProjects();
   const { data: skills, isLoading: skillsLoading } = useSkills();
   const { data: experiences, isLoading: experiencesLoading } = useExperiences();
-  const { data: settings, isLoading: settingsLoading } = useSiteSettings();
+  const { data: settings } = useSiteSettings();
   return (
     <section id="about" className="section-container scroll-mt-20 overflow-hidden py-16 md:py-24 relative">
       <div className="text-center mb-20 relative z-10">
@@ -225,7 +225,7 @@ export default function About() {
                     <h3 className="text-2xl font-bold text-foreground font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4 text-cyan-400" />
-                      {(settings as any)?.locationText || "Kathmandu, Nepal"}
+                      {settings?.locationText || "Kathmandu, Nepal"}
                     </div>
                   </div>
                 </div>
@@ -234,17 +234,17 @@ export default function About() {
                 <div className="p-6 border-t border-border bg-foreground/5 space-y-4 relative z-30">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Position</span>
-                    <span className="text-foreground font-medium">{(settings as any)?.personalTitle || "Student Engineer"}</span>
+                    <span className="text-foreground font-medium">{settings?.personalTitle || "Student Engineer"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Availability</span>
-                    <span className="text-green-400 font-medium">{(settings as any)?.aboutAvailability || "Open to Work"}</span>
+                    <span className="text-green-400 font-medium">{settings?.aboutAvailability || "Open to Work"}</span>
                   </div>
 
                   <div className="pt-4 border-t border-border space-y-3">
                     <span className="text-sm text-muted-foreground">Core Tech Stack</span>
                     <div className="flex flex-wrap gap-2">
-                      {((settings as any)?.aboutTechStack || ["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]).map((tech: string) => (
+                      {(settings?.aboutTechStack || ["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]).map((tech: string) => (
                         <span key={tech} className="px-2 py-1 bg-card/50 border border-border hover:border-cyan-500/30 hover:text-cyan-400 transition-colors rounded text-[11px] font-mono text-muted-foreground">
                           {tech}
                         </span>
@@ -284,8 +284,8 @@ export default function About() {
               </h3>
 
               <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed font-light space-y-4">
-                {(settings as any)?.aboutDescription ? (
-                  (settings as any).aboutDescription.split('\n\n').map((para: string, i: number) => (
+                {settings?.aboutDescription ? (
+                  settings.aboutDescription.split('\n\n').map((para: string, i: number) => (
                     <p key={i} className="leading-relaxed text-[1.05rem]">
                       {para}
                     </p>
@@ -338,13 +338,13 @@ export default function About() {
               viewport={{ once: true, margin: "-50px" }}
               className="grid sm:grid-cols-2 gap-4"
             >
-              {((settings as any)?.aboutInfoCards || [
+              {(settings?.aboutInfoCards || [
                 { icon: "GraduationCap", label: "Status", value: "B.E. Student" },
                 { icon: "Code", label: "Focus Area", value: "Full Stack System Design", color: "purple" },
                 { icon: "Cpu", label: "Hardware", value: "Electronics & Comms", color: "purple" },
                 { icon: "Target", label: "Goal", value: "Software Engineer" }
-              ]).map((card: any, idx: number) => {
-                const IconMap: Record<string, any> = { GraduationCap, Code, Cpu, Target };
+              ]).map((card: { icon: string; label: string; value: string; color?: "cyan" | "purple" }, idx: number) => {
+                const IconMap: Record<string, React.ElementType> = { GraduationCap, Code, Cpu, Target };
                 const Icon = IconMap[card.icon] || Code;
                 return (
                   <InfoCard 
@@ -352,7 +352,6 @@ export default function About() {
                     icon={Icon} 
                     label={card.label} 
                     value={card.value} 
-                    delay={0.1 * (idx + 1)} 
                     color={card.color} 
                   />
                 );
@@ -386,17 +385,16 @@ export default function About() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
               >
-              {((settings as any)?.aboutTimeline || [
+              {(settings?.aboutTimeline || [
                 { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture while building complex full-stack applications." },
                 { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and Object-Oriented Programming (C++, Java) at Tribhuvan University." },
                 { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development. Built my first static websites." }
-              ]).map((item: any, index: number) => (
+              ]).map((item: { year: string; title: string; description: string }, index: number) => (
                 <TimelineItem
                   key={index}
                   year={item.year}
                   title={item.title}
                   description={item.description}
-                  delay={index * 0.1}
                 />
               ))}
               </m.div>

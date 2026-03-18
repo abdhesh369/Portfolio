@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import {
     LayoutDashboard, BarChart3, Mail, FileText, FolderKanban,
-    Zap, Briefcase, Settings, Search, PenTool, Star, Shield,
-    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, ChevronRight, X, Send, Rocket
+    Zap, Briefcase, Search, PenTool, Star, Shield,
+    Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, X, Send, Rocket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
@@ -94,7 +94,6 @@ export default function Sidebar({
     }, []);
 
     const brandName = settings?.personalName || "OS_ADMIN";
-    const brandInitial = brandName.charAt(0).toUpperCase();
 
     const filteredGroups = NAV_GROUPS.map(group => ({
         ...group,
@@ -195,7 +194,7 @@ export default function Sidebar({
 
                 {/* Navigation Items: grouped spacing */}
                 <nav className="flex-1 py-4 px-4 flex flex-col gap-8 overflow-y-auto overflow-x-hidden custom-scrollbar">
-                    {filteredGroups.map((group, groupIdx) => (
+                    {filteredGroups.map((group) => (
                         <div key={group.label} className="flex flex-col gap-3">
                             {/* Group Header */}
                             <div className="flex items-center gap-3 h-4 px-2">

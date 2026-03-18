@@ -175,19 +175,19 @@ export default function WhyHireMe() {
   const resumeFileName = resumeUrl.split('/').pop() || "Resume.docx";
 
   // Use dynamic data if available, otherwise fall back to local constants
-  const dynamicPoints = (settings as any)?.whyHireMeData?.stats?.map((stat: any) => ({
+  const dynamicPoints = settings?.whyHireMeData?.stats?.map((stat: { label: string; value: string }) => ({
     title: stat.label,
     description: stat.value,
     icon: CheckCircle2 // Fallback icon since we don't store icon names in DB yet
   })) || defaultPoints;
 
-  const dynamicSkills = (settings as any)?.whyHireMeData?.skills?.map((s: any, i: number) => ({
-    skill: s.skill || s,
-    level: s.level || 85,
-    color: s.color || defaultSkills[i % defaultSkills.length].color
+  const dynamicSkills = settings?.whyHireMeData?.skills?.map((s: string | { skill: string; level: number; color?: string }, i: number) => ({
+    skill: typeof s === 'string' ? s : s.skill,
+    level: typeof s === 'string' ? 85 : s.level || 85,
+    color: typeof s === 'string' ? defaultSkills[i % defaultSkills.length].color : s.color || defaultSkills[i % defaultSkills.length].color
   })) || defaultSkills;
   
-  const displayDescription = (settings as any)?.whyHireMeData?.description || "As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.";
+  const displayDescription = settings?.whyHireMeData?.description || "As a student, I bring fresh perspectives, high energy, and a commitment to professional growth. Let's discuss how I can help your organization succeed.";
 
   return (
     <section id="why-hire-me" className="section-container overflow-hidden relative">
@@ -254,7 +254,7 @@ export default function WhyHireMe() {
               <Target className="w-5 h-5 text-primary" />
               Core Competencies
             </h3>
-            {dynamicSkills.slice(0, 4).map((s: any, i: number) => (
+            {dynamicSkills.slice(0, 4).map((s: { skill: string; level: number; color: string }, i: number) => (
               <SkillBar key={i} {...s} delay={i * 0.1} />
             ))}
           </div>
@@ -266,7 +266,7 @@ export default function WhyHireMe() {
               What Sets Me Apart
             </h3>
             <ul className="space-y-4">
-              {dynamicSkills.map((s: any, i: number) => (
+              {dynamicSkills.map((s: { skill: string; level: number; color: string }, i: number) => (
                 <SkillBar key={i} {...s} delay={i * 0.1} />
               ))}
             </ul>

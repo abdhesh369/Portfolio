@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
     FileText, Trash2, Sparkles, Eye, EyeOff,
-    ChevronRight, Layout, Plus, Loader2
+    ChevronRight, Layout, Plus
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api-helpers';
-import { LoadingSkeleton, AdminButton, EmptyState } from '@/components/admin/AdminShared';
+import { AdminButton, EmptyState } from '@/components/admin/AdminShared';
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/date";
 import { QUERY_KEYS } from "@/lib/query-keys";

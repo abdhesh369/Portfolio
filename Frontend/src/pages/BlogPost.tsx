@@ -136,7 +136,7 @@ export default function BlogPost() {
                         },
                         "mainEntityOfPage": {
                             "@type": "WebPage",
-                            "@id": `${(import.meta as any).env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
+                            "@id": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
                         }
                     },
                     {
@@ -157,9 +157,9 @@ export default function BlogPost() {
                             },
                             {
                                 "@type": "ListItem",
-                                "position": 3,
-                                "name": article!.title,
-                                "item": `${(import.meta as any).env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
+                                position: 3,
+                                name: article!.title,
+                                item: `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
                             }
                         ]
                     }
@@ -248,10 +248,7 @@ export default function BlogPost() {
                             />
 
                             {/* Share buttons */}
-                            <div className="mt-12 pt-8 border-t border-white/10 flex flex-col gap-4">
-                                <h3 className="text-sm font-semibold text-white/50">How was the read?</h3>
-                                <ArticleReactions articleId={article!.id} reactions={(article! as any).reactions || {}} />
-                            </div>
+                            <ArticleReactions articleId={article!.id} reactions={article!.reactions || {}} />
 
                             {/* Share buttons */}
                             <div className="mt-12 flex flex-col gap-4">
@@ -335,8 +332,7 @@ export default function BlogPost() {
                                         Related Articles
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                        {relatedArticles.map((related: any) => (
+                                        {relatedArticles.map((related) => (
                                             <Link key={related.id} href={`/blog/${related.slug}`}>
                                                 <m.div
                                                     whileHover={{ y: -4 }}

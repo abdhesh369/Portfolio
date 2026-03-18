@@ -26,7 +26,7 @@ export function PersonaSelector() {
         setIsOpen(false);
     };
 
-    const personas: { id: Persona; label: string; icon: any; color: string; desc: string }[] = [
+    const personas: { id: Persona; label: string; icon: React.ElementType; color: string; desc: string }[] = [
         { 
             id: 'recruiter', 
             label: "Recruiter", 
