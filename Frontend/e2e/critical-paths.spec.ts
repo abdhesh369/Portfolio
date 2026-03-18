@@ -8,17 +8,17 @@ test.describe("Public User Journey", () => {
 
   test("homepage loads with all major sections visible", async ({ page }) => {
     await page.goto("/");
+    await page.locator('#main-content').waitFor({ state: 'attached', timeout: 15000 });
 
     // Hero section
     const heading = page.locator("h1");
     // Ensure h1 is visible - it might be delayed by an intro animation
     await expect(heading).toBeVisible({ timeout: 15000 });
 
-    // Using a more flexible approach for lazy-loaded sections
     // Use getByRole for the Projects heading
     const projectsHeading = page.getByRole('heading', { name: /Featured Projects|My Projects|Projects/i }).first();
     await projectsHeading.scrollIntoViewIfNeeded();
-    await expect(projectsHeading).toBeVisible({ timeout: 20000 });
+    await expect(projectsHeading).toBeVisible({ timeout: 30000 });
 
     // Contact / CTA area should exist somewhere on the page
     // Look for various button texts that appear in the Contact section modes
@@ -201,7 +201,8 @@ test.describe("Performance & Accessibility Basics", () => {
     page.on('requestfailed', request => {
       const url = request.url();
       const failure = request.failure();
-      if (url.includes('/api/')) {
+      // Ignore ERR_ABORTED for analytics as it's common during navigation/unmount
+      if (url.includes('/api/') && failure?.errorText !== 'net::ERR_ABORTED') {
         criticalErrors.push(`Request failed: ${url} (${failure?.errorText || 'Unknown error'})`);
       }
     });

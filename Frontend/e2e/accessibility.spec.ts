@@ -53,6 +53,7 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
     // The main content element should exist
     const mainContent = page.locator('#main-content');
+    await mainContent.waitFor({ state: 'attached', timeout: 15000 });
     await expect(mainContent).toBeAttached();
   });
 

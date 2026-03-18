@@ -359,11 +359,15 @@ jobs:
           VITE_API_URL: http://localhost:5000
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
+          VITE_GA_MEASUREMENT_ID: G-MOCK-ID
+          VITE_DISABLE_PWA: "true"
 
       - name: Run E2E tests
         run: npm run test:e2e -w Frontend
         env:
           CI: true
+          TEST_ADMIN_PASSWORD: mock-password
+          VITE_DISABLE_PWA: "true"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
