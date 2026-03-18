@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Public User Journey", () => {
+  test.beforeEach(async ({ page }) => {
+    // Set a large viewport to ensure all navigation elements are visible
+    await page.setViewportSize({ width: 1920, height: 1080 });
+  });
+
   test("homepage loads with all major sections visible", async ({ page }) => {
     await page.goto("/");
 
@@ -10,7 +15,8 @@ test.describe("Public User Journey", () => {
     await expect(heading).toBeVisible({ timeout: 15000 });
 
     // Using a more flexible approach for lazy-loaded sections
-    const projectsHeading = page.getByText(/Featured Projects|My Projects|Projects/i).first();
+    // Use getByRole for the Projects heading
+    const projectsHeading = page.getByRole('heading', { name: /Featured Projects|My Projects|Projects/i }).first();
     await projectsHeading.scrollIntoViewIfNeeded();
     await expect(projectsHeading).toBeVisible({ timeout: 20000 });
 
@@ -24,7 +30,7 @@ test.describe("Public User Journey", () => {
     await page.goto("/");
 
     // Click the Blog nav link - Use a more robust selector
-    const blogLink = page.locator('nav').getByText(/Blog/i, { exact: false }).first();
+    const blogLink = page.locator('nav').getByRole('button', { name: /Blog/i }).first();
     await expect(blogLink).toBeVisible({ timeout: 10000 });
     await blogLink.click();
 
@@ -61,6 +67,11 @@ test.describe("Public User Journey", () => {
 });
 
 test.describe("Contact Form", () => {
+  test.beforeEach(async ({ page }) => {
+    // Set a large viewport to ensure we're not in mobile layout
+    await page.setViewportSize({ width: 1920, height: 1080 });
+  });
+
   test("contact form validates required fields", async ({ page }) => {
     await page.goto("/");
 

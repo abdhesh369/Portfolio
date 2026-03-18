@@ -32,6 +32,7 @@ class ChunkErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error) {
+    console.error("ChunkErrorBoundary caught error:", error);
     const isChunkError =
       error.name === "ChunkLoadError" ||
       /loading chunk/i.test(error.message) ||

@@ -81,15 +81,18 @@ test.describe("Admin Dashboard (requires auth)", () => {
   });
 
   test("admin can logout and be redirected to login", async ({ page }) => {
+    // Set a large viewport to ensure all header elements are visible
+    await page.setViewportSize({ width: 1920, height: 1080 });
+
     // Click the profile button to show the dropdown
-    // The profile button is in the header, usually containing 'ROOT_USER'
-    const profileBtn = page.locator('header button').filter({ hasText: /ROOT_USER|ADMIN/i }).first();
+    // The profile button is in the header, look for the avatar initial 'R'
+    const profileBtn = page.locator('header button').filter({ hasText: /^R$/ }).first();
     await expect(profileBtn).toBeVisible({ timeout: 15000 });
     await profileBtn.click();
 
-    // Now the logout button (labeled TERMINATE_SESSION or TERMINATE SESSION in the UI) should be visible
-    const logoutBtn = page.locator('button').filter({ hasText: /TERMINATE_SESSION|TERMINATE SESSION|LOGOUT/i }).first();
-    await expect(logoutBtn).toBeVisible({ timeout: 10000 });
+    // Now the logout button (labeled TERMINATE_SESSION in the UI) should be visible
+    const logoutBtn = page.getByText(/TERMINATE_SESSION|LOGOUT|TERMINATE SESSION/i).first();
+    await expect(logoutBtn).toBeVisible({ timeout: 15000 });
     await logoutBtn.click();
 
     await page.waitForURL("**/admin/login", { timeout: 10000 });

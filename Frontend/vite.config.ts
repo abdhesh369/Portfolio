@@ -6,11 +6,13 @@ import path from 'path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const isPwaDisabled = env.VITE_DISABLE_PWA === 'true';
+
   return {
   plugins: [
     react(),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
-    VitePWA({
+    !isPwaDisabled && VitePWA({
       registerType: 'prompt',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
       manifest: {
