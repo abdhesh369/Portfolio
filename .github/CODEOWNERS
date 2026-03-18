@@ -1,0 +1,20 @@
+# CODEOWNERS — auto-assigns reviewers based on changed paths.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Replace @your-username / @your-org/team-name with real GitHub handles.
+# The last matching rule wins, so put more specific rules below general ones.
+
+# ── Catch-all ────────────────────────────────────────────────────────────────
+*                           @your-username
+
+# ── Backend ──────────────────────────────────────────────────────────────────
+/Backend/                   @your-username
+
+# ── Frontend ─────────────────────────────────────────────────────────────────
+/Frontend/                  @your-username
+
+# ── Database migrations (high-risk — require explicit sign-off) ───────────────
+/Backend/drizzle/migrations/ @your-username
+
+# ── CI / GitHub config (changes here affect every contributor) ────────────────
+/.github/                   @your-username

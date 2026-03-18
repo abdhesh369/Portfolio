@@ -1,0 +1,103 @@
+name: PR Comment
+
+# ══════════════════════════════════════════════════════════════════════════════
+# This workflow runs AFTER the CI workflow completes and posts the PR summary
+# comment. It is intentionally separate from ci.yml.
+#
+# WHY: pull_request events from fork PRs run with a read-only GITHUB_TOKEN,
+# so the CI workflow cannot write PR comments. workflow_run runs in the context
+# of the base branch and always has the permissions declared here, including
+# for fork PRs.
+#
+# SECURITY: Never checkout untrusted code or use PR head refs here. Only
+# read the artifact uploaded by the CI workflow (a safe, pre-baked JSON file).
+# ══════════════════════════════════════════════════════════════════════════════
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  pull-requests: write
+  actions: read   # needed to download artifacts from the triggering run
+
+jobs:
+  post-comment:
+    name: "Post PR Summary"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only run when the triggering workflow was for a PR (not a push to main).
+    if: github.event.workflow_run.event == 'pull_request'
+
+    steps:
+      - name: Download CI results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-results
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post summary comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const results = JSON.parse(fs.readFileSync("results.json", "utf8"));
+
+            const jobs = {
+              "Static Checks":      results.static_checks,
+              "Unit Tests":         results.unit_tests,
+              "Integration Tests":  results.integration_tests,
+              "Build + Bundle":     results.build_check,
+              "E2E (non-blocking)": results.e2e_tests,
+            };
+
+            const icon = r => r === "success" ? "✅" : r === "skipped" ? "⏭️" : "❌";
+            const rows = Object.entries(jobs)
+              .map(([name, result]) => `| ${icon(result)} | ${name} | \`${result}\` |`)
+              .join("\n");
+
+            const critical = ["Static Checks", "Unit Tests", "Integration Tests", "Build + Bundle"];
+            const allPassed = critical.every(k => jobs[k] === "success");
+
+            const header = allPassed
+              ? "## ✅ All checks passed — ready to merge"
+              : "## ❌ Checks failed — merge is blocked";
+
+            const body = [
+              header,
+              "",
+              "| | Check | Result |",
+              "|---|---|---|",
+              rows,
+              "",
+              "> E2E tests are **non-blocking** until the suite has a proven green track record.",
+              "> When stable, set `continue-on-error: false` on the `e2e-tests` job.",
+            ].join("\n");
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: results.pr_number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === "github-actions[bot]" &&
+              (c.body.includes("All checks passed") || c.body.includes("merge is blocked"))
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: results.pr_number,
+                body,
+              });
+            }

@@ -3,6 +3,8 @@ name: Security Scan
 on:
   push:
     branches: [main, master]
+  pull_request:
+    branches: [main, master]   # catch issues before they reach main
   schedule:
     # Run weekly on Monday at 06:00 UTC
     - cron: "0 6 * * 1"
@@ -10,36 +12,102 @@ on:
 
 permissions:
   contents: read
+  security-events: write  # required for CodeQL to upload SARIF results
+
+env:
+  NODE_VERSION: "22"
 
 jobs:
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 1 — Backend dependency audit
+# ══════════════════════════════════════════════════════════════════════════════
   audit-backend:
     name: Backend Dependency Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
           cache-dependency-path: package-lock.json
+
       - name: Install dependencies
         run: npm ci
-      - name: Run npm audit (high + critical)
-        run: npm audit -w portfolio-backend --audit-level=high
 
+      # --workspace scopes the report to one workspace's dependency tree.
+      # Must run from repo root so npm can resolve the root package-lock.json.
+      - name: Run npm audit (high + critical)
+        run: npm audit --workspace=Backend --audit-level=high
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 2 — Frontend dependency audit
+# ══════════════════════════════════════════════════════════════════════════════
   audit-frontend:
     name: Frontend Dependency Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
           cache-dependency-path: package-lock.json
+
       - name: Install dependencies
         run: npm ci
+
       - name: Run npm audit (high + critical)
-        run: npm audit -w frontend --audit-level=high
+        run: npm audit --workspace=Frontend --audit-level=high
+
+# ══════════════════════════════════════════════════════════════════════════════
+# JOB 3 — CodeQL static analysis
+# Scans your own source code (not just dependencies) for security issues such
+# as SQL injection, XSS, path traversal, and insecure crypto. Runs on PRs so
+# issues are caught before they reach main, and on push + schedule for ongoing
+# coverage. Results appear in the Security → Code scanning tab.
+# ══════════════════════════════════════════════════════════════════════════════
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # 'javascript-typescript' is the correct combined language value
+          # as of CodeQL v2.15+ and covers both .js and .ts source files.
+          languages: javascript-typescript
+          # security-extended adds rules beyond the default security set.
+          queries: security-extended
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      # CodeQL needs the compiled output for TypeScript projects.
+      - name: Build backend
+        run: npm run build -w Backend
+        continue-on-error: true  # Don't block analysis if build fails
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"

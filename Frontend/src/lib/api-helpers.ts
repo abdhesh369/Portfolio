@@ -1,10 +1,20 @@
 export const API_BASE_URL = (() => {
-    if (import.meta.env.DEV) {
-        // Use relative paths to leverage Vite proxy in development
-        return "";
+    let url = "";
+
+    // If running on localhost (dev or e2e), always use relative paths 
+    if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+        url = "";
+    } else if (import.meta.env.DEV) {
+        url = "";
+    } else {
+        url = import.meta.env.VITE_PRODUCTION_API_URL || import.meta.env.VITE_API_URL || "";
     }
 
-    const prodUrl = import.meta.env.VITE_PRODUCTION_API_URL || import.meta.env.VITE_API_URL;
+    if (typeof window !== "undefined") {
+        console.log(`[API_BASE_URL] Detected host: ${window.location.hostname}, using: "${url}"`);
+    }
+
+    const prodUrl = url;
 
     if (!prodUrl) {
         console.warn("⚠️ VITE_API_URL not configured. Falling back to relative path or placeholder.");

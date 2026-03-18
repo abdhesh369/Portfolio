@@ -8,12 +8,18 @@ on:
     branches: [main, master]
 
 # Cancel in-progress runs for the same branch/PR on new pushes.
+# Workflow name prefix prevents a second workflow from sharing the same group.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# Least-privilege defaults; pr-summary job extends this with pull-requests: write.
+permissions:
+  contents: read
 
 env:
   NODE_VERSION: "22"
+  VITE_DIST_ASSETS: "Frontend/dist/assets"
 
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 1 — Static checks (type-check, lint, migration integrity)
@@ -23,6 +29,7 @@ jobs:
   static-checks:
     name: "Static Checks"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -51,10 +58,10 @@ jobs:
       - name: Frontend — lint (zero warnings)
         run: npm run lint -w Frontend
 
-      # ── Migration duplicate number check ───────────────────────────────────
-      # The existing validate-migrations.js only counts files; it does NOT
-      # detect duplicate numbers (e.g. the 0017 collision that currently exists).
-      # This step catches that before it can reach any database.
+      # ── Migration duplicate number check ────────────────────────────────────
+      # Detects duplicate migration numbers (e.g. a 0017 collision) before they
+      # can reach any database. The validate-migrations.js script only counts
+      # files; this step catches the more dangerous duplicate-prefix case.
       - name: Check for duplicate migration numbers
         run: |
           node --input-type=module << 'EOF'
@@ -92,13 +99,12 @@ jobs:
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 2 — Unit tests + coverage
 # No real database needed — DB calls are mocked.
-# FIX: Added ADMIN_PASSWORD, ADMIN_EMAIL, CONTACT_EMAIL which were missing from
-# the original CI, causing process.exit(1) before any auth test could run.
 # ══════════════════════════════════════════════════════════════════════════════
   unit-tests:
     name: "Unit Tests + Coverage"
     runs-on: ubuntu-latest
     needs: static-checks
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -152,13 +158,16 @@ jobs:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 3 — Integration tests
-# FIX: The original CI had a DATABASE_URL pointing to localhost:5432 but no
-# postgres service block — every integration test failed with ECONNREFUSED.
+# Spins up a real Postgres 16 service container so migrations and queries run
+# against an actual database instead of mocks.
+# GitHub Actions waits for healthy services automatically when --health-cmd is
+# configured, so no manual polling step is needed.
 # ══════════════════════════════════════════════════════════════════════════════
   integration-tests:
     name: "Integration Tests"
     runs-on: ubuntu-latest
     needs: static-checks
+    timeout-minutes: 20
 
     services:
       postgres:
@@ -190,14 +199,6 @@ jobs:
       - name: Build shared package
         run: npm run build:shared
 
-      - name: Wait for Postgres
-        run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for postgres..."
-            sleep 2
-          done
-          echo "Postgres is ready"
-
       - name: Run database migrations
         run: npm run migrate -w Backend
         env:
@@ -217,13 +218,15 @@ jobs:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 4 — Frontend build + bundle size guard
-# Prevents silent bundle bloat. The current vite.config.ts raises the warning
-# threshold to 1200 KB to suppress warnings — this job enforces a real limit.
+# Enforces a hard 1000 KB per-chunk limit. The dist path is driven by the
+# VITE_DIST_ASSETS env var so a vite.config.ts output change can't silently
+# break this check — update the env var at the top of this file instead.
 # ══════════════════════════════════════════════════════════════════════════════
   build-check:
     name: "Frontend Build + Bundle Size"
     runs-on: ubuntu-latest
     needs: static-checks
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -249,12 +252,14 @@ jobs:
           VITE_SENTRY_ENVIRONMENT: ci
 
       - name: Check chunk sizes (max 1000 KB per chunk)
+        env:
+          DIST_ASSETS: ${{ env.VITE_DIST_ASSETS }}
         run: |
           node --input-type=module << 'EOF'
           import { readdirSync, statSync } from "fs";
           import path from "path";
 
-          const distDir = "Frontend/dist/assets";
+          const distDir = process.env.DIST_ASSETS;
           const MAX_KB = 1000;
           const MAX_BYTES = MAX_KB * 1024;
 
@@ -275,9 +280,20 @@ jobs:
           }
           EOF
 
+      # stats.html is only emitted when rollup-plugin-visualizer is configured
+      # in vite.config.ts. This step is skipped silently when it doesn't exist.
+      - name: Check for bundle stats file
+        id: stats-check
+        run: |
+          if [ -f "Frontend/stats.html" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upload bundle stats
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.stats-check.outputs.exists == 'true'
         with:
           name: bundle-stats
           path: Frontend/stats.html
@@ -285,15 +301,38 @@ jobs:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 5 — E2E tests (non-blocking)
-# These four spec files exist but are never run in CI. Running them here with
-# continue-on-error so they report without blocking merges until the suite
-# has a proven green track record. Flip to false when stable.
+# Playwright browsers are cached by package-lock.json hash to avoid paying
+# the ~2-3 min install cost on every run.
+#
+# The backend is started before Playwright runs so API calls don't get
+# ECONNREFUSED. Replace `npm run start -w Backend` with your actual script.
+#
+# Health probe uses a TCP port check (nc) as a fallback — this works even if
+# the backend has no /health HTTP endpoint.
+#
+# Flip continue-on-error to false once the suite has a proven green track record.
 # ══════════════════════════════════════════════════════════════════════════════
   e2e-tests:
     name: "E2E Tests (non-blocking)"
     runs-on: ubuntu-latest
     needs: [unit-tests, build-check]
     continue-on-error: true
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: portfolio_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d portfolio_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -310,8 +349,49 @@ jobs:
       - name: Build shared package
         run: npm run build:shared
 
+      - name: Run database migrations
+        run: npm run migrate -w Backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          NODE_ENV: test
+
+      - name: Start backend server
+        run: npm run start -w Backend &
+        env:
+          NODE_ENV: test
+          PORT: 5000
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
+          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
+          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_EMAIL: admin@ci-test.local
+          CONTACT_EMAIL: contact@ci-test.local
+
+      # TCP port check works even without a /health HTTP endpoint.
+      # Falls back to nc (netcat) which is pre-installed on ubuntu-latest.
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend on port 5000..."
+          timeout 30 bash -c 'until nc -z localhost 5000; do sleep 1; done'
+          echo "Backend is accepting connections"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            playwright-chromium-
+
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+        working-directory: Frontend
+
+      - name: Install Playwright system deps (cached browsers)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
         working-directory: Frontend
 
       - name: Build frontend for preview
@@ -335,77 +415,37 @@ jobs:
           retention-days: 7
 
 # ══════════════════════════════════════════════════════════════════════════════
-# JOB 6 — PR summary comment
-# Posts a single comment summarising all job results. Updates in-place on
-# subsequent pushes so the PR thread doesn't get spammed.
+# JOB 6 — Store CI results for the PR comment job
+# The pr-summary workflow (ci-pr-comment.yml) runs with write permissions on
+# workflow_run and reads these results to post the comment. This pattern is
+# required because pull_request events from forks run with read-only tokens —
+# posting comments directly from this workflow would silently fail for fork PRs.
 # ══════════════════════════════════════════════════════════════════════════════
-  pr-summary:
-    name: "Post PR Summary"
+  save-results:
+    name: "Save CI Results"
     runs-on: ubuntu-latest
     needs: [static-checks, unit-tests, integration-tests, build-check, e2e-tests]
     if: always() && github.event_name == 'pull_request'
-    permissions:
-      pull-requests: write
+    timeout-minutes: 5
 
     steps:
-      - name: Post summary comment
-        uses: actions/github-script@v7
+      - name: Write results to file
+        run: |
+          cat << 'JSON' > results.json
+          {
+            "pr_number": ${{ github.event.pull_request.number }},
+            "static_checks": "${{ needs.static-checks.result }}",
+            "unit_tests": "${{ needs.unit-tests.result }}",
+            "integration_tests": "${{ needs.integration-tests.result }}",
+            "build_check": "${{ needs.build-check.result }}",
+            "e2e_tests": "${{ needs.e2e-tests.result }}"
+          }
+          JSON
+          cat results.json
+
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            const jobs = {
-              "Static Checks":      "${{ needs.static-checks.result }}",
-              "Unit Tests":         "${{ needs.unit-tests.result }}",
-              "Integration Tests":  "${{ needs.integration-tests.result }}",
-              "Build + Bundle":     "${{ needs.build-check.result }}",
-              "E2E (non-blocking)": "${{ needs.e2e-tests.result }}",
-            };
-
-            const icon = r => r === "success" ? "✅" : r === "skipped" ? "⏭️" : "❌";
-            const rows = Object.entries(jobs)
-              .map(([name, result]) => `| ${icon(result)} | ${name} | \`${result}\` |`)
-              .join("\n");
-
-            const critical = ["Static Checks","Unit Tests","Integration Tests","Build + Bundle"];
-            const allPassed = critical.every(k => jobs[k] === "success");
-
-            const header = allPassed
-              ? "## ✅ All checks passed — ready to merge"
-              : "## ❌ Checks failed — merge is blocked";
-
-            const body = [
-              header,
-              "",
-              "| | Check | Result |",
-              "|---|---|---|",
-              rows,
-              "",
-              "> E2E tests are **non-blocking** until the suite has a proven green track record.",
-              "> When stable, set `continue-on-error: false` on the `e2e-tests` job.",
-            ].join("\n");
-
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const existing = comments.find(c =>
-              c.user.login === "github-actions[bot]" &&
-              (c.body.includes("All checks passed") || c.body.includes("merge is blocked"))
-            );
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
+          name: ci-results
+          path: results.json
+          retention-days: 1

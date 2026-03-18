@@ -1,0 +1,33 @@
+# ── Enforce LF line endings in Git's index and on checkout ───────────────────
+# This prevents CRLF from sneaking in from Windows dev environments and
+# causing noisy diffs or shell script failures in CI.
+
+*           text=auto eol=lf
+
+# ── Explicitly text files (always LF) ────────────────────────────────────────
+*.js        text eol=lf
+*.ts        text eol=lf
+*.jsx       text eol=lf
+*.tsx       text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.sql       text eol=lf
+*.sh        text eol=lf
+*.env*      text eol=lf
+*.css       text eol=lf
+*.html      text eol=lf
+
+# ── Binary files (no line-ending conversion) ──────────────────────────────────
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.woff      binary
+*.woff2     binary
+*.ttf       binary
+*.eot       binary
+*.pdf       binary
+*.zip       binary

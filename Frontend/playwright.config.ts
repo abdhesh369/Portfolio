@@ -20,6 +20,11 @@ export default defineConfig({
         /* Base URL to use in actions like \`await page.goto('/')\`. */
         baseURL: 'http://localhost:4173',
 
+        /* Global script to bypass modal */
+        launchOptions: {
+            args: ['--disable-web-security']
+        },
+
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
     },
@@ -28,15 +33,40 @@ export default defineConfig({
     projects: [
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: { 
+                ...devices['Desktop Chrome'],
+                /* Injected before any script runs */
+                storageState: {
+                    cookies: [],
+                    origins: [
+                        {
+                            origin: 'http://localhost:4173',
+                            localStorage: [
+                                { name: 'portfolio_has_seen_persona', value: 'true' }
+                            ]
+                        }
+                    ]
+                }
+            },
         },
     ],
 
     /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'npm run build && npm run preview',
-        url: 'http://localhost:4173',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
-    },
+    webServer: [
+        {
+            command: 'node scripts/mock-backend.js',
+            port: 5000,
+            reuseExistingServer: !process.env.CI,
+        },
+        {
+            command: 'npm run build && npm run preview',
+            url: 'http://localhost:4173',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120 * 1000,
+        }
+    ],
+
+
+
+
 });
