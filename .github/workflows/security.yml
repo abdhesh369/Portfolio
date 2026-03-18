@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: Backend/package-lock.json
+          cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: cd Backend && npm ci
       - name: Run npm audit (high + critical)
@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: Frontend/package-lock.json
+          cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: cd Frontend && npm ci
       - name: Run npm audit (high + critical)

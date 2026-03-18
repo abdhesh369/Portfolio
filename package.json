@@ -17,6 +17,7 @@
         "packages/*"
     ],
     "scripts": {
+        "dev": "npm run dev:backend & npm run dev:frontend",
         "dev:backend": "npm run dev -w Backend",
         "dev:frontend": "npm run dev -w Frontend",
         "build:shared": "npm run build -w @portfolio/shared",
