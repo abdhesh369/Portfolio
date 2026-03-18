@@ -66,10 +66,12 @@ CREATE TABLE "whiteboard_sessions" (
 );
 --> statement-breakpoint
 ALTER TABLE "comments" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-DROP TABLE "comments" CASCADE;--> statement-breakpoint
-ALTER TABLE "skill_connections" DROP CONSTRAINT "skill_connections_from_skill_id_skills_id_fk";
+DROP TABLE IF EXISTS "comments" CASCADE;
 --> statement-breakpoint
-ALTER TABLE "skill_connections" DROP CONSTRAINT "skill_connections_to_skill_id_skills_id_fk";
+ALTER TABLE "skill_connections" DROP CONSTRAINT IF EXISTS "skill_connections_from_skill_id_skills_id_fk";
+--> statement-breakpoint
+ALTER TABLE "skill_connections" DROP CONSTRAINT IF EXISTS "skill_connections_to_skill_id_skills_id_fk";
+
 --> statement-breakpoint
 ALTER TABLE "experiences" ALTER COLUMN "period" DROP NOT NULL;--> statement-breakpoint
 ALTER TABLE "experiences" ALTER COLUMN "startDate" SET DEFAULT now();--> statement-breakpoint
