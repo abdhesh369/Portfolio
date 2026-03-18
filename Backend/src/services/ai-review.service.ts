@@ -10,6 +10,7 @@ import { env } from "../env.js";
 function sanitizeForPrompt(text: string): string {
     return text
         .replace(/<[^>]*>/g, "")          // Remove HTML/XML tags
+        // eslint-disable-next-line no-control-regex
         .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") // Remove control chars
         .trim();
 }
@@ -37,8 +38,8 @@ export class AIReviewService {
             });
 
             return review;
-        } catch (error: any) {
-            if (error.code === '23505') {
+        } catch (error: unknown) {
+            if (error && typeof error === 'object' && 'code' in error && error.code === '23505') {
                 logger.info(`[AIReviewService] Review already processing for project ${projectId}`);
                 const existingReview = await db.query.codeReviewsTable.findFirst({
                     where: and(

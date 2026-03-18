@@ -4,8 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // In production (e.g. Render), env vars come from the platform — .env files are gitignored.
 // Only load .env files if they exist on disk (local development).

@@ -25,7 +25,7 @@ export class ProjectRepository {
         }
 
         const results = await query.limit(limit).offset(offset);
-        return results.map(p => this.transformProject(p as any));
+        return results.map(p => this.transformProject(p as DbProject));
     }
 
     /** Admin: returns ALL projects including hidden ones */
@@ -43,7 +43,7 @@ export class ProjectRepository {
             .from(projectsTable)
             .where(eq(projectsTable.id, id))
             .limit(1);
-        return result ? this.transformProject(result as any) : null;
+        return result ? this.transformProject(result as DbProject) : null;
     }
 
     async findBySlug(slug: string): Promise<Project | null> {
@@ -52,7 +52,7 @@ export class ProjectRepository {
             .from(projectsTable)
             .where(eq(projectsTable.slug, slug))
             .limit(1);
-        return result ? this.transformProject(result as any) : null;
+        return result ? this.transformProject(result as DbProject) : null;
     }
 
     async create(data: InsertProject): Promise<Project> {

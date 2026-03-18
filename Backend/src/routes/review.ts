@@ -6,8 +6,6 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { aiLimiter } from "../lib/rate-limit.js";
 
-const router = Router();
-
 export function registerReviewRoutes(app: Router) {
     // POST /projects/:id/review — trigger AI review (admin only)
     app.post(

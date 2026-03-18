@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { isAuthenticated } from "../auth.js";
 import { auditLogService } from "../services/audit-log.service.js";
 
@@ -9,7 +9,7 @@ const router = Router();
  * Admin only, paginated, filterable by entity and days.
  * Append-only — no DELETE endpoint.
  */
-router.get("/audit-log", isAuthenticated, async (req: any, res: any, next: any) => {
+router.get("/audit-log", isAuthenticated, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const limit = Math.min(Number(req.query.limit) || 50, 100);
     const offset = Math.max(Number(req.query.offset) || 0, 0);

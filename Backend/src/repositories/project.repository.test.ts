@@ -59,9 +59,12 @@ describe("ProjectRepository", () => {
             ];
 
             const { db } = await import("../db.js");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const selectMock = db.select() as any;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             vi.spyOn(selectMock, 'then').mockImplementation((resolve: any) => {
                 if (resolve) resolve(mockProjects);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return Promise.resolve(mockProjects) as any;
             });
 

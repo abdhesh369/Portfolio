@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { db } from "../db.js";
 
@@ -17,11 +18,11 @@ vi.mock("../env.js", () => ({
 }));
 
 vi.mock("express-rate-limit", () => ({
-    default: () => (_req: any, _res: any, next: any) => next(),
+    default: () => (_req: unknown, _res: unknown, next: (err?: any) => void) => next(),
 }));
 
 vi.mock("../middleware/validate.js", () => ({
-    validateBody: () => (_req: any, _res: any, next: any) => next(),
+    validateBody: () => (_req: unknown, _res: unknown, next: (err?: any) => void) => next(),
 }));
 
 // Mock redis
@@ -61,10 +62,15 @@ describe("buildSystemPrompt", () => {
         mockRedisSetex.mockResolvedValue("OK");
 
         vi.mocked(db.select)
+             
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleArticles).then(f) } as any)
+             
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleProjects).then(f) } as any)
+             
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleSkills).then(f) } as any)
+             
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve(sampleExperiences).then(f) } as any)
+             
             .mockReturnValueOnce({ from: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([{ personalName: "Abdhesh" }]).then(f) } as any);
 
         const result = await buildSystemPrompt();

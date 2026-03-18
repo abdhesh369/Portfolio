@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { articleService } from "../services/article.service.js";
 import type { Article } from "@portfolio/shared";
 import { escapeXml } from "../lib/xml-utils.js";
@@ -6,7 +6,7 @@ import { logger } from "../lib/logger.js";
 
 const feedRoutes = Router();
 
-feedRoutes.get("/feed.xml", async (req: any, res: any) => {
+feedRoutes.get("/feed.xml", async (req: Request, res: Response) => {
   try {
     const articles = await articleService.getAll("published");
     const siteUrl = process.env.FRONTEND_URL || "https://abdheshsah.com.np";

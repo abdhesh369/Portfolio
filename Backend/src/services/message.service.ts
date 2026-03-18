@@ -38,7 +38,10 @@ export class MessageService {
             throw new Error("Message rejected");
         }
 
-        const { _bnt_id, ...insertData } = data;
+        // The _bnt_id field is only used for the honeypot check and is not part of the message data to be inserted.
+        // Destructure it to exclude it from insertData.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _bnt_id: __bnt_id, ...insertData } = data;
 
         const sanitizedData: InsertMessage = {
             name: this.sanitize(insertData.name),

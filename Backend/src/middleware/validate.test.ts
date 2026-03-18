@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Request, Response, NextFunction } from "express";
 import { validateBody } from "../middleware/validate.js";
@@ -67,7 +68,6 @@ describe("validateBody middleware", () => {
         const middleware = validateBody(schema);
 
         // Simulate parseAsync throwing a non-Zod error
-        const origParseAsync = schema.parseAsync.bind(schema);
         vi.spyOn(schema, "parseAsync").mockRejectedValueOnce(new Error("Unexpected error"));
 
         await middleware(mockReq as Request, mockRes as Response, mockNext);

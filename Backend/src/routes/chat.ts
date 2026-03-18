@@ -201,7 +201,7 @@ export const registerChatRoutes = (router: Router) => {
         const lastErrMsg = lastError instanceof Error ? lastError.message : "Unknown error";
         logger.error({ context: "chat", error: lastErrMsg }, "All chat models failed");
         
-        if (lastError instanceof Error && (lastError.message.includes("429") || (lastError as any).status === 429)) {
+        if (lastError instanceof Error && (lastError.message.includes("429") || (lastError as { status?: number }).status === 429)) {
             return res.status(429).json({
                 success: false,
                 message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",

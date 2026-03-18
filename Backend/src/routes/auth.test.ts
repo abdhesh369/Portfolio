@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ---- Hoisted mocks ----
@@ -48,7 +49,7 @@ vi.mock("../env.js", () => ({
 }));
 
 vi.mock("../auth.js", () => ({
-    isAuthenticated: vi.fn((_req: any, _res: any, next: any) => next()),
+    isAuthenticated: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
     asyncHandler: (fn: any) => fn,
     createRefreshToken: vi.fn().mockReturnValue("mock-refresh-token"),
     storeRefreshToken: mockStoreRefreshToken,
@@ -59,7 +60,7 @@ vi.mock("../auth.js", () => ({
 
 vi.mock("../middleware/csrf.js", () => ({
     generateCsrfToken: mockGenerateCsrfToken,
-    csrfProtection: vi.fn((_req: any, _res: any, next: any) => next()),
+    csrfProtection: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
 }));
 
 vi.mock("../lib/async-handler.js", () => ({
@@ -71,14 +72,16 @@ vi.mock("express-rate-limit", () => ({
 }));
 
 vi.mock("../lib/rate-limit.js", () => ({
-    authLimiter: (_req: any, _res: any, next: any) => next(),
+    authLimiter: (_req: unknown, _res: unknown, next: (err?: any) => void) => next(),
 }));
 
 // Now import the auth routes
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { type ScopeRequest } from "@portfolio/shared";
 import { authRoutes as router } from "./auth.js";
 
 // Helper to create mock req/res
-function mockReq(overrides: any = {}): any {
+function mockReq(overrides: Record<string, any> = {}): any {
     return {
         body: {},
         cookies: {},
@@ -108,8 +111,14 @@ function mockRes(): { res: any; ctx: MockResponseCtx } {
             ctx.cookies[name] = { value, opts };
             return res;
         },
-        clearCookie(name: string, _opts?: any) {
+        clearCookie(name: string, __opts?: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
             ctx.clearedCookies.push(name);
+            return res;
+        },
+        login(_user: any, _opts?: any, callback?: (err?: any) => void) {
+            if (callback) {
+                callback();
+            }
             return res;
         },
     };
@@ -117,7 +126,7 @@ function mockRes(): { res: any; ctx: MockResponseCtx } {
 }
 
 // Extract route handlers from the router
-function getRouteHandler(method: string, path: string): Function | undefined {
+function getRouteHandler(method: string, path: string): ((...args: any[]) => any) | undefined {
     const stack = (router as any).stack;
     for (const layer of stack) {
         if (layer.route) {

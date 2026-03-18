@@ -1,9 +1,8 @@
-import { eq, inArray, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { db } from "../db.js";
 import { skillConnectionsTable, type SkillConnection, type InsertSkillConnection } from "@portfolio/shared";
 
-type DbSkillConnection = InferSelectModel<typeof skillConnectionsTable>;
-type DbInsertSkillConnection = InferInsertModel<typeof skillConnectionsTable>;
+// Types moved to @portfolio/shared
 
 export class SkillConnectionRepository {
     async findAll(): Promise<SkillConnection[]> {
@@ -20,7 +19,7 @@ export class SkillConnectionRepository {
     }
 
     async create(data: { fromSkillId: number; toSkillId: number }): Promise<SkillConnection> {
-        const connectionData: DbInsertSkillConnection = {
+        const connectionData: InsertSkillConnection = {
             ...data,
         };
 

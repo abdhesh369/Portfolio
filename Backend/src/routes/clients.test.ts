@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import express from "express";
@@ -26,8 +27,8 @@ vi.mock("../services/client.service.js", () => ({
 
 // Mock audit and CSRF to avoid side effects
 vi.mock("../lib/audit.js", () => ({ recordAudit: vi.fn() }));
-vi.mock("../middleware/csrf.js", () => ({ csrfProtection: (_req: any, _res: any, next: any) => next() }));
-vi.mock("../middleware/validate.js", () => ({ validateBody: () => (_req: any, _res: any, next: any) => next() }));
+vi.mock("../middleware/csrf.js", () => ({ csrfProtection: (_req: unknown, _res: unknown, next: (err?: any) => void) => next() }));
+vi.mock("../middleware/validate.js", () => ({ validateBody: () => (_req: unknown, _res: unknown, next: (err?: any) => void) => next() }));
 
 import { registerClientRoutes } from "./clients.js";
 

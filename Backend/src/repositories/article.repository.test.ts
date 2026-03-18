@@ -33,14 +33,14 @@ describe("ArticleRepository", () => {
                     const p = Promise.resolve([mockArticle]);
                     return onFulfilled ? p.then(onFulfilled) : p;
                 })
-            } as any).mockReturnValueOnce({
+            } as any).mockReturnValueOnce({ // eslint-disable-line @typescript-eslint/no-explicit-any
                 from: vi.fn().mockReturnThis(),
                 where: vi.fn().mockReturnThis(),
                 then: vi.fn(onFulfilled => {
                     const p = Promise.resolve(mockTags);
                     return onFulfilled ? p.then(onFulfilled) : p;
                 })
-            } as any);
+            } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
             const result = await articleRepository.findBySlug("test");
             expect(result).not.toBeNull();
@@ -56,7 +56,7 @@ describe("ArticleRepository", () => {
                     const p = Promise.resolve([]);
                     return onFulfilled ? p.then(onFulfilled) : p;
                 })
-            } as any);
+            } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
             const result = await articleRepository.findBySlug("missing");
             expect(result).toBeNull();

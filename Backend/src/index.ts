@@ -10,7 +10,7 @@ import helmet from "helmet";
 import { registerRoutes } from "./routes.js";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import { seedDatabase } from "./seed.js";
+// import { seedDatabase } from "./seed.js"; // Unused
 
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker, scopeQueue, scopeWorker, initQueues } from "./lib/queue.js";
@@ -111,7 +111,7 @@ app.use(
           "'self'",
           "https://www.googletagmanager.com",
           "https://infird.com",
-          (_req, res) => `'nonce-${(res as any).locals.nonce}'`
+          (__req: unknown, res: unknown) => `'nonce-${(res as { locals: { nonce: string } }).locals.nonce}'`
         ],
         "object-src": ["'none'"],
         "connect-src": [
@@ -133,7 +133,7 @@ app.use(
           "'self'",
           "https://fonts.googleapis.com",
           "https://api.fontshare.com",
-          (req, res) => `'nonce-${(res as any).locals.nonce}'`
+          (__req: unknown, res: unknown) => `'nonce-${(res as { locals: { nonce: string } }).locals.nonce}'`
         ],
         "font-src": ["'self'", "https://fonts.gstatic.com", "https://cdn.fontshare.com"],
         "frame-ancestors": ["'none'"],
@@ -200,7 +200,8 @@ app.get("/ping", (_req: Request, res: Response) => {
 // Sentry debug route (for verifying error capture pipeline)
 // Guarded to only run in development/staging, never production
 if (process.env.NODE_ENV !== "production") {
-  app.get("/api/v1/debug-sentry", function mainHandler(_req: Request, _res: Response) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  app.get("/api/v1/debug-sentry", (_req: Request, _res: Response) => {
     throw new Error("My first Sentry error!");
   });
 }
@@ -369,27 +370,27 @@ async function startServer() {
 
     // Sanitize Global Error Handler
     app.use(
-      (err: Error & { status?: number; statusCode?: number }, req: Request, res: Response, _next: NextFunction) => {
-        const status = err.status || err.statusCode || 500;
-        const message = (status === 500 && process.env.NODE_ENV !== "development") ? "Internal Server Error" : err.message;
+      (_err: Error & { status?: number; statusCode?: number }, req: Request, res: Response, _next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+        const status = _err.status || _err.statusCode || 500;
+        const message = (status === 500 && process.env.NODE_ENV !== "development") ? "Internal Server Error" : _err.message;
 
         logger.error({
           requestId: req.id,
           status,
-          error: err.message,
-          stack: env.NODE_ENV === "development" ? err.stack : undefined,
+          error: _err.message,
+          stack: env.NODE_ENV === "development" ? _err.stack : undefined,
         }, `Global Error Handler`);
 
 
         if (env.SENTRY_DSN && status >= 500) {
-          Sentry.captureException(err);
+          Sentry.captureException(_err);
         }
 
         res.status(status).json({
           error: {
             message,
             status,
-            ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+            ...(process.env.NODE_ENV === "development" && { stack: _err.stack }),
           }
         });
       }

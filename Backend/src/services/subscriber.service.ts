@@ -1,5 +1,4 @@
 import { SubscriberRepository } from "../repositories/subscriber.repository.js";
-import type { InsertSubscriber } from "@portfolio/shared/schema";
 
 export class SubscriberService {
     private subscriberRepository: SubscriberRepository;

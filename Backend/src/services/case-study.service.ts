@@ -1,6 +1,5 @@
 import { caseStudyRepository } from "../repositories/case-study.repository.js";
 import { projectService } from "./project.service.js";
-import { logger } from "../lib/logger.js";
 import { env } from "../env.js";
 import type { CaseStudy } from "@portfolio/shared";
 
@@ -8,6 +7,7 @@ import type { CaseStudy } from "@portfolio/shared";
 function sanitizeForPrompt(text: string): string {
     return text
         .replace(/<[^>]*>/g, "")          // Remove HTML/XML tags
+        // eslint-disable-next-line no-control-regex
         .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") // Remove control chars
         .trim();
 }

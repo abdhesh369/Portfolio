@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ---- Mock dependencies ----
-const mockArticleRepository = {
+const mockArticleRepository = vi.hoisted(() => ({
     findAll: vi.fn(),
     findBySlug: vi.fn(),
     findById: vi.fn(),
@@ -14,7 +15,7 @@ const mockArticleRepository = {
     incrementViewCount: vi.fn(),
     addReaction: vi.fn(),
     search: vi.fn(),
-};
+}));
 
 vi.mock("../repositories/article.repository.js", () => ({
     articleRepository: mockArticleRepository,
@@ -64,6 +65,7 @@ const MOCK_ARTICLE: Article = {
     readTimeMinutes: 5,
     authorId: 1,
     viewCount: 0,
+    reactions: {},
     createdAt: new Date(),
     updatedAt: new Date(),
 };

@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
-import { Resend } from "resend";
 import { contactLimiter } from "../lib/rate-limit.js";
 import { messageService } from "../services/message.service.js";
 import { insertMessageApiSchema } from "@portfolio/shared";
@@ -12,7 +11,6 @@ import { emailQueue } from "../lib/queue.js";
 import { logger } from "../lib/logger.js";
 import { recordAudit } from "../lib/audit.js";
 import { parseIntParam } from "../lib/params.js";
-import { escapeHtml } from "../lib/escape.js";
 import { validateBody } from "../middleware/validate.js";
 import { messageSSE } from "../lib/sse.js";
 import { notificationService } from "../services/notification.service.js";
@@ -157,7 +155,7 @@ export function registerMessageRoutes(app: Router) {
                 return;
             }
 
-            const resend = new Resend(env.RESEND_API_KEY);
+            // Removed unused resend instantiation as we use emailQueue now
 
             // Sanitize HTML before sending — block javascript: URIs and enforce secure links
             const sanitizedBody = DOMPurify.sanitize(body, {
@@ -190,9 +188,9 @@ export function registerMessageRoutes(app: Router) {
                     recordAudit("CREATE", "message_reply", id, null, { subject });
 
                     res.json({ success: true, message: "Reply queued successfully" });
-                } catch (queueError: any) {
-                    logger.error({ context: "messages", to: message.email, error: queueError.message }, "Failed to queue reply");
-                    res.status(500).json({ success: false, message: `Failed to queue email: ${queueError.message}` });
+                } catch (queueError: unknown) {
+                    logger.error({ context: "messages", to: message.email, error: (queueError as Error).message }, "Failed to queue reply");
+                    res.status(500).json({ success: false, message: `Failed to queue email: ${(queueError as Error).message}` });
                 }
             } else {
                 res.status(500).json({ success: false, message: "Email queue not configured (Redis required)" });

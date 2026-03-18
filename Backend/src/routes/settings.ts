@@ -7,8 +7,6 @@ import { validateBody } from "../middleware/validate.js";
 import { recordAudit } from "../lib/audit.js";
 import { syncSeedData } from "../lib/sync-seed.js";
 
-const router = Router();
-
 export function registerSettingsRoutes(app: Router) {
     // GET /settings - Publicly get site settings
     app.get(

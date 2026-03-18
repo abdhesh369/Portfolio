@@ -1,4 +1,3 @@
-/// <reference path="./types/express.d.ts" />
 import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { env } from "./env.js";
@@ -28,8 +27,8 @@ export async function revokeToken(token: string) {
                 await redis.set(`blacklist:${token}`, "1", "EX", ttl);
             }
         }
-    } catch (err) {
-        logger.error({ context: "auth", error: err }, "Failed to revoke token");
+    } catch (_err) {
+        logger.error({ context: "auth", error: _err }, "Failed to revoke token");
     }
 }
 
@@ -111,8 +110,8 @@ export async function validateRefreshToken(token: string): Promise<boolean> {
                 return false;
             }
         }
-    } catch (err) {
-        logger.error({ context: "auth", error: err }, "Redis unavailable during revocation check — failing closed");
+    } catch (_err) {
+        logger.error({ context: "auth", error: _err }, "Redis unavailable during revocation check — failing closed");
         return false; 
     }
 
@@ -133,8 +132,8 @@ export async function revokeRefreshToken(token: string, revokeFamily = false): P
         if (revokeFamily && decoded?.fid) {
             await redis.set(`refresh_family_revoked:${decoded.fid}`, "1", "EX", REFRESH_TOKEN_TTL_SECONDS);
         }
-    } catch (err) {
-        logger.error({ context: "auth", error: err }, "Failed to revoke refresh token");
+    } catch (_err) {
+        logger.error({ context: "auth", error: _err }, "Failed to revoke refresh token");
     }
 }
 
@@ -159,7 +158,7 @@ export async function checkAuthStatus(req: Request): Promise<boolean> {
         try {
             jwt.verify(token, env.JWT_SECRET);
             return true;
-        } catch (err) {
+        } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
             return false;
         }
     }
@@ -218,8 +217,8 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
                 via: authHeader ? "bearer" : "cookie"
             };
             return next();
-        } catch (err) {
-            if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {
+        } catch (_err) {
+            if (_err instanceof jwt.TokenExpiredError || _err instanceof jwt.JsonWebTokenError) {
                 return res.status(401).json({ message: "Invalid or expired token" });
             } else {
                 return res.status(401).json({ message: "Token verification failed" });

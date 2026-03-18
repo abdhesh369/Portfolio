@@ -5,7 +5,42 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { cachePublic } from "../middleware/cache.js";
 import { getOpenRouterClient } from "./chat.js";
 
-async function fetchGitHubEvents(username: string): Promise<any> {
+interface GitHubEvent {
+    type: string;
+    repo: { name: string };
+    payload: {
+        commits: Array<{
+            sha: string;
+            message: string;
+        }>;
+    };
+    created_at: string;
+}
+
+interface GitHubCommitDetail {
+    files: Array<{
+        filename: string;
+        additions: number;
+        deletions: number;
+        status: string;
+    }>;
+    stats: {
+        total: number;
+        additions: number;
+        deletions: number;
+    };
+}
+
+interface GitHubContributions {
+    contributions: Array<Array<{
+        date: string;
+        contributionCount: number;
+        contributionLevel: string;
+    }>>;
+    totalContributions: number;
+}
+
+async function fetchGitHubEvents(username: string): Promise<GitHubEvent[]> {
     const headers: Record<string, string> = {
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "Portfolio-Backend",
@@ -24,7 +59,7 @@ async function fetchGitHubEvents(username: string): Promise<any> {
         throw new Error(`GitHub API error: ${response.statusText}`);
     }
 
-    return await response.json();
+    return await response.json() as GitHubEvent[];
 }
 
 const githubRoutes = Router();
@@ -58,7 +93,7 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
         }
 
         const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
-        const pushEvent = Array.isArray(events) ? events.find((e: any) => e.type === "PushEvent") : null;
+        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent") : null;
 
         if (!pushEvent) {
             return res.json({
@@ -119,7 +154,7 @@ githubRoutes.get("/activity/latest", cachePublic(300), asyncHandler(async (_req,
         }
 
         const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
-        const pushEvent = Array.isArray(events) ? events.find((e: any) => e.type === "PushEvent") : null;
+        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent") : null;
 
         if (!pushEvent || !pushEvent.payload.commits[0]) {
             return res.json({ status: "idle" });
@@ -138,7 +173,7 @@ githubRoutes.get("/activity/latest", cachePublic(300), asyncHandler(async (_req,
         const commitResponse = await fetch(`https://api.github.com/repos/${repoName}/commits/${latestCommit.sha}`, { headers });
         if (!commitResponse.ok) throw new Error("Failed to fetch commit details");
         
-        const details = await commitResponse.json() as any;
+        const details = await commitResponse.json() as GitHubCommitDetail;
         
         res.json({
             status: "active",
@@ -146,7 +181,7 @@ githubRoutes.get("/activity/latest", cachePublic(300), asyncHandler(async (_req,
             message: latestCommit.message,
             sha: latestCommit.sha.substring(0, 7),
             date: pushEvent.created_at,
-            files: (details.files || []).slice(0, 3).map((f: any) => ({
+            files: (details.files || []).slice(0, 3).map((f: GitHubCommitDetail["files"][number]) => ({
                 filename: f.filename,
                 additions: f.additions,
                 deletions: f.deletions,
@@ -172,7 +207,7 @@ githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req,
             throw new Error(`GitHub Contributions API error: ${response.statusText}`);
         }
 
-        const data = await response.json() as any;
+        const data = await response.json() as GitHubContributions;
         
         // Flatten and map data for frontend
         const levelMap: Record<string, number> = {
@@ -183,7 +218,7 @@ githubRoutes.get("/contributions", cachePublic(86400), asyncHandler(async (_req,
             "FOURTH_QUARTILE": 4
         };
 
-        const contributions = (data.contributions || []).flat().map((d: any) => ({
+        const contributions = (data.contributions || []).flat().map((d: GitHubContributions["contributions"][number][number]) => ({
             date: d.date,
             count: d.contributionCount,
             level: levelMap[d.contributionLevel] || 0

@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { db } from "../db.js";
 
 // ---- Mock drizzle db (vi.hoisted ensures availability during vi.mock hoisting) ----
 const { mockReturning, mockDeleteWhere, mockValues } = vi.hoisted(() => {

@@ -31,9 +31,11 @@ vi.mock("../db.js", () => {
         insert: vi.fn().mockReturnThis(),
         values: vi.fn().mockReturnThis(),
         returning: vi.fn().mockReturnThis(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         execute: vi.fn().mockImplementation(function (this: any) {
             return Promise.resolve(this.__mockValue || []);
         }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         then: vi.fn(function (this: any, onFulfilled) {
             const p = Promise.resolve(this.__mockValue || []);
             return onFulfilled ? p.then(onFulfilled) : p;

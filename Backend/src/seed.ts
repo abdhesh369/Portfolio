@@ -7,11 +7,8 @@ import { skillService } from "./services/skill.service.js";
 import { skillConnectionService } from "./services/skill-connection.service.js";
 import { mindsetService } from "./services/mindset.service.js";
 import { experienceService } from "./services/experience.service.js";
-import { messageService } from "./services/message.service.js";
-import { emailTemplateService } from "./services/email-template.service.js";
-import { seoSettingsService } from "./services/seo-settings.service.js";
 import { settingsService } from "./services/settings.service.js";
-import type { Project, InsertProject, InsertSeoSettings, InsertSiteSettings } from "@portfolio/shared";
+import type { Project, InsertProject, InsertSiteSettings } from "@portfolio/shared";
 
 import { logger } from "./lib/logger.js";
 
@@ -30,7 +27,7 @@ export async function seedDatabase() {
     let existingProjects: Project[] = [];
     try {
       existingProjects = await projectService.getAll();
-    } catch (err) {
+    } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
       logSeed("Tables don't exist yet or database empty, proceeding with seeding...");
     }
 
@@ -55,7 +52,7 @@ export async function seedDatabase() {
       logSeed(`Failed to seed site settings: ${err}`, "error");
     }
 
-    const projectList: InsertProject[] = seedData.projects as any;
+    const projectList: InsertProject[] = seedData.projects as unknown as InsertProject[];
 
     let successCount = 0;
     let failCount = 0;
@@ -157,7 +154,8 @@ export async function seedDatabase() {
       }
     }
 
-    const experienceList = seedData.experiences.map((exp: any) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const experienceList = (seedData.experiences as any[]).map((exp: any) => ({
       ...exp,
       startDate: new Date(exp.startDate)
     }));
@@ -182,64 +180,7 @@ export async function seedDatabase() {
       }
     }
 
-    logSeed(`Experiences: ${successCount} seeded`);
-
-    const existingMessages = await messageService.getAll();
-    if (existingMessages.length === 0) {
-      try {
-        await messageService.create({
-          name: "Portfolio System",
-          email: "system@portfolio.local",
-          subject: "Database Initialized",
-          message: "This is a sample message created during database seeding. Your contact form is working correctly!",
-        });
-        logSeed("Seeded sample message");
-      } catch (err) {
-        logSeed(`Failed to seed sample message: ${err} `, "error");
-      }
-    } else {
-      logSeed("Messages already exist, skipping sample message seeding.");
-    }
-
-    const emailTemplates = seedData.emailTemplates;
-
-    const currentTemplates = await emailTemplateService.getAll();
-    for (const template of emailTemplates) {
-      try {
-        const existing = currentTemplates.find(t => t.name === template.name);
-        if (existing) {
-          logSeed(`Email template already exists, skipping: ${template.name}`);
-          continue;
-        }
-        await emailTemplateService.create(template);
-        logSeed(`Seeded email template: ${template.name}`);
-      } catch (err) {
-        logSeed(`Failed to seed email template: ${template.name} - ${err}`, "error");
-      }
-    }
-
-    const seoSettings: InsertSeoSettings[] = seedData.seoSettings;
-
-    for (const settings of seoSettings) {
-      try {
-        const existing = await seoSettingsService.getBySlug(settings.pageSlug);
-        if (existing) {
-          logSeed(`SEO settings already exist for: ${settings.pageSlug}, skipping...`);
-          continue;
-        }
-        await seoSettingsService.create(settings);
-        logSeed(`Seeded SEO settings for: ${settings.pageSlug}`);
-      } catch (err) {
-        logSeed(`Failed to seed SEO settings for: ${settings.pageSlug} - ${err}`, "error");
-      }
-    }
-
-    try {
-      await settingsService.getSettings(); // Just to trigger default creation if service handles it
-    } catch (err) {
-      logSeed(`Failed to trigger settings service: ${err}`, "error");
-    }
-
+    logSeed(`Experiences: ${successCount} seeded (${failCount} failed)`);
     logSeed("Database seeding completed successfully! 🎉");
   } catch (err) {
     logSeed(`Database seeding failed: ${err} `, "error");

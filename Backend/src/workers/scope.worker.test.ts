@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { db } from "../db.js";
 import { createScopeWorker } from "./scope.worker.js";
 import { scopeRepository } from "../repositories/scope.repository.js";
 import { aiClient } from "../lib/ai.js";

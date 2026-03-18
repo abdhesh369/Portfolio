@@ -1,8 +1,7 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { projectService } from "../services/project.service.js";
 import { insertProjectApiSchema } from "@portfolio/shared";
-import { api } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { parseIntParam } from "../lib/params.js";
@@ -129,19 +128,19 @@ export function registerProjectRoutes(app: Router) {
       if (r) {
         r.get(viewKey).then((hasViewed: string | null) => {
           if (!hasViewed) {
-            projectService.incrementViewCount(project.id).catch((err: any) => {
+            projectService.incrementViewCount(project.id).catch((err: unknown) => {
               logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
             });
-            r.set(viewKey, "1", "EX", 3600).catch((err: any) => {
+            r.set(viewKey, "1", "EX", 3600).catch((err: unknown) => {
               logger.error({ context: "project", error: err }, "Failed to set view cache");
             });
           }
-        }).catch((err: any) => {
+        }).catch((err: unknown) => {
           logger.error({ context: "project", error: err }, "Failed to check view cache");
         });
       } else {
         // Fallback if no redis
-        projectService.incrementViewCount(project.id).catch((err: any) => {
+        projectService.incrementViewCount(project.id).catch((err: unknown) => {
           logger.error({ context: "project", id: project.id, error: err }, "Failed to increment view count");
         });
       }

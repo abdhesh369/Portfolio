@@ -1,5 +1,4 @@
 import { articleRepository } from "../repositories/article.repository.js";
-import { redis } from "../lib/redis.js";
 import { CHAT_CACHE_KEY } from "../routes/chat.js";
 import { logger } from "../lib/logger.js";
 import type { Article, InsertArticle } from "@portfolio/shared";

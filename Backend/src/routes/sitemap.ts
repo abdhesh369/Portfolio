@@ -1,82 +1,68 @@
 import { Router } from "express";
-import { seoSettingsService } from "../services/seo-settings.service.js";
-import { projectService } from "../services/project.service.js";
-import { articleService } from "../services/article.service.js";
-import { escapeXml } from "../lib/xml-utils.js";
-import { logger } from "../lib/logger.js";
 
 const router = Router();
 
-router.get("/", async (req: any, res: any) => {
+export const getSitemap = async (_req: any, res: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
     const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
     if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {
-      logger.warn({ context: "sitemap" }, "No PUBLIC_URL or FRONTEND_URL found, falling back to default");
+      console.warn("Sitemap: Neither PUBLIC_URL nor FRONTEND_URL found, defaulting to https://abdheshsah.com.np");
     }
-    const seoSettings = await seoSettingsService.getAll();
+
+    const { projectService } = await import("../services/project.service.js");
+    const { articleService } = await import("../services/article.service.js");
+
     const projects = await projectService.getAll();
+    const articles = await articleService.getAll();
 
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+    const staticPages = [
+      "",
+      "/projects",
+      "/articles",
+      "/about",
+      "/contact"
+    ];
 
-    // Static pages from SEO settings
-    seoSettings.forEach((page) => {
-      // Don't include noindex pages in sitemap
-      if (page.noindex) return;
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-      const slug = page.pageSlug === "home" ? "" : page.pageSlug;
-      const url = escapeXml(`${baseUrl}/${slug}`);
-      const lastMod = escapeXml(new Date(page.updatedAt || new Date()).toISOString());
-      const priority = page.pageSlug === "home" ? "1.0" : "0.8";
-
-      xml += `
-  <url>
-    <loc>${url}</loc>
-    <lastmod>${lastMod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+    // Static pages
+    staticPages.forEach(page => {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}${page}</loc>\n`;
+      xml += '    <changefreq>monthly</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
     });
 
-    // Dynamic project pages
-    projects.forEach((project) => {
-      const url = escapeXml(`${baseUrl}/project/${project.id}`);
-      const priority = "0.7";
-
-      xml += `
-  <url>
-    <loc>${url}</loc>
-    <changefreq>monthly</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+    // Projects
+    projects.forEach(p => {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}/projects/${p.slug}</loc>\n`;
+      xml += '    <changefreq>monthly</changefreq>\n';
+      xml += '    <priority>0.7</priority>\n';
+      xml += '  </url>\n';
     });
 
-    // Dynamic blog articles
-    const articles = await articleService.getAll("published");
-    articles.forEach((article) => {
-      const url = escapeXml(`${baseUrl}/blog/${article.slug}`);
-      const lastMod = escapeXml(new Date(article.updatedAt || new Date()).toISOString());
-      const priority = "0.6";
-
-      xml += `
-  <url>
-    <loc>${url}</loc>
-    <lastmod>${lastMod}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+    // Articles
+    articles.forEach(a => {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}/articles/${a.slug}</loc>\n`;
+      xml += '    <changefreq>monthly</changefreq>\n';
+      xml += '    <priority>0.7</priority>\n';
+      xml += '  </url>\n';
     });
 
-    xml += `
-</urlset>`;
+    xml += '</urlset>';
 
-    res.header("Content-Type", "application/xml");
-    res.header("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400");
+    res.header('Content-Type', 'application/xml');
     res.send(xml);
   } catch (error) {
-    logger.error({ context: "sitemap", error }, "Sitemap generation error");
+    console.error("Sitemap error:", error);
     res.status(500).send("Error generating sitemap");
   }
-});
+};
 
-export default router;
+router.get("/", getSitemap);
+
+export { router as sitemapRoutes };

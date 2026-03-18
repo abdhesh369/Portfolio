@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { z } from "zod";
 import { insertScopeRequestApiSchema } from "@portfolio/shared";
 import { scopeService } from "../services/scope.service.js";
 import { scopeRepository } from "../repositories/scope.repository.js";

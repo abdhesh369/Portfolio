@@ -74,3 +74,5 @@ Backend/src/seed-data.json
 create_test_client.ts
 get_tokens.ts
 *.test_client.ts
+*.txt
+

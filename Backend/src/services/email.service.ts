@@ -2,6 +2,7 @@ import { emailQueue } from "../lib/queue.js";
 import { env } from "../env.js";
 import { logger } from "../lib/logger.js";
 import { escapeHtml } from "../lib/escape.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ScopeRequest } from "@portfolio/shared";
 
 type NotificationType = "admin-notification" | "client-notification";

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
 // ---- Mock dependencies ----
 const {
     mockFindAll, mockFindById, mockCreate, mockUpdate,
@@ -53,22 +53,21 @@ vi.mock("../routes/chat.js", () => ({ CHAT_CACHE_KEY: "chat:context" }));
 import { ProjectService } from "./project.service.js";
 import type { Project } from "@portfolio/shared";
 
-const MOCK_PROJECT: Project = {
+const MOCK_PROJECT = {
     id: 1,
     title: "Test Project",
     description: "A test project",
     techStack: ["TypeScript", "React"],
     imageUrl: "https://example.com/img.png",
     category: "web",
-    status: "published",
-    featured: false,
+    status: "Completed",
     displayOrder: 1,
     githubUrl: null,
     liveUrl: null,
     viewCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
-};
+} as any as Project;
 
 describe("ProjectService", () => {
     let service: ProjectService;
@@ -126,7 +125,8 @@ describe("ProjectService", () => {
         it("creates a project and invalidates cache", async () => {
             mockCreate.mockResolvedValue(MOCK_PROJECT);
 
-            const { id, createdAt, updatedAt, viewCount, ...insertData } = MOCK_PROJECT;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { id: _id, createdAt: _ca, updatedAt: _ua, viewCount: _vc, ...insertData } = MOCK_PROJECT;
             const result = await service.create(insertData);
 
             expect(mockCreate).toHaveBeenCalledWith(insertData);
@@ -174,7 +174,7 @@ describe("ProjectService", () => {
         it("bulk updates status and invalidates cache", async () => {
             mockBulkUpdateStatus.mockResolvedValue(undefined);
 
-            await service.bulkUpdateStatus([1, 2], "published");
+            await service.bulkUpdateStatus([1, 2], "Completed");
 
             expect(mockBulkUpdateStatus).toHaveBeenCalledWith([1, 2], "published");
             expect(mockCacheInvalidate).toHaveBeenCalled();

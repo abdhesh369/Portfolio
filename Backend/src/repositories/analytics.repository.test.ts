@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { db } from "../db.js";
 
@@ -13,7 +14,7 @@ vi.mock("@portfolio/shared", () => ({
 }));
 
 vi.mock("drizzle-orm", () => {
-    const sqlTag = (...args: any[]) => {
+    const sqlTag = (...args: unknown[]) => {
         const result = { __sql: args, as: vi.fn().mockReturnThis() };
         return result;
     };
@@ -24,7 +25,7 @@ vi.mock("drizzle-orm", () => {
         sql: sqlTag,
         desc: vi.fn((v) => ({ desc: v })),
         gte: vi.fn((col, val) => ({ gte: col, val })),
-        and: vi.fn((...args: any[]) => ({ and: args })),
+        and: vi.fn((...args: unknown[]) => ({ and: args })),
     };
 });
 
@@ -58,7 +59,7 @@ describe("AnalyticsRepository", () => {
                     const p = Promise.resolve([mockInserted]);
                     return onFulfilled ? p.then(onFulfilled) : p;
                 })
-            } as any);
+            } as any);  
 
             const result = await repo.logEvent(mockEvent as any);
             expect(result).toMatchObject({ id: 1, type: "page_view" });
@@ -72,7 +73,7 @@ describe("AnalyticsRepository", () => {
                     const p = Promise.resolve([]);
                     return onFulfilled ? p.then(onFulfilled) : p;
                 })
-            } as any);
+            } as any);  
 
             await expect(repo.logEvent({} as any)).rejects.toThrow("Failed to log analytics event");
         });
@@ -100,6 +101,7 @@ describe("AnalyticsRepository", () => {
                     ]).then(f)
                 } as any)
                 // 5. deviceBreakdown
+                 
                 .mockReturnValueOnce({
                     from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), groupBy: vi.fn().mockReturnThis(), orderBy: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([
                         { device: "desktop", count: 120 },
@@ -107,6 +109,7 @@ describe("AnalyticsRepository", () => {
                     ]).then(f)
                 } as any)
                 // 6. topCountries
+                 
                 .mockReturnValueOnce({
                     from: vi.fn().mockReturnThis(), where: vi.fn().mockReturnThis(), groupBy: vi.fn().mockReturnThis(), orderBy: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), then: (f: any) => Promise.resolve([
                         { country: "US", visits: 90 },

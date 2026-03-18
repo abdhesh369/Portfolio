@@ -1,9 +1,8 @@
-import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { siteSettingsTable, type SiteSettings, type InsertSiteSettings } from "@portfolio/shared";
 
-type DbSiteSettings = InferSelectModel<typeof siteSettingsTable>;
-type DbInsertSiteSettings = InferInsertModel<typeof siteSettingsTable>;
+// Types moved to @portfolio/shared
 
 export class SettingsRepository {
     async getSettings(): Promise<SiteSettings | null> {
@@ -18,7 +17,8 @@ export class SettingsRepository {
         const existing = await this.getSettings();
 
         if (existing) {
-            const updateData: Partial<DbInsertSiteSettings> = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const updateData: any = {
                 ...data,
                 updatedAt: new Date(),
             };
@@ -30,7 +30,7 @@ export class SettingsRepository {
                 .returning();
             return updated as SiteSettings;
         } else {
-            const insertData: DbInsertSiteSettings = {
+            const insertData: InsertSiteSettings = {
                 ...data,
                 isOpenToWork: data.isOpenToWork ?? true,
             };

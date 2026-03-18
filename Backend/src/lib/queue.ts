@@ -1,5 +1,7 @@
 import { Queue, Worker, Job } from "bullmq";
 import { Redis } from "ioredis";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Request } from "express";
 import { Resend } from "resend";
 import { env } from "../env.js";
 import { logger } from "./logger.js";
@@ -7,6 +9,7 @@ import { isLocalRedisUrl, formatRedisUrlForLog } from "./redis.js";
 import { createScopeWorker } from "../workers/scope.worker.js";
 import { escapeHtml } from "./escape.js";
 import { emailTemplateService } from "../services/email-template.service.js";
+import type { EmailTemplate } from "@portfolio/shared";
 
 // BullMQ requires dedicated ioredis connections with maxRetriesPerRequest: null.
 // Queue and Worker each need their own connection (BullMQ internal requirement).
@@ -42,7 +45,7 @@ export let scopeWorker: Worker | null = null;
 let resend: Resend | null = null;
 
 /** Simple in-memory template cache (Finding #16) */
-let templateCache: any[] | null = null;
+let templateCache: EmailTemplate[] | null = null;
 let lastTemplateFetch = 0;
 const TEMPLATE_CACHE_TTL = 60 * 1000; // 1 minute
 
@@ -59,13 +62,15 @@ interface EmailParams {
     from: string;
     to: string;
     subject: string;
-    html: string;
-    attachments?: any[];
+    html?: string;
+    text?: string;
+    react?: unknown;  
+    attachments?: unknown[];
 }
 
 /** Strategy Pattern for different email types (Finding #15) */
-const EMAIL_STRATEGIES: Record<string, (payload: any) => Promise<EmailParams> | EmailParams> = {
-    "contact-notification": (payload) => ({
+const EMAIL_STRATEGIES: Record<string, (payload: any) => Promise<EmailParams> | EmailParams> = { // eslint-disable-line @typescript-eslint/no-explicit-any
+    "contact-notification": (payload: { targetEmail: string; message: { subject?: string; name: string; email: string; message: string } }) => ({
         from: env.CONTACT_EMAIL,
         to: payload.targetEmail,
         subject: `Portfolio Message: ${escapeHtml(payload.message.subject || "No Subject")}`,
@@ -85,21 +90,21 @@ const EMAIL_STRATEGIES: Record<string, (payload: any) => Promise<EmailParams> | 
         subject: payload.subject,
         html: payload.html,
     }),
-    "admin-notification": (payload) => ({
+    "admin-notification": (payload: { to?: string; subject: string; html: string; attachments?: unknown[] }) => ({
         from: env.CONTACT_EMAIL,
         to: payload.to || env.ADMIN_EMAIL,
         subject: payload.subject,
         html: payload.html,
         attachments: payload.attachments,
     }),
-    "client-notification": (payload) => ({
+    "client-notification": (payload: { to: string; subject: string; html: string; attachments?: unknown[] }) => ({
         from: env.CONTACT_EMAIL,
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
         attachments: payload.attachments,
     }),
-    "auto-reply": async (payload) => {
+    "auto-reply": async (payload: { message: { name: string; email: string } }) => {
         const { message } = payload;
         const templates = await getCachedTemplates();
         const dynamicTemplate = templates.find(t => 
@@ -182,7 +187,8 @@ export function initQueues() {
             throw new Error(`Unknown job type: ${type}`);
         }
 
-        const params = await strategy(payload);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const params = await strategy(payload) as any;
         const { data, error } = await resend.emails.send(params);
 
         if (error) {

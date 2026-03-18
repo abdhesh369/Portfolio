@@ -1,11 +1,9 @@
 import { Router } from "express";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
-import { recordAudit } from "../lib/audit.js";
-import multer from "multer";
-import { fileTypeFromBuffer } from 'file-type';
-import { cloudinary } from "../lib/cloudinary.js";
 import { UploadService } from "../services/upload.service.js";
+
+import multer from "multer";
 
 const storage = multer.memoryStorage();
 const uploadMem = multer({

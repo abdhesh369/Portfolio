@@ -1,14 +1,14 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { env } from "../env.js";
-import { isAuthenticated, createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { logger } from "../lib/logger.js";
 import { getIsProd } from "../lib/is-prod.js";
-import { generateCsrfToken, csrfProtection } from "../middleware/csrf.js";
+import { generateCsrfToken } from "../middleware/csrf.js";
 
 import { authLimiter } from "../lib/rate-limit.js";
 
@@ -50,7 +50,7 @@ function safeCompare(a: string, b: string): boolean {
  * POST /api/auth/login
  * Verifies credentials and returns a JWT
  */
-router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response) => {
+router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response, __next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     const { password } = req.body;
 
     if (!password) {
@@ -66,7 +66,7 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         // Secret is a bcrypt hash — use bcrypt.compare (already constant-time)
         try {
             isValid = await bcrypt.compare(normalizedInput, normalizedSecret);
-        } catch {
+        } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
             isValid = false;
         }
     } else {
@@ -155,7 +155,7 @@ router.get("/status", asyncHandler(async (req: Request, res: Response) => {
             authenticated: true,
             csrfToken
         });
-    } catch (err) {
+    } catch (__err) { // eslint-disable-line @typescript-eslint/no-unused-vars
         return res.json({
             success: true,
             authenticated: false,

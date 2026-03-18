@@ -84,7 +84,7 @@ export class ScopeRepository {
             .where(eq(scopeRequestsTable.id, id));
     }
 
-    async updateEstimation(id: number, estimation: any): Promise<void> {
+    async updateEstimation(id: number, estimation: any): Promise<void> { // eslint-disable-line @typescript-eslint/no-explicit-any
         await db
             .update(scopeRequestsTable)
             .set({

@@ -8,14 +8,14 @@ export class NotificationService {
     /**
      * Non-blocking fallback for emails when Redis/Queue is unavailable.
      */
-    private async sendDirectFallback(jobType: string, payload: any) {
+    private async sendDirectFallback(type: string, payload: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
         if (!env.RESEND_API_KEY) {
             logger.error({ context: "notification" }, "RESEND_API_KEY not set - fallback failed");
             return;
         }
         try {
             const resend = new Resend(env.RESEND_API_KEY);
-            if (jobType === "contact-notification") {
+            if (type === "contact-notification") {
                 await resend.emails.send({
                     from: env.CONTACT_EMAIL || "onboarding@resend.dev",
                     to: payload.targetEmail,
@@ -29,7 +29,7 @@ export class NotificationService {
                     <p style="white-space: pre-wrap;">${escapeHtml(payload.message.message)}</p>
                     `
                 });
-            } else if (jobType === "auto-reply") {
+            } else if (type === "auto-reply") {
                 const { emailTemplateService } = await import("./email-template.service.js");
                 const templates = await emailTemplateService.getAll();
                 const dynamicTemplate = templates.find(t => t.name.toLowerCase().includes('auto-reply') || t.name.toLowerCase().includes('inquiry'));
@@ -43,7 +43,7 @@ export class NotificationService {
 
                 if (dynamicTemplate) {
                     subject = dynamicTemplate.subject;
-                    html = dynamicTemplate.body.replace(/\\{name\\}/g, escapeHtml(payload.message.name));
+                    html = dynamicTemplate.body.replace(/\{name\}/g, escapeHtml(payload.message.name));
                 }
 
                 await resend.emails.send({

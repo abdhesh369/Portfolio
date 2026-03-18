@@ -17,9 +17,9 @@ describe("cachePublic middleware", () => {
 
     beforeEach(() => {
         mockRes = {
-            set: vi.fn().mockReturnThis() as any,
+            set: vi.fn().mockReturnThis() as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         };
-        mockNext = vi.fn();
+        mockNext = vi.fn() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
     });
 
     it("sets Cache-Control header for GET requests", () => {

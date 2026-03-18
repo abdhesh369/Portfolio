@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ClientService } from "./client.service.js";
 import { clientRepository } from "../repositories/client.repository.js";

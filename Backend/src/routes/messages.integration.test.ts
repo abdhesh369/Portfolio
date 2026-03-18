@@ -48,8 +48,6 @@ vi.mock("../lib/queue.js", () => ({
 import cookieParser from "cookie-parser";
 import { Router } from "express";
 import { registerMessageRoutes } from "../routes/messages.js";
-import { isAuthenticated } from "../auth.js";
-import { asyncHandler } from "../lib/async-handler.js";
 
 function createMessagesApp() {
     const app = express();
@@ -61,7 +59,7 @@ function createMessagesApp() {
     app.use("/api/v1", router);
 
     app.use(
-        (err: Error & { status?: number }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+        (err: Error & { status?: number }, _req: express.Request, res: express.Response, __next: express.NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
             const status = err.status || 500;
             res.status(status).json({ message: err.message });
         }

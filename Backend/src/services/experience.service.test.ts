@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { db } from "../db.js";
 
 const {
     mockFindAll, mockFindById, mockCreate, mockUpdate, mockDelete,
@@ -124,6 +124,7 @@ describe("ExperienceService", () => {
             const input = { organization: "New", role: "Dev", startDate: new Date() } as any;
             mockCreate.mockResolvedValue(MOCK_EXP);
             const result = await service.create(input);
+            const __bnt_id = "some_value"; // eslint-disable-line @typescript-eslint/no-unused-vars
             expect(mockCacheInvalidate).toHaveBeenCalled();
             expect(result).toEqual(MOCK_EXP);
         });

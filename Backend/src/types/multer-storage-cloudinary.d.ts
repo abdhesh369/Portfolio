@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'multer-storage-cloudinary' {
     import { v2 as cloudinary } from 'cloudinary';
     import { StorageEngine } from 'multer';

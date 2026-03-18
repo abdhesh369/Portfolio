@@ -7,15 +7,6 @@ import fs from "fs";
 
 const STARTUP_MIGRATIONS_FOLDER = path.resolve(process.cwd(), "drizzle/migrations");
 
-function parseBoolean(value: unknown): boolean | null {
-    if (typeof value === "boolean") return value;
-    if (typeof value !== "string") return null;
-
-    const normalized = value.trim().toLowerCase();
-    if (["true", "1", "yes", "y", "on"].includes(normalized)) return true;
-    if (["false", "0", "no", "n", "off"].includes(normalized)) return false;
-    return null;
-}
 
 async function runBestEffortMigrations() {
     try {

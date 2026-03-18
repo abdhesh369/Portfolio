@@ -25,7 +25,7 @@ export type SeedDataType =
  * @param type The top-level key in seed-data.json
  * @param data The updated data object (must contain the natural identifier)
  */
-export function syncSeedData(type: SeedDataType, data: any) {
+export function syncSeedData(type: SeedDataType, data: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
     if (!fs.existsSync(SEED_DATA_PATH)) {
       logger.warn({ path: SEED_DATA_PATH }, "seed-data.json not found for sync");
@@ -33,7 +33,7 @@ export function syncSeedData(type: SeedDataType, data: any) {
     }
 
     const fileContent = fs.readFileSync(SEED_DATA_PATH, 'utf-8');
-    let seedData: any;
+    let seedData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
         seedData = JSON.parse(fileContent);
     } catch (e) {
@@ -63,7 +63,7 @@ export function syncSeedData(type: SeedDataType, data: any) {
       if (Array.isArray(identifierKey)) {
         // Multi-key matching (e.g. experiences)
         const keys = identifierKey;
-        const index = array.findIndex((item: any) => 
+        const index = array.findIndex((item: any) => // eslint-disable-line @typescript-eslint/no-explicit-any
             keys.every(k => item[k] === data[k])
         );
         if (index !== -1) {
@@ -82,7 +82,7 @@ export function syncSeedData(type: SeedDataType, data: any) {
             return;
         }
 
-        const index = array.findIndex((item: any) => item[key] === idValue);
+        const index = array.findIndex((item: any) => item[key] === idValue); // eslint-disable-line @typescript-eslint/no-explicit-any
         if (index !== -1) {
           array[index] = { ...array[index], ...data };
         } else {
