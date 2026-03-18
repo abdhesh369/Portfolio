@@ -24,9 +24,9 @@ jobs:
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
-        run: cd Backend && npm ci
+        run: npm ci
       - name: Run npm audit (high + critical)
-        run: cd Backend && npm audit --audit-level=high
+        run: npm audit -w portfolio-backend --audit-level=high
 
   audit-frontend:
     name: Frontend Dependency Audit
@@ -40,6 +40,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
-        run: cd Frontend && npm ci
+        run: npm ci
       - name: Run npm audit (high + critical)
-        run: cd Frontend && npm audit --audit-level=high
+        run: npm audit -w frontend --audit-level=high
