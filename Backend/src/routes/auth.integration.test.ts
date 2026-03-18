@@ -10,12 +10,17 @@ const { JWT_SECRET } = vi.hoisted(() => ({
 vi.mock("../env.js", () => ({
     env: {
         NODE_ENV: "test",
-        JWT_SECRET,
-        ADMIN_PASSWORD: "test-admin-password",
+        PORT: 5000,
+        DATABASE_URL: "postgresql://localhost:5432/test",
+        JWT_SECRET: "integration-test-jwt-secret-key-that-is-at-least-64-characters-long-for-zod-validation",
+        JWT_REFRESH_SECRET: "integration-test-refresh-secret-key-that-is-at-least-64-characters-long-for-zod-validation",
+        ADMIN_PASSWORD: "test-admin-password-long-enough",
         ADMIN_EMAIL: "admin@test.com",
+        CONTACT_EMAIL: "contact@test.com",
         REDIS_URL: "",
     },
 }));
+
 
 // Mock ioredis
 vi.mock("ioredis", () => ({
@@ -50,7 +55,8 @@ describe("Auth Routes Integration", () => {
         it("returns 200 and sets cookie with valid password", async () => {
             const res = await request(app)
                 .post("/api/v1/auth/login")
-                .send({ password: "test-admin-password" });
+                .send({ password: "test-admin-password-long-enough" });
+
 
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
@@ -66,47 +72,55 @@ describe("Auth Routes Integration", () => {
     });
 
     describe("GET /api/v1/auth/status", () => {
-        it("returns 401 without token", async () => {
+        it("returns 200 with authenticated: false without token", async () => {
             const res = await request(app).get("/api/v1/auth/status");
-
-            expect(res.status).toBe(401);
+            
+            expect(res.status).toBe(200);
+            expect(res.body.authenticated).toBe(false);
         });
 
+
         it("returns 200 with valid token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
+            const token = jwt.sign({ role: "admin" }, "integration-test-jwt-secret-key-that-is-at-least-64-characters-long-for-zod-validation", { expiresIn: "1h" });
+
+            const res = await request(app)
+                .get("/api/v1/auth/status")
+                .set("Authorization", `Bearer ${token}`);
+
+
+            expect(res.status).toBe(200);
+            expect(res.body.authenticated).toBe(true);
+        });
+
+        it("returns 200 with authenticated: false with expired token", async () => {
+            const token = jwt.sign({ role: "admin" }, "integration-test-jwt-secret-key-that-is-at-least-64-characters-long-for-zod-validation", { expiresIn: "-1h" });
 
             const res = await request(app)
                 .get("/api/v1/auth/status")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
-            expect(res.body.authenticated).toBe(true);
+            expect(res.body.authenticated).toBe(false);
         });
 
-        it("returns 401 with expired token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "-1h" });
-
-            const res = await request(app)
-                .get("/api/v1/auth/status")
-                .set("Authorization", `Bearer ${token}`);
-
-            expect(res.status).toBe(401);
-        });
     });
 
     describe("POST /api/v1/auth/logout", () => {
-        it("returns 401 without token", async () => {
+        it("returns 200 even without token (silent logout)", async () => {
             const res = await request(app).post("/api/v1/auth/logout");
 
-            expect(res.status).toBe(401);
+            expect(res.status).toBe(200);
+            expect(res.body.success).toBe(true);
         });
 
+
         it("clears cookie and returns success with valid token", async () => {
-            const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "1h" });
+            const token = jwt.sign({ role: "admin" }, "integration-test-jwt-secret-key-that-is-at-least-64-characters-long-for-zod-validation", { expiresIn: "1h" });
 
             const res = await request(app)
                 .post("/api/v1/auth/logout")
                 .set("Authorization", `Bearer ${token}`);
+
 
             expect(res.status).toBe(200);
             expect(res.body.message).toBe("Logged out successfully");
@@ -125,8 +139,9 @@ describe("Auth Routes Integration", () => {
             // 1. Login
             const loginRes = await request(app)
                 .post("/api/v1/auth/login")
-                .send({ password: "test-admin-password" });
+                .send({ password: "test-admin-password-long-enough" });
             expect(loginRes.status).toBe(200);
+
 
             // Extract the auth_token from set-cookie header
             const setCookie = loginRes.headers["set-cookie"];
