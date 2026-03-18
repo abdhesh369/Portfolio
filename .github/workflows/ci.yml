@@ -313,26 +313,11 @@ jobs:
 # Flip continue-on-error to false once the suite has a proven green track record.
 # ══════════════════════════════════════════════════════════════════════════════
   e2e-tests:
-    name: "E2E Tests (non-blocking)"
+    name: "E2E Tests (blocking)"
     runs-on: ubuntu-latest
     needs: [unit-tests, build-check]
-    continue-on-error: true
+    continue-on-error: false
     timeout-minutes: 30
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: portfolio_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d portfolio_test"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -354,26 +339,6 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
           NODE_ENV: test
-
-      - name: Start backend server
-        run: npm run start -w Backend &
-        env:
-          NODE_ENV: test
-          PORT: 5000
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
-          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
-          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
-          ADMIN_PASSWORD: ci_test_admin_password_secure
-          ADMIN_EMAIL: admin@ci-test.local
-          CONTACT_EMAIL: contact@ci-test.local
-
-      # TCP port check works even without a /health HTTP endpoint.
-      # Falls back to nc (netcat) which is pre-installed on ubuntu-latest.
-      - name: Wait for backend to be ready
-        run: |
-          echo "Waiting for backend on port 5000..."
-          timeout 30 bash -c 'until nc -z localhost 5000; do sleep 1; done'
-          echo "Backend is accepting connections"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4

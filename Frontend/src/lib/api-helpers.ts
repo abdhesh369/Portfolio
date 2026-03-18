@@ -1,5 +1,5 @@
 export const API_BASE_URL = (() => {
-    let url = "";
+    let url: string;
 
     // If running on localhost (dev or e2e), always use relative paths 
     if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
@@ -10,9 +10,6 @@ export const API_BASE_URL = (() => {
         url = import.meta.env.VITE_PRODUCTION_API_URL || import.meta.env.VITE_API_URL || "";
     }
 
-    if (typeof window !== "undefined") {
-        console.log(`[API_BASE_URL] Detected host: ${window.location.hostname}, using: "${url}"`);
-    }
 
     const prodUrl = url;
 
