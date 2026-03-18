@@ -1,0 +1,2116 @@
+npm warn config ignoring workspace config at D:\Portfolio\Frontend/.npmrc
+{
+  "config": {
+    "configFile": "D:\\Portfolio\\Frontend\\playwright.config.ts",
+    "rootDir": "D:/Portfolio/Frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 11
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Portfolio/Frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 11
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/Portfolio/Frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 11,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "accessibility.spec.ts",
+      "file": "accessibility.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Accessibility ΓÇö WCAG 2.1 AA",
+          "file": "accessibility.spec.ts",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Home page has no critical a11y violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "slow",
+                      "location": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                        "line": 11,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6153,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-XYMPZq --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=30732 \u001b[30m+23ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.057:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.151:INFO:CONSOLE:0] \"[.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+95ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.157:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.175:INFO:CONSOLE:0] \"[.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+17ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.207:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+32ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.293:INFO:CONSOLE:0] \"[.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+86ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.302:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732][err] [0318/184523.338:INFO:CONSOLE:0] \"[.WebGL-0x555c0233e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+36ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.963Z",
+                      "annotations": [
+                        {
+                          "type": "slow",
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                            "line": 11,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-212e5fceafef71c56cba",
+              "file": "accessibility.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "Blog list page has no critical a11y violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "slow",
+                      "location": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                        "line": 28,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 8992,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-j3g4Ui --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=34040 \u001b[30m+46ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184521.789:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+3s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184521.873:INFO:CONSOLE:0] \"[.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/blog (0) \u001b[30m+84ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184521.878:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184521.940:INFO:CONSOLE:0] \"[.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/blog (0) \u001b[30m+62ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184521.953:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+14ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184522.036:INFO:CONSOLE:0] \"[.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/blog (0) \u001b[30m+83ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184522.044:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+7ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040][err] [0318/184522.070:INFO:CONSOLE:0] \"[.WebGL-0x7b5c01e32200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/blog (0) \u001b[30m+26ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.822Z",
+                      "annotations": [
+                        {
+                          "type": "slow",
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                            "line": 28,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-501223c2b280a4ab4fe1",
+              "file": "accessibility.spec.ts",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "title": "skip-to-content link is functional",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 13140,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#main-content')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#main-content')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#main-content')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#main-content')\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts:56:31",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                          "column": 31,
+                          "line": 56
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 54 |\u001b[39m     \u001b[90m// The main content element should exist\u001b[39m\n \u001b[90m 55 |\u001b[39m     \u001b[36mconst\u001b[39m mainContent \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#main-content'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 56 |\u001b[39m     \u001b[36mawait\u001b[39m expect(mainContent)\u001b[33m.\u001b[39mtoBeAttached()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 57 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 58 |\u001b[39m\n \u001b[90m 59 |\u001b[39m   test(\u001b[32m'all images have alt attributes'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                            "column": 31,
+                            "line": 56
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#main-content')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#main-content')\u001b[22m\n\n\n  54 |     // The main content element should exist\n  55 |     const mainContent = page.locator('#main-content');\n> 56 |     await expect(mainContent).toBeAttached();\n     |                               ^\n  57 |   });\n  58 |\n  59 |   test('all images have alt attributes', async ({ page }) => {\n    at D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts:56:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-27bUXp --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=27320 \u001b[30m+31ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184519.538:ERROR:gpu\\ipc\\client\\command_buffer_proxy_impl.cc:287] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer. \u001b[30m+678ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.414:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+8s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.506:INFO:CONSOLE:0] \"[.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/#main-content (0) \u001b[30m+91ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.512:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+6ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.540:INFO:CONSOLE:0] \"[.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/#main-content (0) \u001b[30m+27ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.554:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.639:INFO:CONSOLE:0] \"[.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/#main-content (0) \u001b[30m+84ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.644:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+6ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320][err] [0318/184527.676:INFO:CONSOLE:0] \"[.WebGL-0x242404382a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/#main-content (0) \u001b[30m+32ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320] <gracefully close start> \u001b[30m+5s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320] <process did exit: exitCode=0, signal=null> \u001b[30m+11s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320] starting temporary directories cleanup \u001b[30m+2ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320] finished temporary directories cleanup \u001b[30m+38ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27320] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.757Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\accessibility-Accessibilit-220cd--content-link-is-functional-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                        "column": 31,
+                        "line": 56
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-348669e23b092630925d",
+              "file": "accessibility.spec.ts",
+              "line": 40,
+              "column": 3
+            },
+            {
+              "title": "all images have alt attributes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 7365,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-e3w2c4 --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=7972 \u001b[30m+25ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.136:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+3s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.233:INFO:CONSOLE:0] \"[.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+100ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.237:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.254:INFO:CONSOLE:0] \"[.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+16ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.266:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+11ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.352:INFO:CONSOLE:0] \"[.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+117ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.360:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=7972][err] [0318/184522.382:INFO:CONSOLE:0] \"[.WebGL-0x45e400e46900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+1ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.759Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-00c098ccf220f841e86a",
+              "file": "accessibility.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "interactive elements are keyboard accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1725,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-tLgbPx --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=24260 \u001b[30m+26ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-b20cf03d739f60f14243",
+              "file": "accessibility.spec.ts",
+              "line": 71,
+              "column": 3
+            },
+            {
+              "title": "icon-only buttons have accessible labels",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "timedOut",
+                      "duration": 30126,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts",
+                            "column": 34,
+                            "line": 98
+                          },
+                          "message": "Error: locator.getAttribute: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button').nth(4)\u001b[22m\n\n\n   96 |       const textContent = (await button.textContent())?.trim();\n   97 |       const ariaLabelledBy = await button.getAttribute('aria-labelledby');\n>  98 |       const title = await button.getAttribute('title');\n      |                                  ^\n   99 |\n  100 |       const hasAccessibleName = !!(ariaLabel || textContent || ariaLabelledBy || title);\n  101 |       if (!hasAccessibleName) {\n    at D:\\Portfolio\\Frontend\\e2e\\accessibility.spec.ts:98:34"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-FBPm7j --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=10584 \u001b[30m+24ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.102:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+3s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.207:INFO:CONSOLE:0] \"[.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+105ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.213:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.231:INFO:CONSOLE:0] \"[.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.245:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+13ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.339:INFO:CONSOLE:0] \"[.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+94ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.344:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+6ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584][err] [0318/184522.378:INFO:CONSOLE:0] \"[.WebGL-0x503400117100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+33ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584] <gracefully close start> \u001b[30m+27s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584] <process did exit: exitCode=0, signal=null> \u001b[30m+103ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584] finished temporary directories cleanup \u001b[30m+16ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10584] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.964Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\accessibility-Accessibilit-cdec4-tons-have-accessible-labels-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ddd864604af8a6a0198f-5c064cb5a4e6c93171a9",
+              "file": "accessibility.spec.ts",
+              "line": 85,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin-flow.spec.ts",
+      "file": "admin-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Admin Authentication Flow",
+          "file": "admin-flow.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "admin login page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 1661,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-eUZhtv --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=28804 \u001b[30m+39ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.812Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-f01071ebc114d60a2351",
+              "file": "admin-flow.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "admin login rejects empty password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2957,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-Hw1LVN --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=6668 \u001b[30m+26ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-31b09d47657a0641cfdf",
+              "file": "admin-flow.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "admin login rejects invalid password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 8,
+                      "status": "passed",
+                      "duration": 2551,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Submitting login with wrong password...\n"
+                        },
+                        {
+                          "text": "Waiting for error message...\n"
+                        },
+                        {
+                          "text": "Error message visible\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-iY6GXM --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=27968 \u001b[30m+27ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.834Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-e238238a95d818a77c25",
+              "file": "admin-flow.spec.ts",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated access to admin dashboard redirects to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 9,
+                      "status": "passed",
+                      "duration": 1920,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-bkyzT2 --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=28608 \u001b[30m+27ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.746Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-05f4c035cff1230f79ac",
+              "file": "admin-flow.spec.ts",
+              "line": 52,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Admin Dashboard (requires auth)",
+          "file": "admin-flow.spec.ts",
+          "line": 63,
+          "column": 6,
+          "specs": [
+            {
+              "title": "dashboard shows navigation sidebar when authenticated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 10,
+                      "status": "passed",
+                      "duration": 2710,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-mcOtZ0 --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=27748 \u001b[30m+25ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184521.582:INFO:CONSOLE:0] \"EventSource's response has a MIME type (\"application/json\") that is not \"text/event-stream\". Aborting the connection.\", source: http://localhost:4173/admin (0) \u001b[30m+3s\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:18.649Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-af8bcb03736dda22ece4",
+              "file": "admin-flow.spec.ts",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "admin can logout and be redirected to login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 17305,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /logout|sign out/i }).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /logout|sign out/i }).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /logout|sign out/i }).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /logout|sign out/i }).first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\admin-flow.spec.ts:85:29",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\admin-flow.spec.ts",
+                          "column": 29,
+                          "line": 85
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 83 |\u001b[39m   test(\u001b[32m\"admin can logout and be redirected to login\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 84 |\u001b[39m     \u001b[36mconst\u001b[39m logoutBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m\"button\"\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/logout|sign out/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 85 |\u001b[39m     \u001b[36mawait\u001b[39m expect(logoutBtn)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mawait\u001b[39m logoutBtn\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 87 |\u001b[39m\n \u001b[90m 88 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m\"**/admin/login\"\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\admin-flow.spec.ts",
+                            "column": 29,
+                            "line": 85
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /logout|sign out/i }).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /logout|sign out/i }).first()\u001b[22m\n\n\n  83 |   test(\"admin can logout and be redirected to login\", async ({ page }) => {\n  84 |     const logoutBtn = page.getByRole(\"button\", { name: /logout|sign out/i }).first();\n> 85 |     await expect(logoutBtn).toBeVisible({ timeout: 5000 });\n     |                             ^\n  86 |     await logoutBtn.click();\n  87 |\n  88 |     await page.waitForURL(\"**/admin/login\", { timeout: 10000 });\n    at D:\\Portfolio\\Frontend\\e2e\\admin-flow.spec.ts:85:29"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260][err] [0318/184533.533:INFO:CONSOLE:0] \"EventSource's response has a MIME type (\"application/json\") that is not \"text/event-stream\". Aborting the connection.\", source: http://localhost:4173/admin (0) \u001b[30m+15s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260] <gracefully close start> \u001b[30m+5s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260] <process did exit: exitCode=0, signal=null> \u001b[30m+778ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260] finished temporary directories cleanup \u001b[30m+88ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=24260] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:20.708Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\admin-flow-Admin-Dashboard-d5654--and-be-redirected-to-login-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\admin-flow.spec.ts",
+                        "column": 29,
+                        "line": 85
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4fe7fafde167a7a23674-6583018c3ee85fbc281d",
+              "file": "admin-flow.spec.ts",
+              "line": 83,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "critical-paths.spec.ts",
+      "file": "critical-paths.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Public User Journey",
+          "file": "critical-paths.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage loads with all major sections visible",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "failed",
+                      "duration": 20890,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:17:31",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 31,
+                          "line": 17
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 15 |\u001b[39m     \u001b[90m// Contact / CTA area should exist somewhere on the page\u001b[39m\n \u001b[90m 16 |\u001b[39m     \u001b[36mconst\u001b[39m contactArea \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m\"button\"\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/Contact|Get in Touch|Send/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 17 |\u001b[39m     \u001b[36mawait\u001b[39m expect(contactArea)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 18 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m   test(\u001b[32m\"can navigate to blog page\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 31,
+                            "line": 17
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Contact|Get in Touch|Send/i }).first()\u001b[22m\n\n\n  15 |     // Contact / CTA area should exist somewhere on the page\n  16 |     const contactArea = page.getByRole(\"button\", { name: /Contact|Get in Touch|Send/i }).first();\n> 17 |     await expect(contactArea).toBeVisible({ timeout: 10000 });\n     |                               ^\n  18 |   });\n  19 |\n  20 |   test(\"can navigate to blog page\", async ({ page }) => {\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:17:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184532.938:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+14s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.027:INFO:CONSOLE:0] \"[.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+88ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.035:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+7ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.054:INFO:CONSOLE:0] \"[.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+20ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.069:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.155:INFO:CONSOLE:0] \"[.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+86ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.163:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+7ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804][err] [0318/184533.193:INFO:CONSOLE:0] \"[.WebGL-0x544029cbf00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+30ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804] <gracefully close start> \u001b[30m+9s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804] <process did exit: exitCode=0, signal=null> \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804] finished temporary directories cleanup \u001b[30m+50ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28804] <gracefully close end> \u001b[30m+1ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:21.190Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Public-User-89858--all-major-sections-visible-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 31,
+                        "line": 17
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-49012d5f37b836159571",
+              "file": "critical-paths.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "can navigate to blog page",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 9,
+                      "status": "timedOut",
+                      "duration": 30093,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 28,
+                            "line": 27
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Blog', exact: true }).or(getByRole('link', { name: 'Blog', exact: true })).first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"relative px-4 py-2 text-sm font-medium transition-colors rounded-full group overflow-hidden text-muted-foreground hover:text-foreground\">ΓÇª</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n\n\n  25 |       .getByRole(\"button\", { name: \"Blog\", exact: true })\n  26 |       .or(page.getByRole(\"link\", { name: \"Blog\", exact: true }));\n> 27 |     await blogLink.first().click();\n     |                            ^\n  28 |\n  29 |     // Should be on /blog\n  30 |     await page.waitForURL(\"**/blog\");\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:27:28"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.047:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+16s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.142:INFO:CONSOLE:0] \"[.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+95ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.146:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+3ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.163:INFO:CONSOLE:0] \"[.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+17ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.190:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+26ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.270:INFO:CONSOLE:0] \"[.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+82ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.275:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+4ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608][err] [0318/184535.308:INFO:CONSOLE:0] \"[.WebGL-0x524c02268700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+33ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608] <gracefully close start> \u001b[30m+16s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608] <process did exit: exitCode=0, signal=null> \u001b[30m+84ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608] finished temporary directories cleanup \u001b[30m+12ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=28608] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:21.188Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Public-User-Journey-can-navigate-to-blog-page-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-0d43aae8de0d0ef91345",
+              "file": "critical-paths.spec.ts",
+              "line": 20,
+              "column": 3
+            },
+            {
+              "title": "can navigate to project detail from homepage",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 10,
+                      "status": "failed",
+                      "duration": 12915,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href*=\"/project/\"]').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href*=\"/project/\"]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href*=\"/project/\"]').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href*=\"/project/\"]').first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:42:31",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 31,
+                          "line": 42
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 40 |\u001b[39m     \u001b[90m// Look for any project card link - using a more specific locator that targets the ProjectCard Link wrapper\u001b[39m\n \u001b[90m 41 |\u001b[39m     \u001b[36mconst\u001b[39m projectLink \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[href*=\"/project/\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 42 |\u001b[39m     \u001b[36mawait\u001b[39m expect(projectLink)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 43 |\u001b[39m     \u001b[36mawait\u001b[39m projectLink\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 44 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m\"**/project/**\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 45 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/project\\//\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 31,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href*=\"/project/\"]').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href*=\"/project/\"]').first()\u001b[22m\n\n\n  40 |     // Look for any project card link - using a more specific locator that targets the ProjectCard Link wrapper\n  41 |     const projectLink = page.locator('a[href*=\"/project/\"]').first();\n> 42 |     await expect(projectLink).toBeVisible({ timeout: 10000 });\n     |                               ^\n  43 |     await projectLink.click();\n  44 |     await page.waitForURL(\"**/project/**\");\n  45 |     await expect(page).toHaveURL(/\\/project\\//);\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:42:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.302:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+5s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.413:INFO:CONSOLE:0] \"[.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+139ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.443:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+34ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.472:INFO:CONSOLE:0] \"[.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.486:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+10ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.577:INFO:CONSOLE:0] \"[.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+92ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.586:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748][err] [0318/184526.623:INFO:CONSOLE:0] \"[.WebGL-0x58401b7db00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+37ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748] <gracefully close start> \u001b[30m+8s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748] <process did exit: exitCode=0, signal=null> \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748] finished temporary directories cleanup \u001b[30m+123ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27748] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:21.708Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Public-User-7d7db-roject-detail-from-homepage-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 31,
+                        "line": 42
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-928b6b51b083141f70d0",
+              "file": "critical-paths.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "404 page renders for unknown routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 8,
+                      "status": "passed",
+                      "duration": 6864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:21.953Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-9e0b64b178b698751e0b",
+              "file": "critical-paths.spec.ts",
+              "line": 48,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Contact Form",
+          "file": "critical-paths.spec.ts",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "contact form validates required fields",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "failed",
+                      "duration": 25521,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:65:29",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 29,
+                          "line": 65
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 63 |\u001b[39m     \u001b[36mconst\u001b[39m nameInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#name, [name=\"name\"], [placeholder*=\"name\" i]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 64 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(nameInput)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[90m// Try to submit empty form\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[36mconst\u001b[39m submitBtn \u001b[33m=\u001b[39m page\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 29,
+                            "line": 65
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n\n\n  63 |     const nameInput = page.locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first();\n  64 |\n> 65 |     await expect(nameInput).toBeVisible({ timeout: 5000 });\n     |                             ^\n  66 |\n  67 |     // Try to submit empty form\n  68 |     const submitBtn = page\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:65:29"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.267:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+25s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.340:INFO:CONSOLE:0] \"[.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+75ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.345:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+4ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.366:INFO:CONSOLE:0] \"[.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+20ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.387:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+20ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.461:INFO:CONSOLE:0] \"[.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+74ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.468:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+8ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668][err] [0318/184544.489:INFO:CONSOLE:0] \"[.WebGL-0x3c0c02900d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+21ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668] <gracefully close start> \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668] <process did exit: exitCode=0, signal=null> \u001b[30m+1s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668] finished temporary directories cleanup \u001b[30m+27ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=6668] <gracefully close end> \u001b[30m+1ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:22.626Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Contact-For-51d26-m-validates-required-fields-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 29,
+                        "line": 65
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-342e9f4baef2957cdd49",
+              "file": "critical-paths.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "contact form accepts valid input",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11657,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:87:29",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 29,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 85 |\u001b[39m     \u001b[36mconst\u001b[39m nameInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#name, [name=\"name\"], [placeholder*=\"name\" i]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 86 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 87 |\u001b[39m     \u001b[36mawait\u001b[39m expect(nameInput)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 88 |\u001b[39m     \u001b[36mawait\u001b[39m nameInput\u001b[33m.\u001b[39mfill(\u001b[32m\"Test User\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 89 |\u001b[39m\n \u001b[90m 90 |\u001b[39m     \u001b[36mconst\u001b[39m emailInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 29,
+                            "line": 87
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first()\u001b[22m\n\n\n  85 |     const nameInput = page.locator('#name, [name=\"name\"], [placeholder*=\"name\" i]').first();\n  86 |\n> 87 |     await expect(nameInput).toBeVisible({ timeout: 5000 });\n     |                             ^\n  88 |     await nameInput.fill(\"Test User\");\n  89 |\n  90 |     const emailInput = page.locator(\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:87:29"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732] <gracefully close start> \u001b[30m+15s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732] <process did exit: exitCode=0, signal=null> \u001b[30m+5s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732] finished temporary directories cleanup \u001b[30m+34ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30732] <gracefully close end> \u001b[30m+1ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:26.135Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Contact-Form-contact-form-accepts-valid-input-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 29,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-cec4d4fcb1c3427b2c14",
+              "file": "critical-paths.spec.ts",
+              "line": 82,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Responsive Layout",
+          "file": "critical-paths.spec.ts",
+          "line": 107,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders mobile layout correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 17631,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:26.695Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-180e5e9b6bd841972a1d",
+              "file": "critical-paths.spec.ts",
+              "line": 108,
+              "column": 3
+            },
+            {
+              "title": "renders tablet layout correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3827,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:28.593Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-22ff26651ad528656558",
+              "file": "critical-paths.spec.ts",
+              "line": 126,
+              "column": 3
+            },
+            {
+              "title": "renders desktop layout correctly",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 8,
+                      "status": "failed",
+                      "duration": 12276,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:147:37",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 37,
+                          "line": 147
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 145 |\u001b[39m         \u001b[33m.\u001b[39mgetByRole(\u001b[32m\"button\"\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m item\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\n \u001b[90m 146 |\u001b[39m         \u001b[33m.\u001b[39mor(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m\"link\"\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m item\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 147 |\u001b[39m       \u001b[36mawait\u001b[39m expect(locator\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 148 |\u001b[39m     }\n \u001b[90m 149 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 150 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 37,
+                            "line": 147
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Skills', exact: true }).or(getByRole('link', { name: 'Skills', exact: true })).first()\u001b[22m\n\n\n  145 |         .getByRole(\"button\", { name: item, exact: true })\n  146 |         .or(page.getByRole(\"link\", { name: item, exact: true }));\n> 147 |       await expect(locator.first()).toBeVisible();\n      |                                     ^\n  148 |     }\n  149 |   });\n  150 | });\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:147:37"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184536.851:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+18s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.001:INFO:CONSOLE:0] \"[.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+172ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.004:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.336:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+312ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.475:INFO:CONSOLE:0] \"[.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+145ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.480:INFO:CONSOLE:0] \"[.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.487:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968][err] [0318/184537.545:INFO:CONSOLE:0] \"[.WebGL-0x7bbc027da300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+79ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968] <gracefully close start> \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968] <process did exit: exitCode=0, signal=null> \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968] finished temporary directories cleanup \u001b[30m+30ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=27968] <gracefully close end> \u001b[30m+1ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:28.860Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Responsive--a1708-rs-desktop-layout-correctly-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 37,
+                        "line": 147
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-8cffd730c2a529d9c4a0",
+              "file": "critical-paths.spec.ts",
+              "line": 134,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Performance & Accessibility Basics",
+          "file": "critical-paths.spec.ts",
+          "line": 152,
+          "column": 6,
+          "specs": [
+            {
+              "title": "page loads within acceptable time",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 9428,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:32.537Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-50c60bac5b653caf4d79",
+              "file": "critical-paths.spec.ts",
+              "line": 153,
+              "column": 3
+            },
+            {
+              "title": "images have alt attributes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2767,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-7pHBvC --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=30100 \u001b[30m+55ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.690:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.764:INFO:CONSOLE:0] \"[.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+75ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.767:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.782:INFO:CONSOLE:0] \"[.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.793:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+10ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.853:INFO:CONSOLE:0] \"[.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+61ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.859:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=30100][err] [0318/184552.879:INFO:CONSOLE:0] \"[.WebGL-0x33540151e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+20ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:50.770Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-6589c78da9ea767c0660",
+              "file": "critical-paths.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "no console errors on homepage",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 10,
+                      "status": "failed",
+                      "duration": 5694,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m0\u001b[39m\nReceived length: \u001b[31m4\u001b[39m\nReceived array:  \u001b[31m[\"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\"]\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m0\u001b[39m\nReceived length: \u001b[31m4\u001b[39m\nReceived array:  \u001b[31m[\"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\"]\u001b[39m\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:197:28",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                          "column": 28,
+                          "line": 197
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 195 |\u001b[39m       console\u001b[33m.\u001b[39mlog(\u001b[32m\"Critical Console/Network Errors:\"\u001b[39m\u001b[33m,\u001b[39m \u001b[33mJSON\u001b[39m\u001b[33m.\u001b[39mstringify(criticalErrors\u001b[33m,\u001b[39m \u001b[36mnull\u001b[39m\u001b[33m,\u001b[39m \u001b[35m2\u001b[39m))\u001b[33m;\u001b[39m\n \u001b[90m 196 |\u001b[39m     }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 197 |\u001b[39m     expect(criticalErrors)\u001b[33m.\u001b[39mtoHaveLength(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 198 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 199 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 200 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                            "column": 28,
+                            "line": 197
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m0\u001b[39m\nReceived length: \u001b[31m4\u001b[39m\nReceived array:  \u001b[31m[\"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\", \"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\"]\u001b[39m\n\n  195 |       console.log(\"Critical Console/Network Errors:\", JSON.stringify(criticalErrors, null, 2));\n  196 |     }\n> 197 |     expect(criticalErrors).toHaveLength(0);\n      |                            ^\n  198 |   });\n  199 | });\n  200 |\n    at D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts:197:28"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "Critical Console/Network Errors: [\n  \"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\",\n  \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\",\n  \"Request failed: http://localhost:4173/api/v1/analytics/vitals (net::ERR_ABORTED)\",\n  \"Request failed: http://localhost:4173/api/v1/analytics/live-visitors (net::ERR_ABORTED)\"\n]\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-TWzlft --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=29612 \u001b[30m+28ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.054:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.124:INFO:CONSOLE:0] \"[.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+71ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.127:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.142:INFO:CONSOLE:0] \"[.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.152:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.215:INFO:CONSOLE:0] \"[.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+63ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.222:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612][err] [0318/184552.241:INFO:CONSOLE:0] \"[.WebGL-0x6c940128a300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+18ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612] <gracefully close start> \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612] <process did exit: exitCode=0, signal=null> \u001b[30m+90ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612] finished temporary directories cleanup \u001b[30m+13ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=29612] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:50.191Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\critical-paths-Performance-030f1--console-errors-on-homepage-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\critical-paths.spec.ts",
+                        "column": 28,
+                        "line": 197
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4b09cc25f4bb3a5ff8ce-321aeac4ce8ee947b3cf",
+              "file": "critical-paths.spec.ts",
+              "line": 173,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "smoke.spec.ts",
+      "file": "smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Portfolio Smoke Tests",
+          "file": "smoke.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "has title and renders hero section",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 6980,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h1')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h1')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts:12:31",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                          "column": 31,
+                          "line": 12
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 10 |\u001b[39m         \u001b[90m// Expect the hero section to render. Note: \"Abdhesh Sah\" is in a screen-reader span.\u001b[39m\n \u001b[90m 11 |\u001b[39m         \u001b[36mconst\u001b[39m heading \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 12 |\u001b[39m         \u001b[36mawait\u001b[39m expect(heading)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m         \u001b[90m// Check for the \"View My Work\" button in the hero\u001b[39m\n \u001b[90m 15 |\u001b[39m         \u001b[36mconst\u001b[39m viewWorkBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/View My Work/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                            "column": 31,
+                            "line": 12
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h1')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n\n\n  10 |         // Expect the hero section to render. Note: \"Abdhesh Sah\" is in a screen-reader span.\n  11 |         const heading = page.locator('h1');\n> 12 |         await expect(heading).toBeVisible();\n     |                               ^\n  13 |\n  14 |         // Check for the \"View My Work\" button in the hero\n  15 |         const viewWorkBtn = page.getByRole('button', { name: /View My Work/i }).first();\n    at D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts:12:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040] <gracefully close start> \u001b[30m+27s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040] <process did exit: exitCode=0, signal=null> \u001b[30m+353ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040] starting temporary directories cleanup \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040] finished temporary directories cleanup \u001b[30m+32ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=34040] <gracefully close end> \u001b[30m+13ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:42.135Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\smoke-Portfolio-Smoke-Test-1e182-le-and-renders-hero-section-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                        "column": 31,
+                        "line": 12
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4219922fea2e2bd3c691-018549be9fbf83af8102",
+              "file": "smoke.spec.ts",
+              "line": 4,
+              "column": 5
+            },
+            {
+              "title": "navigation bar works",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 8,
+                      "status": "failed",
+                      "duration": 6415,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\u001b[22m\n\n    at D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts:27:43",
+                        "location": {
+                          "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                          "column": 43,
+                          "line": 27
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m         \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m item \u001b[36mof\u001b[39m navItems) {\n \u001b[90m 26 |\u001b[39m             \u001b[36mconst\u001b[39m locator \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m item\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mor(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m item\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m             \u001b[36mawait\u001b[39m expect(locator\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m         }\n \u001b[90m 29 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 30 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                            "column": 43,
+                            "line": 27
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Projects', exact: true }).or(getByRole('link', { name: 'Projects', exact: true })).first()\u001b[22m\n\n\n  25 |         for (const item of navItems) {\n  26 |             const locator = page.getByRole('button', { name: item, exact: true }).or(page.getByRole('link', { name: item, exact: true }));\n> 27 |             await expect(locator.first()).toBeVisible();\n     |                                           ^\n  28 |         }\n  29 |     });\n  30 |\n    at D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts:27:43"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-p1IfSf --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=31248 \u001b[30m+27ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.758:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.821:INFO:CONSOLE:0] \"[.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+63ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.830:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+8ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.844:INFO:CONSOLE:0] \"[.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+14ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.852:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.904:INFO:CONSOLE:0] \"[.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+52ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.909:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248][err] [0318/184553.927:INFO:CONSOLE:0] \"[.WebGL-0x5824027c3100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+18ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248] <gracefully close start> \u001b[30m+4s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248] <process did exit: exitCode=0, signal=null> \u001b[30m+82ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248] starting temporary directories cleanup \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248] finished temporary directories cleanup \u001b[30m+9ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=31248] <gracefully close end> \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:51.596Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Portfolio\\Frontend\\test-results\\smoke-Portfolio-Smoke-Tests-navigation-bar-works-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Portfolio\\Frontend\\e2e\\smoke.spec.ts",
+                        "column": 43,
+                        "line": 27
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4219922fea2e2bd3c691-7ab6b7df45830c668e85",
+              "file": "smoke.spec.ts",
+              "line": 19,
+              "column": 5
+            },
+            {
+              "title": "chatbot button is visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2045,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> C:\\Users\\abdhe\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1208\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-web-security --user-data-dir=C:\\Users\\abdhe\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-YGykHd --remote-debugging-pipe --no-startup-window \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=10528 \u001b[30m+21ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.253:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+2s\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.340:INFO:CONSOLE:0] \"[.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+85ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.355:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+15ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.372:INFO:CONSOLE:0] \"[.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+18ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.385:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels \u001b[30m+12ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.458:INFO:CONSOLE:0] \"[.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\", source: http://localhost:4173/ (0) \u001b[30m+73ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.464:ERROR:gpu\\command_buffer\\service\\gl_utils.cc:386] [.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) \u001b[30m+6ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=10528][err] [0318/184553.484:INFO:CONSOLE:0] \"[.WebGL-0x2fdc04153100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\", source: http://localhost:4173/ (0) \u001b[30m+20ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-03-18T13:00:51.327Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4219922fea2e2bd3c691-a2008684642a576a35d6",
+              "file": "smoke.spec.ts",
+              "line": 31,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-18T12:59:49.040Z",
+    "duration": 69827.844,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 12,
+    "flaky": 0
+  }
+}

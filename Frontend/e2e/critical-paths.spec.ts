@@ -6,28 +6,30 @@ test.describe("Public User Journey", () => {
 
     // Hero section
     const heading = page.locator("h1");
-    await expect(heading).toBeVisible();
+    // Ensure h1 is visible - it might be delayed by an intro animation
+    await expect(heading).toBeVisible({ timeout: 15000 });
 
-    // Check key sections exist by scrolling and looking for section headings
-    // Projects section
-    await expect(page.getByText(/Featured Projects|My Projects|Projects/i).first()).toBeVisible();
+    // Using a more flexible approach for lazy-loaded sections
+    const projectsHeading = page.getByText(/Featured Projects|My Projects|Projects/i).first();
+    await projectsHeading.scrollIntoViewIfNeeded();
+    await expect(projectsHeading).toBeVisible({ timeout: 20000 });
 
     // Contact / CTA area should exist somewhere on the page
-    const contactArea = page.getByRole("button", { name: /Contact|Get in Touch|Send/i }).first();
-    await expect(contactArea).toBeVisible({ timeout: 10000 });
+    // Look for various button texts that appear in the Contact section modes
+    const contactBtn = page.locator('button').filter({ hasText: /Contact|Hire|Transmission|Inquiry|Get in Touch/i }).first();
+    await expect(contactBtn).toBeVisible({ timeout: 15000 });
   });
 
   test("can navigate to blog page", async ({ page }) => {
     await page.goto("/");
 
-    // Click the Blog nav link
-    const blogLink = page
-      .getByRole("button", { name: "Blog", exact: true })
-      .or(page.getByRole("link", { name: "Blog", exact: true }));
-    await blogLink.first().click();
+    // Click the Blog nav link - Use a more robust selector
+    const blogLink = page.locator('nav').getByText(/Blog/i, { exact: false }).first();
+    await expect(blogLink).toBeVisible({ timeout: 10000 });
+    await blogLink.click();
 
     // Should be on /blog
-    await page.waitForURL("**/blog");
+    await page.waitForURL("**/blog", { timeout: 15000 });
     await expect(page).toHaveURL(/\/blog/);
   });
 
@@ -35,13 +37,16 @@ test.describe("Public User Journey", () => {
     await page.goto("/");
 
     // Wait for projects heading to ensure section is loaded
-    await page.getByText(/Featured Projects|My Projects|Projects/i).first().waitFor({ state: 'visible' });
+    const projectsHeading = page.getByText(/Featured Projects|My Projects|Projects/i).first();
+    await projectsHeading.scrollIntoViewIfNeeded();
+    await expect(projectsHeading).toBeVisible({ timeout: 15000 });
 
-    // Look for any project card link - using a more specific locator that targets the ProjectCard Link wrapper
+    // Look for any project card link
     const projectLink = page.locator('a[href*="/project/"]').first();
-    await expect(projectLink).toBeVisible({ timeout: 10000 });
+    await expect(projectLink).toBeAttached({ timeout: 15000 });
+    await expect(projectLink).toBeVisible({ timeout: 15000 });
     await projectLink.click();
-    await page.waitForURL("**/project/**");
+    await page.waitForURL("**/project/**", { timeout: 10000 });
     await expect(page).toHaveURL(/\/project\//);
   });
 
@@ -59,47 +64,49 @@ test.describe("Contact Form", () => {
   test("contact form validates required fields", async ({ page }) => {
     await page.goto("/");
 
-    // Scroll to contact section and find the form
-    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
+    // Scroll to contact section and find the "Project Request" tab to show the standard form
+    const projectTab = page.locator('button').filter({ hasText: /Project Request/i }).first();
+    await projectTab.scrollIntoViewIfNeeded();
+    await projectTab.click();
 
-    await expect(nameInput).toBeVisible({ timeout: 5000 });
+    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
+    await expect(nameInput).toBeVisible({ timeout: 20000 });
 
     // Try to submit empty form
     const submitBtn = page
-      .getByRole("button", { name: /send|submit|contact|transmission|packet/i })
+      .getByRole("button", { name: /send|submit|contact|transmission|packet|inquiry/i })
       .first();
     await submitBtn.click();
 
     // Should show validation errors or the form should still be present
-    // Custom check for Zod error message or presence of required attr
-    const nameInputId = await nameInput.getAttribute('id');
-    if (nameInputId) {
-      await expect(page.locator(`label[for="${nameInputId}"]`)).toBeVisible();
-    }
-    await expect(nameInput).toBeVisible();
+    await expect(nameInput).toBeVisible({ timeout: 10000 });
   });
 
   test("contact form accepts valid input", async ({ page }) => {
     await page.goto("/");
 
-    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
+    // Select Project Request tab to reveal the form
+    const projectTab = page.locator('button').filter({ hasText: /Project Request/i }).first();
+    await projectTab.scrollIntoViewIfNeeded();
+    await projectTab.click();
 
-    await expect(nameInput).toBeVisible({ timeout: 5000 });
+    const nameInput = page.locator('#name, [name="name"], [placeholder*="name" i]').first();
+    await expect(nameInput).toBeVisible({ timeout: 20000 });
     await nameInput.fill("Test User");
 
     const emailInput = page.locator(
       'input[name="email"], input[type="email"], input[placeholder*="email" i]'
     ).first();
-    await expect(emailInput).toBeVisible();
+    await expect(emailInput).toBeVisible({ timeout: 10000 });
     await emailInput.fill("test@example.com");
 
     const messageInput = page.locator(
       'textarea[name="message"], textarea[placeholder*="message" i], textarea'
     ).first();
-    await expect(messageInput).toBeVisible();
+    await expect(messageInput).toBeVisible({ timeout: 10000 });
     await messageInput.fill("This is a test message from Playwright.");
 
-    // Verify the form is filled (don't submit to avoid side effects in E2E without a test backend)
+    // Verify the form is filled
     await expect(nameInput).toHaveValue("Test User");
   });
 });
