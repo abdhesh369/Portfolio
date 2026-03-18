@@ -334,12 +334,6 @@ jobs:
       - name: Build shared package
         run: npm run build:shared
 
-      - name: Run database migrations
-        run: npm run migrate -w Backend
-        env:
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
-          NODE_ENV: test
-
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         id: playwright-cache
