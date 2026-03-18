@@ -8,5 +8,4 @@ UPDATE "projects" SET "createdAt" = now() WHERE "createdAt" IS NULL;--> statemen
 ALTER TABLE "projects" ALTER COLUMN "createdAt" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "projects" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
 ALTER TABLE "projects" ADD COLUMN "updatedAt" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
-CREATE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");--> statement-breakpoint
-ALTER TABLE "articles" ADD CONSTRAINT "articles_authorId_authors_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."authors"("id") ON DELETE set null ON UPDATE no action;
+CREATE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");--> statement-breakpoint
