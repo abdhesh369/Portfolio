@@ -23,7 +23,9 @@ export default defineConfig({
     /* Opt out of parallel tests for stability. */
     workers: 1,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: 'list',
+    /* Global setup for database/cache reset */
+    globalSetup: './e2e/global-setup.ts',
+
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Base URL to use in actions like \`await page.goto('/')\`. */
@@ -63,17 +65,21 @@ export default defineConfig({
     /* Run your local dev server before starting the tests */
     webServer: [
         {
-            command: 'npx tsx scripts/mock-backend.ts',
+            // Start the REAL backend server in test mode
+            command: 'npm run test:e2e:server --prefix ../Backend',
             port: 5000,
             reuseExistingServer: !process.env.CI,
+            timeout: 60 * 1000,
         },
         {
-            command: 'npm run build && npm run preview',
+            // Build and preview the frontend, pointing to the real backend
+            command: 'cross-env VITE_API_URL=http://localhost:5000 npm run build && npm run preview',
             url: 'http://localhost:4173',
             reuseExistingServer: !process.env.CI,
-            timeout: 120 * 1000,
+            timeout: 180 * 1000,
         }
     ],
+
 
 
 

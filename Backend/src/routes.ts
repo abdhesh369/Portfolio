@@ -29,7 +29,9 @@ import { registerClientRoutes } from "./routes/clients.js";
 import { registerSketchpadRoutes } from "./routes/sketchpad.js";
 import { registerCoverLetterRoutes } from "./routes/cover-letter.js";
 import subscribersRouter from "./routes/subscribers.js";
+import { testRouter } from "./routes/test.js";
 import ogRouter from "./routes/og.js";
+
 import searchRouter from "./routes/search.js";
 import readingListRouter from "./routes/reading-list.js";
 import express from "express";
@@ -57,9 +59,14 @@ export function registerRoutes(app: Express) {
   v1Router.use("/search", searchRouter);
   v1Router.use("/reading-list", readingListRouter);
   
+  if (process.env.NODE_ENV === "test") {
+    v1Router.use("/test", testRouter);
+  }
+
   if (process.env.NODE_ENV !== "production") {
     v1Router.use("/debug", debugRouter);
   }
+
 
   // CSP violation reporting route
   v1Router.post(
