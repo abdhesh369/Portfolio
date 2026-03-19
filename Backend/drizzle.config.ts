@@ -1,7 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 import dotenv from "dotenv";
 
-dotenv.config();
+const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env";
+console.warn(`[Drizzle Config] Loading environment from: ${envFile}`);
+dotenv.config({ path: envFile, override: true });
 
 export default defineConfig({
   out: "./drizzle/migrations",              // where migration files will be generated

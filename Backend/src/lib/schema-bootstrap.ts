@@ -13,16 +13,24 @@ async function runBestEffortMigrations() {
         logger.info({ context: "schema-bootstrap", path: STARTUP_MIGRATIONS_FOLDER }, "📍 Checking migrations folder...");
 
         if (!fs.existsSync(STARTUP_MIGRATIONS_FOLDER)) {
-            throw new Error(`Migrations folder not found: ${STARTUP_MIGRATIONS_FOLDER}`);
+            // Only warn, don't throw. In some test environments, migrations folder might be missing but DB is pre-seeded.
+            logger.warn({ context: "schema-bootstrap" }, "Migrations folder missing - skipping automated migration");
+            return;
         }
 
         await migrate(db, { migrationsFolder: STARTUP_MIGRATIONS_FOLDER });
         logger.info({ context: "schema-bootstrap" }, "✓ Migration check completed");
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "Unknown error";
-        const stack = error instanceof Error ? error.stack : undefined;
+        
+        // Specific handling for "CREATE SCHEMA" failure which can happen on some managed PG providers
+        if (message.includes('CREATE SCHEMA IF NOT EXISTS "drizzle"')) {
+            logger.warn({ context: "schema-bootstrap" }, "⚠️  Could not manage 'drizzle' schema - assuming tables are already migrated or using external management.");
+            return;
+        }
+
         logger.error(
-            { context: "schema-bootstrap", error: message, stack },
+            { context: "schema-bootstrap", error: message },
             "❌ Migration step failed"
         );
         // We still continue to applyConsistencyChecks which might create basic tables

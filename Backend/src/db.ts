@@ -18,7 +18,9 @@ export const pool = new pg.Pool({
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 15000, // 15 s — handles Neon cold starts (increased from 10s)
     query_timeout: 15000, // Per-query timeout
-    ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
+    ssl: env.NODE_ENV === 'production' || env.DATABASE_URL.includes("neon.tech") 
+        ? { rejectUnauthorized: false } 
+        : false,
 });
 
 export const db = drizzle(pool, { schema });
