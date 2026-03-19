@@ -196,6 +196,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Memory Overcommit
+        run: sudo sysctl -w vm.overcommit_memory=1
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -364,6 +367,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable Memory Overcommit
+        run: sudo sysctl -w vm.overcommit_memory=1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

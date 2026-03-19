@@ -378,7 +378,7 @@ async function startServer() {
       logger.info({ context: "startup" }, "✓ Migrations complete");
     } catch (migErr) {
       logger.error({ context: "startup", error: migErr }, "❌ Migration failed");
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
         process.exit(1);
       }
     }
