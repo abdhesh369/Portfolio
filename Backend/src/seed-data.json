@@ -287,7 +287,6 @@
       "y": 50,
       "description": "Advanced TS usage",
       "proof": "Project experience",
-      "id": 1,
       "mastery": 90,
       "endorsements": 0
     }
@@ -349,7 +348,6 @@
       "type": "Experience"
     },
     {
-      "id": 1,
       "role": "Software Engineer",
       "organization": "Tech Corp",
       "period": "2020 - Present",

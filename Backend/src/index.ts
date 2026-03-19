@@ -24,6 +24,7 @@ import { globalLimiter } from "./lib/rate-limit.js";
 import { randomUUID } from "crypto";
 
 const app = express();
+let isReady = false;
 // NOTE: "trust proxy 1" assumes exactly ONE proxy tier (Render's load balancer).
 // If topology changes (e.g. Cloudflare + Render = 2 proxies), this must be updated
 // to the correct number, otherwise rate-limiting will use the proxy IP instead of the client IP.
@@ -194,6 +195,9 @@ app.get("/", (_req: Request, res: Response) => {
 // Lightweight liveness probe — used by Render's deploy health check.
 // Must NOT touch the database so it stays fast even when Neon is cold.
 app.get("/ping", (_req: Request, res: Response) => {
+  if (!isReady && process.env.NODE_ENV === "test") {
+    return res.status(503).json({ status: "starting" });
+  }
   res.status(200).json({ status: "ok" });
 });
 
@@ -313,6 +317,9 @@ async function startServer() {
     const port = parseInt(process.env.PORT || "5000", 10);
     const host = process.env.NODE_ENV === "test" ? "127.0.0.1" : "0.0.0.0";
 
+    // In production, we bind early for Render heartbeat.
+    // In test, we might choose to bind late, but Playwright config expects it to bind while it's starting.
+    // So let's keep early binding but make sure the /health endpoint is the source of truth.
     await new Promise<void>((resolve, reject) => {
       httpServer.on("error", (err: Error & { code?: string }) => {
         if (err.code === "EADDRINUSE") {
@@ -412,6 +419,7 @@ async function startServer() {
     // SETUP GRACEFUL SHUTDOWN
     setupGracefulShutdown();
 
+    isReady = true;
     logger.info({ context: "startup" }, "✓ Server fully ready");
   } catch (error) {
     logger.fatal({ context: "startup", error }, `❌ STARTUP FAILED`);
