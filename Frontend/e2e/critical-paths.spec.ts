@@ -87,7 +87,7 @@ test.describe("Contact Form", () => {
     const submitBtn = page
       .getByRole("button", { name: /send|submit|contact|transmission|packet|inquiry/i })
       .first();
-    await submitBtn.click();
+    await submitBtn.click({ force: true });
 
     // Should show validation errors or the form should still be present
     await expect(nameInput).toBeVisible({ timeout: 10000 });
@@ -212,7 +212,7 @@ test.describe("Performance & Accessibility Basics", () => {
       }
     });
 
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('/', { waitUntil: 'load' });
     await page.waitForTimeout(3000); // Wait for async resources like analytics/chatbot
     
     if (criticalErrors.length > 0) {

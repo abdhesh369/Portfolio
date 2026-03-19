@@ -38,15 +38,15 @@ test.describe("Admin Authentication Flow", () => {
     const submitBtn = page
       .getByRole("button", { name: /login|sign in|submit/i })
       .first();
-    console.log("Submitting login with wrong password...");
+    console.warn("Submitting login with wrong password...");
     await submitBtn.click();
 
     // We should see an error message and still be on the login page
-    console.log("Waiting for error message...");
+    console.warn("Waiting for error message...");
     const errorMsg = page.getByText(/invalid|incorrect|wrong|unauthorized|error|failed/i).first();
     await expect(errorMsg).toBeVisible({ timeout: 15000 });
 
-    console.log("Error message visible");
+    console.warn("Error message visible");
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 
@@ -86,8 +86,8 @@ test.describe("Admin Dashboard (requires auth)", () => {
     await page.setViewportSize({ width: 1920, height: 1080 });
 
     // Click the profile button to show the dropdown
-    // The profile button is in the header, look for the avatar initial 'R'
-    const profileBtn = page.locator('header button').filter({ hasText: /^R$/ }).first();
+    // The profile button is in the header
+    const profileBtn = page.getByTestId('profile-popover-trigger');
     await expect(profileBtn).toBeVisible({ timeout: 15000 });
     await profileBtn.click();
 

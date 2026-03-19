@@ -157,6 +157,7 @@ export default function TopBar({
                         <div className="relative" ref={profileRef}>
                             <button
                                 onClick={() => setProfileOpen(!profileOpen)}
+                                data-testid="profile-popover-trigger"
                                 className={cn(
                                     "flex items-center gap-4 p-1.5 rounded-2xl transition-all group",
                                     profileOpen ? "nm-inset" : "nm-button"
@@ -195,6 +196,7 @@ export default function TopBar({
                                         <div className="h-px bg-[var(--nm-light)] mx-3 my-2" />
                                         <button
                                             onClick={() => logout()}
+                                            data-testid="logout-button"
                                             className="flex w-full items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black text-pink-500 hover:bg-pink-500/10 transition-all group"
                                         >
                                             <LogOut size={16} className="group-hover:translate-x-1 transition-transform" />

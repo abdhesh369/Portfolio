@@ -53,6 +53,7 @@ test.describe('Full-Stack Journey (Layer 3)', () => {
         
         // Wait for success
         console.warn('[E2E] Project created, verifying in list...');
+        await page.waitForTimeout(2000); // Give list a moment to refresh
         await expect(page.getByText(TEST_PROJECT_TITLE)).toBeVisible({ timeout: 15000 });
 
 
