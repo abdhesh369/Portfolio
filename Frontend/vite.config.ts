@@ -122,15 +122,15 @@ export default defineConfig(({ mode }) => {
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
       '/ping': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
     },
@@ -139,15 +139,15 @@ export default defineConfig(({ mode }) => {
     port: 4173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
       '/ping': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5005',
         changeOrigin: true,
       },
     },

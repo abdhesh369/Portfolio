@@ -42,8 +42,13 @@ export function registerRoutes(app: Express) {
   const v1Router = Router();
 
   // CSRF protection for all state-changing admin requests
-  // (skips GET/HEAD/OPTIONS and unauthenticated requests automatically)
-  v1Router.use(csrfProtection);
+  // Exclude /test (E2E setup) and public search routes
+  v1Router.use((req, res, next) => {
+    if (req.path.startsWith("/test") || req.path.startsWith("/search")) {
+      return next();
+    }
+    return csrfProtection(req, res, next);
+  });
 
   // Register all routes on the v1 router
   v1Router.use("/auth", authRoutes);
@@ -58,7 +63,7 @@ export function registerRoutes(app: Express) {
   v1Router.use("/og", ogRouter);
   v1Router.use("/search", searchRouter);
   v1Router.use("/reading-list", readingListRouter);
-  
+
   if (process.env.NODE_ENV === "test") {
     v1Router.use("/test", testRouter);
   }

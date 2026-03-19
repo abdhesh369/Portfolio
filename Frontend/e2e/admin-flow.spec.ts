@@ -43,8 +43,9 @@ test.describe("Admin Authentication Flow", () => {
 
     // We should see an error message and still be on the login page
     console.log("Waiting for error message...");
-    const errorMsg = page.getByText(/invalid|incorrect|wrong|unauthorized|error/i).first();
+    const errorMsg = page.getByText(/invalid|incorrect|wrong|unauthorized|error|failed/i).first();
     await expect(errorMsg).toBeVisible({ timeout: 15000 });
+
     console.log("Error message visible");
     await expect(page).toHaveURL(/\/admin\/login/);
   });

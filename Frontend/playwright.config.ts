@@ -28,8 +28,8 @@ export default defineConfig({
 
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-        /* Base URL to use in actions like \`await page.goto('/')\`. */
-        baseURL: 'http://localhost:4173',
+        /* Base URL to use in actions like `await page.goto('/')`. */
+        baseURL: 'http://127.0.0.1:4173',
 
         /* Global script to bypass modal */
         launchOptions: {
@@ -51,7 +51,7 @@ export default defineConfig({
                     cookies: [],
                     origins: [
                         {
-                            origin: 'http://localhost:4173',
+                            origin: 'http://127.0.0.1:4173',
                             localStorage: [
                                 { name: 'portfolio_has_seen_persona', value: 'true' }
                             ]
@@ -67,16 +67,16 @@ export default defineConfig({
         {
             // Start the REAL backend server in test mode
             command: 'npm run test:e2e:server --prefix ../Backend',
-            port: 5000,
+            url: 'http://127.0.0.1:5005/ping',
             reuseExistingServer: !process.env.CI,
-            timeout: 60 * 1000,
+            timeout: 120 * 1000,
         },
         {
             // Build and preview the frontend, pointing to the real backend
-            command: 'cross-env VITE_API_URL=http://localhost:5000 npm run build && npm run preview',
-            url: 'http://localhost:4173',
+            command: 'cross-env VITE_API_URL=http://127.0.0.1:5005 npm run build && npm run preview -- --host 127.0.0.1',
+            url: 'http://127.0.0.1:4173',
             reuseExistingServer: !process.env.CI,
-            timeout: 180 * 1000,
+            timeout: 300 * 1000,
         }
     ],
 

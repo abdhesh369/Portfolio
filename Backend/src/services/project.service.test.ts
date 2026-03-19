@@ -31,9 +31,14 @@ vi.mock("../repositories/project.repository.js", () => ({
     },
 }));
 
-const { mockCacheGetOrSet, mockCacheInvalidate, mockCacheKey } = vi.hoisted(() => ({
+const { 
+    mockCacheGetOrSet, mockCacheInvalidate, mockCacheKey,
+    mockCacheTrack, mockCacheInvalidateTracked
+} = vi.hoisted(() => ({
     mockCacheGetOrSet: vi.fn(),
     mockCacheInvalidate: vi.fn(),
+    mockCacheTrack: vi.fn(),
+    mockCacheInvalidateTracked: vi.fn(),
     mockCacheKey: vi.fn().mockImplementation((f: string, n: string, id?: string | number) =>
         id !== undefined ? `${f}:${n}:${id}` : `${f}:${n}`
     ),
@@ -43,9 +48,12 @@ vi.mock("../lib/cache.js", () => ({
     CacheService: {
         getOrSet: mockCacheGetOrSet,
         invalidate: mockCacheInvalidate,
+        track: mockCacheTrack,
+        invalidateTracked: mockCacheInvalidateTracked,
         key: mockCacheKey,
     },
 }));
+
 
 vi.mock("../lib/redis.js", () => ({ redis: null }));
 vi.mock("../routes/chat.js", () => ({ CHAT_CACHE_KEY: "chat:context" }));
@@ -89,6 +97,7 @@ describe("ProjectService", () => {
                 3600,
                 expect.any(Function)
             );
+            expect(mockCacheTrack).toHaveBeenCalled();
         });
 
         it("calls repository when cache misses", async () => {
@@ -130,7 +139,8 @@ describe("ProjectService", () => {
             const result = await service.create(insertData);
 
             expect(mockCreate).toHaveBeenCalledWith(insertData);
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
             expect(result).toEqual(MOCK_PROJECT);
         });
     });
@@ -143,7 +153,8 @@ describe("ProjectService", () => {
             const result = await service.update(1, { title: "Updated" });
 
             expect(mockUpdate).toHaveBeenCalledWith(1, { title: "Updated" });
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
             expect(result.title).toBe("Updated");
         });
     });
@@ -155,7 +166,8 @@ describe("ProjectService", () => {
             await service.delete(1);
 
             expect(mockDelete).toHaveBeenCalledWith(1);
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
         });
     });
 
@@ -166,7 +178,8 @@ describe("ProjectService", () => {
             await service.bulkDelete([1, 2, 3]);
 
             expect(mockBulkDelete).toHaveBeenCalledWith([1, 2, 3]);
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
         });
     });
 
@@ -177,7 +190,8 @@ describe("ProjectService", () => {
             await service.bulkUpdateStatus([1, 2], "Completed");
 
             expect(mockBulkUpdateStatus).toHaveBeenCalledWith([1, 2], "Completed");
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
         });
     });
 
@@ -188,7 +202,8 @@ describe("ProjectService", () => {
             await service.updateReorder([3, 1, 2]);
 
             expect(mockReorder).toHaveBeenCalledWith([3, 1, 2]);
-            expect(mockCacheInvalidate).toHaveBeenCalled();
+            expect(mockCacheInvalidateTracked).toHaveBeenCalled();
+            expect(mockCacheInvalidate).toHaveBeenCalledWith("chat:context");
         });
     });
 

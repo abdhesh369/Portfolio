@@ -104,8 +104,9 @@ export async function apiFetch<T = any>(
         headers: { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) },
     });
 
-    // Silent refresh on 401 — skip for the refresh endpoint itself to avoid infinite loops
-    if (res.status === 401 && !path.includes("/auth/refresh")) {
+    // Silent refresh on 401 — skip for certain endpoints to avoid infinite loops or incorrect error reporting
+    if (res.status === 401 && !path.includes("/auth/refresh") && !path.includes("/auth/login")) {
+
         // Deduplicate concurrent refresh attempts
         if (!refreshPromise) {
             refreshPromise = attemptRefresh().finally(() => { refreshPromise = null; });

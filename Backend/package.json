@@ -24,7 +24,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:e2e:server": "cross-env NODE_ENV=test DATABASE_URL=postgres://postgres:postgres@localhost:5432/portfolio_test REDIS_URL=redis://localhost:6379 tsx src/index.ts"
+    "test:e2e:server": "cross-env NODE_ENV=test tsx src/index.ts"
+
   },
 
   "dependencies": {

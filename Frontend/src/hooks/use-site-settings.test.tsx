@@ -39,7 +39,11 @@ describe("useSiteSettings hook", () => {
 
         await waitFor(() => expect(result.current.isSuccess).toBe(true));
         expect(result.current.data).toEqual(mockSettings);
-        expect(apiFetch).toHaveBeenCalledWith("/api/v1/settings");
+        expect(apiFetch).toHaveBeenCalledWith(
+            "/api/v1/settings",
+            expect.any(Object),
+            expect.any(Object)
+        );
     });
 
     it("updates site settings correctly", async () => {

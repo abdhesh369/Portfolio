@@ -10,7 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 // In production (e.g. Render), env vars come from the platform — .env files are gitignored.
 // Only load .env files if they exist on disk (local development).
 const rootDir = process.cwd();
-const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
+let envFile = ".env";
+if (process.env.NODE_ENV === "production") envFile = ".env.production";
+if (process.env.NODE_ENV === "test") envFile = ".env.test";
+
 const envPath = path.join(rootDir, envFile);
 
 if (fs.existsSync(envPath)) {

@@ -35,6 +35,7 @@
         "dev": "tsc -w",
         "lint": "eslint src --ext .ts",
         "type-check": "tsc --noEmit",
+        "test": "npm run type-check",
         "clean": "rimraf dist"
     },
     "dependencies": {

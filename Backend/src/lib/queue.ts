@@ -145,9 +145,15 @@ export function initQueues() {
         );
     }
 
-    if (!canUseRedis) return;
+    if (!canUseRedis || process.env.NODE_ENV === "test") {
+        if (process.env.NODE_ENV === "test") {
+            logger.info({ context: "queue" }, "⏭️  Skipping BullMQ initialization in test mode (bypasses version checks)");
+        }
+        return;
+    }
 
     logger.info({ context: "queue" }, "📍 Initializing BullMQ queues and workers...");
+
 
     const defaultJobOptions = {
         attempts: 5,

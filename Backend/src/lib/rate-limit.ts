@@ -25,7 +25,7 @@ const createLimiter = (options: {
             // Bypass rate limiting in test environment
             if (process.env.NODE_ENV === 'test') return true;
             // Only bypass rate limiting for localhost requests (development)
-            return req.ip === '127.0.0.1' || req.ip === '::1' || req.ip?.includes('127.0.0.1');
+            return req.ip === '127.0.0.1' || req.ip === '::1' || (req.ip?.includes('127.0.0.1') ?? false);
         },
 
         store: redis ? new RedisStore({
