@@ -17,7 +17,8 @@ export function createTestApp() {
 
     // Error handler
     app.use(
-        (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+        (error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+            const err = error as Error & { status?: number; statusCode?: number; errors?: unknown };
             const status = err.status || err.statusCode || 500;
             res.status(status).json({ 
                 message: err.message || "Internal Server Error",

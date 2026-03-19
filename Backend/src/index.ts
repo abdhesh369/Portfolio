@@ -3,7 +3,6 @@ import * as Sentry from "@sentry/node";
 /**
  * Main Entry Point - System Stabilized
  */
-console.log("[BACKEND] 🚀 Entry point reached, loading environment...");
 import { env } from "./env.js";
 import { createServer } from "http";
 import cors from "cors";
@@ -291,7 +290,7 @@ function setupGracefulShutdown() {
   process.on("SIGINT", () => shutdown("SIGINT"));
 
   // Handle unhandled rejections and exceptions
-  process.on("unhandledRejection", (reason: any) => {
+  process.on("unhandledRejection", (reason: unknown) => {
     logger.fatal({ context: "crash", error: reason }, "💣 UNHANDLED REJECTION");
     // Special console log to ensure it's seen in Playwright/Vite output
     console.error("\n[BACKEND] 💣 UNHANDLED REJECTION:", reason);
@@ -315,7 +314,7 @@ async function startServer() {
     const host = process.env.NODE_ENV === "test" ? "127.0.0.1" : "0.0.0.0";
 
     await new Promise<void>((resolve, reject) => {
-      httpServer.on("error", (err: any) => {
+      httpServer.on("error", (err: Error & { code?: string }) => {
         if (err.code === "EADDRINUSE") {
           logger.fatal({ context: "startup", port }, "❌ Port already in use");
         } else {
@@ -382,29 +381,29 @@ async function startServer() {
       Sentry.setupExpressErrorHandler(app);
     }
 
-    // Sanitize Global Error Handler
+    // Global Error Handler
     app.use(
-      (_err: Error & { status?: number; statusCode?: number }, req: Request, res: Response, _next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
-        const status = _err.status || _err.statusCode || 500;
-        const message = (status === 500 && process.env.NODE_ENV !== "development") ? "Internal Server Error" : _err.message;
+      (error: unknown, req: Request, res: Response, _next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+        const err = error as Error & { status?: number; statusCode?: number; errors?: unknown };
+        const status = err.status || err.statusCode || 500;
+        const message = (status === 500 && process.env.NODE_ENV !== "development") ? "Internal Server Error" : err.message;
 
         logger.error({
           requestId: req.id,
           status,
-          error: _err.message,
-          stack: env.NODE_ENV === "development" ? _err.stack : undefined,
+          error: err.message,
+          stack: env.NODE_ENV === "development" ? err.stack : undefined,
         }, `Global Error Handler`);
 
-
         if (env.SENTRY_DSN && status >= 500) {
-          Sentry.captureException(_err);
+          Sentry.captureException(err);
         }
 
         res.status(status).json({
           error: {
             message,
             status,
-            ...(process.env.NODE_ENV === "development" && { stack: _err.stack }),
+            ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
           }
         });
       }
