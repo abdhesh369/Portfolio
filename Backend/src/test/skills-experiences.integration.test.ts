@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
 import { createTestApp } from "./test-app.js";
+import { env } from "../env.js";
+
 
 describe("Skills & Experiences API Integration Tests", () => {
     const app = createTestApp();
@@ -8,7 +10,8 @@ describe("Skills & Experiences API Integration Tests", () => {
     const getAuth = async () => {
         const loginRes = await request(app)
             .post("/api/v1/auth/login")
-            .send({ password: "1111111111111111" });
+            .send({ password: env.ADMIN_PASSWORD });
+
         
         const cookies = loginRes.get("Set-Cookie")!;
         const authCookie = cookies.find(c => c.includes("auth_token"))!;

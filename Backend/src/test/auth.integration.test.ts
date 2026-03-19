@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
 import { createTestApp } from "./test-app.js";
+import { env } from "../env.js";
+
 
 describe("Auth Integration Tests", () => {
     const app = createTestApp();
@@ -9,7 +11,8 @@ describe("Auth Integration Tests", () => {
         it("should return 200 and set cookies on valid credentials", async () => {
             const response = await request(app)
                 .post("/api/v1/auth/login")
-                .send({ password: "1111111111111111" });
+                .send({ password: env.ADMIN_PASSWORD });
+
 
 
             expect(response.status).toBe(200);
@@ -39,7 +42,8 @@ describe("Auth Integration Tests", () => {
             // 1. Login to get initial tokens
             const loginRes = await request(app)
                 .post("/api/v1/auth/login")
-                .send({ password: "1111111111111111" });
+                .send({ password: env.ADMIN_PASSWORD });
+
 
             const initialCookies = loginRes.get("Set-Cookie")!;
             const refreshToken = initialCookies.find(c => c.includes("refresh_token"))!;
@@ -86,7 +90,8 @@ describe("Auth Integration Tests", () => {
             // First login to get the cookie
             const loginRes = await request(app)
                 .post("/api/v1/auth/login")
-                .send({ password: "1111111111111111" });
+                .send({ password: env.ADMIN_PASSWORD });
+
 
 
             const authCookie = loginRes.get("Set-Cookie")!.find(c => c.includes("auth_token"))!;
