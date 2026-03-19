@@ -7,7 +7,7 @@ async function globalSetup(_config: FullConfig) {
   const pingUrl = `${backendUrl}/ping`;
   const resetUrl = `${backendUrl}/api/v1/test/reset`;
   
-  const maxAttempts = 90; // 90 attempts, 2s apart = 180s (3 minutes)
+  const maxAttempts = 135; // 135 attempts, 2s apart = 270s (4.5 minutes)
   let attempts = 0;
   let success = false;
 

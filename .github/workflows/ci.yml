@@ -442,11 +442,15 @@ jobs:
 
       - name: Wait for backend to be ready
         run: |
-          for i in {1..60}; do
-            nc -z 127.0.0.1 5005 && echo Backend up && exit 0
+          for i in {1..90}; do
+            if curl -s http://127.0.0.1:5005/ping | grep -q 'ok'; then
+              echo "Backend is ready!"
+              exit 0
+            fi
+            echo "Waiting for backend... ($i/90)"
             sleep 3
           done
-          echo Backend did not start in time
+          echo "Backend failed to become ready in time"
           exit 1
 
       - name: Run E2E tests
