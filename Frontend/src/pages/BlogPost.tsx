@@ -21,6 +21,17 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { ArticleReactions } from "@/components/ArticleReactions";
 
+function getPlainTextFromHtml(html: string): string {
+    // Sanitize the HTML first to remove any potentially unsafe content
+    const sanitized = DOMPurify.sanitize(html);
+
+    // Use a temporary DOM element to extract plain text content
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = sanitized;
+
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
+
 function PostSkeleton() {
     return (
         <div className="max-w-4xl mx-auto space-y-8">
@@ -125,7 +136,7 @@ export default function BlogPost() {
                         "image": article!.featuredImage ? [article!.featuredImage] : [],
                         "datePublished": article!.publishedAt,
                         "dateModified": article!.updatedAt,
-                        "wordCount": article!.content ? article!.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length : 0,
+                        "wordCount": article!.content ? getPlainTextFromHtml(article!.content).split(/\s+/).filter(Boolean).length : 0,
                         "author": {
                             "@type": "Person",
                             "name": authorName,
