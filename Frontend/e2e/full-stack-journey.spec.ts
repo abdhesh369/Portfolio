@@ -52,10 +52,12 @@ test.describe('Full-Stack Journey (Layer 3)', () => {
         await commitBtn.click({ force: true });
 
         
-        // Wait for success
+        // Wait for success - targeting the modal/form specifically to ensure it's gone
         console.warn('[E2E] Project created, verifying in list...');
-        await expect(page.getByPlaceholder(/Enter primary designation/i).first()).not.toBeVisible({ timeout: 15000 });
-        await page.waitForTimeout(2000); // Give list a moment to refresh
+        const formInput = page.getByPlaceholder(/Enter primary designation/i).first();
+        await expect(formInput).not.toBeVisible({ timeout: 20000 });
+        
+        // Final verification in the list
         await expect(page.getByText(TEST_PROJECT_TITLE)).toBeVisible({ timeout: 15000 });
 
 

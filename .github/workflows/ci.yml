@@ -452,6 +452,7 @@ jobs:
             echo "Waiting for backend... ($i/90)"
             sleep 3
           done
+          sleep 10 # Final warm-up for proxy stability
           echo "--- BACKEND LOG ---"
           cat /tmp/backend.log
           echo "Backend failed to become ready in time"

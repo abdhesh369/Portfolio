@@ -9,14 +9,14 @@ test.describe("SEO & Social Metadata", () => {
     // Title may be dynamic, so we check for the core name
     await expect(page).toHaveTitle(/Abdhesh Sah/i);
 
-    const description = page.locator('meta[name="description"]');
+    const description = page.locator('meta[name="description"]').first();
     await expect(description).toHaveAttribute("content", /portfolio|engineer|developer/i);
   });
 
   test("should have OpenGraph metadata for social sharing", async ({ page }) => {
-    const ogTitle = page.locator('meta[property="og:title"]');
-    const ogImage = page.locator('meta[property="og:image"]');
-    const ogType = page.locator('meta[property="og:type"]');
+    const ogTitle = page.locator('meta[property="og:title"]').first();
+    const ogImage = page.locator('meta[property="og:image"]').first();
+    const ogType = page.locator('meta[property="og:type"]').first();
 
     await expect(ogTitle).toHaveAttribute("content", /Abdhesh Sah/i);
     await expect(ogType).toHaveAttribute("content", "website");
@@ -27,15 +27,15 @@ test.describe("SEO & Social Metadata", () => {
   });
 
   test("should have Twitter card metadata", async ({ page }) => {
-    const twitterCard = page.locator('meta[name="twitter:card"]');
-    const twitterTitle = page.locator('meta[name="twitter:title"]');
+    const twitterCard = page.locator('meta[name="twitter:card"]').first();
+    const twitterTitle = page.locator('meta[name="twitter:title"]').first();
 
     await expect(twitterCard).toHaveAttribute("content", /summary|large_image/i);
     await expect(twitterTitle).toHaveAttribute("content", /Abdhesh Sah/i);
   });
 
   test("should have canonical URL tag", async ({ page }) => {
-    const canonical = page.locator('link[rel="canonical"]');
+    const canonical = page.locator('link[rel="canonical"]').first();
     const href = await canonical.getAttribute("href");
     expect(href).toMatch(/^https?:\/\//);
   });

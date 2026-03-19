@@ -8,8 +8,8 @@ test.describe("Mobile UI/UX Deep Dive", () => {
   });
 
   test("hamburger menu opens and closes", async ({ page }) => {
-    // Wait for React hydration (static HTML has "Abdhesh.dev", React has "Portfolio.Dev")
-    await expect(page.getByText(/Portfolio\.Dev/i)).toBeVisible({ timeout: 15000 });
+    // Wait for React hydration (Theme Toggle only exists in the dynamic Navbar)
+    await expect(page.locator('button[aria-label*="theme" i], .theme-toggle').first()).toBeVisible({ timeout: 15000 });
 
     const menuBtn = page.locator('button[aria-label*="menu" i], button.hamburger').first();
     await expect(menuBtn).toBeVisible();
