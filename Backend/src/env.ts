@@ -14,15 +14,31 @@ let envFile = ".env";
 if (process.env.NODE_ENV === "production") envFile = ".env.production";
 if (process.env.NODE_ENV === "test") envFile = ".env.test";
 
-const envPath = path.join(rootDir, envFile);
+// Resolve the .env file path. When running via `npm -w Backend` from the
+// monorepo root, process.cwd() is the root, not Backend/. We therefore check
+// multiple candidate directories so the correct file is always found.
+const candidateDirs = [
+    rootDir,
+    path.join(rootDir, "Backend"),      // monorepo root → Backend/
+];
 
-if (fs.existsSync(envPath)) {
+function findEnvFile(filename: string): string | null {
+    for (const dir of candidateDirs) {
+        const candidate = path.join(dir, filename);
+        if (fs.existsSync(candidate)) return candidate;
+    }
+    return null;
+}
+
+const envPath = findEnvFile(envFile);
+
+if (envPath) {
     process.stdout.write(`[ENV] Loading variables from: ${envPath}\n`);
     dotenv.config({ path: envPath });
 } else {
-    // Try fallback .env in root
-    const fallback = path.join(rootDir, ".env");
-    if (fs.existsSync(fallback)) {
+    // Try fallback .env
+    const fallback = findEnvFile(".env");
+    if (fallback) {
         process.stdout.write(`[ENV] Loading variables from fallback: ${fallback}\n`);
         dotenv.config({ path: fallback });
     } else {

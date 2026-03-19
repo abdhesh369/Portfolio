@@ -3,16 +3,15 @@ import { db, pool } from "../db.js";
 import { sql } from "drizzle-orm";
 import { CacheService } from "../lib/cache.js";
 import { initQueues } from "../lib/queue.js";
+import { bootstrapDatabaseSchema } from "../lib/schema-bootstrap.js";
 
 /**
  * Global setup for integration tests.
  * Runs once before all tests in a file.
  */
 beforeAll(async () => {
-    // 1. Ensure schema is up to date
-    // Note: We've manually pushed the schema to the test database to avoid migration schema lock issues on Neon.
-    // For now, we skip automated bootstrap to ensure tests run fast and don't timeout.
-    // await bootstrapDatabaseSchema();
+    // 1. Ensure schema is up to date (runs migrations + consistency checks)
+    await bootstrapDatabaseSchema();
     
     // 2. Initialize queues (needed for some integration tests)
     initQueues();

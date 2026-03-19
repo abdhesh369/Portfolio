@@ -5,7 +5,12 @@ import { logger } from "./logger.js";
 import path from "path";
 import fs from "fs";
 
-const STARTUP_MIGRATIONS_FOLDER = path.resolve(process.cwd(), "drizzle/migrations");
+// Resolve migrations folder — works both when cwd is Backend/ or the monorepo root
+const migrationsCandidates = [
+    path.resolve(process.cwd(), "drizzle/migrations"),
+    path.resolve(process.cwd(), "Backend/drizzle/migrations"),
+];
+const STARTUP_MIGRATIONS_FOLDER = migrationsCandidates.find(p => fs.existsSync(p)) ?? migrationsCandidates[0];
 
 
 async function runBestEffortMigrations() {
