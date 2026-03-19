@@ -458,15 +458,15 @@ jobs:
         env:
           CI: true
           NODE_ENV: test
+          TEST_ADMIN_PASSWORD: ci_test_admin_password_unbreakable_long_string_12345
           PORT: 5005
           HOST: 127.0.0.1
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
           JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
-          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_PASSWORD: ci_test_admin_password_unbreakable_long_string_12345
           ADMIN_EMAIL: admin@ci-test.local
           CONTACT_EMAIL: contact@ci-test.local
-          TEST_ADMIN_PASSWORD: ci_test_admin_password_secure
           VITE_DISABLE_PWA: "true"
 
       - name: Upload Playwright report
