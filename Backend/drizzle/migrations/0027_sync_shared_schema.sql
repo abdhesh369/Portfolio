@@ -110,6 +110,12 @@ BEGIN
         WHEN duplicate_column THEN NULL;
     END;
 
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutAvailability" varchar(255) DEFAULT 'Open to Work';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
     -- ... Add other site_settings columns if needed, but start with the one reported as missing
     BEGIN
         ALTER TABLE "site_settings" ADD COLUMN "personalName" varchar(255) DEFAULT 'Your Name';
