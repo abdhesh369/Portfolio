@@ -208,6 +208,15 @@ jobs:
       - name: Build shared package
         run: npm run build:shared
 
+      - name: Wait for Redis
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 6379 && echo Redis up && exit 0
+            sleep 1
+          done
+          echo Redis did not start in time
+          exit 1
+
       - name: Run database migrations
         run: npm run migrate -w Backend
         env:
@@ -367,6 +376,15 @@ jobs:
 
       - name: Build shared package
         run: npm run build:shared
+
+      - name: Wait for Redis
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 6379 && echo Redis up && exit 0
+            sleep 1
+          done
+          echo Redis did not start in time
+          exit 1
 
       - name: Run database migrations
         run: npm run migrate -w Backend
