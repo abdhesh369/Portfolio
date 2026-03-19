@@ -40,6 +40,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Guard all routes except /ping until server is fully ready (Finding #10)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (!isReady && req.path !== "/ping" && !req.path.startsWith("/health")) {
+    return res.status(503).json({ 
+      error: { 
+        message: "Server is initializing", 
+        status: 503,
+        context: "startup"
+      } 
+    });
+  }
+  next();
+});
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",

@@ -472,6 +472,7 @@ jobs:
           ADMIN_EMAIL: admin@ci-test.local
           CONTACT_EMAIL: contact@ci-test.local
           VITE_DISABLE_PWA: "true"
+          GITHUB_USERNAME: abdhesh369
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

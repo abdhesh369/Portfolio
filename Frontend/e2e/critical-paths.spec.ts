@@ -213,6 +213,7 @@ test.describe("Performance & Accessibility Basics", () => {
       }
     });
 
+    page.on('response', r => { if (r.status() >= 500) console.warn('HTTP ' + r.status() + ' at ' + r.url()); });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForTimeout(3000); // Wait for async resources like analytics/chatbot
     
