@@ -44,6 +44,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
+  "http://127.0.0.1:4173",
+  "http://127.0.0.1:5173",
   "https://abdheshsah.com.np",
   "https://portfolio-frontend-h4f2.onrender.com",
   process.env.FRONTEND_URL,
@@ -82,7 +84,7 @@ app.use(
     }
 
     const isAllowed = allowedOrigins.includes(origin) ||
-      (process.env.NODE_ENV !== "production" && origin.startsWith("http://localhost:")) ||
+      (process.env.NODE_ENV !== "production" && (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:"))) ||
       (process.env.BACKEND_RENDER_URL ? origin === process.env.BACKEND_RENDER_URL : false);
 
     if (isAllowed) {

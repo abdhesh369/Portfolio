@@ -45,7 +45,10 @@ async function globalSetup(_config: FullConfig) {
       } else {
         console.error(`\n[E2E Setup] \u274C Error: Backend server not ready at ${backendUrl} after ${maxAttempts * 2}s`);
         console.error(`Reason: ${errorMessage}`);
-        if (process.env.CI) process.exit(1);
+        throw new Error(
+          `[E2E Setup] Backend server not ready at ${backendUrl} after ${maxAttempts * 2}s. Reason: ${errorMessage}`,
+          { cause: error }
+        );
       }
     }
   }

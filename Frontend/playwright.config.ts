@@ -74,7 +74,7 @@ export default defineConfig({
         {
             // Preview the frontend, pointing to the real backend
             // Note: Frontend must be built before running this (handled by CI or manually)
-            command: 'npm run preview -- --host 127.0.0.1',
+            command: 'npm run preview',
             url: 'http://127.0.0.1:4173',
             reuseExistingServer: true,
             timeout: 120 * 1000,

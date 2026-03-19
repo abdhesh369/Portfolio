@@ -426,16 +426,17 @@ jobs:
           VITE_SENTRY_DSN: ""
           VITE_GA_MEASUREMENT_ID: G-MOCK-ID
           VITE_DISABLE_PWA: "true"
+          VITE_SENTRY_ENVIRONMENT: test
 
       - name: Start backend server
-        run: npm run test:e2e:server -w Backend &
+        run: npm run test:e2e:server -w Backend > /tmp/backend.log 2>&1 &
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
           JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
-          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_PASSWORD: ci_test_admin_password_unbreakable_long_string_12345
           ADMIN_EMAIL: admin@ci-test.local
           CONTACT_EMAIL: contact@ci-test.local
         shell: bash
@@ -450,11 +451,14 @@ jobs:
             echo "Waiting for backend... ($i/90)"
             sleep 3
           done
+          echo "--- BACKEND LOG ---"
+          cat /tmp/backend.log
           echo "Backend failed to become ready in time"
           exit 1
 
       - name: Run E2E tests
-        run: npm run test:e2e -w Frontend
+        run: npx playwright test
+        working-directory: Frontend
         env:
           CI: true
           NODE_ENV: test
