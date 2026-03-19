@@ -122,6 +122,24 @@ BEGIN
         WHEN duplicate_column THEN NULL;
     END;
 
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutTechStack" jsonb DEFAULT '["React", "Node.js", "TypeScript", "PostgreSQL", "Tailwind"]'::jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutTimeline" jsonb DEFAULT '[{"year": "2024 - Present", "title": "Advanced System Design", "description": "Deep diving into distributed systems, Docker, and Microservices architecture."}, {"year": "2023", "title": "Engineering Core", "description": "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University."}, {"year": "2022", "title": "Hello World", "description": "Started the journey with Python scripting and basic web development."}]'::jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutInfoCards" jsonb DEFAULT '[{"icon": "GraduationCap", "label": "Status", "value": "B.E. Student"}, {"icon": "Code", "label": "Focus Area", "value": "Full Stack System Design", "color": "purple"}, {"icon": "Cpu", "label": "Hardware", "value": "Electronics & Comms", "color": "purple"}, {"icon": "Target", "label": "Goal", "value": "Software Engineer"}]'::jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
     -- ... Add other site_settings columns if needed, but start with the one reported as missing
     BEGIN
         ALTER TABLE "site_settings" ADD COLUMN "personalName" varchar(255) DEFAULT 'Your Name';
