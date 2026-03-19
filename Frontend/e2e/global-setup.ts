@@ -11,7 +11,7 @@ async function globalSetup(_config: FullConfig) {
   let attempts = 0;
   let success = false;
 
-  console.log(`\n[E2E Setup] Waiting for backend at ${backendUrl}...`);
+  console.warn(`\n[E2E Setup] Waiting for backend at ${backendUrl}...`);
   
   while (attempts < maxAttempts && !success) {
     try {
@@ -22,14 +22,14 @@ async function globalSetup(_config: FullConfig) {
       }
 
       // 2. Server is up, now try to reset environment
-      console.log('\n[E2E Setup] Backend reachable. Resetting environment...');
+      console.warn('\n[E2E Setup] Backend reachable. Resetting environment...');
       const resetRes = await fetch(resetUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
       });
       
       if (resetRes.ok) {
-        console.log('[E2E Setup] \u2705 Backend environment reset successfully.');
+        console.warn('[E2E Setup] \u2705 Backend environment reset successfully.');
         success = true;
       } else {
         const errorText = await resetRes.text();

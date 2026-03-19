@@ -383,6 +383,27 @@ jobs:
           VITE_GA_MEASUREMENT_ID: G-MOCK-ID
           VITE_DISABLE_PWA: "true"
 
+      - name: Start backend server
+        run: npm run test:e2e:server -w Backend &
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          NODE_ENV: test
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
+          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
+          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_EMAIL: admin@ci-test.local
+          CONTACT_EMAIL: contact@ci-test.local
+        shell: bash
+
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..60}; do
+            nc -z 127.0.0.1 5005 && echo Backend up && exit 0
+            sleep 3
+          done
+          echo Backend did not start in time
+          exit 1
+
       - name: Run E2E tests
         run: npm run test:e2e -w Frontend
         env:

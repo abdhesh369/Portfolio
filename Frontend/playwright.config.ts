@@ -68,7 +68,7 @@ export default defineConfig({
             // Start the REAL backend server in test mode
             command: 'npm run test:e2e:server --prefix ../Backend',
             url: 'http://127.0.0.1:5005/ping',
-            reuseExistingServer: !process.env.CI,
+            reuseExistingServer: true,
             timeout: 120 * 1000,
         },
         {
@@ -76,7 +76,7 @@ export default defineConfig({
             // Note: Frontend must be built before running this (handled by CI or manually)
             command: 'npm run preview -- --host 127.0.0.1',
             url: 'http://127.0.0.1:4173',
-            reuseExistingServer: !process.env.CI,
+            reuseExistingServer: true,
             timeout: 120 * 1000,
         }
     ],
