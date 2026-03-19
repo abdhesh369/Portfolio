@@ -87,6 +87,7 @@
   "overrides": {
     "fast-xml-parser": "^5.4.1",
     "esbuild": "^0.25.0",
+    "flatted": "^3.4.2",
     "ioredis": "5.10.0"
   },
   "engines": {
