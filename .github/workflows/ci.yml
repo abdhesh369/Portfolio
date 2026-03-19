@@ -183,6 +183,15 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -203,6 +212,7 @@ jobs:
         run: npm run migrate -w Backend
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          REDIS_URL: redis://localhost:6379
           NODE_ENV: test
 
       - name: Backend — integration tests
@@ -333,6 +343,15 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -353,6 +372,7 @@ jobs:
         run: npm run migrate -w Backend
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          REDIS_URL: redis://localhost:6379
           NODE_ENV: test
 
       - name: Cache Playwright browsers
@@ -387,6 +407,7 @@ jobs:
         run: npm run test:e2e:server -w Backend &
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          REDIS_URL: redis://localhost:6379
           NODE_ENV: test
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
           JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
