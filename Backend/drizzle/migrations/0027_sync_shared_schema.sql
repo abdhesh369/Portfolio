@@ -49,4 +49,37 @@ BEGIN
     EXCEPTION
         WHEN duplicate_column THEN NULL;
     END;
+
+    -- Skills missing columns
+    BEGIN
+        ALTER TABLE "skills" ADD COLUMN "mastery" integer DEFAULT 0 NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "skills" ADD COLUMN "endorsements" integer DEFAULT 0 NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    -- Testimonials missing columns
+    BEGIN
+        ALTER TABLE "testimonials" ADD COLUMN "linkedinUrl" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    -- Experiences missing columns
+    BEGIN
+        ALTER TABLE "experiences" ADD COLUMN "startDate" timestamp DEFAULT now() NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "experiences" ADD COLUMN "endDate" timestamp;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
 END $$;

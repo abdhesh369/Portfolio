@@ -38,7 +38,12 @@ async function runBestEffortMigrations() {
             { context: "schema-bootstrap", error: message },
             "❌ Migration step failed"
         );
-        // We still continue to applyConsistencyChecks which might create basic tables
+        
+        // Critical for tests: if migrations fail, we must stop execution
+        if (process.env.NODE_ENV === "test") {
+            throw error;
+        }
+        // In production/dev, we try to proceed with consistency checks
     }
 }
 
@@ -143,11 +148,56 @@ async function applyConsistencyChecks() {
     }
 }
 
-export async function bootstrapDatabaseSchema() {
-    // 1. Run migrations first (primary method)
-    await runBestEffortMigrations();
+let bootstrapPromise: Promise<void> | null = null;
 
-    // 2. Run light consistency checks/init (secondary safety net)
-    await applyConsistencyChecks();
+export async function bootstrapDatabaseSchema() {
+    if (bootstrapPromise) return bootstrapPromise;
+
+    bootstrapPromise = (async () => {
+        // In test environment, we want a truly fresh start to ensure migration consistency
+        if (process.env.NODE_ENV === "test") {
+            const client = await pool.connect();
+            try {
+                logger.info({ context: "schema-bootstrap" }, "🧹 Wiping test database schema...");
+                await client.query("DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;");
+                await client.query("DROP SCHEMA IF EXISTS drizzle CASCADE;");
+                logger.info({ context: "schema-bootstrap" }, "✓ Test database wiped");
+            } catch (error) {
+                logger.error({ context: "schema-bootstrap", error }, "Failed to wipe test database");
+                bootstrapPromise = null; // Allow retry on failure
+                throw error;
+            } finally {
+                client.release();
+            }
+        }
+
+        // 1. Run migrations first (primary method)
+        await runBestEffortMigrations();
+
+        // Verify that at least one core table exists - if not, migrations failed to apply
+        const client = await pool.connect();
+        try {
+            const check = await client.query("SELECT to_regclass('public.analytics') as has_analytics, to_regclass('public.reading_list') as has_reading_list;");
+            if (!check.rows[0].has_analytics || !check.rows[0].has_reading_list) {
+                logger.error({ 
+                    context: "schema-bootstrap", 
+                    analytics: !!check.rows[0].has_analytics,
+                    reading_list: !!check.rows[0].has_reading_list
+                }, "❌ Core tables missing after migration! Migrations failed to apply correctly.");
+                if (process.env.NODE_ENV === "test") {
+                    throw new Error("Migrations failed to create core tables (analytics or reading_list)");
+                }
+            } else {
+                logger.info({ context: "schema-bootstrap" }, "✓ Core tables verified (analytics & reading_list)");
+            }
+        } finally {
+            client.release();
+        }
+
+        // 2. Run light consistency checks/init (secondary safety net)
+        await applyConsistencyChecks();
+    })();
+
+    return bootstrapPromise;
 }
 

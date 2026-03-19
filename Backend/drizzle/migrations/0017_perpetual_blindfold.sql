@@ -70,7 +70,15 @@ ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "logoText" varchar(255) DEF
 ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "heroHeadingLine1" varchar(255) DEFAULT 'Start building';--> statement-breakpoint
 ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "heroHeadingLine2" varchar(255) DEFAULT 'The Future';
 --> statement-breakpoint
-ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_fromSkillId_skills_id_fk" FOREIGN KEY ("fromSkillId") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_toSkillId_skills_id_fk" FOREIGN KEY ("toSkillId") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'skill_connections_fromSkillId_skills_id_fk') THEN
+        ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_fromSkillId_skills_id_fk" FOREIGN KEY ("fromSkillId") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'skill_connections_toSkillId_skills_id_fk') THEN
+        ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_toSkillId_skills_id_fk" FOREIGN KEY ("toSkillId") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;
+    END IF;
+END $$;
+--> statement-breakpoint
 CREATE INDEX "code_reviews_processing_idx" ON "code_reviews" USING btree ("projectId") WHERE status = 'processing';--> statement-breakpoint
 ALTER TABLE "seo_settings" ADD CONSTRAINT "seo_settings_pageSlug_unique" UNIQUE("pageSlug");

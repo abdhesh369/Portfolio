@@ -148,13 +148,19 @@ CREATE TABLE IF NOT EXISTS "testimonials" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "article_tags" ADD CONSTRAINT "article_tags_articleId_articles_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."articles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "analytics_type_idx" ON "analytics" USING btree ("type");--> statement-breakpoint
-CREATE INDEX "analytics_created_at_idx" ON "analytics" USING btree ("createdAt");--> statement-breakpoint
-CREATE INDEX "articles_status_idx" ON "articles" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "articles_slug_idx" ON "articles" USING btree ("slug");--> statement-breakpoint
-CREATE INDEX "projects_category_idx" ON "projects" USING btree ("category");--> statement-breakpoint
-CREATE INDEX "projects_order_idx" ON "projects" USING btree ("displayOrder");--> statement-breakpoint
-CREATE INDEX "services_category_idx" ON "services" USING btree ("category");--> statement-breakpoint
-CREATE INDEX "services_order_idx" ON "services" USING btree ("displayOrder");--> statement-breakpoint
-CREATE INDEX "testimonials_order_idx" ON "testimonials" USING btree ("displayOrder");
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'article_tags_articleId_articles_id_fk') THEN
+        ALTER TABLE "article_tags" ADD CONSTRAINT "article_tags_articleId_articles_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."articles"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+END $$;
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "analytics_type_idx" ON "analytics" USING btree ("type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "analytics_created_at_idx" ON "analytics" USING btree ("createdAt");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "articles_status_idx" ON "articles" USING btree ("status");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "articles_slug_idx" ON "articles" USING btree ("slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "projects_category_idx" ON "projects" USING btree ("category");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "projects_order_idx" ON "projects" USING btree ("displayOrder");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "services_category_idx" ON "services" USING btree ("category");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "services_order_idx" ON "services" USING btree ("displayOrder");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "testimonials_order_idx" ON "testimonials" USING btree ("displayOrder");

@@ -82,11 +82,31 @@ ALTER TABLE "messages" ADD COLUMN IF NOT EXISTS "timeline" varchar(100);--> stat
 ALTER TABLE "projects" ADD COLUMN IF NOT EXISTS "isHidden" boolean DEFAULT false NOT NULL;--> statement-breakpoint
 
 ALTER TABLE "skills" ADD COLUMN IF NOT EXISTS "mastery" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
-ALTER TABLE "case_studies" ADD CONSTRAINT "case_studies_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientProjectId_client_projects_id_fk" FOREIGN KEY ("clientProjectId") REFERENCES "public"."client_projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientId_clients_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."clients"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "client_projects" ADD CONSTRAINT "client_projects_clientId_clients_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."clients"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "code_reviews" ADD CONSTRAINT "code_reviews_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "analytics" ADD CONSTRAINT "analytics_targetId_projects_id_fk" FOREIGN KEY ("targetId") REFERENCES "public"."projects"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_from_skill_id_skills_id_fk" FOREIGN KEY ("from_skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_to_skill_id_skills_id_fk" FOREIGN KEY ("to_skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'case_studies_projectId_projects_id_fk') THEN
+        ALTER TABLE "case_studies" ADD CONSTRAINT "case_studies_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'client_feedback_clientProjectId_client_projects_id_fk') THEN
+        ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientProjectId_client_projects_id_fk" FOREIGN KEY ("clientProjectId") REFERENCES "public"."client_projects"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'client_feedback_clientId_clients_id_fk') THEN
+        ALTER TABLE "client_feedback" ADD CONSTRAINT "client_feedback_clientId_clients_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."clients"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'client_projects_clientId_clients_id_fk') THEN
+        ALTER TABLE "client_projects" ADD CONSTRAINT "client_projects_clientId_clients_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."clients"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'code_reviews_projectId_projects_id_fk') THEN
+        ALTER TABLE "code_reviews" ADD CONSTRAINT "code_reviews_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'analytics_targetId_projects_id_fk') THEN
+        ALTER TABLE "analytics" ADD CONSTRAINT "analytics_targetId_projects_id_fk" FOREIGN KEY ("targetId") REFERENCES "public"."projects"("id") ON DELETE set null ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'skill_connections_from_skill_id_skills_id_fk') THEN
+        ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_from_skill_id_skills_id_fk" FOREIGN KEY ("from_skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'skill_connections_to_skill_id_skills_id_fk') THEN
+        ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_to_skill_id_skills_id_fk" FOREIGN KEY ("to_skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;
+    END IF;
+END $$;
+--> statement-breakpoint

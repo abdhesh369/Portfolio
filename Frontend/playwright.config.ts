@@ -72,11 +72,12 @@ export default defineConfig({
             timeout: 120 * 1000,
         },
         {
-            // Build and preview the frontend, pointing to the real backend
-            command: 'cross-env VITE_API_URL=http://127.0.0.1:5005 npm run build && npm run preview -- --host 127.0.0.1',
+            // Preview the frontend, pointing to the real backend
+            // Note: Frontend must be built before running this (handled by CI or manually)
+            command: 'npm run preview -- --host 127.0.0.1',
             url: 'http://127.0.0.1:4173',
             reuseExistingServer: !process.env.CI,
-            timeout: 300 * 1000,
+            timeout: 120 * 1000,
         }
     ],
 
