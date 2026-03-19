@@ -213,9 +213,25 @@ test.describe("Performance & Accessibility Basics", () => {
       }
     });
 
-    page.on('response', r => { if (r.status() >= 500) console.warn('HTTP ' + r.status() + ' at ' + r.url()); });
+    // Log 500/502/503 responses which may cause homepage console errors
+    page.on('response', async response => {
+      const status = response.status();
+      if (status >= 500 && status <= 504) {
+        let bodySnippet = '';
+        try {
+          const body = await response.text();
+          bodySnippet = ` - Body: ${body.substring(0, 100)}`;
+        } catch (_ignore) {
+          // Ignore body read errors in tests
+        }
+        criticalErrors.push(`HTTP ${status} at ${response.url()}${bodySnippet}`);
+      }
+    });
+
     await page.goto('/', { waitUntil: 'load' });
-    await page.waitForTimeout(3000); // Wait for async resources like analytics/chatbot
+    if (criticalErrors.length === 0) {
+      await page.waitForTimeout(3000); // Wait for async resources like analytics/chatbot
+    }
     
     if (criticalErrors.length > 0) {
       console.warn("Critical Console/Network Errors:", JSON.stringify(criticalErrors, null, 2));

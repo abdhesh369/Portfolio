@@ -483,6 +483,16 @@ jobs:
           path: Frontend/playwright-report/
           retention-days: 7
 
+      - name: Display Backend Logs on Failure
+        if: failure()
+        run: |
+          echo "--- BACKEND LOGS ---"
+          if [ -f /tmp/backend.log ]; then
+            cat /tmp/backend.log
+          else
+            echo "Backend log file not found"
+          fi
+
 # ══════════════════════════════════════════════════════════════════════════════
 # JOB 6 — Store CI results for the PR comment job
 # The pr-summary workflow (ci-pr-comment.yml) runs with write permissions on

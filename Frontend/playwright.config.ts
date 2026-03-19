@@ -70,6 +70,17 @@ export default defineConfig({
             url: 'http://127.0.0.1:5005/ping',
             reuseExistingServer: true,
             timeout: 120 * 1000,
+            env: {
+                GITHUB_USERNAME: 'abdhesh369',
+                ADMIN_PASSWORD: 'ci_test_admin_password_unbreakable_long_string_12345',
+                ADMIN_EMAIL: 'admin@ci-test.local',
+                CONTACT_EMAIL: 'contact@ci-test.local',
+                DATABASE_URL: 'postgresql://postgres:password@localhost:5432/portfolio_test',
+                REDIS_URL: 'redis://localhost:6379',
+                NODE_ENV: 'test',
+                JWT_SECRET: 'test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs',
+                JWT_REFRESH_SECRET: 'test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_'
+            }
         },
         {
             // Preview the frontend, pointing to the real backend
