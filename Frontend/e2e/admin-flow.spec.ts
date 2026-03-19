@@ -89,12 +89,14 @@ test.describe("Admin Dashboard (requires auth)", () => {
     // The profile button is in the header
     const profileBtn = page.getByTestId('profile-popover-trigger');
     await expect(profileBtn).toBeVisible({ timeout: 15000 });
-    await profileBtn.click();
+    await profileBtn.scrollIntoViewIfNeeded();
+    await profileBtn.click({ force: true });
 
     // Now the logout button (labeled TERMINATE_SESSION in the UI) should be visible
-    const logoutBtn = page.getByText(/TERMINATE_SESSION|LOGOUT|TERMINATE SESSION/i).first();
+    const logoutBtn = page.getByTestId('logout-button');
     await expect(logoutBtn).toBeVisible({ timeout: 15000 });
-    await logoutBtn.click();
+    await logoutBtn.scrollIntoViewIfNeeded();
+    await logoutBtn.click({ force: true });
 
     await page.waitForURL("**/admin/login", { timeout: 10000 });
     await expect(page).toHaveURL(/\/admin\/login/);

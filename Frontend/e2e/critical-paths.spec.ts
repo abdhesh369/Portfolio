@@ -87,6 +87,7 @@ test.describe("Contact Form", () => {
     const submitBtn = page
       .getByRole("button", { name: /send|submit|contact|transmission|packet|inquiry/i })
       .first();
+    await submitBtn.scrollIntoViewIfNeeded();
     await submitBtn.click({ force: true });
 
     // Should show validation errors or the form should still be present

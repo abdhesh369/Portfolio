@@ -48,7 +48,8 @@ test.describe('Full-Stack Journey (Layer 3)', () => {
         // Submit (Commit Artifact)
         console.warn('[E2E] Committing artifact...');
         const commitBtn = page.getByRole('button', { name: /Commit Artifact/i }).first();
-        await commitBtn.click();
+        await commitBtn.scrollIntoViewIfNeeded();
+        await commitBtn.click({ force: true });
 
         
         // Wait for success
