@@ -116,6 +116,12 @@ BEGIN
         WHEN duplicate_column THEN NULL;
     END;
 
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutDescription" text DEFAULT 'Building scalable web systems and analyzing complex algorithms.';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
     -- ... Add other site_settings columns if needed, but start with the one reported as missing
     BEGIN
         ALTER TABLE "site_settings" ADD COLUMN "personalName" varchar(255) DEFAULT 'Your Name';

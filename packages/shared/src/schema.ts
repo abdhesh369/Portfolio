@@ -152,7 +152,7 @@ export const seoSettingsTable = pgTable("seo_settings", {
   keywords: text("keywords"),
   canonicalUrl: varchar("canonicalUrl", { length: 500 }),
   noindex: boolean("noindex").default(false),
-  twitterCard: varchar("twitterCard", { length: 50 }).default("summary_large_image"),
+  twitterCard: varchar("twitter_card", { length: 50 }).default("summary_large_image"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
