@@ -143,18 +143,18 @@ export const emailTemplatesTable = pgTable("email_templates", {
 
 export const seoSettingsTable = pgTable("seo_settings", {
   id: serial("id").primaryKey(),
-  pageSlug: varchar("pageSlug", { length: 100 }).notNull().unique(),
-  metaTitle: varchar("metaTitle", { length: 60 }).notNull(),
-  metaDescription: text("metaDescription").notNull(),
-  ogTitle: varchar("ogTitle", { length: 255 }),
-  ogDescription: text("ogDescription"),
-  ogImage: varchar("ogImage", { length: 500 }),
+  pageSlug: varchar("page_slug", { length: 100 }).notNull().unique(),
+  metaTitle: varchar("meta_title", { length: 60 }).notNull(),
+  metaDescription: text("meta_description").notNull(),
+  ogTitle: varchar("og_title", { length: 255 }),
+  ogDescription: text("og_description"),
+  ogImage: varchar("og_image", { length: 500 }),
   keywords: text("keywords"),
-  canonicalUrl: varchar("canonicalUrl", { length: 500 }),
+  canonicalUrl: varchar("canonical_url", { length: 500 }),
   noindex: boolean("noindex").default(false),
-  twitterCard: varchar("twitterCard", { length: 50 }).default("summary_large_image"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(), // onUpdateNow is not directly supported in PG same way
+  twitterCard: varchar("twitter_card", { length: 50 }).default("summary_large_image"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const articlesTable = pgTable("articles", {
