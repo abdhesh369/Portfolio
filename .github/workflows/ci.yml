@@ -377,7 +377,7 @@ jobs:
       - name: Build frontend for preview
         run: npm run build -w Frontend
         env:
-          VITE_API_URL: http://localhost:5005
+          VITE_API_URL: http://127.0.0.1:5005
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
           VITE_GA_MEASUREMENT_ID: G-MOCK-ID
@@ -389,6 +389,7 @@ jobs:
           CI: true
           NODE_ENV: test
           PORT: 5005
+          HOST: 127.0.0.1
           DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
           JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
           JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_

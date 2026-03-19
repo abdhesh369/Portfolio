@@ -1,44 +1,50 @@
 import { FullConfig } from '@playwright/test';
 
 
-async function globalSetup(config: FullConfig) {
-  // Use 127.0.0.1 for maximum stability on Windows
-  const backendUrl = 'http://127.0.0.1:5005';
-  const maxAttempts = 60; // 60 attempts, 2s apart = 120s
+async function globalSetup(_config: FullConfig) {
+  // Use 127.0.0.1:5005 as configured in playwright.config.ts
+  const backendUrl = process.env.VITE_API_URL || 'http://127.0.0.1:5005';
+  const pingUrl = `${backendUrl}/ping`;
+  const resetUrl = `${backendUrl}/api/v1/test/reset`;
+  
+  const maxAttempts = 90; // 90 attempts, 2s apart = 180s (3 minutes)
   let attempts = 0;
   let success = false;
 
-  console.log('\n[E2E Setup] Waiting for backend and resetting environment...');
+  console.log(`\n[E2E Setup] Waiting for backend at ${backendUrl}...`);
   
   while (attempts < maxAttempts && !success) {
     try {
-      const response = await fetch(`${backendUrl}/api/v1/test/reset`, {
+      // 1. Check if server is listening and responding to /ping
+      const pingRes = await fetch(pingUrl);
+      if (!pingRes.ok) {
+        throw new Error(`Ping failed with status ${pingRes.status}`);
+      }
+
+      // 2. Server is up, now try to reset environment
+      console.log('\n[E2E Setup] Backend reachable. Resetting environment...');
+      const resetRes = await fetch(resetUrl, {
           method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
       });
       
-      if (response.ok) {
+      if (resetRes.ok) {
         console.log('[E2E Setup] \u2705 Backend environment reset successfully.');
         success = true;
-      } else if (response.status === 404) {
-        // Routes might not be registered yet if DB check is still running
-        throw new Error('Backend responding but routes not ready (404)');
       } else {
-        console.warn(`[E2E Setup] \u26A0\uFE0F Backend reset returned status ${response.status}`);
-        // Consider non-404 non-ok as "ready enough" or log and retry
-        attempts++;
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        const errorText = await resetRes.text();
+        throw new Error(`Reset failed (${resetRes.status}): ${errorText}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       attempts++;
+      const errorMessage = error instanceof Error ? error.message : String(error);
       if (attempts < maxAttempts) {
-        process.stdout.write('.'); // Progress indicator
+        if (attempts % 5 === 0) process.stdout.write(`${attempts}`);
+        else process.stdout.write('.');
         await new Promise(resolve => setTimeout(resolve, 2000));
       } else {
-        console.error(`\n[E2E Setup] \u274C Error: Backend server not reachable at ${backendUrl} after 60s`);
-        console.error(`Reason: ${error.message}`);
+        console.error(`\n[E2E Setup] \u274C Error: Backend server not ready at ${backendUrl} after ${maxAttempts * 2}s`);
+        console.error(`Reason: ${errorMessage}`);
         if (process.env.CI) process.exit(1);
       }
     }
