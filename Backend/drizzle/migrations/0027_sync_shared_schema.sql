@@ -182,4 +182,263 @@ BEGIN
     EXCEPTION
         WHEN duplicate_column THEN NULL;
     END;
+
+    -- NEW: All other missing columns for site_settings to prevent further errors
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "personalAvatar" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "whyHireMeData" jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialGithub" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialLinkedin" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialTwitter" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialInstagram" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialFacebook" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialYoutube" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialDiscord" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialStackoverflow" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialDevto" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "socialMedium" varchar(500);
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "locationText" varchar(255) DEFAULT 'Kathmandu, Nepal';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "chatbotGreeting" text DEFAULT 'Hi there! I''m Abdhesh''s AI assistant. How can I help you today?';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroGreeting" varchar(255) DEFAULT 'Hey, I am';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroBadgeText" varchar(255) DEFAULT 'Available for work';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroTaglines" jsonb DEFAULT '["Building amazing products", "Solving complex problems"]'::jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroCtaPrimary" varchar(255) DEFAULT 'View My Work';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroCtaPrimaryUrl" varchar(500) DEFAULT '#projects';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroCtaSecondary" varchar(255) DEFAULT 'Get In Touch';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroCtaSecondaryUrl" varchar(500) DEFAULT '#contact';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "logoText" varchar(255) DEFAULT 'Portfolio.Dev';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroHeadingLine1" varchar(255) DEFAULT 'Start building';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "heroHeadingLine2" varchar(255) DEFAULT 'The Future';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "navbarLinks" jsonb DEFAULT '[]'::jsonb;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "footerCopyright" varchar(255) DEFAULT '© 2024 Your Name. All rights reserved.';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "footerTagline" varchar(500) DEFAULT 'Building the future, one line of code at a time.';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "featureBlog" boolean DEFAULT true NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "featureGuestbook" boolean DEFAULT true NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "featureTestimonials" boolean DEFAULT true NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "featureServices" boolean DEFAULT true NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "featurePlayground" boolean DEFAULT false NOT NULL;
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "aboutHeading" varchar(255) DEFAULT 'About Me';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "projectsHeading" varchar(255) DEFAULT 'Flagship Projects';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "skillsHeading" varchar(255) DEFAULT 'Technical Arsenal';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "whyHireMeHeading" varchar(255) DEFAULT 'Why Hire Me';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "servicesHeading" varchar(255) DEFAULT 'What I Do';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "mindsetHeading" varchar(255) DEFAULT 'Engineering Mindset';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "practiceHeading" varchar(255) DEFAULT 'Disciplined Practice';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "experienceHeading" varchar(255) DEFAULT 'Professional Journey';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "testimonialsHeading" varchar(255) DEFAULT 'Client Feedback';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "guestbookHeading" varchar(255) DEFAULT 'Guestbook';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
+
+    BEGIN
+        ALTER TABLE "site_settings" ADD COLUMN "contactHeading" varchar(255) DEFAULT 'Get In Touch';
+    EXCEPTION
+        WHEN duplicate_column THEN NULL;
+    END;
 END $$;
