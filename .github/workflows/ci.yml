@@ -319,6 +319,21 @@ jobs:
     continue-on-error: false
     timeout-minutes: 30
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: portfolio_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d portfolio_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -333,6 +348,12 @@ jobs:
 
       - name: Build shared package
         run: npm run build:shared
+
+      - name: Run database migrations
+        run: npm run migrate -w Backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          NODE_ENV: test
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -356,7 +377,7 @@ jobs:
       - name: Build frontend for preview
         run: npm run build -w Frontend
         env:
-          VITE_API_URL: http://localhost:5000
+          VITE_API_URL: http://localhost:5005
           VITE_CLOUDINARY_CLOUD_NAME: ci_placeholder
           VITE_SENTRY_DSN: ""
           VITE_GA_MEASUREMENT_ID: G-MOCK-ID
@@ -366,7 +387,15 @@ jobs:
         run: npm run test:e2e -w Frontend
         env:
           CI: true
-          TEST_ADMIN_PASSWORD: mock-password
+          NODE_ENV: test
+          PORT: 5005
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/portfolio_test
+          JWT_SECRET: test_secret_key_at_least_64_characters_long_for_proper_security_in_ci_runs
+          JWT_REFRESH_SECRET: test_refresh_secret_key_at_least_64_chars_long_for_security_in_ci_runs_
+          ADMIN_PASSWORD: ci_test_admin_password_secure
+          ADMIN_EMAIL: admin@ci-test.local
+          CONTACT_EMAIL: contact@ci-test.local
+          TEST_ADMIN_PASSWORD: ci_test_admin_password_secure
           VITE_DISABLE_PWA: "true"
 
       - name: Upload Playwright report
