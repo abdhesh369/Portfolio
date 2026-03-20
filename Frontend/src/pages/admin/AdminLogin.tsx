@@ -24,8 +24,12 @@ export default function AdminLogin() {
     }, [isAuthenticated, navigate]);
 
     const handleSubmit = async (e: FormEvent) => {
+        console.warn("[DEBUG] AdminLogin handleSubmit triggered");
         e.preventDefault();
-        if (!password.trim()) return;
+        if (!password.trim()) {
+            console.warn("[DEBUG] AdminLogin: empty password, aborting");
+            return;
+        }
 
         setLoading(true);
         try {

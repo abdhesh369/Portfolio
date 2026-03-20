@@ -26,7 +26,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 
 const emptyProject = {
-    title: "", description: "", techStack: [] as string[], imageUrl: "",
+    title: "", slug: "", description: "", techStack: [] as string[], imageUrl: "",
     githubUrl: "", liveUrl: "", category: "", status: "Completed" as "In Progress" | "Completed" | "Archived",
     problemStatement: "", motivation: "", systemDesign: "", challenges: "", learnings: "",
     isFlagship: false, isHidden: false, impact: "", role: "",
@@ -251,6 +251,7 @@ export function ProjectsTab(_props: AdminTabProps) {
 
         const body = {
             ...editing,
+            slug: editing.slug || (editing.title || "").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
             techStack: techInput.split(",").map((s) => s.trim()).filter(Boolean),
             githubUrl: editing.githubUrl || null,
             liveUrl: editing.liveUrl || null,

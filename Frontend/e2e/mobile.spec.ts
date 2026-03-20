@@ -8,10 +8,11 @@ test.describe("Mobile UI/UX Deep Dive", () => {
   });
 
   test("hamburger menu opens and closes", async ({ page }) => {
-    // Wait for React hydration (Theme Toggle only exists in the dynamic Navbar)
-    await expect(page.locator('button[aria-label*="theme" i], .theme-toggle').first()).toBeVisible({ timeout: 15000 });
-
-    const menuBtn = page.locator('button[aria-label*="menu" i], button.hamburger').first();
+    const menuBtn = page.locator('button[aria-label*="menu" i], button.hamburger, [data-testid="mobile-menu"]').first();
+    await expect(menuBtn).toBeVisible({ timeout: 15000 });
+    
+    // Wait briefly for React hydration to attach event listeners
+    await page.waitForTimeout(1500);
     await expect(menuBtn).toBeVisible();
     
     await menuBtn.click();
@@ -19,8 +20,8 @@ test.describe("Mobile UI/UX Deep Dive", () => {
     // Allow for Framer Motion animation
     await page.waitForTimeout(500);
     
-    // Check for mobile nav links
-    const mobileLink = page.locator('nav a, nav button').filter({ hasText: /Projects|Skills|Blog/i }).first();
+    // Check for mobile nav links (use .last() to avoid hidden desktop nav)
+    const mobileLink = page.getByRole('button', { name: /Projects|Skills|Blog/i }).or(page.getByRole('link', { name: /Projects|Skills|Blog/i })).last();
     await expect(mobileLink).toBeVisible();
     
     // Close menu (either by clicking toggle again or an overlay)

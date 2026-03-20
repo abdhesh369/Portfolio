@@ -8,6 +8,11 @@ import { recordAudit } from "../lib/audit.js";
 const subscribersRouter = Router();
 const subscriberService = new SubscriberService();
 
+subscribersRouter.get("/", asyncHandler(async (_req, res) => {
+    const subscribers = await subscriberService.listSubscribers();
+    res.json(subscribers);
+}));
+
 subscribersRouter.post("/subscribe", asyncHandler(async (req, res) => {
     const data = insertSubscriberApiSchema.parse(req.body);
     const subscriber = await subscriberService.subscribe(data);

@@ -440,6 +440,7 @@ jobs:
           ADMIN_EMAIL: admin@ci-test.local
           CONTACT_EMAIL: contact@ci-test.local
           GITHUB_USERNAME: abdhesh369
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
 
       - name: Wait for backend to be ready
@@ -475,6 +476,7 @@ jobs:
           CONTACT_EMAIL: contact@ci-test.local
           VITE_DISABLE_PWA: "true"
           GITHUB_USERNAME: abdhesh369
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

@@ -261,6 +261,20 @@ app.get("/health", async (_req: Request, res: Response) => {
   });
 });
 
+// Relay for /api/v1/health (requested by frontend/tests)
+app.get("/api/v1/health", async (req: Request, res: Response) => {
+  // Reuse the logic from /health
+  const dbHealth = await checkDatabaseHealth();
+  const redisHealth = await getRedisHealthSafe();
+  const isHealthy = dbHealth.healthy && redisHealth.healthy;
+
+  res.status(200).json({
+    status: isHealthy ? "healthy" : "degraded",
+    database: dbHealth.healthy ? "connected" : "reconnecting",
+    redis: redisHealth.healthy ? "connected" : "reconnecting",
+  });
+});
+
 
 function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {

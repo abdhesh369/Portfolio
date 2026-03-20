@@ -10,15 +10,17 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
   test('Home page has no critical a11y violations', async ({ page }) => {
     test.slow();
     await page.goto('/');
-    // Wait for hero to render
+    // Wait for hero to render and network to settle
     await page.locator('h1').waitFor({ state: 'visible' });
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1000);
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
 
     if (results.violations.some(v => v.impact === 'critical')) {
-      console.log("CRITICAL ACCESSIBILITY VIOLATIONS:", JSON.stringify(results.violations.filter(v => v.impact === 'critical'), null, 2));
+      console.error("CRITICAL ACCESSIBILITY VIOLATIONS:", JSON.stringify(results.violations.filter(v => v.impact === 'critical'), null, 2));
     }
 
     expect(results.violations.filter(v => v.impact === 'critical')).toEqual([]);
@@ -27,8 +29,8 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
   test('Blog list page has no critical a11y violations', async ({ page }) => {
     test.slow();
     await page.goto('/blog');
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Wait for the main heading to ensure page has rendered
+    await page.locator('h1').waitFor({ state: 'visible', timeout: 30000 });
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

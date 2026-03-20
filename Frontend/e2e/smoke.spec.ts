@@ -31,8 +31,16 @@ test.describe('Portfolio Smoke Tests', () => {
     test('chatbot button is visible', async ({ page }) => {
         await page.goto('/');
 
+        // Wait for React hydration
+        await page.locator('h1').waitFor({ state: 'visible', timeout: 15000 });
+        
+        // Chatbot uses DeferredChatbot with useInView({ rootMargin: '200px' })
+        // We must scroll down to trigger it
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.waitForTimeout(2000); // Allow async chunk load & settings fetch
+
         // The chatbot FAB should be visible in the bottom right
         const chatbotBtn = page.locator('button[aria-label="Initialize AI Assistant"]');
-        await expect(chatbotBtn).toBeVisible({ timeout: 15000 });
+        await expect(chatbotBtn).toBeVisible({ timeout: 20000 });
     });
 });

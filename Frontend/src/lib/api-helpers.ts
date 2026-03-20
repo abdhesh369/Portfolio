@@ -99,10 +99,15 @@ export async function apiFetch<T = any>(
     opts: RequestInit = {},
     schema?: { safeParse: (data: unknown) => { success: boolean; data?: T; error?: { issues: Array<{ path: (string | number)[]; message: string }> } } }
 ): Promise<T> {
+    const headers = { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) };
+    if (opts.body instanceof FormData) {
+        delete headers["Content-Type"];
+    }
+
     const res = await fetch(`${API_BASE_URL}${path}`, {
         ...opts,
         credentials: 'include',
-        headers: { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) },
+        headers,
     });
 
     // Silent refresh on 401 — skip for certain endpoints to avoid infinite loops or incorrect error reporting
@@ -117,10 +122,15 @@ export async function apiFetch<T = any>(
 
         if (refreshed) {
             // Retry original request with fresh access token
+            const retryHeaders = { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) };
+            if (opts.body instanceof FormData) {
+                delete retryHeaders["Content-Type"];
+            }
+
             const retryRes = await fetch(`${API_BASE_URL}${path}`, {
                 ...opts,
                 credentials: 'include',
-                headers: { ...authHeaders(), ...(opts.headers as Record<string, string> ?? {}) },
+                headers: retryHeaders,
             });
             if (!retryRes.ok) {
                 const err = await retryRes.json().catch(() => ({ message: retryRes.statusText }));

@@ -288,7 +288,8 @@
       "description": "Advanced TS usage",
       "proof": "Project experience",
       "mastery": 90,
-      "endorsements": 0
+      "endorsements": 0,
+      "id": 1
     }
   ],
   "mindsets": [
@@ -351,10 +352,11 @@
       "role": "Software Engineer",
       "organization": "Tech Corp",
       "period": "2020 - Present",
-      "startDate": "2026-03-19T15:21:21.606Z",
+      "startDate": "2026-03-20T05:36:23.192Z",
       "endDate": null,
       "description": "Built amazing things",
-      "type": "Experience"
+      "type": "Experience",
+      "id": 1
     }
   ],
   "emailTemplates": [

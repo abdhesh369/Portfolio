@@ -42,7 +42,7 @@ export function ImageUpload({ value, onChange, label = "Image", className }: Ima
                 body: formData
             });
 
-            onChange(data.url);
+            onChange(data.data?.url || data.url);
         } catch (error: unknown) {
             console.error('Upload error:', error);
             const message = error instanceof Error ? error.message : "Failed to upload image.";
