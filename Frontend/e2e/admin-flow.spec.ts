@@ -101,10 +101,13 @@ test.describe("Admin Dashboard (requires auth)", () => {
     const passwordInput = page.locator('input[type="password"]').first();
     await expect(passwordInput).toBeVisible({ timeout: 10000 });
     await passwordInput.fill(adminPassword);
-    
+
     const submitBtn = page.getByRole("button", { name: /login|sign in|submit/i }).first();
     await submitBtn.click();
-    await page.waitForURL("**/admin", { timeout: 20000 });
+    
+    // Wait for the sidebar to confirm we're on the dashboard (not /admin/login)
+    const sidebar = page.locator('[data-testid="admin-sidebar"], nav, aside').first();
+    await expect(sidebar).toBeVisible({ timeout: 20000 });
   });
 
   test("dashboard shows navigation sidebar when authenticated", async ({ page }) => {

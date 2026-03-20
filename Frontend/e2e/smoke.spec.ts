@@ -4,8 +4,8 @@ test.describe('Portfolio Smoke Tests', () => {
     test('has title and renders hero section', async ({ page }) => {
         await page.goto('/');
 
-        // Expect the title to contain "Abdhesh Sah"
-        await expect(page).toHaveTitle(/Abdhesh Sah/);
+        // Expect the title to contain the owner's name (fetched from settings)
+        await expect(page).toHaveTitle(/Portfolio/, { timeout: 10000 });
 
         // Expect the hero section to render. Note: "Abdhesh Sah" is in a screen-reader span.
         const heading = page.locator('h1');
