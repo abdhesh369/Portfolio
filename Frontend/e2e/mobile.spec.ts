@@ -20,13 +20,13 @@ test.describe("Mobile UI/UX Deep Dive", () => {
     // Allow for Framer Motion animation
     await page.waitForTimeout(500);
     
-    // Check for mobile nav links (use .last() to avoid hidden desktop nav)
-    const mobileLink = page.getByRole('button', { name: /Projects|Skills|Blog/i }).or(page.getByRole('link', { name: /Projects|Skills|Blog/i })).last();
-    await expect(mobileLink).toBeVisible();
+    // Check for mobile nav links container
+    const mobileMenuContent = page.getByTestId('mobile-nav-content');
+    await expect(mobileMenuContent).toBeVisible();
     
     // Close menu (either by clicking toggle again or an overlay)
     await menuBtn.click();
-    await expect(mobileLink).not.toBeVisible({ timeout: 5000 });
+    await expect(mobileMenuContent).not.toBeVisible({ timeout: 5000 });
   });
 
   test("no horizontal overflow (layout stability)", async ({ page }) => {

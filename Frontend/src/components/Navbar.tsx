@@ -229,6 +229,7 @@ export default function Navbar() {
         {isOpen && (
           <m.div
             ref={mobileMenuRef}
+            data-testid="mobile-nav-content"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}

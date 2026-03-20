@@ -230,6 +230,7 @@ export function HireMeChat({ onSuccess }: HireMeChatProps) {
         <Button
           onClick={handleSend}
           disabled={isLoading || !input.trim()}
+          aria-label="Send message"
           className="absolute right-2 top-[calc(50%+4px)] -translate-y-1/2 h-10 w-10 p-0 bg-cyan-600 hover:bg-cyan-500 rounded-lg shadow-lg shadow-cyan-900/20"
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
