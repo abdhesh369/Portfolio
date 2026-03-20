@@ -104,42 +104,42 @@
       "idx": 14,
       "version": "7",
       "when": 1773041306626,
-      "tag": "0014_serious_hercules",
+      "tag": "0014_remove_guestbook_reactions",
       "breakpoints": true
     },
     {
       "idx": 15,
       "version": "7",
       "when": 1773041341179,
-      "tag": "0015_worried_komodo",
+      "tag": "0015_add_guestbook_json_reactions",
       "breakpoints": true
     },
     {
       "idx": 16,
       "version": "7",
       "when": 1773170188364,
-      "tag": "0016_steep_piledriver",
+      "tag": "0016_add_project_slug_timestamps",
       "breakpoints": true
     },
     {
       "idx": 17,
       "version": "7",
       "when": 1773235784301,
-      "tag": "0017_perpetual_blindfold",
+      "tag": "0017_schema_normalization",
       "breakpoints": true
     },
     {
       "idx": 18,
       "version": "7",
       "when": 1773236199949,
-      "tag": "0018_first_obadiah_stane",
+      "tag": "0018_add_location_text",
       "breakpoints": true
     },
     {
       "idx": 19,
       "version": "7",
       "when": 1773239256582,
-      "tag": "0019_stormy_swordsman",
+      "tag": "0019_add_resume_whyhireme",
       "breakpoints": true
     },
     {
@@ -160,35 +160,35 @@
       "idx": 22,
       "version": "7",
       "when": 1773436356106,
-      "tag": "0022_woozy_firestar",
+      "tag": "0022_placeholder",
       "breakpoints": true
     },
     {
       "idx": 23,
       "version": "7",
       "when": 1773471051302,
-      "tag": "0023_swift_shooting_star",
+      "tag": "0023_add_chat_subscribers",
       "breakpoints": true
     },
     {
       "idx": 24,
       "version": "7",
       "when": 1773510085092,
-      "tag": "0024_slippery_captain_midlands",
+      "tag": "0024_placeholder",
       "breakpoints": true
     },
     {
       "idx": 25,
       "version": "7",
       "when": 1773510919895,
-      "tag": "0025_outstanding_major_mapleleaf",
+      "tag": "0025_placeholder",
       "breakpoints": true
     },
     {
       "idx": 26,
       "version": "7",
       "when": 1773511606976,
-      "tag": "0026_warm_warstar",
+      "tag": "0026_normalize_audit_log",
       "breakpoints": true
     },
     {

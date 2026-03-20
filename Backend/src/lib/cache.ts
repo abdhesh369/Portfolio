@@ -16,11 +16,10 @@ export class CacheService {
         return identifier ? `${feature}:${namespace}:${identifier}` : `${feature}:${namespace}`;
     }
 
+    private static inFlight = new Map<string, Promise<unknown>>();
+
     /**
-     * Get or Set pattern
-     * Note: This implementation has a TOCTOU (Time-of-Check to Time-of-Use) race condition 
-     * between the get and set operations. In high-concurrency environments, this may 
-     * lead to "cache stampede" where multiple requests fetch from DB simultaneously.
+     * Get or Set pattern with Promise Deduplication (SingleFlight)
      * 
      * @param key - The Redis key
      * @param ttl - Time to live in seconds
@@ -31,6 +30,7 @@ export class CacheService {
             return fallback();
         }
 
+        // 1. Check Cache First
         try {
             const cached = await this.get<T>(key);
             if (cached !== null) return cached;
@@ -38,15 +38,25 @@ export class CacheService {
             logger.warn({ context: "cache", key, error: err }, "Cache read failure, falling back to DB");
         }
 
-        const data = await fallback();
-
-        try {
-            await this.set(key, data, ttl);
-        } catch (err) {
-            logger.warn({ context: "cache", key, error: err }, "Cache write failure");
+        // 2. Check for In-Flight Request (SingleFlight)
+        let flight = this.inFlight.get(key);
+        if (flight) {
+            return flight as Promise<T>;
         }
 
-        return data;
+        // 3. Fetch from DB & Deduplicate
+        const promise = (async () => {
+            try {
+                const data = await fallback();
+                await this.set(key, data, ttl);
+                return data;
+            } finally {
+                this.inFlight.delete(key);
+            }
+        })();
+
+        this.inFlight.set(key, promise);
+        return promise;
     }
 
     /**

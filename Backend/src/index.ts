@@ -235,42 +235,36 @@ async function getRedisHealthSafe(): Promise<{ healthy: boolean; message: string
   }
 }
 
-// Readiness / deep health check — includes database connectivity.
-// Returns 200 even if DB is waking up, with a "degraded" flag,
-// so Render doesn't mark the deploy as failed during Neon cold starts.
-app.get("/health", async (_req: Request, res: Response) => {
+/**
+ * Core health check logic shared by all health endpoints
+ */
+async function getHealthStatus() {
   const dbHealth = await checkDatabaseHealth();
   const redisHealth = await getRedisHealthSafe();
-
   const isHealthy = dbHealth.healthy && redisHealth.healthy;
 
-  res.status(200).json({
+  return {
     status: isHealthy ? "healthy" : "degraded",
-    database: dbHealth.healthy ? "connected" : "reconnecting",
-    redis: redisHealth.healthy ? "connected" : "reconnecting",
-    environment: process.env.NODE_ENV || "development",
-    ...(process.env.NODE_ENV === "development" && {
-      timestamp: new Date().toISOString(),
-      details: {
-        database: dbHealth.message,
-        redis: redisHealth.message
-      }
-    })
-  });
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    services: {
+      database: dbHealth.healthy ? "up" : "down",
+      redis: redisHealth.healthy ? "up" : "down",
+    },
+    version: process.env.npm_package_version || "2.0.0",
+  };
+}
+
+// Global baseline health check
+app.get("/health", async (_req: Request, res: Response) => {
+  const health = await getHealthStatus();
+  res.status(health.status === "healthy" ? 200 : 503).json(health);
 });
 
-// Relay for /api/v1/health (requested by frontend/tests)
-app.get("/api/v1/health", async (req: Request, res: Response) => {
-  // Reuse the logic from /health
-  const dbHealth = await checkDatabaseHealth();
-  const redisHealth = await getRedisHealthSafe();
-  const isHealthy = dbHealth.healthy && redisHealth.healthy;
-
-  res.status(200).json({
-    status: isHealthy ? "healthy" : "degraded",
-    database: dbHealth.healthy ? "connected" : "reconnecting",
-    redis: redisHealth.healthy ? "connected" : "reconnecting",
-  });
+// API v1 health check (requested by frontend/tests)
+app.get("/api/v1/health", async (_req: Request, res: Response) => {
+  const health = await getHealthStatus();
+  res.status(health.status === "healthy" ? 200 : 503).json(health);
 });
 
 

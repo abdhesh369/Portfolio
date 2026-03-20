@@ -5,16 +5,8 @@
 # The last matching rule wins, so put more specific rules below general ones.
 
 # ── Catch-all ────────────────────────────────────────────────────────────────
-*                           @your-username
-
-# ── Backend ──────────────────────────────────────────────────────────────────
-/Backend/                   @your-username
-
-# ── Frontend ─────────────────────────────────────────────────────────────────
-/Frontend/                  @your-username
-
-# ── Database migrations (high-risk — require explicit sign-off) ───────────────
-/Backend/drizzle/migrations/ @your-username
-
-# ── CI / GitHub config (changes here affect every contributor) ────────────────
-/.github/                   @your-username
+*                           @abdhesh369
+/Backend/                   @abdhesh369
+/Frontend/                  @abdhesh369
+/Backend/drizzle/migrations/ @abdhesh369
+/.github/                   @abdhesh369

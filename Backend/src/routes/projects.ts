@@ -15,19 +15,14 @@ import { logger } from "../lib/logger.js";
 import { redis } from "../lib/redis.js";
 
 export function registerProjectRoutes(app: Router) {
-  // GET /api/projects - Get all projects
   app.get(
     "/projects",
-    cachePublic(600), // Cache for 10 minutes
+    cachePublic(600),
     asyncHandler(async (req: Request, res: Response) => {
       const sortSchema = z.enum(["views", "default"]).optional().default("default");
       const sortBy = sortSchema.parse(req.query.sort);
-      const isSecretMode = req.query.secret === "revealed";
 
-      const projects = isSecretMode
-        ? await projectService.getAllAdmin()
-        : await projectService.getAll(sortBy);
-
+      const projects = await projectService.getAll(sortBy);
       res.json(projects);
     })
   );
@@ -109,12 +104,11 @@ export function registerProjectRoutes(app: Router) {
     cachePublic(600),
     asyncHandler(async (req, res) => {
       const id = parseIntParam(res, req.params.id, "project ID");
-            if (id === null) return;
+      if (id === null) return;
       
-      const isSecretMode = req.query.secret === "revealed";
       const project = await projectService.getById(id);
       
-      if (!project || (project.isHidden && !isSecretMode)) {
+      if (!project || project.isHidden) {
         res.status(404).json({ success: false, message: "Project not found" });
         return;
       }

@@ -17,10 +17,9 @@ articlesRouter.get(
     "/",
     asyncHandler(async (req, res) => {
         const isAdmin = await checkAuthStatus(req);
-        const isSecretMode = req.query.secret === "revealed";
         let status = req.query.status as Article["status"] | undefined;
 
-        if (!isAdmin && !isSecretMode) {
+        if (!isAdmin) {
             status = "published";
             // Only cache public responses
             res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=60");

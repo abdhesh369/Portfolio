@@ -25,9 +25,7 @@
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e:server": "cross-env NODE_ENV=test PORT=5005 HOST=127.0.0.1 tsx src/index.ts"
-
   },
-
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@openrouter/sdk": "^0.9.11",
@@ -36,14 +34,6 @@
     "@resvg/resvg-js": "^2.6.2",
     "@sentry/node": "^10.42.0",
     "@sentry/profiling-node": "^10.42.0",
-    "@types/compression": "^1.8.1",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "4.17.21",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.1.0",
-    "@types/node": "^25.5.0",
-    "@types/nodemailer": "^7.0.11",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.70.1",
     "cloudinary": "^2.9.0",
@@ -71,10 +61,18 @@
     "react": "^19.2.3",
     "resend": "^6.7.0",
     "satori": "^0.25.0",
-    "@types/react": "^19.2.10",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.5.0",
+    "@types/nodemailer": "^7.0.11",
+    "@types/react": "^19.2.10",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.0.18",
     "drizzle-kit": "^0.31.9",
@@ -83,12 +81,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
-  },
-  "overrides": {
-    "fast-xml-parser": "^5.4.1",
-    "esbuild": "^0.25.0",
-    "flatted": "^3.4.2",
-    "ioredis": "5.10.0"
   },
   "engines": {
     "node": "22.x"
