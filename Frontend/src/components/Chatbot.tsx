@@ -194,10 +194,10 @@ export function Chatbot() {
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed right-4 sm:right-6 group pointer-events-auto"
+                        className="fixed right-4 sm:right-6 w-14 h-14 group pointer-events-auto"
                         style={{ 
-                            bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))',
-                            zIndex: 'var(--z-floating)'
+                            bottom: `max(1rem, env(safe-area-inset-bottom))`,
+                            zIndex: 9999
                         }}
                         aria-label="Initialize AI Assistant"
                     >

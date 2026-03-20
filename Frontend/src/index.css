@@ -768,6 +768,8 @@
   --z-modal: 500;
   --z-toast: 1000;
   --z-tooltip: 1100;
+  --z-floating: 5000;
+  --z-chatbot: 6000;
   --z-highest: 9999;
 }
 

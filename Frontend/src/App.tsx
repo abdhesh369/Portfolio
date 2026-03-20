@@ -270,7 +270,7 @@ function DeferredChatbot() {
 
   useEffect(() => {
     if (isAdmin || isAdminLogin) return;
-    const id = setTimeout(() => setShow(true), 0);
+    const id = setTimeout(() => setShow(true), 100);
     return () => clearTimeout(id);
   }, [isAdmin, isAdminLogin]);
 
