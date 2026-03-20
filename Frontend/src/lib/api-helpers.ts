@@ -11,7 +11,11 @@ export const API_BASE_URL = (() => {
     }
 
 
-    const prodUrl = url;
+    let prodUrl = url;
+
+    if (prodUrl && !prodUrl.startsWith("http")) {
+        prodUrl = `https://${prodUrl}`;
+    }
 
     if (!prodUrl) {
         console.warn("⚠️ VITE_API_URL not configured. Falling back to relative path or placeholder.");
