@@ -75,7 +75,10 @@ githubRoutes.get("/activity", cachePublic(3600), asyncHandler(async (_req, res) 
         const data = await fetchGitHubEvents(env.GITHUB_USERNAME);
 
         // Limit the payload size to the first 15 events
-        const filteredData = Array.isArray(data) ? data.slice(0, 15) : [];
+        // Filter out PushEvents with empty commit arrays to prevent frontend/backend crashes
+        const filteredData = Array.isArray(data) 
+            ? data.filter(e => e.type !== "PushEvent" || (e.payload?.commits && e.payload.commits.length > 0)).slice(0, 15) 
+            : [];
 
         res.json(filteredData);
     } catch (error) {
@@ -93,7 +96,7 @@ githubRoutes.get("/latest-commit", cachePublic(3600), asyncHandler(async (_req, 
         }
 
         const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
-        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent") : null;
+        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent" && e.payload?.commits?.length > 0) : null;
 
         if (!pushEvent) {
             return res.json({
@@ -154,9 +157,9 @@ githubRoutes.get("/activity/latest", cachePublic(300), asyncHandler(async (_req,
         }
 
         const events = await fetchGitHubEvents(env.GITHUB_USERNAME);
-        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent") : null;
+        const pushEvent = Array.isArray(events) ? events.find((e: GitHubEvent) => e.type === "PushEvent" && e.payload?.commits?.length > 0) : null;
 
-        if (!pushEvent || !pushEvent.payload.commits[0]) {
+        if (!pushEvent) {
             return res.json({ status: "idle" });
         }
 
