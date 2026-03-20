@@ -152,7 +152,7 @@ export async function apiFetch<T = any>(
 
     if (!res.ok) {
         const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw new ApiError(res.status, err.message || `Request failed (${res.status})`, err);
+        throw new ApiError(res.status, err.message || err.error || `Request failed (${res.status})`, err);
     }
     if (res.status === 204) return null as T;
     const data = await res.json();

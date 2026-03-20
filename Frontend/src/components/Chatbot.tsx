@@ -76,7 +76,8 @@ export function Chatbot() {
                     // If 503, it matches the resilience test expectations
                     const status = (error as { status?: number })?.status;
                     const message = (error as { message?: string })?.message;
-                    if (status === 503 || (message && /initializing/i.test(message))) {
+                    // Check status || message for robustness against different API error shapes
+                    if (status === 503 || (message && /initializing|starting|offline/i.test(message))) {
                         setMessages(prev => [...prev, {
                             id: crypto.randomUUID(),
                             role: "model",
@@ -233,6 +234,9 @@ export function Chatbot() {
                         <span className="absolute -top-12 right-0 bg-card border border-cyan-500/30 text-cyan-400 font-mono px-3 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 whitespace-nowrap pointer-events-none shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                             SYS.INITIALIZE_CORE
                         </span>
+                        
+                        {/* Hidden text for screen readers and E2E tests */}
+                        <span className="sr-only">AI Assistant</span>
                     </m.button>
                 )}
             </AnimatePresence>

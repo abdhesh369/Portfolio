@@ -270,13 +270,8 @@ function DeferredChatbot() {
 
   useEffect(() => {
     if (isAdmin || isAdminLogin) return;
-    if (typeof requestIdleCallback === "function") {
-      const id = requestIdleCallback(() => setShow(true));
-      return () => cancelIdleCallback(id);
-    } else {
-      const id = setTimeout(() => setShow(true), 3000);
-      return () => clearTimeout(id);
-    }
+    const id = setTimeout(() => setShow(true), 1000);
+    return () => clearTimeout(id);
   }, [isAdmin, isAdminLogin]);
 
   if (isAdmin || isAdminLogin || !show) return null;
@@ -343,15 +338,15 @@ function App() {
 
               <a
                 href="#main-content"
-                className="skip-to-content sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"
+                className="skip-to-content"
               >
                 Skip to main content
               </a>
               <ServerStatusBanner />
               <DeferredAnalytics />
+              <DeferredChatbot />
               <Router />
               <DeferredBackground />
-              <DeferredChatbot />
               <ReloadPrompt />
               <InstallPrompt />
                <Toaster />
