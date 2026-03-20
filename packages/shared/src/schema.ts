@@ -385,6 +385,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   socialDevto: varchar("socialDevto", { length: 500 }),
   socialMedium: varchar("socialMedium", { length: 500 }),
   socialEmail: varchar("socialEmail", { length: 255 }),
+  personalPhone: varchar("personalPhone", { length: 255 }),
   locationText: varchar("locationText", { length: 255 }).default("Kathmandu, Nepal"),
 
   // Chatbot
@@ -874,6 +875,7 @@ const siteSettingsBaseSchema = z.object({
   socialDevto: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
   socialMedium: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
   socialEmail: z.string().email().max(255).nullable().optional().or(z.literal("").transform(() => null)),
+  personalPhone: z.string().max(255).nullable().optional().or(z.literal("").transform(() => null)),
   locationText: z.string().max(255).nullable().optional(),
 
   // Hero Section

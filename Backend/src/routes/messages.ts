@@ -59,7 +59,7 @@ export function registerMessageRoutes(app: Router) {
         "/messages/bulk-delete",
         isAuthenticated,
         asyncHandler(async (req, res) => {
-            const schema = z.object({ ids: z.array(z.number()) });
+            const schema = z.object({ ids: z.array(z.number()).min(1).max(100) });
             const { ids } = schema.parse(req.body);
             await messageService.bulkDelete(ids);
 

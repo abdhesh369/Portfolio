@@ -5,50 +5,46 @@ import { Code2, Hash, Terminal } from "lucide-react";
 const SNIPPETS = [
   {
     language: "typescript",
-    name: "HeroComponent.tsx",
-    code: `export function Hero() {
-  const [active, setActive] = useState(false);
-  
-  return (
-    <div className="relative group">
-      <MatrixRain opacity={0.1} />
-      <h1 className="text-glow">
-        Engineering the Future
-      </h1>
-      <Button onClick={() => setActive(true)}>
-        Initialize Transmission
-      </Button>
-    </div>
+    name: "rate-limit.ts",
+    code: `// IMPORTANT: "trust proxy 1" assumes exactly ONE proxy tier (Render/Cloudflare).
+// If topology changes (e.g. Cloudflare + Render = 2 proxies), this must be updated
+// otherwise rate-limiting will use the proxy IP instead of the client IP.
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  keyGenerator: (req) => req.ip || "unknown"
+});`
+  },
+  {
+    language: "typescript",
+    name: "og.tsx",
+    code: `export async function generateOgImageBuffer(title: string) {
+  const [fontData, { default: satori }] = await Promise.all([
+    getFont(),
+    import("satori")
+  ]);
+
+  return await satori(
+    <div style={{ display: 'flex', color: 'white' }}>
+      <h1>{title}</h1>
+    </div>,
+    { width: 1200, height: 630, fonts: [{ data: fontData }] }
   );
 }`
   },
   {
-    language: "sql",
-    name: "GetAnalytics.sql",
-    code: `SELECT 
-  country,
-  count(*) as visits,
-  avg(latency) as ping
-FROM analytics
-WHERE type = 'page_view'
-  AND created_at > now() - interval '30 days'
-GROUP BY country
-ORDER BY visits DESC
-LIMIT 10;`
-  },
-  {
     language: "typescript",
-    name: "ai-review.service.ts",
-    code: `class AIReviewService {
-  async triggerReview(projectId: number) {
-    const project = await db.projects.get(projectId);
-    const context = await fetchGithub(project.url);
-    
-    return gemini.generate({
-      prompt: buildRoastPrompt(project, context),
-      temp: 0.7
-    });
-  }
+    name: "use-portfolio.ts",
+    code: `export function useProjects() {
+  return useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      const res = await fetch('/api/v1/projects');
+      if (!res.ok) throw new Error('Failed to fetch');
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 5
+  });
 }`
   }
 ];
@@ -72,7 +68,7 @@ export function LiveCodeEditor() {
       setSnippetIndex((prev) => (prev + 1) % SNIPPETS.length);
     } else {
       // Type or delete
-      const speed = isDeleting ? 20 : 40;
+      const speed = isDeleting ? 15 : 30; // Slightly faster for longer snippets
       timeout = setTimeout(() => {
         setDisplayedCode(prev => 
           isDeleting 

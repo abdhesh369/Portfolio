@@ -1,19 +1,23 @@
 import { Router } from "express";
+import { logger } from "../lib/logger.js";
 
 const router = Router();
 
 export const getSitemap = async (_req: any, res: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
-    const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL || "https://abdheshsah.com.np";
-    if (!process.env.PUBLIC_URL && !process.env.FRONTEND_URL) {
-      console.warn("Sitemap: Neither PUBLIC_URL nor FRONTEND_URL found, defaulting to https://abdheshsah.com.np");
+    const baseUrl = process.env.PUBLIC_URL || process.env.FRONTEND_URL;
+    if (!baseUrl) {
+      logger.error({ context: "sitemap" }, "PUBLIC_URL / FRONTEND_URL not set — sitemap cannot be generated");
+      return res.status(500).send("Sitemap configuration error: set FRONTEND_URL environment variable");
     }
 
     const { projectService } = await import("../services/project.service.js");
     const { articleService } = await import("../services/article.service.js");
 
-    const projects = await projectService.getAll();
-    const articles = await articleService.getAll();
+    const [projects, articles] = await Promise.all([
+      projectService.getAll(),
+      articleService.getAll()
+    ]);
 
     const staticPages = [
       "",
@@ -58,7 +62,7 @@ export const getSitemap = async (_req: any, res: any) => { // eslint-disable-lin
     res.header('Content-Type', 'application/xml');
     res.send(xml);
   } catch (error) {
-    console.error("Sitemap error:", error);
+    logger.error({ context: "sitemap", error }, "Error generating sitemap");
     res.status(500).send("Error generating sitemap");
   }
 };

@@ -1,27 +1,14 @@
 import { m, AnimatePresence } from "framer-motion";
-import { User, Briefcase, Code, MousePointer2, X, Sparkles } from "lucide-react";
-import { useState, useEffect } from "react";
+import { User, Briefcase, MousePointer2, X, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { usePersona, Persona } from "@/hooks/use-persona";
 import { cn } from "@/lib/utils";
 
 export function PersonaSelector() {
     const { persona, setPersona } = usePersona();
     const [isOpen, setIsOpen] = useState(false);
-    const [hasSeenChoice, setHasSeenChoice] = useState(() => {
-        if (typeof window === "undefined") return true;
-        return localStorage.getItem("portfolio_has_seen_persona") === "true";
-    });
-
-    useEffect(() => {
-        if (!hasSeenChoice) {
-            const timer = setTimeout(() => setIsOpen(true), 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [hasSeenChoice]);
-
     const handleChoice = (choice: Persona) => {
         setPersona(choice);
-        setHasSeenChoice(true);
         localStorage.setItem("portfolio_has_seen_persona", "true");
         setIsOpen(false);
     };
@@ -40,13 +27,6 @@ export function PersonaSelector() {
             icon: MousePointer2, 
             color: "text-emerald-400", 
             desc: "Show Services & Results" 
-        },
-        { 
-            id: 'developer', 
-            label: "Developer", 
-            icon: Code, 
-            color: "text-purple-400", 
-            desc: "Architecture & Code Quality" 
         }
     ];
 

@@ -24,11 +24,10 @@ const Testimonials = lazy(() => import("@/components/Testimonials"));
 const Contact = lazy(() => import("@/components/Contact"));
 const Footer = lazy(() => import("@/components/Footer"));
 const BackToTop = lazy(() => import("@/components/BackToTop"));
-const SectionReveal = lazy(() => import("@/components/SectionReveal"));
+const SectionReveal = lazy(() => import("@/components/animations/Reveal"));
 const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
 import { GithubHeatmap } from "@/components/GithubHeatmap";
 import { ReadingList } from "@/components/ReadingList";
-import { StressTest } from "@/components/StressTest";
 import { LiveActivityTicker } from "@/components/LiveActivityTicker";
 
 
@@ -167,7 +166,6 @@ export default function Home() {
     testimonials: <SafeSection name="Testimonials"><Testimonials /></SafeSection>,
     guestbook: <SafeSection name="Guestbook"><Guestbook /></SafeSection>,
     contact: <SafeSection name="Contact"><Contact /></SafeSection>,
-    "stress-test": <SafeSection name="Stress Test"><StressTest /></SafeSection>,
     "live-activity": <SafeSection name="Live Activity"><LiveActivityTicker /></SafeSection>,
     "reading-list": <SafeSection name="Reading List"><ReadingList /></SafeSection>,
     "github-heatmap": <SafeSection name="Github Heatmap"><GithubHeatmap /></SafeSection>,
@@ -175,9 +173,9 @@ export default function Home() {
 
   // Define persona-specific order overrides
   const PERSONA_ORDERS: Record<string, string[]> = {
-    recruiter: ['hero', 'live-activity', 'github-heatmap', 'experience', 'skills', 'about', 'projects', 'testimonials', 'stress-test', 'contact', 'reading-list'],
-    client: ['hero', 'live-activity', 'github-heatmap', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
-    developer: ['hero', 'live-activity', 'github-heatmap', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'stress-test', 'contact', 'reading-list'],
+    recruiter: ['hero', 'live-activity', 'github-heatmap', 'experience', 'skills', 'about', 'projects', 'testimonials', 'contact', 'reading-list'],
+    client: ['hero', 'live-activity', 'github-heatmap', 'services', 'whyhireme', 'testimonials', 'projects', 'experience', 'contact', 'reading-list'],
+    developer: ['hero', 'live-activity', 'github-heatmap', 'mindset', 'practice', 'about', 'skills', 'projects', 'experience', 'contact', 'reading-list'],
   };
 
   // Build section order: admin-saved order takes priority, fall back to defaults
@@ -197,7 +195,6 @@ export default function Home() {
         });
 
         // 3. Always ensure new v8 features are present for the "wow" factor
-        if (!baseOrder.includes('stress-test')) baseOrder.push('stress-test');
         if (!baseOrder.includes('live-activity')) {
           // Insert live-activity after hero
           const heroIndex = baseOrder.indexOf('hero');

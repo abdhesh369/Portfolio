@@ -117,7 +117,7 @@ export default defineConfig(({ mode }) => {
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@assets': path.resolve(__dirname, './Resources'),
+      '@assets': path.resolve(__dirname, './assets'),
       '@shared': path.resolve(__dirname, '../packages/shared/src'),
       '@portfolio/shared/schema': path.resolve(__dirname, '../packages/shared/src/schema'),
       '@portfolio/shared/routes': path.resolve(__dirname, '../packages/shared/src/routes'),
@@ -160,7 +160,7 @@ export default defineConfig(({ mode }) => {
   },
   build: {
     outDir: 'dist',
-    chunkSizeWarningLimit: 1200,
+    chunkSizeWarningLimit: 500,
     target: 'es2020',
     cssCodeSplit: true,
     // Use esbuild (Vite default) instead of Terser — Terser's variable

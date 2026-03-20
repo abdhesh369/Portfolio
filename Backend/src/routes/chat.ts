@@ -58,7 +58,7 @@ export async function buildSystemPrompt(): Promise<string> {
         db.select({ personalName: siteSettingsTable.personalName }).from(siteSettingsTable).limit(1),
     ]);
 
-    const ownerName = settingsRows[0]?.personalName || "Abdhesh";
+    const ownerName = settingsRows[0]?.personalName || "Portfolio Owner";
 
     const truncate = (text: string, maxLen = 200) =>
         text.length > maxLen ? text.slice(0, maxLen) + "..." : text;

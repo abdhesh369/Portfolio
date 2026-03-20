@@ -24,7 +24,10 @@ const createLimiter = (options: {
         skip: (req) => {
             // Bypass rate limiting in test environment
             if (process.env.NODE_ENV === 'test') return true;
-            // Only bypass rate limiting for localhost requests (development)
+            
+            // NOTE: This bypass works only because trust proxy = 1 (Render's single LB).
+            // If topology changes to 2+ proxy hops (e.g., Cloudflare + Render),
+            // req.ip will be the Render LB IP — update trust proxy AND revisit this skip.
             return req.ip === '127.0.0.1' || req.ip === '::1' || (req.ip?.includes('127.0.0.1') ?? false);
         },
 

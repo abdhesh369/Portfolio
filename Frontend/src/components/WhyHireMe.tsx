@@ -171,8 +171,8 @@ export default function WhyHireMe() {
   
   const { data: settings } = useSiteSettings();
   
-  const resumeUrl = settings?.resumeUrl || "/Abdhesh_Sah_CV.docx";
-  const resumeFileName = resumeUrl.split('/').pop() || "Resume.docx";
+  const resumeUrl = settings?.resumeUrl || "/resume.pdf";
+  const resumeFileName = resumeUrl.split('/').pop() || "Resume.pdf";
 
   // Use dynamic data if available, otherwise fall back to local constants
   const dynamicPoints = settings?.whyHireMeData?.stats?.map((stat: { label: string; value: string }) => ({

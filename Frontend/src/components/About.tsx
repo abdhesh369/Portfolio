@@ -204,7 +204,7 @@ export default function About() {
 
                   <OptimizedImage
                     src="/images/Myphoto.webp"
-                    alt="Abdhesh Sah - Full-Stack Engineer"
+                    alt={`${settings?.personalName || "Portfolio Owner"} - Full-Stack Engineer`}
                     width={400}
                     height={500}
                     loading="lazy"
@@ -222,7 +222,7 @@ export default function About() {
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-foreground font-display">{settings?.personalName || "Abdhesh Sah"}</h3>
+                    <h3 className="text-2xl font-bold text-foreground font-display">{settings?.personalName || "Portfolio Owner"}</h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4 text-cyan-400" />
                       {settings?.locationText || "Kathmandu, Nepal"}
@@ -253,10 +253,10 @@ export default function About() {
                   </div>
 
                   <div className="pt-2 flex gap-3">
-                    <a href={settings?.socialGithub || "https://github.com/abdhesh369"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-foreground/5 hover:bg-cyan-500/20 text-foreground hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
+                    <a href={settings?.socialGithub || "#"} target="_blank" rel="noopener noreferrer" className="flex-1 py-2 rounded bg-foreground/5 hover:bg-cyan-500/20 text-foreground hover:text-cyan-400 transition-all border border-transparent hover:border-cyan-500/30 flex items-center justify-center gap-2">
                       <Github className="w-4 h-4" /> <span className="text-xs">GitHub</span>
                     </a>
-                    <a href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} className="flex-1 py-2 rounded bg-foreground/5 hover:bg-purple-500/20 text-foreground hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
+                    <a href={settings?.socialEmail ? `mailto:${settings.socialEmail}?subject=Project%20Inquiry` : "#"} className="flex-1 py-2 rounded bg-foreground/5 hover:bg-purple-500/20 text-foreground hover:text-purple-400 transition-all border border-transparent hover:border-purple-500/30 flex items-center justify-center gap-2">
                       <Mail className="w-4 h-4" /> <span className="text-xs">Email</span>
                     </a>
                   </div>
@@ -293,7 +293,7 @@ export default function About() {
                 ) : (
                   <>
                     <p className="leading-relaxed text-[1.05rem]">
-                      I'm currently pursuing my <Highlight>Bachelor's in Electronics & Communication Engineering</Highlight> at Tribhuvan University. My journey began with a fascination for how hardware meets software, which inevitably led me down the rabbit hole of Full-Stack Development.
+                      I'm currently pursuing my <Highlight>Bachelor's Degree</Highlight>. My journey began with a fascination for how hardware meets software, which inevitably led me down the rabbit hole of Full-Stack Development.
                     </p>
                     <p className="leading-relaxed text-[1.05rem]">
                       Today, I focus on building <Highlight color="purple">scalable web systems</Highlight> and analyzing complex algorithms. I don't just write code; I design systems that resolve real-world inefficiencies. My approach is rooted in engineering fundamentals—understanding <Highlight>memory, complexity, and architecture</Highlight> before typing a single line of syntax.
@@ -339,9 +339,9 @@ export default function About() {
               className="grid sm:grid-cols-2 gap-4"
             >
               {(settings?.aboutInfoCards || [
-                { icon: "GraduationCap", label: "Status", value: "B.E. Student" },
-                { icon: "Code", label: "Focus Area", value: "Full Stack System Design", color: "purple" },
-                { icon: "Cpu", label: "Hardware", value: "Electronics & Comms", color: "purple" },
+                { icon: "GraduationCap", label: "Status", value: "Student" },
+                { icon: "Code", label: "Focus Area", value: "Software Development", color: "purple" },
+                { icon: "Cpu", label: "Focus", value: "Engineering", color: "purple" },
                 { icon: "Target", label: "Goal", value: "Software Engineer" }
               ]).map((card: { icon: string; label: string; value: string; color?: "cyan" | "purple" }, idx: number) => {
                 const IconMap: Record<string, React.ElementType> = { GraduationCap, Code, Cpu, Target };

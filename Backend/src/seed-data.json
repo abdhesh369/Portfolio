@@ -1,9 +1,10 @@
 {
   "siteSettings": {
-    "personalName": "Abdhesh Sah",
+    "personalName": "Portfolio Owner",
     "personalTitle": "Full-Stack Engineer",
-    "personalBio": "Passionate about building digital experiences that feel alive with a focus on performance, precision, and scalability. Currently pursuing Electronics & Communication Engineering.",
-    "logoText": "Abdhesh.Sah",
+    "personalBio": "Passionate about building digital experiences that feel alive with a focus on performance, precision, and scalability.",
+    "logoText": "Portfolio.Dev",
+    "personalPhone": "+000 0000000",
     "heroHeadingLine1": "Start building",
     "heroHeadingLine2": "The Future",
     "heroTaglines": [
@@ -11,7 +12,7 @@
       "Crafting intuitive interfaces.",
       "Solving complex problems."
     ],
-    "socialEmail": "admin@example.com",
+    "socialEmail": "hello@example.com",
     "socialGithub": "https://github.com/username",
     "socialLinkedin": "https://linkedin.com/in/username",
     "footerTagline": "Building the future, one line of code at a time.",
@@ -389,26 +390,26 @@
     {
       "name": "General Inquiry Reply",
       "subject": "Re: Inquiry regarding my portfolio",
-      "body": "Hello {name},\n\nThank you for reaching out! I've received your message and will get back to you shortly.\n\nBest regards,\nAbdhesh Sah"
+      "body": "Hello {name},\n\nThank you for reaching out! I've received your message and will get back to you shortly.\n\nBest regards,\n{personalName}"
     },
     {
       "name": "Project Collaboration",
       "subject": "Re: Collaboration opportunity",
-      "body": "Hi {name},\n\nThanks for your interest in collaborating. I've reviewed your message and I'm very interested in hearing more about the project.\n\nLet's schedule a call to discuss further.\n\nBest,\nAbdhesh Sah"
+      "body": "Hi {name},\n\nThanks for your interest in collaborating. I've reviewed your message and I'm very interested in hearing more about the project.\n\nLet's schedule a call to discuss further.\n\nBest,\n{personalName}"
     }
   ],
   "seoSettings": [
     {
       "pageSlug": "home",
-      "metaTitle": "Abdhesh Sah | Full-Stack Engineer",
-      "metaDescription": "Portfolio of Abdhesh Sah, a Full-Stack Engineer specializing in React, Node.js, and modern web technologies.",
-      "keywords": "Abdhesh Sah, Full-Stack Engineer, React, Node.js, Portfolio, Web Development",
+      "metaTitle": "Portfolio Owner | Full-Stack Engineer",
+      "metaDescription": "Portfolio showcasing projects and skills in React, Node.js, and modern web technologies.",
+      "keywords": "Portfolio, Full-Stack Engineer, React, Node.js, Web Development",
       "noindex": false,
       "twitterCard": "summary_large_image"
     },
     {
       "pageSlug": "projects",
-      "metaTitle": "Projects | Abdhesh Sah",
+      "metaTitle": "Projects | Developer Portfolio",
       "metaDescription": "Explore the projects built by Your Name, showcasing skills in full-stack development, AI, and automation.",
       "keywords": "Projects, Web Development, Case Studies, Portfolio Work",
       "noindex": false,
@@ -416,7 +417,7 @@
     },
     {
       "pageSlug": "about",
-      "metaTitle": "About Me | Abdhesh Sah",
+      "metaTitle": "About Me | Developer Portfolio",
       "metaDescription": "Learn more about Your Name, his background, education, and journey as a self-taught developer.",
       "keywords": "About Your Name, Biography, Developer Journey, Skills",
       "noindex": false,
@@ -424,7 +425,7 @@
     },
     {
       "pageSlug": "contact",
-      "metaTitle": "Contact | Abdhesh Sah",
+      "metaTitle": "Contact | Developer Portfolio",
       "metaDescription": "Get in touch with Your Name for collaborations, freelance work, or just to say hi.",
       "keywords": "Contact, Hire Developer, Freelance, Collaboration",
       "noindex": false,

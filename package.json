@@ -34,10 +34,10 @@
         "lint:all": "npm run lint --workspaces",
         "type-check:backend": "npm run build:shared && npm run type-check -w Backend",
         "type-check:frontend": "npm run build:shared && npm run type-check -w Frontend",
-        "type-check:all": "npm run build:shared && npm run type-check --workspaces",
-        "schema:sync-check": "echo 'Schema consolidated in packages/shared/src/schema.ts'"
+        "type-check:all": "npm run build:shared && npm run type-check --workspaces"
     },
     "overrides": {
+        "zod": "^3.25.76",
         "ioredis": "5.10.0",
         "multer-storage-cloudinary": {
             "cloudinary": "^2.0.0"

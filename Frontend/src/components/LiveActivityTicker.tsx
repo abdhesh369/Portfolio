@@ -105,7 +105,7 @@ export const LiveActivityTicker: React.FC = () => {
             </div>
 
             {activity.stats && (
-               <div className="pt-4 mt-4 border-t border-[#30363d] flex items-center justify-between text-[10px] text-[#8b949e]">
+                <div className="pt-4 mt-4 border-t border-[#30363d] flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-[#8b949e]">
                   <div className="flex items-center gap-4">
                      <span>Total Changes: {activity.stats.total}</span>
                      <a 
@@ -114,8 +114,12 @@ export const LiveActivityTicker: React.FC = () => {
                        rel="noopener noreferrer"
                        className="text-[#58a6ff] hover:underline flex items-center gap-1"
                      >
-                       View Repository <ExternalLink className="w-2.5 h-2.5" />
+                       View Repo <ExternalLink className="w-2.5 h-2.5" />
                      </a>
+                  </div>
+                  <div className="flex items-center gap-3 italic">
+                    <Activity className="w-2.5 h-2.5 text-primary" />
+                    Powered by GitHub & Analytics API
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-32 h-1.5 rounded-full bg-[#30363d] overflow-hidden flex">

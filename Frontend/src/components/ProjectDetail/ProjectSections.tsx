@@ -6,15 +6,21 @@ import { ArrowLeft, ChevronRight, Sparkles, Github, ExternalLink, Share2, Twitte
 import { Link } from "wouter";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
+// Simple seeded randomizer for deterministic rendering
+const seededRandom = (seed: number) => {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+};
+
 // Floating particles
 const PARTICLE_DATA = Array.from({ length: 20 }, (_, i) => ({
   id: i,
-  x: Math.random() * 100,
-  y: Math.random() * 100,
-  delay: Math.random() * 6,
-  duration: 10 + Math.random() * 8,
-  size: 2 + Math.random() * 4,
-  color: Math.random() > 0.5 ? 'cyan' : 'purple'
+  x: seededRandom(i * 10) * 100,
+  y: seededRandom(i * 10 + 1) * 100,
+  delay: seededRandom(i * 10 + 2) * 6,
+  duration: 10 + seededRandom(i * 10 + 3) * 8,
+  size: 2 + seededRandom(i * 10 + 4) * 4,
+  color: seededRandom(i * 10 + 5) > 0.5 ? 'cyan' : 'purple'
 }));
 
 export const FloatingParticles = () => {
@@ -168,7 +174,7 @@ export const ProjectHero = ({
     text: string;
     glow: string;
   };
-  handleBack: () => void;
+  handleBack: (e?: React.MouseEvent) => void;
   handleShare: () => void;
   twitterShareUrl: string;
   linkedinShareUrl: string;

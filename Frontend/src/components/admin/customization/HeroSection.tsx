@@ -37,7 +37,7 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
                 <div className="md:col-span-2">
                     <FormTextarea
                         label="Bio Paragraph"
-                        placeholder="I'm Abdhesh Sah, a developer who..."
+                        placeholder="I'm a developer who..."
                         {...(({ onChange, ...rest }) => ({ ...rest, onChange: (v: string) => onChange({ target: { value: v, name: rest.name } }) }))(register("personalBio"))}
                     />
                     <p className="text-[9px] text-admin-text-muted mt-2 px-1 italic">Displays below the rotating taglines in the Hero section.</p>

@@ -36,7 +36,7 @@ export default function CodeAndPractice() {
   const { reducedMotion } = useTheme();
 
   const { data: settings } = useSiteSettings();
-  // const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "abdhesh369";
+  // const githubUsername = settings?.socialGithub?.match(/github\.com\/([^/]+)/)?.[1] || "portfolio-owner";
 
   const { data: githubData, isLoading: isContributionsLoading } = useQuery<{ total: number, contributions: ContributionDay[] }>({
     queryKey: QUERY_KEYS.github.contributions,
@@ -169,7 +169,7 @@ export default function CodeAndPractice() {
 
             <div className="pt-4">
               <a
-                href={settings?.socialGithub || "https://github.com/abdhesh369/"}
+                href={settings?.socialGithub || "https://github.com/"}
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -54,7 +54,7 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
   heroHeadingLine2: "The Future",
   footerCopyright: `© ${new Date().getFullYear()} Your Name. All rights reserved.`,
   footerTagline: "Building the future, one line of code at a time.",
-  socialEmail: "abdheshshah111@gmail.com",
+  socialEmail: "admin@example.com",
   featureBlog: true,
   featureGuestbook: true,
   featureTestimonials: true,

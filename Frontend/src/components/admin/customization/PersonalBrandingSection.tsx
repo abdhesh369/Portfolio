@@ -30,7 +30,7 @@ export function PersonalBrandingSection({ register, isOpen, onToggle }: Personal
 
                 <FloatingLabelInput
                     label="Personal Name (used in bio + page title)"
-                    placeholder="Abdhesh Sah"
+                    placeholder="Portfolio Owner"
                     {...register("personalName")}
                 />
                 <FloatingLabelInput

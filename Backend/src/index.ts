@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import * as Sentry from "@sentry/node";
 /**
- * Main Entry Point - System Stabilized
+ * Application entry point. Starts the HTTP server, runs migrations,
+ * and initializes all background services.
  */
 import { env } from "./env.js";
 import { createServer } from "http";
@@ -38,7 +39,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// Guard all routes except /ping until server is fully ready (Finding #10)
+// Guard all routes except /ping until server is fully ready
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (!isReady && req.path !== "/ping" && !req.path.startsWith("/health")) {
     return res.status(503).json({ 
@@ -53,15 +54,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:4173",
-  "http://127.0.0.1:4173",
-  "http://127.0.0.1:5173",
-  "https://abdheshsah.com.np",
-  "https://portfolio-frontend-h4f2.onrender.com",
   process.env.FRONTEND_URL,
+  process.env.ADDITIONAL_ALLOWED_ORIGIN,
   ...(process.env.NODE_ENV !== "production" ? [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+    "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://localhost:8080",
   ] : []),
@@ -317,15 +317,15 @@ function setupGracefulShutdown() {
 
   // Handle unhandled rejections and exceptions
   process.on("unhandledRejection", (reason: unknown) => {
-    logger.fatal({ context: "crash", error: reason }, "💣 UNHANDLED REJECTION");
+    logger.fatal({ context: "crash", error: reason }, "UNHANDLED REJECTION");
     // Special console log to ensure it's seen in Playwright/Vite output
-    console.error("\n[BACKEND] 💣 UNHANDLED REJECTION:", reason);
+    console.error("\n[BACKEND] UNHANDLED REJECTION:", reason);
     process.exit(1);
   });
 
   process.on("uncaughtException", (error: Error) => {
-    logger.fatal({ context: "crash", error }, "💣 UNCAUGHT EXCEPTION");
-    console.error("\n[BACKEND] 💣 UNCAUGHT EXCEPTION:", error);
+    logger.fatal({ context: "crash", error }, "UNCAUGHT EXCEPTION");
+    console.error("\n[BACKEND] UNCAUGHT EXCEPTION:", error);
     process.exit(1);
   });
 }
@@ -335,7 +335,7 @@ async function startServer() {
   try {
     logger.info({ context: "startup" }, "Starting server...");
 
-    // ── 1. Bind the port FIRST so Render detects the service immediately ──
+    // ── Step 1: Bind the port FIRST so Render detects the service immediately ──
     const port = parseInt(process.env.PORT || "5000", 10);
     const host = process.env.NODE_ENV === "test" ? "127.0.0.1" : "0.0.0.0";
 
@@ -345,31 +345,31 @@ async function startServer() {
     await new Promise<void>((resolve, reject) => {
       httpServer.on("error", (err: Error & { code?: string }) => {
         if (err.code === "EADDRINUSE") {
-          logger.fatal({ context: "startup", port }, "❌ Port already in use");
+          logger.fatal({ context: "startup", port }, "Port already in use");
         } else {
-          logger.fatal({ context: "startup", error: err }, "❌ Server failed to start");
+          logger.fatal({ context: "startup", error: err }, "Server failed to start");
         }
         reject(err);
       });
 
       httpServer.listen(port, host, () => {
-        logger.info({ context: "startup", port, host }, `✓ Server listening on ${host}:${port}`);
+        logger.info({ context: "startup", port, host }, `Server listening on ${host}:${port}`);
         resolve();
       });
     });
 
-    // ── 3. Register API routes ──
+    // ── Step 2: Register API routes ──
     // Registering routes BEFORE the DB check ensures the server responds to probes (e.g. 404 vs 500)
     // and satisfies Playwright's readiness monitor even during a cold start.
-    logger.info({ context: "startup" }, "📍 Registering API routes...");
+    logger.info({ context: "startup" }, "Registering API routes...");
     registerRoutes(app);
-    logger.info({ context: "startup" }, "✓ API routes registered");
+    logger.info({ context: "startup" }, "API routes registered");
 
-    // ── 1.1. Initialize background queues and workers ──
+    // ── Step 3: Initialize background queues and workers ──
     initQueues();
 
-    // ── 2. Ensure database is ready before proceeding ──
-    logger.info({ context: "startup" }, "📍 Ensuring database is ready (waiting for potential cold start)...");
+    // ── Step 4: Ensure database is ready before proceeding ──
+    logger.info({ context: "startup" }, "Ensuring database is ready (waiting for potential cold start)...");
     const maxAttempts = 30; // Increased to 60s for Neon cold starts
     let attempts = 0;
     let dbReady = false;
@@ -381,25 +381,25 @@ async function startServer() {
       } else {
         attempts++;
         if (attempts < maxAttempts) {
-          logger.info({ context: "startup" }, `📍 Database not ready (${health.message}), retrying (${attempts}/${maxAttempts})...`);
+          logger.info({ context: "startup" }, `Database not ready (${health.message}), retrying (${attempts}/${maxAttempts})...`);
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
     }
 
     if (!dbReady) {
-      logger.error({ context: "startup" }, "❌ Database failed to become ready after multiple attempts. Shutting down...");
+      logger.error({ context: "startup" }, "Database failed to become ready after multiple attempts. Shutting down...");
       process.exit(1);
     }
-    logger.info({ context: "startup" }, "✓ Database is ready");
+    logger.info({ context: "startup" }, "Database is ready");
 
-    // ── 2.1. Run database migrations ──
-    logger.info({ context: "startup" }, "📍 Running database migrations...");
+    // ── Step 5: Run database migrations ──
+    logger.info({ context: "startup" }, "Running database migrations...");
     try {
       await bootstrapDatabaseSchema();
-      logger.info({ context: "startup" }, "✓ Migrations complete");
+      logger.info({ context: "startup" }, "Migrations complete");
     } catch (migErr) {
-      logger.error({ context: "startup", error: migErr }, "❌ Migration failed");
+      logger.error({ context: "startup", error: migErr }, "Migration failed");
       if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
         process.exit(1);
       }
@@ -442,9 +442,9 @@ async function startServer() {
     setupGracefulShutdown();
 
     isReady = true;
-    logger.info({ context: "startup" }, "✓ Server fully ready");
+    logger.info({ context: "startup" }, "Server fully ready");
   } catch (error) {
-    logger.fatal({ context: "startup", error }, `❌ STARTUP FAILED`);
+    logger.fatal({ context: "startup", error }, `STARTUP FAILED`);
     process.exit(1);
   }
 }

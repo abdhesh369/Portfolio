@@ -2,14 +2,14 @@ import { useRef, ReactNode } from "react";
 import { m, useInView } from "framer-motion";
 import { EASE } from "@/lib/animation";
 
-interface SectionRevealProps {
+interface RevealProps {
     children: ReactNode;
     className?: string;
     delay?: number;
     width?: "fit-content" | "100%";
 }
 
-export default function SectionReveal({ children, className = "", delay = 0, width = "100%" }: SectionRevealProps) {
+export default function Reveal({ children, className = "", delay = 0, width = "100%" }: RevealProps) {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 

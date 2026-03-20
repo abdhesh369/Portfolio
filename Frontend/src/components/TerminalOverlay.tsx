@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Terminal as TerminalIcon, X, Cpu, Shield } from "lucide-react";
-import { useProjects, useSkills } from "@/hooks/use-portfolio";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSkills } from "@/hooks/portfolio/use-skills";
+import { useProjects } from "@/hooks/portfolio/use-projects";
 import { useLocation } from "wouter";
 
 interface TerminalLine {
@@ -14,14 +15,25 @@ interface TerminalLine {
 export function TerminalOverlay() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const { data: settings } = useSiteSettings();
+  const { data: skills } = useSkills();
+  const { data: projects } = useProjects();
   const [history, setHistory] = useState<TerminalLine[]>([
-    { id: "init", text: "SYSTEM_INITIALIZED: ABDHESH_OS v7.4.2", type: "success" },
+    { id: "init", text: `SYSTEM_INITIALIZED: ${settings?.personalName?.toUpperCase() || "PORTFOLIO"}_OS v1.0.0`, type: "success" },
     { id: "help", text: 'Type "help" for available commands.', type: "out" },
   ]);
-  
-  const { data: projects } = useProjects();
-  const { data: skills } = useSkills();
-  const { data: settings } = useSiteSettings();
+
+  // Update initial line when settings load
+  useEffect(() => {
+    if (settings?.personalName) {
+      const name = settings.personalName;
+      setHistory(prev => prev.map(line => 
+        line.id === "init" 
+          ? { ...line, text: `SYSTEM_INITIALIZED: ${name.toUpperCase()}_OS v1.0.0` }
+          : line
+      ));
+    }
+  }, [settings]);
   const [, setLocation] = useLocation();
   
   const inputRef = useRef<HTMLInputElement>(null);
@@ -225,7 +237,7 @@ export function TerminalOverlay() {
 
             {/* Footer Hud */}
             <div className="px-4 py-2 bg-neutral-950 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-muted-foreground/30 uppercase tracking-[0.2em]">
-               <span>ABDHESH_KERNAL_v7.4.2</span>
+               <span>PORTFOLIO_CORE_v7.4.2</span>
                <span>CONNECTION: STABLE [GIGABIT]</span>
             </div>
           </m.div>

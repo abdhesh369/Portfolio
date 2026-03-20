@@ -118,7 +118,7 @@ export default function BlogPost() {
         );
     }
 
-    const authorName = settings?.personalName || "Abdhesh Sah";
+    const authorName = settings?.personalName || "Portfolio Owner";
     const authorBio = settings?.personalBio || "Full Stack Engineer & Tech Enthusiast";
 
     return (
@@ -140,7 +140,7 @@ export default function BlogPost() {
                         "author": {
                             "@type": "Person",
                             "name": authorName,
-                            "url": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
+                            "url": import.meta.env.VITE_SITE_URL || window.location.origin
                         },
                         "publisher": {
                             "@type": "Person",
@@ -148,7 +148,7 @@ export default function BlogPost() {
                         },
                         "mainEntityOfPage": {
                             "@type": "WebPage",
-                            "@id": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
+                            "@id": `${import.meta.env.VITE_SITE_URL || window.location.origin}/blog/${article!.slug}`
                         }
                     },
                     {
@@ -159,19 +159,19 @@ export default function BlogPost() {
                                 "@type": "ListItem",
                                 "position": 1,
                                 "name": "Home",
-                                "item": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
+                                "item": import.meta.env.VITE_SITE_URL || window.location.origin
                             },
                             {
                                 "@type": "ListItem",
                                 "position": 2,
                                 "name": "Blog",
-                                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog`
+                                "item": `${import.meta.env.VITE_SITE_URL || window.location.origin}/blog`
                             },
                             {
                                 "@type": "ListItem",
                                 position: 3,
                                 name: article!.title,
-                                item: `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/blog/${article!.slug}`
+                                item: `${import.meta.env.VITE_SITE_URL || window.location.origin}/blog/${article!.slug}`
                             }
                         ]
                     }

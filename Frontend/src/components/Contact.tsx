@@ -242,9 +242,9 @@ export default function Contact() {
               </h3>
 
               <div className="space-y-4 relative z-10">
-                <DataCard icon={Mail} label="Email Protocol" value={settings?.socialEmail || "abdheshshah111@gmail.com"} href={`mailto:${settings?.socialEmail || "abdheshshah111@gmail.com"}?subject=Project%20Inquiry&body=Hi%20${settings?.personalName?.split(" ")[0] || "Abdhesh"},`} delay={0.1} />
-                <DataCard icon={MapPin} label="Base Location" value={settings?.locationText || "Kathmandu, Nepal"} href="#" delay={0.2} />
-                <DataCard icon={Phone} label="Signal Freq" value="+977 9761363076" href="tel:+9779761363076" delay={0.3} />
+                <DataCard icon={Mail} label="Email Protocol" value={settings?.socialEmail || "your.email@example.com"} href={settings?.socialEmail ? `mailto:${settings.socialEmail}?subject=Project%20Inquiry` : "#"} delay={0.1} />
+                <DataCard icon={MapPin} label="Base Location" value={settings?.locationText || "Remote / Worldwide"} href="#" delay={0.2} />
+                <DataCard icon={Phone} label="Signal Freq" value={settings?.personalPhone || "+000 0000000"} href={settings?.personalPhone ? `tel:${settings.personalPhone}` : "#"} delay={0.3} />
               </div>
             </div>
 

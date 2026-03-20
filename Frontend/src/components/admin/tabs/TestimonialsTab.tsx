@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 function TestimonialRequestModal({ onClose }: { onClose: () => void }) {
     const { toast } = useToast();
@@ -338,7 +339,13 @@ export function TestimonialsTab(_props: AdminTabProps) {
                                 <div className="flex items-center gap-4">
                                     <div className="w-14 h-14 nm-inset rounded-2xl flex items-center justify-center text-indigo-500/40 relative overflow-hidden">
                                         {t.avatarUrl ? (
-                                            <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
+                                            <OptimizedImage 
+                                              src={t.avatarUrl} 
+                                              alt={t.name} 
+                                              className="w-full h-full object-cover" 
+                                              width={56}
+                                              height={56}
+                                            />
                                         ) : (
                                             <User size={24} />
                                         )}

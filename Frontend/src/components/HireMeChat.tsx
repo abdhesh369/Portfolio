@@ -33,7 +33,7 @@ export function HireMeChat({ onSuccess }: HireMeChatProps) {
 
   // Initial greeting
   useEffect(() => {
-    const name = settings?.personalName?.split(" ")[0] || "Abdhesh";
+    const name = settings?.personalName?.split(" ")[0] || "the developer";
     setMessages([{
       id: "init",
       role: "model",

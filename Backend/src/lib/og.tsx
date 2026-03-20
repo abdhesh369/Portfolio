@@ -1,6 +1,9 @@
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
 import { logger } from "./logger.js";
+import { readFile } from "fs/promises";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Cache for the font buffer
 let fontBuffer: ArrayBuffer | null = null;
@@ -9,19 +12,24 @@ async function getFont() {
     if (fontBuffer) return fontBuffer;
     
     try {
-        const fontUrl = "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff";
-        const response = await fetch(fontUrl);
-        if (!response.ok) throw new Error("Failed to fetch font");
-        fontBuffer = await response.arrayBuffer();
+        // Read from local assets folder
+        const fontPath = path.join(__dirname, "../assets/inter-700.woff");
+        const buffer = await readFile(fontPath);
+        fontBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
         return fontBuffer;
     } catch (error) {
-        logger.error({ error }, "Failed to load font for OG images");
+        logger.error({ error }, "Failed to load local font for OG images");
+        // Fallback or re-throw
         throw error;
     }
 }
 
 export async function generateOgImageBuffer(title: string, description: string, type: string): Promise<Buffer> {
-    const fontData = await getFont();
+    const [fontData, { default: satori }, { Resvg }] = await Promise.all([
+        getFont(),
+        import("satori"),
+        import("@resvg/resvg-js")
+    ]);
 
     const svg = await satori(
         <div
@@ -79,7 +87,7 @@ export async function generateOgImageBuffer(title: string, description: string, 
                     fontWeight: 'bold',
                 }}
             >
-                abdheshsah.com.np
+                Portfolio
             </div>
         </div>,
         {

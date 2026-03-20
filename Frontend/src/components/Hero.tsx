@@ -290,7 +290,7 @@ export default function Hero() {
               transition={{ delay: 1.2 }}
               className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed"
             >
-              I'm <strong className="text-white font-bold">{settings?.personalName || "Abdhesh Sah"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
+              I'm <strong className="text-white font-bold">{settings?.personalName || "Portfolio Owner"}</strong>, {settings?.personalBio || "a Full-Stack Engineer passionate about performance, precision, and building digital experiences that feel alive."}
             </m.p>
 
             <m.div

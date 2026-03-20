@@ -10,7 +10,7 @@ export default function GuestbookPage() {
         <div className="min-h-screen bg-background text-foreground selection:bg-primary/20" style={{ fontFamily: "var(--font-body)" }}>
             <SEO
                 slug="guestbook"
-                title={`Guestbook | ${settings?.personalName || "Abdhesh Sah"}`}
+                title={`Guestbook | ${settings?.personalName || "Portfolio Owner"}`}
                 description="Leave a message, some feedback, or just say hello!"
             />
             <Navbar />

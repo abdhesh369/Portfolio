@@ -200,7 +200,7 @@ export default function Footer() {
 
           {/* Copyright (Centralized) */}
           <div className="text-center text-muted-foreground font-medium">
-            <p>{settings?.footerCopyright ? settings.footerCopyright.replace('{year}', currentYear.toString()) : `© ${currentYear} Abdhesh Sah. All rights reserved.`}</p>
+            <p>{settings?.footerCopyright ? settings.footerCopyright.replace('{year}', currentYear.toString()) : `© ${currentYear} ${settings?.personalName || 'Portfolio Owner'}. All rights reserved.`}</p>
           </div>
 
           {/* Tech Credit (Right) */}

@@ -43,7 +43,7 @@ export function SEO({
     });
 
     const { data: settings } = useSiteSettings();
-    const displayName = settings?.personalName || "Abdhesh Sah";
+    const displayName = settings?.personalName || "Portfolio Owner";
 
     const title = seoSettings?.metaTitle || propTitle || `${displayName} | Portfolio`;
     const description =

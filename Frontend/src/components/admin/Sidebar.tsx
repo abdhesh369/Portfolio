@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { useAdminSubscribers } from "@/hooks/use-portfolio";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface SidebarProps {
     collapsed: boolean;
@@ -130,11 +131,12 @@ export default function Sidebar({
                         )}>
                             <div className="absolute inset-0 bg-var(--nm-accent-gradient) opacity-10 group-hover:opacity-20 transition-opacity" />
                             {settings?.personalAvatar && !avatarError ? (
-                                <img
+                                <OptimizedImage
                                     src={settings.personalAvatar}
                                     className="w-full h-full object-cover rounded-xl z-10"
-                                    onError={() => setAvatarError(true)}
                                     alt="Logo"
+                                    width={48}
+                                    height={48}
                                 />
                             ) : (
                                 <Rocket className="w-5 h-5 text-purple-500 z-10" />

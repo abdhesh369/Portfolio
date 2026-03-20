@@ -145,7 +145,7 @@ export default function BlogList() {
         <div className="min-h-screen selection:bg-primary/20 bg-background text-foreground" style={{ fontFamily: "var(--font-body)" }}>
             <SEO
                 slug="blog"
-                title={`Blog | ${settings?.personalName || "Abdhesh Sah"} - Tech Thoughts & Tutorials`}
+                title={`Blog | ${settings?.personalName || "Portfolio Owner"} - Tech Thoughts & Tutorials`}
                 description="Articles about web development, engineering mindset, and modern technologies."
             />
             <Navbar />

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   ArrowLeft,
   Layers,
@@ -6,17 +7,23 @@ import {
   Settings,
   BookOpen,
   Code2,
+  Sparkles,
 } from "lucide-react";
 import { Link, useRoute, useLocation } from "wouter";
-import { fadeUp, fadeUpLarge, fadeRight } from "@/lib/animation";
+import { fadeUp, fadeRight, fadeIn } from "@/lib/animation";
 import { m } from "framer-motion";
 import DOMPurify from "dompurify";
 import { SEO } from "@/components/SEO";
+import { useProjects, useProjectById } from "@/hooks/use-portfolio";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+import { getDynamicOgImage } from "@/lib/cloudinary";
+import { toast } from "@/hooks/use-toast";
 import { ApiResponseViewer } from "@/components/ApiResponseViewer";
 import { InteractivePlayground } from "@/components/InteractivePlayground";
 import { FloatingParticles, SectionCard, TechBadge, ProjectHero, OtherProjectsSection } from "@/components/ProjectDetail/ProjectSections";
 
 export default function ProjectDetail() {
+  const { data: settings } = useSiteSettings();
   const [, params] = useRoute("/project/:id");
   const { data: projects } = useProjects();
 
@@ -35,8 +42,8 @@ export default function ProjectDetail() {
 
   const [, setLocation] = useLocation();
 
-  const handleBack = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleBack = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     if (window.history.length > 2) {
       window.history.back();
     } else {
@@ -142,7 +149,7 @@ export default function ProjectDetail() {
     >
       <SEO
         slug={`project-${project.id}`}
-        title={project.title ? `${project.title} - Abdhesh Sah` : "Project Detail"}
+        title={project.title ? `${project.title} | ${settings?.personalName || 'Portfolio'}` : "Project Detail"}
         description={project.description || "Project details and overview."}
         image={getDynamicOgImage(project.title || "Project Detail", project.imageUrl || "")}
         keywords={project.techStack?.join(", ")}
@@ -157,7 +164,7 @@ export default function ProjectDetail() {
             "operatingSystem": "Any",
             "author": {
               "@type": "Person",
-              "name": "Abdhesh Sah"
+              "name": settings?.personalName || "Portfolio Owner"
             },
             "datePublished": new Date().toISOString().split('T')[0],
             "codeRepository": project.githubUrl,
@@ -171,19 +178,19 @@ export default function ProjectDetail() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"
+                "item": import.meta.env.VITE_SITE_URL || window.location.origin
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Projects",
-                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/#projects`
+                "item": `${import.meta.env.VITE_SITE_URL || window.location.origin}/#projects`
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": project.title,
-                "item": `${import.meta.env.VITE_SITE_URL || "https://abdheshsah.com.np"}/project/${project.id}`
+                "item": `${import.meta.env.VITE_SITE_URL || window.location.origin}/project/${project.id}`
               }
             ]
           }
@@ -353,7 +360,15 @@ export default function ProjectDetail() {
               </div>
             </div>
 
-            <OtherProjectsSection projects={otherProjects} catColor={catColor} />
+            <OtherProjectsSection 
+              projects={(otherProjects || []).map(p => ({
+                id: p.id,
+                title: p.title,
+                description: p.description,
+                imageUrl: p.imageUrl
+              }))} 
+              catColor={catColor} 
+            />
 
             {/* Back to Projects */}
             <m.div
