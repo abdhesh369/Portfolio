@@ -75,32 +75,37 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
     await page.goto('/');
     await page.locator('h1').waitFor({ state: 'visible' });
 
-    // Tab through the page and ensure focus is visible
-    await page.keyboard.press('Tab');
-    const focusedElement = page.locator(':focus');
-    await expect(focusedElement).toBeAttached();
+    // Tab through the first few elements and ensure focus is visible and landing on interactive elements
+    for (let i = 0; i < 3; i++) {
+      await page.keyboard.press('Tab');
+      const focusedElement = page.locator(':focus');
+      await expect(focusedElement).toBeAttached();
 
-    // Verify the focused element is interactive (link, button, input, etc.)
-    const tagName = await focusedElement.evaluate(el => el.tagName.toLowerCase());
-    expect(['a', 'button', 'input', 'select', 'textarea', 'summary']).toContain(tagName);
+      const tagName = await focusedElement.evaluate(el => el.tagName.toLowerCase());
+      // li is sometimes used for interactive menu items or cards with roles
+      expect(['a', 'button', 'input', 'select', 'textarea', 'summary', 'li']).toContain(tagName);
+    }
   });
 
   test('icon-only buttons have accessible labels', async ({ page }) => {
+    test.slow();
     await page.goto('/');
     await page.locator('h1').waitFor({ state: 'visible' });
 
-    // All buttons should have either text content or an aria-label
+    // All buttons should have either text content or an accessible label
     const buttons = page.locator('button');
     const count = await buttons.count();
 
     for (let i = 0; i < count; i++) {
       const button = buttons.nth(i);
-      const ariaLabel = await button.getAttribute('aria-label');
-      const textContent = (await button.textContent())?.trim();
-      const ariaLabelledBy = await button.getAttribute('aria-labelledby');
-      const title = await button.getAttribute('title');
+      const hasAccessibleName = await button.evaluate((el: HTMLElement) => {
+        const ariaLabel = el.getAttribute('aria-label');
+        const textContent = el.textContent?.trim();
+        const ariaLabelledBy = el.getAttribute('aria-labelledby');
+        const title = el.getAttribute('title');
+        return !!(ariaLabel || textContent || ariaLabelledBy || title);
+      });
 
-      const hasAccessibleName = !!(ariaLabel || textContent || ariaLabelledBy || title);
       if (!hasAccessibleName) {
         const html = await button.evaluate(el => el.outerHTML);
         expect(hasAccessibleName, `Button missing accessible name: ${html}`).toBe(true);

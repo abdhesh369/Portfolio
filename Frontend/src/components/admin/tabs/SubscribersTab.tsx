@@ -15,7 +15,6 @@ import {
 import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
 import { formatDate } from "@/lib/utils/date";
 import { cn } from "@/lib/utils";
-// import type { Subscriber } from "@portfolio/shared/schema";
 import type { AdminTabProps } from "./types";
 import { AnimatePresence, motion } from "framer-motion";
 

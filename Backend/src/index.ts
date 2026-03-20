@@ -10,8 +10,6 @@ import helmet from "helmet";
 import { registerRoutes } from "./routes.js";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-// import { seedDatabase } from "./seed.js"; // Unused
-
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker, scopeQueue, scopeWorker, initQueues } from "./lib/queue.js";
 import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker

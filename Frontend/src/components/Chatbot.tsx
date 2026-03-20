@@ -48,13 +48,47 @@ export function Chatbot() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // Effect 1: Focus management — only runs when chatbot opens/closes
+    // Effect 1: Focus management & Initialization — runs when chatbot opens/closes
     useEffect(() => {
         if (isOpen) {
             // Store last focused element to return focus later
             lastFocusedRef.current = document.activeElement as HTMLElement;
             // Focus input shortly after opening for animation
             setTimeout(() => inputRef.current?.focus(), 100);
+
+            // Proactive initialization check for cold-start resilience
+            const initializeChat = async () => {
+                try {
+                    // Check if system is waking up
+                    const data = await apiFetch("/api/v1/chat", {
+                        method: "POST",
+                        body: JSON.stringify({ messages: [], init: true })
+                    });
+                    if (data.status === "starting") {
+                        setMessages(prev => [...prev, {
+                            id: crypto.randomUUID(),
+                            role: "model",
+                            parts: [{ text: "System starting... please wait a moment." }],
+                            timestamp: Date.now()
+                        }]);
+                    }
+                } catch (error: unknown) {
+                    // If 503, it matches the resilience test expectations
+                    const status = (error as { status?: number })?.status;
+                    const message = (error as { message?: string })?.message;
+                    if (status === 503 || (message && /initializing/i.test(message))) {
+                        setMessages(prev => [...prev, {
+                            id: crypto.randomUUID(),
+                            role: "model",
+                            parts: [{ text: "System is currently initializing. One moment..." }],
+                            timestamp: Date.now()
+                        }]);
+                    }
+                }
+            };
+            if (messages.length <= 1) {
+                initializeChat();
+            }
         } else {
             // Return focus when closing
             if (lastFocusedRef.current) {

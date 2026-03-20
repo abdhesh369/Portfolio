@@ -8,6 +8,12 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isPwaDisabled = env.VITE_DISABLE_PWA === 'true';
 
+  const proxyTarget = process.env.VITE_API_PROXY_TARGET || process.env.VITE_API_URL?.replace(/\/v1\/?$/, '') || env.VITE_API_URL?.replace(/\/v1\/?$/, '') || 'http://127.0.0.1:5000';
+  
+  if (mode === 'development' || process.env.NODE_ENV === 'test') {
+    console.warn(`[VITE CONFIG] Proxy Target: ${proxyTarget} (Mode: ${mode})`);
+  }
+
   return {
   plugins: [
     react(),
@@ -122,15 +128,15 @@ export default defineConfig(({ mode }) => {
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
       '/ping': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
     },
@@ -139,15 +145,15 @@ export default defineConfig(({ mode }) => {
     port: 4173,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
       '/ping': {
-        target: 'http://127.0.0.1:5005',
+        target: proxyTarget,
         changeOrigin: true,
       },
     },
@@ -164,7 +170,6 @@ export default defineConfig(({ mode }) => {
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
-          const nm = id.split('node_modules/').pop()?.split('/').slice(0, id.includes('@') ? 2 : 1).join('/');
 
           // Admin-only: rich text editor + all prosemirror/tiptap deps
           if (

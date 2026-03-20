@@ -6,6 +6,7 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^8.25.0",
         "@typescript-eslint/parser": "^8.25.0",
+        "concurrently": "^9.2.1",
         "eslint": "^9.21.0",
         "tinyexec": "^0.3.2",
         "tsx": "^4.19.3",
@@ -17,9 +18,11 @@
         "packages/*"
     ],
     "scripts": {
-        "dev": "npm run dev:backend & npm run dev:frontend",
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
         "dev:backend": "npm run dev -w Backend",
         "dev:frontend": "npm run dev -w Frontend",
+        "dev:b": "npm run dev:backend",
+        "dev:f": "npm run dev:frontend",
         "build:shared": "npm run build -w @portfolio/shared",
         "build:backend": "npm run build:shared && npm run build -w Backend",
         "build:frontend": "npm run build:shared && npm run build -w Frontend",

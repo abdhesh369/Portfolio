@@ -558,7 +558,7 @@ export const insertProjectApiSchema = z.object({
   description: z.string().min(1).max(5000),
   longDescription: z.string().nullable().optional(),
   techStack: z.array(z.string().max(100)).default([]),
-  imageUrl: z.string().url().max(500),
+  imageUrl: z.string().max(500).refine(v => isValidUrl(v), { message: "Invalid url" }),
   githubUrl: z.string().max(500).nullable().optional(),
   liveUrl: z.string().max(500).nullable().optional(),
   category: z.string().min(1).max(100),

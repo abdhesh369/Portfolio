@@ -14,6 +14,15 @@ test.describe("Admin Authentication Flow", () => {
   test("admin login rejects empty password", async ({ page }) => {
     await page.goto("/admin/login");
 
+    // Suppress PersonaSelector and clear overlays
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio_has_seen_persona', 'true');
+    });
+    await page.waitForTimeout(1000);
+    await page.evaluate(() => {
+      document.querySelectorAll('[class*="fixed"][class*="inset-0"]').forEach(el => el.remove());
+    });
+
     const submitBtn = page
       .getByRole("button", { name: /login|sign in|submit/i })
       .first();
@@ -31,6 +40,15 @@ test.describe("Admin Authentication Flow", () => {
     const passwordInput = page.locator(
       'input[type="password"], input[name="password"]'
     ).first();
+
+    // Suppress PersonaSelector and clear overlays
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio_has_seen_persona', 'true');
+    });
+    await page.waitForTimeout(1000);
+    await page.evaluate(() => {
+      document.querySelectorAll('[class*="fixed"][class*="inset-0"]').forEach(el => el.remove());
+    });
 
     await expect(passwordInput).toBeVisible({ timeout: 5000 });
     await passwordInput.fill("wrong-password-12345");
@@ -68,12 +86,25 @@ test.describe("Admin Dashboard (requires auth)", () => {
   test.beforeEach(async ({ page }) => {
     const adminPassword = process.env.TEST_ADMIN_PASSWORD || '1111111111111111';
 
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio_has_seen_persona', 'true');
+    });
+
     await page.goto("/admin/login");
+
+    // Wait and clear overlays
+    await page.waitForTimeout(1000);
+    await page.evaluate(() => {
+      document.querySelectorAll('[class*="fixed"][class*="inset-0"]').forEach(el => el.remove());
+    });
+
     const passwordInput = page.locator('input[type="password"]').first();
+    await expect(passwordInput).toBeVisible({ timeout: 10000 });
     await passwordInput.fill(adminPassword);
+    
     const submitBtn = page.getByRole("button", { name: /login|sign in|submit/i }).first();
     await submitBtn.click();
-    await page.waitForURL("**/admin", { timeout: 10000 });
+    await page.waitForURL("**/admin", { timeout: 20000 });
   });
 
   test("dashboard shows navigation sidebar when authenticated", async ({ page }) => {

@@ -54,6 +54,7 @@
   --ring: 262 83% 58%;
 
   --radius: 0.75rem;
+  --button-outline: 214 25% 72%;
 
   /* Chart Colors */
   --chart-1: 262 83% 58%;
@@ -129,6 +130,7 @@
   --border: 216 28% 28%;          /* was 17% — visible border on dark surfaces */
   --input: 216 28% 28%;
   --ring: 263 70% 50%;
+  --button-outline: 216 28% 28%;
 
   /* Extended accent colors (hex for inline styles, HSL for Tailwind) */
   --color-cyan: #00d4ff;
@@ -282,7 +284,7 @@
 
   /* Accessibility */
   .skip-to-content {
-    @apply sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-b-md focus:shadow-lg focus:left-4 focus:top-0 transition-opacity;
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-2xl transition-all;
   }
 
   /* Container */
@@ -756,3 +758,38 @@
   --z-tooltip: 1100;
   --z-highest: 9999;
 }
+
+/* ==================== ACCESSIBILITY: FORCED COLORS (HIGH CONTRAST) ==================== */
+/* Ensures site remains readable and styled in Windows High Contrast Mode */
+@media (forced-colors: active) {
+  :root {
+    --primary: CanvasText;
+    --primary-foreground: Canvas;
+    --border: CanvasText;
+    --background: Canvas;
+    --foreground: CanvasText;
+  }
+
+  /* Force sr-only to stay hidden in high contrast */
+  .sr-only {
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    white-space: nowrap !important;
+  }
+
+  :focus-visible {
+    outline: 2px solid SelectedItem !important;
+    outline-offset: 2px !important;
+  }
+
+  .glass-card, .bg-card, .bg-secondary {
+    background: Canvas !important;
+    border: 1px solid CanvasText !important;
+  }
+}
+
+/* Cache-busting refresh: 2026-03-20-T19:53:00Z */

@@ -190,6 +190,7 @@ const Magnetic = ({ children }: { children: React.ReactNode }) => {
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      className="inline-block w-full sm:w-auto"
       style={{ x, y }}
     >
       {children}
@@ -296,7 +297,7 @@ export default function Hero() {
               initial={fadeUp.initial}
               animate={fadeUp.animate}
               transition={{ delay: 1.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start items-center lg:items-start"
             >
               <Magnetic>
                 <Button

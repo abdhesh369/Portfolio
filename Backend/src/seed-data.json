@@ -290,6 +290,32 @@
       "mastery": 90,
       "endorsements": 0,
       "id": 1
+    },
+    {
+      "id": 15,
+      "name": "hhhh",
+      "category": "jhhh",
+      "status": "Core",
+      "icon": "Code",
+      "description": "nnnnnnnnnnnnn",
+      "proof": "bbbbbbbbbbbbbbbb",
+      "mastery": 51,
+      "x": 50,
+      "y": 50,
+      "endorsements": 0
+    },
+    {
+      "id": 16,
+      "name": "dddddddddddd",
+      "category": "dddddddddd",
+      "status": "Core",
+      "icon": "Code",
+      "description": "ddddddddddddddddd",
+      "proof": "",
+      "mastery": 50,
+      "x": 50,
+      "y": 50,
+      "endorsements": 0
     }
   ],
   "mindsets": [

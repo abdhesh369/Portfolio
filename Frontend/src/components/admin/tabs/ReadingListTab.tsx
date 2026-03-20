@@ -6,7 +6,6 @@ import {
     BookOpen, Plus, Trash2, ExternalLink,
     Save, X, FileText, Video
 } from "lucide-react";
-// import { motion, AnimatePresence } from "framer-motion";
 import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
 import { AdminTabProps } from "./types";
 
