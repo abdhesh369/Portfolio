@@ -44,7 +44,7 @@ export let scopeWorker: Worker | null = null;
 /** Shared Resend client — instantiated once when queues initialize, not per-job */
 let resend: Resend | null = null;
 
-/** Simple in-memory template cache (Finding #16) */
+/** Simple in-memory template cache */
 let templateCache: EmailTemplate[] | null = null;
 let lastTemplateFetch = 0;
 const TEMPLATE_CACHE_TTL = 60 * 1000; // 1 minute
@@ -68,7 +68,7 @@ interface EmailParams {
     attachments?: unknown[];
 }
 
-/** Strategy Pattern for different email types (Finding #15) */
+/** Strategy Pattern for different email types */
 const EMAIL_STRATEGIES: Record<string, (payload: any) => Promise<EmailParams> | EmailParams> = { // eslint-disable-line @typescript-eslint/no-explicit-any
     "contact-notification": (payload: { targetEmail: string; message: { subject?: string; name: string; email: string; message: string } }) => ({
         from: env.CONTACT_EMAIL,
@@ -147,12 +147,12 @@ export function initQueues() {
 
     if (!canUseRedis || process.env.NODE_ENV === "test") {
         if (process.env.NODE_ENV === "test") {
-            logger.info({ context: "queue" }, "⏭️  Skipping BullMQ initialization in test mode (bypasses version checks)");
+            logger.info({ context: "queue" }, "Skipping BullMQ initialization in test mode (bypasses version checks)");
         }
         return;
     }
 
-    logger.info({ context: "queue" }, "📍 Initializing BullMQ queues and workers...");
+    logger.info({ context: "queue" }, "Initializing BullMQ queues and workers...");
 
 
     const defaultJobOptions = {
@@ -217,5 +217,5 @@ export function initQueues() {
         });
     }
 
-    logger.info({ context: "queue" }, "✓ BullMQ queues and workers initialized");
+    logger.info({ context: "queue" }, "BullMQ queues and workers initialized");
 }

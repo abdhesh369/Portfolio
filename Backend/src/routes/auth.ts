@@ -14,7 +14,7 @@ import { authLimiter } from "../lib/rate-limit.js";
 
 const router = Router();
 
-/** DRY cookie options generator (Finding #6) */
+/** DRY cookie options generator */
 function getCookieOptions(isProd: boolean, maxAge: number): {
     httpOnly: boolean;
     secure: boolean;

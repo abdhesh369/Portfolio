@@ -1,7 +1,7 @@
 # CODEOWNERS — auto-assigns reviewers based on changed paths.
 # Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 #
-# Replace @your-username / @your-org/team-name with real GitHub handles.
+# Determines auto-assigned reviewers based on changed file paths.
 # The last matching rule wins, so put more specific rules below general ones.
 
 # ── Catch-all ────────────────────────────────────────────────────────────────

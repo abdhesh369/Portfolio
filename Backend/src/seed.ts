@@ -181,7 +181,7 @@ export async function seedDatabase() {
     }
 
     logSeed(`Experiences: ${successCount} seeded (${failCount} failed)`);
-    logSeed("Database seeding completed successfully! 🎉");
+    logSeed("Database seeding completed successfully!");
   } catch (err) {
     logSeed(`Database seeding failed: ${err} `, "error");
     throw err;

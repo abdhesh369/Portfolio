@@ -80,7 +80,7 @@ function validateEnv(): Env {
 
         if (parsed.NODE_ENV === "production") {
             if (!parsed.RESEND_API_KEY) {
-                console.warn("⚠️  [ENV] RESEND_API_KEY not set. Email sending will fail in production.");
+                console.warn("[ENV] RESEND_API_KEY not set. Email sending will fail in production.");
             }
         }
 
@@ -88,8 +88,8 @@ function validateEnv(): Env {
     } catch (err) {
         if (err instanceof z.ZodError) {
             const missing = err.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
-            process.stderr.write(`❌ [ENV] Environment validation failed: ${missing}\n`);
-            process.stderr.write("💡 Please check your .env file and ensure all required variables are set correctly.\n");
+            process.stderr.write(`[ENV] Environment validation failed: ${missing}\n`);
+            process.stderr.write("[ENV] Please check your .env file and ensure all required variables are set correctly.\n");
             process.exit(1);
         }
         throw err;
