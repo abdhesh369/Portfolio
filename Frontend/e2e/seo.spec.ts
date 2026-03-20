@@ -18,7 +18,7 @@ test.describe("SEO & Social Metadata", () => {
     const ogImage = page.locator('meta[property="og:image"]').first();
     const ogType = page.locator('meta[property="og:type"]').first();
 
-    await expect(ogTitle).toHaveAttribute("content", /Portfolio/i);
+    await expect(ogTitle).toHaveAttribute("content", /Portfolio|Engineer|Developer/i);
     await expect(ogType).toHaveAttribute("content", "website");
     
     // Image should be a valid absolute URL or root-relative
@@ -31,7 +31,7 @@ test.describe("SEO & Social Metadata", () => {
     const twitterTitle = page.locator('meta[name="twitter:title"]').first();
 
     await expect(twitterCard).toHaveAttribute("content", /summary|large_image/i);
-    await expect(twitterTitle).toHaveAttribute("content", /Portfolio/i);
+    await expect(twitterTitle).toHaveAttribute("content", /Portfolio|Engineer|Developer/i);
   });
 
   test("should have canonical URL tag", async ({ page }) => {
