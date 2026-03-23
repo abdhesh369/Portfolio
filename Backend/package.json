@@ -76,7 +76,7 @@
     "drizzle-kit": "^0.31.9",
     "globals": "^17.4.0",
     "react": "^19.2.3",
-    "satori": "^0.25.0",
+    "satori": "^0.26.0",
     "supertest": "^7.2.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.3",
