@@ -19,6 +19,8 @@ import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
 import { nonceMiddleware } from "./middleware/nonce.js";
 
 import { globalLimiter } from "./lib/rate-limit.js";
+import { startHealthMonitor, stopHealthMonitor } from "./lib/circuit-breaker.js";
+import { dbGuard } from "./middleware/db-guard.js";
 
 import { randomUUID } from "crypto";
 
@@ -72,6 +74,7 @@ app.use(cookieParser());
 app.use(nonceMiddleware);
 
 app.use("/api/v1", globalLimiter);
+app.use("/api/v1", dbGuard);
 
 // Harden CORS
 app.use(
@@ -296,6 +299,9 @@ function setupGracefulShutdown() {
         if (scopeQueue) await scopeQueue.close();
         if (scopeWorker) await scopeWorker.close();
 
+        // Stop circuit breaker health monitor
+        stopHealthMonitor();
+
         // Disconnect main Redis client
         if (redis) {
           await redis.quit();
@@ -392,6 +398,9 @@ async function startServer() {
       process.exit(1);
     }
     logger.info({ context: "startup" }, "Database is ready");
+
+    // ── Step 4b: Start circuit breaker health monitor ──
+    startHealthMonitor();
 
     // ── Step 5: Run database migrations ──
     logger.info({ context: "startup" }, "Running database migrations...");
