@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { env } from "../env.js";
 import { createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -35,16 +34,6 @@ const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000;         // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 
-/**
- * Constant-time string comparison to prevent timing attacks.
- * Uses HMAC to normalize input lengths before comparison.
- */
-function safeCompare(a: string, b: string): boolean {
-    const sah = crypto.randomBytes(32); // Random salt for this comparison
-    const hmacA = crypto.createHmac("sha256", sah).update(a || "").digest();
-    const hmacB = crypto.createHmac("sha256", sah).update(b || "").digest();
-    return crypto.timingSafeEqual(hmacA, hmacB);
-}
 
 /**
  * POST /api/auth/login
@@ -58,20 +47,21 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     }
 
     const normalizedInput = String(password).trim();
-    const normalizedSecret = String(env.ADMIN_PASSWORD).trim();
+    const hash = String(env.ADMIN_PASSWORD).trim();
 
     let isValid = false;
 
-    if (normalizedSecret.startsWith("$2")) {
-        // Secret is a bcrypt hash — use bcrypt.compare (already constant-time)
-        try {
-            isValid = await bcrypt.compare(normalizedInput, normalizedSecret);
-        } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    try {
+        // Enforce bcrypt hashes in production/development
+        // This prevents plain-text passwords from being used after initial setup
+        if (hash.startsWith("$2")) {
+            isValid = await bcrypt.compare(normalizedInput, hash);
+        } else {
+            logger.error({ context: "auth" }, "ADMIN_PASSWORD is not a valid bcrypt hash. Login disabled for security.");
             isValid = false;
         }
-    } else {
-        // Secret is plain text — use constant-time comparison
-        isValid = safeCompare(normalizedInput, normalizedSecret);
+    } catch {
+        isValid = false;
     }
 
     if (!isValid) {

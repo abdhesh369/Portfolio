@@ -213,18 +213,32 @@ export const registerChatRoutes = (router: Router) => {
     }));
 
     // POST /api/v1/chat/save-session - Save a chat session to logs
-    router.post("/chat/save-session", asyncHandler(async (req: Request, res: Response) => {
+    router.post("/chat/save-session", 
+        chatLimiter,
+        isAuthenticated, 
+        asyncHandler(async (req: Request, res: Response) => {
         const schema = z.object({
-            sessionId: z.string().default(() => `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
-            history: z.array(z.any()),
-            sessionMetadata: z.any().optional(),
+            sessionId: z.string().min(8).max(100),
+            history: z.array(z.object({
+                role: z.enum(["user", "model", "assistant", "system"]),
+                parts: z.array(z.object({
+                    text: z.string().min(1).max(5000)
+                }))
+            })).max(100),
+            sessionMetadata: z.record(z.string(), z.any()).optional().default({}),
         });
 
         const { sessionId, history, sessionMetadata } = schema.parse(req.body);
 
+        // Map the parts-based history to the content-based format the repository expects
+        const mappedMessages = history.map(msg => ({
+            role: (msg.role === "model" || msg.role === "system" ? "assistant" : "user") as "user" | "assistant",
+            content: msg.parts.map(p => p.text).join("\n")
+        }));
+
         const log = await chatRepository.create({
             sessionId,
-            messages: history,
+            messages: mappedMessages,
             metadata: sessionMetadata || {},
         });
 

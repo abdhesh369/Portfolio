@@ -6,6 +6,7 @@ import { parseIntParam } from "../lib/params.js";
 import { logger } from "../lib/logger.js";
 import { aiLimiter } from "../lib/rate-limit.js";
 import { asyncHandler } from "../lib/async-handler.js";
+import { isAuthenticated } from "../auth.js";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.post("/request", aiLimiter, asyncHandler(async (req, res) => {
 }));
 
 // GET /api/v1/scope/stream/:id - SSE endpoint to stream estimation progress/results
-router.get("/stream/:id", (req, res) => {
+router.get("/stream/:id", isAuthenticated, (req, res) => {
     const requestId = parseIntParam(res, req.params.id, "request ID");
     if (requestId === null) return;
 
@@ -73,14 +74,14 @@ router.get("/stream/:id", (req, res) => {
 });
 
 // GET /api/v1/scope/recent - Get recent completed requests (for social proof or admin)
-router.get("/recent", asyncHandler(async (req, res) => {
+router.get("/recent", isAuthenticated, asyncHandler(async (req, res) => {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 5;
     const recent = await scopeRepository.findRecent(limit);
     res.json(recent);
 }));
 
 // GET /api/v1/scope/:id - Get status/result of a specific request
-router.get("/:id", asyncHandler(async (req, res) => {
+router.get("/:id", isAuthenticated, asyncHandler(async (req, res) => {
     const id = parseIntParam(res, req.params.id, "ID");
     if (id === null) return;
 

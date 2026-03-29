@@ -52,14 +52,14 @@ guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, 
 }));
 
 // POST /guestbook/:id/react - Add a reaction to an entry
-guestbookRoutes.post("/:id/react", asyncHandler(async (req, res) => {
+guestbookRoutes.post("/:id/react", guestbookLimiter, asyncHandler(async (req, res) => {
     const id = parseIntParam(res, req.params.id, "guestbook entry ID");
     if (id === null) return;
     
     const { emoji } = req.body;
 
-    if (!emoji || typeof emoji !== "string") {
-        res.status(400).json({ success: false, message: "Emoji is required" });
+    if (!emoji || typeof emoji !== "string" || emoji.length > 8) {
+        res.status(400).json({ success: false, message: "Invalid or too long emoji" });
         return;
     }
 
