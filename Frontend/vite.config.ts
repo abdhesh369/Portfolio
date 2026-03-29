@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -16,104 +17,22 @@ export default defineConfig(({ mode }) => {
 
   return {
   plugins: [
+    tailwindcss(),
     react(),
+    visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
     visualizer({ open: false, filename: 'stats.html', gzipSize: true, brotliSize: true }),
     VitePWA({
       disable: isPwaDisabled,
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'offline.html'],
-      manifest: {
-        name: env.VITE_SITE_NAME || 'Abdhesh Sah | Portfolio',
-        short_name: env.VITE_SITE_NAME || 'Abdhesh',
-        description: env.VITE_SITE_DESCRIPTION || 'Professional portfolio showcasing full-stack engineering projects and skills.',
-        theme_color: '#020817',
-        background_color: '#020817',
-        display: 'standalone',
-        scope: '/',
-        start_url: '/',
-        icons: [
-          {
-            src: '/icons/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: '/icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: '/icons/pwa-512x512-maskable.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ]
-      }, // Enabled static manifest fallback; overridden by dynamic /api/v1/settings/manifest.json if reachable
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
-        runtimeCaching: [
-          // Public API routes: NetworkFirst, 7-day TTL
-          {
-            urlPattern: /\/api\/v1\/(projects|skills|articles|experiences|settings)(\/|$|\?)/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-public-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7  // 7 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          // Admin & auth routes: NetworkOnly (never cached)
-          {
-            urlPattern: /\/api\/v1\/(admin|auth)(\/|$|\?)/i,
-            handler: 'NetworkOnly',
-          },
-          // Google Fonts stylesheets
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          // Google Fonts files
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
-      }
+        maximumFileSizeToCacheInBytes: 4000000,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+      },
     }),
   ],
-  esbuild: mode === 'production' ? {
-    drop: ['console', 'debugger'],
-  } : {},
+  // esbuild: mode === 'production' ? {
+  //   drop: ['console', 'debugger'],
+  // } : {},
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
