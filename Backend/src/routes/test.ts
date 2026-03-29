@@ -5,6 +5,7 @@ import { CacheService } from "../lib/cache.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { logger } from "../lib/logger.js";
 import { seedDatabase } from "../seed.js";
+import { redis } from "../lib/redis.js";
 
 export const testRouter = Router();
 
@@ -18,11 +19,28 @@ testRouter.post(
 
         logger.info({ context: "test-reset" }, "Resetting database and cache for E2E...");
 
-        // 1. Clear Redis cache
+        // 1. Clear Redis state (Cache + Hardening Keys)
         try {
             await CacheService.clearAll();
+            
+            if (redis) {
+                // Clear all lockout and attempt counters
+                // We use a broader pattern to ensure we catch all variations (active, count, etc.)
+                const lockoutKeys = await redis.keys("lockout:*");
+                const attemptKeys = await redis.keys("login_attempts:*");
+                const loginAttemptKeys = await redis.keys("login_attempt:*");
+                const allToClear = [...lockoutKeys, ...attemptKeys, ...loginAttemptKeys];
+                
+                if (allToClear.length > 0) {
+                    await redis.del(...allToClear);
+                }
+                
+                // Reset JWT global version to 1
+                await redis.set("glob:admin_token_version", "1");
+                logger.info({ context: "test-reset" }, `Cleared ${allToClear.length} hardening keys and reset JWT version.`);
+            }
         } catch (err) {
-            logger.error({ context: "test-reset", error: err }, "Failed to clear cache");
+            logger.error({ context: "test-reset", error: err }, "Failed to clear Redis state");
         }
 
         // 2. Truncate all tables (Mirror of integration-setup.ts)

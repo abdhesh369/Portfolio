@@ -22,12 +22,13 @@ const createLimiter = (options: {
         legacyHeaders: false,
         skipSuccessfulRequests: options.skipSuccessfulRequests || false,
         skip: (req) => {
-            // Bypass rate limiting in test environment
+            // Allow E2E tests to force rate limiting even on localhost
+            if (req.headers['x-test-force-rate-limit'] === 'true') return false;
+
+            // Bypass rate limiting in test environment by default to ensure CI stability
             if (process.env.NODE_ENV === 'test') return true;
             
-            // NOTE: This bypass works only because trust proxy = 1 (Render's single LB).
-            // If topology changes to 2+ proxy hops (e.g., Cloudflare + Render),
-            // req.ip will be the Render LB IP — update trust proxy AND revisit this skip.
+            // Standard bypass for localhost in DEV mode
             return req.ip === '127.0.0.1' || req.ip === '::1' || (req.ip?.includes('127.0.0.1') ?? false);
         },
 

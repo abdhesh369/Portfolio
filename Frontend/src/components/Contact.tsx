@@ -141,8 +141,9 @@ export default function Contact() {
   useEffect(() => {
     const handleSetMode = (e: Event) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail === 'wizard') {
-        setFormMode('wizard');
+      const mode = customEvent.detail;
+      if (['message', 'project', 'wizard'].includes(mode)) {
+        setFormMode(mode as "message" | "project" | "wizard");
       }
     };
     window.addEventListener('set-contact-mode', handleSetMode);

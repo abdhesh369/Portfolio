@@ -289,11 +289,9 @@
       "description": "Advanced TS usage",
       "proof": "Project experience",
       "mastery": 90,
-      "endorsements": 0,
-      "id": 1
+      "endorsements": 0
     },
     {
-      "id": 15,
       "name": "hhhh",
       "category": "jhhh",
       "status": "Core",
@@ -306,7 +304,6 @@
       "endorsements": 0
     },
     {
-      "id": 16,
       "name": "dddddddddddd",
       "category": "dddddddddd",
       "status": "Core",
@@ -382,8 +379,7 @@
       "startDate": "2026-03-20T05:36:23.192Z",
       "endDate": null,
       "description": "Built amazing things",
-      "type": "Experience",
-      "id": 1
+      "type": "Experience"
     }
   ],
   "emailTemplates": [

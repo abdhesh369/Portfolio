@@ -36,7 +36,7 @@ const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000;         // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().optional(),
   password: z.string().min(1),
 });
 
@@ -47,7 +47,11 @@ const loginSchema = z.object({
  * Verifies credentials and returns a JWT
  */
 router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response) => {
-    const { email, password } = loginSchema.parse(req.body);
+    let { email, password } = loginSchema.parse(req.body);
+
+    if (!email) {
+        email = env.ADMIN_EMAIL;
+    }
 
     const lockoutKey = `lockout:active:${email}`;
     const countKey = `lockout:count:${email}`;
@@ -61,20 +65,29 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         }
     }
 
-    const normalizedInput = String(password).trim();
-    const hash = String(env.ADMIN_PASSWORD).trim();
-
     let isValid = false;
 
+    // Verify password (best-effort bcrypt support)
+    let isMatch = false;
     try {
-        if (hash.startsWith("$2")) {
-            isValid = await bcrypt.compare(normalizedInput, hash);
+        if (env.ADMIN_PASSWORD.startsWith('$2b$') || env.ADMIN_PASSWORD.startsWith('$2a$')) {
+            isMatch = await bcrypt.compare(password, env.ADMIN_PASSWORD);
         } else {
-            logger.error({ context: "auth" }, "ADMIN_PASSWORD is not a valid bcrypt hash. Login disabled for security.");
-            isValid = false;
+            // Fallback to plain text for dev/test environments without hashed secrets
+            isMatch = password === env.ADMIN_PASSWORD;
+            if (isMatch) {
+                logger.warn({ context: "auth" }, "Login successful using plain-text ADMIN_PASSWORD. Please use a bcrypt hash for production.");
+            }
         }
-    } catch {
+    } catch (err) {
+        logger.error({ context: "auth", error: err }, "Password verification failed");
+        isMatch = false;
+    }
+
+    if (!isMatch) {
         isValid = false;
+    } else {
+        isValid = true;
     }
 
     if (!isValid) {

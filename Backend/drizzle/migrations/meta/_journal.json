@@ -197,6 +197,20 @@
       "when": 1773933151029,
       "tag": "0027_sync_shared_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1774000000000,
+      "tag": "0028_fix_site_settings_mismatch",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1774000001000,
+      "tag": "0029_rebuild_site_settings",
+      "breakpoints": true
     }
   ]
 }
