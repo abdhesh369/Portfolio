@@ -62,7 +62,7 @@ export default function TopBar({
                 <div className="flex items-center gap-8">
                     <button
                         onClick={() => setMobileMenuOpen(true)}
-                        className="w-12 h-12 nm-button lg:hidden"
+                        className="w-12 h-12 nm-button !p-0 lg:hidden"
                     >
                         <Menu size={20} />
                     </button>
@@ -113,7 +113,7 @@ export default function TopBar({
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => window.open(viewSiteUrl, "_blank")}
-                            className="w-12 h-12 nm-button flex items-center justify-center hover:text-purple-400 group"
+                            className="w-12 h-12 nm-button !p-0 flex items-center justify-center hover:text-purple-400 group"
                             title="View Site"
                         >
                             <Globe size={18} className="text-[var(--admin-text-primary)] group-hover:rotate-12 transition-transform" />
@@ -121,7 +121,7 @@ export default function TopBar({
 
                         <button 
                             onClick={() => onNavigate?.("messages")}
-                            className="w-12 h-12 nm-button relative flex items-center justify-center group hover:text-purple-400"
+                            className="w-12 h-12 nm-button !p-0 relative flex items-center justify-center group hover:text-purple-400"
                             title="Notifications"
                         >
                             <Bell size={20} className="text-[var(--admin-text-primary)]" />
@@ -134,7 +134,7 @@ export default function TopBar({
 
                         <button
                             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="w-12 h-12 nm-button hidden sm:flex hover:text-purple-400 relative overflow-hidden"
+                            className="w-12 h-12 nm-button !p-0 hidden sm:flex hover:text-purple-400 relative overflow-hidden"
                             title={`Re-Init Viewport Mode: ${theme === 'dark' ? 'LIGHT' : 'DARK'}`}
                         >
                             <div className={cn(

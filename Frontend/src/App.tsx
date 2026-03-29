@@ -131,6 +131,20 @@ function ConditionalBackground() {
   return <PlexusBackground />;
 }
 
+// Only show floating public controls on public routes
+function ConditionalPublicFloaters() {
+  const [isAdmin] = useRoute("/admin/*?");
+  const [isAdminLogin] = useRoute("/admin/login");
+  if (isAdmin || isAdminLogin) return null;
+
+  return (
+    <>
+      <PersonaSelector />
+      <VoiceControl />
+    </>
+  );
+}
+
 // Load analytics after a short delay to avoid blocking first paint
 function DeferredAnalytics() {
   const [show, setShow] = useState(false);
@@ -350,8 +364,7 @@ function App() {
               <ReloadPrompt />
               <InstallPrompt />
                <Toaster />
-              <PersonaSelector />
-              <VoiceControl />
+              <ConditionalPublicFloaters />
               <CommandPalette />
               <TerminalOverlay />
             </LazyMotion>

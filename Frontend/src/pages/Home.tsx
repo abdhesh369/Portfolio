@@ -110,12 +110,22 @@ const ShortcutHint = () => {
   const [isVisible, setIsVisible] = useState(true);
   
   useEffect(() => {
+    // Auto-hide the hint after 5 seconds
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 5000);
+
+    // Hide immediately if they scroll down, but never reappear
     const handleScroll = () => {
       if (window.scrollY > 100) setIsVisible(false);
-      else setIsVisible(true);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (

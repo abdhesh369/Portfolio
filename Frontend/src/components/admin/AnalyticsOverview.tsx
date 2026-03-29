@@ -208,7 +208,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                 Top Projects
                             </h4>
                         </div>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2 max-h-[280px] overflow-y-auto custom-scrollbar pr-2">
                             {topProjects.map((p, i) => (
                                 <li key={p.targetId} className="flex items-center justify-between text-xs">
                                     <span className="text-slate-400">
@@ -231,7 +231,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                 Devices
                             </h4>
                         </div>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2 max-h-[280px] overflow-y-auto custom-scrollbar pr-2">
                             {deviceBreakdown.map((d) => (
                                 <li key={d.device} className="space-y-1">
                                     <div className="flex items-center justify-between text-xs">
@@ -266,7 +266,7 @@ export function AnalyticsOverview(_props: AnalyticsOverviewProps) {
                                 Top Countries
                             </h4>
                         </div>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2 max-h-[280px] overflow-y-auto custom-scrollbar pr-2">
                             {topCountries.map((c, i) => (
                                 <li key={c.country} className="flex items-center justify-between text-xs">
                                     <span className="text-slate-400">
