@@ -70,6 +70,7 @@ const envSchema = z.object({
     BACKEND_RENDER_URL: z.string().url().optional(),
     GITHUB_USERNAME: z.string().optional(),
     GITHUB_TOKEN: z.string().optional(),
+    TRUST_PROXY: z.string().transform(Number).default("1"),
 });
 
 export type Env = z.infer<typeof envSchema>;

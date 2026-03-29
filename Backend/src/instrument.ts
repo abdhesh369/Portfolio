@@ -42,5 +42,29 @@ if (env.SENTRY_DSN) {
         // Profiling requires native bindings and supported Node versions.
         // If unavailable, keep profiling disabled while retaining tracing.
         profilesSampleRate: integrations.length > 0 ? 1.0 : 0,
+
+        // Filter out noise (Risk #17)
+        beforeSend(event, hint) {
+            // Drop common 401/404/429 errors from bots or expired sessions
+            // We check the original exception's status or the event's response status
+            const status = (hint?.originalException as { status?: number })?.status || 
+                         (event.extra as { status?: number })?.status;
+            
+            if (status === 401 || status === 404 || status === 429) {
+                return null;
+            }
+
+            // Drop common bot scan paths
+            const url = event.request?.url || "";
+            const botPaths = [
+                ".php", "wp-admin", "wp-login", "cgi-bin", ".env", 
+                "config", "backup", "shell", "cmd", "xmlrpc"
+            ];
+            if (botPaths.some(p => url.toLowerCase().includes(p))) {
+                return null;
+            }
+
+            return event;
+        },
     });
 }

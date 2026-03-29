@@ -21,15 +21,16 @@ import { nonceMiddleware } from "./middleware/nonce.js";
 import { globalLimiter } from "./lib/rate-limit.js";
 import { startHealthMonitor, stopHealthMonitor } from "./lib/circuit-breaker.js";
 import { dbGuard } from "./middleware/db-guard.js";
+import { timeoutGuard } from "./middleware/timeout.js";
+import { versionGuard } from "./middleware/version-guard.js";
 
 import { randomUUID } from "crypto";
 
 const app = express();
 let isReady = false;
-// NOTE: "trust proxy 1" assumes exactly ONE proxy tier (Render's load balancer).
-// If topology changes (e.g. Cloudflare + Render = 2 proxies), this must be updated
-// to the correct number, otherwise rate-limiting will use the proxy IP instead of the client IP.
-app.set("trust proxy", 1);
+// NOTE: "trust proxy" configuration. In production on Render, typically 1.
+// If using Cloudflare or multiple proxy tiers, set TRUST_PROXY accordingly in .env.
+app.set("trust proxy", env.TRUST_PROXY);
 const httpServer = createServer(app);
 
 // Request Tracing and Types are handled via src/types/express.d.ts
@@ -72,6 +73,10 @@ const allowedOrigins = [
 app.use(compression());
 app.use(cookieParser());
 app.use(nonceMiddleware);
+
+// ── Global Hardening Middlewares ──
+app.use(timeoutGuard);          // Enforce 10s request timeout
+app.use("/api", versionGuard);  // Enforce /api/v1 prefix
 
 app.use("/api/v1", globalLimiter);
 app.use("/api/v1", dbGuard);
@@ -216,6 +221,23 @@ app.get("/ping", (_req: Request, res: Response) => {
     return res.status(503).json({ status: "starting" });
   }
   res.status(200).json({ status: "ok" });
+});
+
+// Keep-alive endpoint — designed for external cron ping services
+// (e.g., UptimeRobot, cron-job.org) to prevent free-tier sleep on
+// Render (backend) and Neon/Supabase (database cold starts).
+// Pings DB to keep the connection pool warm.
+app.get("/api/v1/keep-alive", async (_req: Request, res: Response) => {
+  try {
+    const dbHealth = await checkDatabaseHealth();
+    res.status(200).json({ 
+      status: "alive", 
+      db: dbHealth.healthy ? "warm" : "cold",
+      timestamp: Date.now() 
+    });
+  } catch {
+    res.status(200).json({ status: "alive", db: "unreachable", timestamp: Date.now() });
+  }
 });
 
 // Sentry debug route (for verifying error capture pipeline)
@@ -404,13 +426,29 @@ async function startServer() {
 
     // ── Step 5: Run database migrations ──
     logger.info({ context: "startup" }, "Running database migrations...");
-    try {
-      await bootstrapDatabaseSchema();
-      logger.info({ context: "startup" }, "Migrations complete");
-    } catch (migErr) {
-      logger.error({ context: "startup", error: migErr }, "Migration failed");
-      if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
-        process.exit(1);
+    let migrationAttempts = 0;
+    let migrationsComplete = false;
+    while (migrationAttempts < 3 && !migrationsComplete) {
+      try {
+        await bootstrapDatabaseSchema();
+        migrationsComplete = true;
+        logger.info({ context: "startup" }, "Migrations complete");
+      } catch (migErr) {
+        migrationAttempts++;
+        logger.error({ context: "startup", attempt: migrationAttempts, error: migErr }, "Migration failed");
+        if (migrationAttempts < 3) {
+          logger.info({ context: "startup" }, "Retrying migrations in 5 seconds...");
+          await new Promise(resolve => setTimeout(resolve, 5000));
+        } else if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+          process.exit(1);
+        }
+      }
+    }
+
+    // ── Step 6: Production Safety Checks ──
+    if (process.env.NODE_ENV === "production") {
+      if (env.FRONTEND_URL && (env.FRONTEND_URL.includes("localhost") || env.FRONTEND_URL.includes("127.0.0.1"))) {
+        logger.warn({ context: "startup", frontendUrl: env.FRONTEND_URL }, "CRITICAL: FRONTEND_URL is set to localhost in production environment!");
       }
     }
 

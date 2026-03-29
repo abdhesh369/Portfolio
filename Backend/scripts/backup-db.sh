@@ -14,7 +14,8 @@ FILENAME="portfolio_backup_$DATE.sql"
 # xargs-based sourcing splits on whitespace, breaking passwords that
 # contain spaces, quotes, or dollar signs.
 if [ -f ../.env ]; then
-    DATABASE_URL=$(grep -E '^DATABASE_URL=' ../.env | cut -d '=' -f2-)
+    # Extract, remove 'DATABASE_URL=' prefix, and strip any surrounding quotes
+    DATABASE_URL=$(grep -E '^DATABASE_URL=' ../.env | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
     export DATABASE_URL
 fi
 

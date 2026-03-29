@@ -182,7 +182,9 @@ export const registerChatRoutes = (router: Router) => {
                     chatGenerationParams: {
                         model,
                         messages: finalMessages,
-                        stream: false
+                        stream: false,
+                        maxTokens: 1000,
+                        temperature: 0.7
                     }
                 });
 
@@ -197,19 +199,14 @@ export const registerChatRoutes = (router: Router) => {
             }
         }
 
-        // All models failed - will be caught by asyncHandler if we rethrow
-        const lastErrMsg = lastError instanceof Error ? lastError.message : "Unknown error";
-        logger.error({ context: "chat", error: lastErrMsg }, "All chat models failed");
+        // All models failed - return a friendly branded error
+        logger.error({ context: "chat", error: lastError instanceof Error ? lastError.message : "All models failed" }, "All chat models failed");
         
-        if (lastError instanceof Error && (lastError.message.includes("429") || (lastError as { status?: number }).status === 429)) {
-            return res.status(429).json({
-                success: false,
-                message: "OpenRouter is currently receiving too many requests. Please try again in 10-15 seconds.",
-                details: "Quota exceeded"
-            });
-        }
-
-        throw lastError || new Error("All chat models failed");
+        return res.status(503).json({
+            success: false,
+            message: "Abdhesh's Digital Twin is currently resting or overloaded. Please try again in 30 seconds or reach out via the contact form!",
+            details: lastError instanceof Error ? lastError.message : "Service Unavailable"
+        });
     }));
 
     // POST /api/v1/chat/save-session - Save a chat session to logs
@@ -315,7 +312,8 @@ RULES:
                         model,
                         messages: finalMessages,
                         stream: false,
-                        maxTokens: 400
+                        maxTokens: 500,
+                        temperature: 0.7
                     }
                 });
 

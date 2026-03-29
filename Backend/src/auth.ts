@@ -45,11 +45,12 @@ export async function revokeToken(token: string) {
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 /**
- * Creates a signed JWT access token.
+ * Creates a signed JWT access token with a global version for revocation.
  */
-export function createAccessToken(): string {
+export async function createAccessToken(): Promise<string> {
+    const version = redis ? (await redis.get("glob:admin_token_version")) || "1" : "1";
     return jwt.sign(
-        { role: "admin" },
+        { role: "admin", v: parseInt(version, 10) },
         env.JWT_SECRET,
         { expiresIn: "15m" }
     );
@@ -111,8 +112,11 @@ export async function validateRefreshToken(token: string): Promise<boolean> {
             }
         }
     } catch (_err) {
-        logger.error({ context: "auth", error: _err }, "Redis unavailable during revocation check — failing closed");
-        return false; 
+        // FAIL-OPEN: If Redis is down, we still trust the JWT signature verification
+        // that already passed above. The tradeoff: a revoked token could be used once
+        // during a Redis outage, but the admin won't be locked out of their own panel.
+        logger.warn({ context: "auth", error: _err }, "Redis unavailable during revocation check — failing open (JWT signature still valid)");
+        return true; 
     }
 
     return true;
@@ -199,6 +203,7 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
             // Standard JWT payload schema
             const tokenSchema = z.object({
                 role: z.string(),
+                v: z.number().optional(), // Token version for global revocation
                 iat: z.number().optional(),
                 exp: z.number().optional()
             }).passthrough();
@@ -209,6 +214,22 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
             }
 
             const decoded = parsed.data;
+
+            // Global Version Revocation Check (Risk #15)
+            if (redis && decoded.v !== undefined) {
+                try {
+                    const currentVersion = await redis.get("glob:admin_token_version");
+                    const targetVersion = currentVersion ? parseInt(currentVersion, 10) : 1;
+                    if (decoded.v < targetVersion) {
+                        return res.status(401).json({ 
+                            message: "Session has been revoked by admin. Please login again.",
+                            code: "SESSION_REVOKED"
+                        });
+                    }
+                } catch (redisErr) {
+                    logger.warn({ context: "auth", error: redisErr }, "Redis down during version check — failing open");
+                }
+            }
 
             // Attach decoded token to request with proper typing
             req.user = {

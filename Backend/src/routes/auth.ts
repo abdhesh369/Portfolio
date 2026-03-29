@@ -1,13 +1,15 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response } from "express";
+import { z } from "zod";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { env } from "../env.js";
-import { createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken } from "../auth.js";
+import { createAccessToken, createRefreshToken, validateRefreshToken, revokeRefreshToken, revokeToken, isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
 import { logger } from "../lib/logger.js";
 import { getIsProd } from "../lib/is-prod.js";
 import { generateCsrfToken } from "../middleware/csrf.js";
+import { redis } from "../lib/redis.js";
 
 import { authLimiter } from "../lib/rate-limit.js";
 
@@ -33,17 +35,30 @@ function getCookieOptions(isProd: boolean, maxAge: number): {
 const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000;         // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
 
 
 /**
  * POST /api/auth/login
  * Verifies credentials and returns a JWT
  */
-router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response, __next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
-    const { password } = req.body;
+router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response) => {
+    const { email, password } = loginSchema.parse(req.body);
 
-    if (!password) {
-        return res.status(400).json({ success: false, message: "Password is required" });
+    const lockoutKey = `lockout:active:${email}`;
+    const countKey = `lockout:count:${email}`;
+
+    if (redis) {
+        const isLocked = await redis.get(lockoutKey);
+        if (isLocked) {
+            logger.warn({ context: "auth", email }, "Login attempt for locked-out account");
+            res.status(423).json({ success: false, message: "Account is temporarily locked due to too many failed attempts. Try again in 15 minutes." });
+            return;
+        }
     }
 
     const normalizedInput = String(password).trim();
@@ -52,8 +67,6 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     let isValid = false;
 
     try {
-        // Enforce bcrypt hashes in production/development
-        // This prevents plain-text passwords from being used after initial setup
         if (hash.startsWith("$2")) {
             isValid = await bcrypt.compare(normalizedInput, hash);
         } else {
@@ -65,15 +78,30 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     }
 
     if (!isValid) {
-        // Delay to further prevent brute-force attacks
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (redis) {
+            const currentCount = await redis.incr(countKey);
+            if (currentCount === 1) await redis.expire(countKey, 900); // 15 min window
+            if (currentCount >= 5) {
+                await redis.set(lockoutKey, "1", "EX", 900); // 15 min lockout
+                logger.error({ context: "auth", email }, "Account lockout triggered");
+            }
+        }
+        
         logger.warn({ context: "auth", ip: req.ip }, "Failed login attempt");
-        recordAudit("LOGIN_FAILED", "auth", undefined, null, { ip: req.ip });
-        return res.status(401).json({ success: false, message: "Invalid credentials" });
+        recordAudit("LOGIN_FAILED", "auth", undefined, null, { ip: req.ip, email });
+        
+        res.status(401).json({ success: false, message: "Invalid email or password" });
+        return;
+    }
+
+    // Success — Clear lockout counters
+    if (redis) {
+        await redis.del(countKey);
+        await redis.del(lockoutKey);
     }
 
     // Generate JWT access token
-    const accessToken = createAccessToken();
+    const accessToken = await createAccessToken();
 
     // Generate stateless JWT refresh token (validated by signature, not Redis)
     const refreshToken = createRefreshToken();
@@ -182,7 +210,7 @@ router.post("/refresh", asyncHandler(async (req: Request, res: Response) => {
     
     // 3. Issue a new pair, keeping the family ID (fid) for continued rotation tracking
     const decodedToken = jwt.decode(refreshToken) as { fid?: string } | null;
-    const newAccessToken = createAccessToken();
+    const newAccessToken = await createAccessToken();
     const newRefreshToken = createRefreshToken(decodedToken?.fid);
     
     const isProd = getIsProd(req);
@@ -239,6 +267,31 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
         success: true,
         message: "Logged out successfully"
     });
+}));
+
+/**
+ * POST /api/auth/revoke-all
+ * Global revocation: Increments the global token version in Redis,
+ * invalidating all currently active JWTs on the next verification.
+ */
+router.post("/revoke-all", isAuthenticated, asyncHandler(async (req: Request, res: Response) => {
+    if (!redis) {
+        return res.status(503).json({ success: false, message: "Redis is required for global revocation." });
+    }
+
+    try {
+        const newVersion = await redis.incr("glob:admin_token_version");
+        const adminRole = req.user && typeof req.user === 'object' ? req.user.role : 'unknown';
+        logger.info({ context: "auth", admin: adminRole }, `Global session revocation triggered. New version: ${newVersion}`);
+        
+        res.json({ 
+            success: true, 
+            message: "Global revocation successful. All other active sessions will be invalidated on their next request." 
+        });
+    } catch (err) {
+        logger.error({ context: "auth", error: err }, "Failed to increment global token version");
+        res.status(500).json({ success: false, message: "Failed to perform global revocation" });
+    }
 }));
 
 export { router as authRoutes };

@@ -22,6 +22,9 @@ router.post("/request", aiLimiter, asyncHandler(async (req, res) => {
     });
 }));
 
+const MAX_SSE_DURATION = 5 * 60 * 1000; // 5 minutes max connection
+const HEARTBEAT_INTERVAL = 15_000;      // 15s heartbeat
+
 // GET /api/v1/scope/stream/:id - SSE endpoint to stream estimation progress/results
 router.get("/stream/:id", isAuthenticated, (req, res) => {
     const requestId = parseIntParam(res, req.params.id, "request ID");
@@ -41,18 +44,18 @@ router.get("/stream/:id", isAuthenticated, (req, res) => {
 
             if (!request) {
                 res.write(`data: ${JSON.stringify({ type: "error", message: "Request not found" })}\n\n`);
-                clearInterval(pollInterval);
+                cleanup();
                 res.end();
                 return;
             }
 
             if (request.status === "completed") {
                 res.write(`data: ${JSON.stringify({ type: "completed", data: request.estimation })}\n\n`);
-                clearInterval(pollInterval);
+                cleanup();
                 res.end();
             } else if (request.status === "failed") {
                 res.write(`data: ${JSON.stringify({ type: "failed", error: request.error })}\n\n`);
-                clearInterval(pollInterval);
+                cleanup();
                 res.end();
             } else {
                 // Still processing
@@ -61,14 +64,34 @@ router.get("/stream/:id", isAuthenticated, (req, res) => {
         } catch (error) {
             logger.error({ err: error }, `Error polling scope request ${requestId}:`);
             res.write(`data: ${JSON.stringify({ type: "error", message: "Internal server error" })}\n\n`);
-            clearInterval(pollInterval);
+            cleanup();
             res.end();
         }
     }, 2000); // Poll every 2 seconds
 
+    const heartbeatInterval = setInterval(() => {
+        if (!res.writableEnded) {
+            res.write(': heartbeat\n\n');
+        }
+    }, HEARTBEAT_INTERVAL);
+
+    const maxDurationTimeout = setTimeout(() => {
+        if (!res.writableEnded) {
+            res.write(`data: ${JSON.stringify({ type: "error", message: "Connection timeout" })}\n\n`);
+            cleanup();
+            res.end();
+        }
+    }, MAX_SSE_DURATION);
+
+    function cleanup() {
+        clearInterval(pollInterval);
+        clearInterval(heartbeatInterval);
+        clearTimeout(maxDurationTimeout);
+    }
+
     // Handle client disconnection
     req.on("close", () => {
-        clearInterval(pollInterval);
+        cleanup();
         res.end();
     });
 });
