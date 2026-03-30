@@ -3,6 +3,8 @@ import { RedisStore } from "rate-limit-redis";
 import { redis } from "./redis.js";
 import { logger } from "./logger.js";
 
+import type { RequestHandler } from "express";
+
 /**
  * Creates a standardized rate limiter with Redis backend if available.
  * Falls back to memory if Redis is unavailable at startup — store selection is static at module initialization.
@@ -13,7 +15,7 @@ const createLimiter = (options: {
     message: string;
     skipSuccessfulRequests?: boolean;
     keyPrefix: string;
-}) => {
+}): RequestHandler => {
     return rateLimit({
         windowMs: options.windowMs,
         max: options.max,
@@ -48,7 +50,7 @@ const createLimiter = (options: {
             }, "Rate limit exceeded");
             res.status(options.statusCode).send(options.message);
         }
-    });
+    }) as unknown as RequestHandler;
 };
 
 /**
