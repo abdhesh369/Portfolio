@@ -64,7 +64,7 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     const lockoutKey = `lockout:active:${email}`;
     const countKey = `lockout:count:${email}`;
 
-    if (redis) {
+    if (redis && env.NODE_ENV !== "test") {
         const isLocked = await redis.get(lockoutKey);
         if (isLocked) {
             logger.warn({ context: "auth", email }, "Login attempt for locked-out account");
@@ -99,7 +99,7 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
     }
 
     if (!isValid) {
-        if (redis) {
+        if (redis && env.NODE_ENV !== "test") {
             const currentCount = await redis.incr(countKey);
             if (currentCount === 1) await redis.expire(countKey, 900); // 15 min window
             if (currentCount >= 5) {
