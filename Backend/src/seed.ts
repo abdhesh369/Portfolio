@@ -40,8 +40,23 @@ export async function seedDatabase() {
     const seedData = (await import("./seed-data.json", { with: { type: "json" } })).default;
 
     const currentYear = new Date().getFullYear();
+    const rawSiteSettings = seedData.siteSettings;
+    
+    type RawCard = { icon: string; label: string; value: string; color?: unknown };
+
+    const normalizeColor = (c?: unknown): "cyan" | "purple" | undefined => {
+      if (c === "cyan" || c === "purple") return c;
+      return undefined;
+    };
+
     const siteSettingsSeed: InsertSiteSettings = {
-      ...seedData.siteSettings,
+      ...rawSiteSettings,
+      aboutInfoCards: (rawSiteSettings.aboutInfoCards ?? []).map((card: RawCard) => ({
+        icon: card.icon,
+        label: card.label,
+        value: card.value,
+        color: normalizeColor(card.color),
+      })),
       footerCopyright: `© ${currentYear} Abdhesh Sah. All rights reserved.`,
     };
 
