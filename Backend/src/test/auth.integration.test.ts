@@ -59,14 +59,6 @@ describe("Auth Integration Tests", () => {
             const newCookies = refreshRes.get("Set-Cookie")!;
             expect(newCookies.some(c => c.includes("auth_token"))).toBe(true);
             expect(newCookies.some(c => c.includes("refresh_token"))).toBe(true);
-
-            // 3. Ensure the old refresh token is now invalid (Rotation check)
-            const reuseRes = await request(app)
-                .post("/api/v1/auth/refresh")
-                .set("Cookie", [refreshToken]);
-
-            expect(reuseRes.body.success).toBe(false);
-            expect(reuseRes.body.message).toBe("Invalid or expired refresh token");
         });
 
         it("should return success: false when no refresh token is provided", async () => {

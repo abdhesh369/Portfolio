@@ -47,7 +47,15 @@ const loginSchema = z.object({
  * Verifies credentials and returns a JWT
  */
 router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Response) => {
-    let { email, password } = loginSchema.parse(req.body);
+    let email, password;
+    try {
+        const parsed = loginSchema.parse(req.body);
+        email = parsed.email;
+        password = parsed.password;
+    } catch {
+        res.status(400).json({ success: false, message: "Password is required" });
+        return;
+    }
 
     if (!email) {
         email = env.ADMIN_EMAIL;
@@ -103,7 +111,7 @@ router.post("/login", authLimiter, asyncHandler(async (req: Request, res: Respon
         logger.warn({ context: "auth", ip: req.ip }, "Failed login attempt");
         recordAudit("LOGIN_FAILED", "auth", undefined, null, { ip: req.ip, email });
         
-        res.status(401).json({ success: false, message: "Invalid email or password" });
+        res.status(401).json({ success: false, message: "Invalid credentials" });
         return;
     }
 
