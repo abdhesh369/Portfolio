@@ -79,7 +79,7 @@
     "satori": "^0.26.0",
     "supertest": "^7.2.2",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vitest": "^4.0.18"
   },
   "engines": {
