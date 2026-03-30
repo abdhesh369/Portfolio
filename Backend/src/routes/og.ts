@@ -21,7 +21,7 @@ router.get("/", asyncHandler(async (req, res) => {
 
 // GET /og/project/:slug
 router.get("/project/:slug", asyncHandler(async (req, res) => {
-    const project = await projectService.getBySlug(req.params.slug);
+    const project = await projectService.getBySlug(req.params.slug as string);
     if (!project) return res.status(404).send("Project not found");
     
     const buffer = await generateOgImageBuffer(project.title, project.summary || project.description, "Project Case Study");
@@ -33,7 +33,7 @@ router.get("/project/:slug", asyncHandler(async (req, res) => {
 
 // GET /og/article/:slug
 router.get("/article/:slug", asyncHandler(async (req, res) => {
-    const article = await articleService.getBySlug(req.params.slug);
+    const article = await articleService.getBySlug(req.params.slug as string);
     if (!article) return res.status(404).send("Article not found");
     
     const buffer = await generateOgImageBuffer(article.title, article.excerpt || "Read more on my blog", "Tech Article");

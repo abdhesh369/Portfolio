@@ -23,7 +23,7 @@ export function registerCaseStudyRoutes(app: Router) {
         "/case-studies/:slug",
         cachePublic(600),
         asyncHandler(async (req: Request, res: Response) => {
-            const study = await caseStudyService.getBySlug(req.params.slug);
+            const study = await caseStudyService.getBySlug(req.params.slug as string);
             if (!study) {
                 res.status(404).json({ success: false, message: "Case study not found" });
                 return;

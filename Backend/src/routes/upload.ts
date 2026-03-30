@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type RequestHandler } from "express";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { UploadService } from "../services/upload.service.js";
@@ -36,8 +36,8 @@ export function registerUploadRoutes(app: Router) {
             // Use the hoisted upload middleware
 
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- multer callback requires any
-            uploadMem(req, res, async (err: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (uploadMem as unknown as RequestHandler)(req as any, res as any, async (err: any) => {
                 if (err) {
                     const multerErr = err as { code?: string };
                     if (multerErr.code === "LIMIT_FILE_SIZE") {

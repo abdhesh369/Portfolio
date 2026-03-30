@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, type RequestHandler } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
 import { z } from "zod";
 import rateLimit from "express-rate-limit";
@@ -19,7 +19,7 @@ const coverLetterLimiter = rateLimit({
     message: { message: "Too many cover letter requests. High-quality AI generation is limited. Try again later." },
     standardHeaders: true,
     legacyHeaders: false,
-});
+}) as unknown as RequestHandler;
 
 export const registerCoverLetterRoutes = (router: Router) => {
     router.post("/cover-letter/generate", coverLetterLimiter, validateBody(generateSchema), asyncHandler(async (req: Request, res: Response) => {

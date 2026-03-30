@@ -25,7 +25,7 @@ router.get(
     "/:slug",
     cachePublic(3600),
     asyncHandler(async (req, res) => {
-        const slug = req.params.slug;
+        const slug = req.params.slug as string;
         const settings = await seoSettingsService.getBySlug(slug);
         if (!settings) {
             res.status(404).json({ message: "SEO settings not found" });

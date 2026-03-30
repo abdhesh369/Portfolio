@@ -1,5 +1,5 @@
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
+import { Router, type RequestHandler } from "express";
+import { rateLimit } from "express-rate-limit";
 import { z } from "zod";
 import { analyticsService } from "../services/analytics.service.js";
 import { insertAnalyticsSchema } from "@portfolio/shared";
@@ -14,7 +14,7 @@ const analyticsLimiter = rateLimit({
     message: { success: false, message: "Too many analytics events" },
     standardHeaders: true,
     legacyHeaders: false,
-});
+}) as unknown as RequestHandler;
 
 const vitalsLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -22,7 +22,7 @@ const vitalsLimiter = rateLimit({
     message: { success: false, message: "Too many vitals reports" },
     standardHeaders: true,
     legacyHeaders: false,
-});
+}) as unknown as RequestHandler;
 
 const insertVitalSchema = z.object({
     name: z.enum(["LCP", "CLS", "INP", "FCP", "TTFB"]),

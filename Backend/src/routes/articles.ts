@@ -53,7 +53,7 @@ articlesRouter.get(
     "/:slug",
     cachePublic(300),
     asyncHandler(async (req, res) => {
-        const slug = req.params.slug;
+        const slug = req.params.slug as string;
         const article = await articleService.getBySlug(slug);
 
         if (!article) {

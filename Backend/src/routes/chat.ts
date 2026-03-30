@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, type RequestHandler } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
 import { OpenRouter } from "@openrouter/sdk";
 import { z } from "zod";
@@ -129,7 +129,7 @@ const chatLimiter = rateLimit({
     message: { message: "Too many chat requests. Please wait a moment before sending another message." },
     standardHeaders: true,
     legacyHeaders: false,
-});
+}) as unknown as RequestHandler;
 
 export const registerChatRoutes = (router: Router) => {
     router.post("/chat", chatLimiter, validateBody(chatSchema), asyncHandler(async (req: Request, res: Response) => {

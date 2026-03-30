@@ -1,9 +1,5 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { type Request, Response, NextFunction, type RequestHandler } from "express";
 import * as Sentry from "@sentry/node";
-/**
- * Application entry point. Starts the HTTP server, runs migrations,
- * and initializes all background services.
- */
 import { env } from "./env.js";
 import { createServer } from "http";
 import cors from "cors";
@@ -13,7 +9,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import { checkDatabaseHealth } from "./db.js";
 import { emailQueue, emailWorker, scopeQueue, scopeWorker, initQueues } from "./lib/queue.js";
-import { redis, RedisClient } from "./lib/redis.js"; // Import redis instance and health checker
+import { redis, RedisClient } from "./lib/redis.js";
 import { logger } from "./lib/logger.js";
 import { bootstrapDatabaseSchema } from "./lib/schema-bootstrap.js";
 import { nonceMiddleware } from "./middleware/nonce.js";
@@ -28,14 +24,10 @@ import { randomUUID } from "crypto";
 
 const app = express();
 let isReady = false;
-// NOTE: "trust proxy" configuration. In production on Render, typically 1.
-// If using Cloudflare or multiple proxy tiers, set TRUST_PROXY accordingly in .env.
 app.set("trust proxy", env.TRUST_PROXY);
 const httpServer = createServer(app);
 
-// Request Tracing and Types are handled via src/types/express.d.ts
 
-// Request Tracing
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.id = randomUUID();
   res.setHeader("X-Request-ID", req.id);
@@ -45,12 +37,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Guard all routes except /ping until server is fully ready
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (!isReady && req.path !== "/ping" && !req.path.startsWith("/health")) {
-    return res.status(503).json({ 
-      error: { 
-        message: "Server is initializing", 
+    return res.status(503).json({
+      error: {
+        message: "Server is initializing",
         status: 503,
         context: "startup"
-      } 
+      }
     });
   }
   next();
@@ -70,8 +62,8 @@ const allowedOrigins = [
   ] : []),
 ].filter((origin): origin is string => Boolean(origin));
 
-app.use(compression());
-app.use(cookieParser());
+app.use(compression() as unknown as RequestHandler);
+app.use(cookieParser() as unknown as RequestHandler);
 app.use(nonceMiddleware);
 
 // ── Global Hardening Middlewares ──
@@ -230,10 +222,10 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.get("/api/v1/keep-alive", async (_req: Request, res: Response) => {
   try {
     const dbHealth = await checkDatabaseHealth();
-    res.status(200).json({ 
-      status: "alive", 
+    res.status(200).json({
+      status: "alive",
       db: dbHealth.healthy ? "warm" : "cold",
-      timestamp: Date.now() 
+      timestamp: Date.now()
     });
   } catch {
     res.status(200).json({ status: "alive", db: "unreachable", timestamp: Date.now() });
@@ -260,9 +252,7 @@ async function getRedisHealthSafe(): Promise<{ healthy: boolean; message: string
   }
 }
 
-/**
- * Core health check logic shared by all health endpoints
- */
+
 async function getHealthStatus() {
   const dbHealth = await checkDatabaseHealth();
   const redisHealth = await getRedisHealthSafe();
@@ -280,13 +270,11 @@ async function getHealthStatus() {
   };
 }
 
-// Global baseline health check
 app.get("/health", async (_req: Request, res: Response) => {
   const health = await getHealthStatus();
   res.status(health.status === "healthy" ? 200 : 503).json(health);
 });
 
-// API v1 health check (requested by frontend/tests)
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const health = await getHealthStatus();
   res.status(health.status === "healthy" ? 200 : 503).json(health);
@@ -297,12 +285,10 @@ function setupGracefulShutdown() {
   const shutdown = async (signal: string) => {
     logger.info({ context: "shutdown" }, `${signal} received, shutting down...`);
 
-    // Close HTTP server first to stop accepting new requests
     httpServer.close(() => {
       logger.info({ context: "shutdown" }, "HTTP server closed");
     });
 
-    // Force exit if shutdown takes too long (must be set before any await)
     const forceTimer = setTimeout(() => {
       logger.info({ context: "shutdown" }, "Forced shutdown due to timeout");
       process.exit(1);
