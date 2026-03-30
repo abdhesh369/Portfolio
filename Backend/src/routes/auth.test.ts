@@ -158,7 +158,7 @@ describe("Auth Routes - Refresh Token Flow", () => {
             await handler!(req, res);
 
             expect(mockJwtSign).toHaveBeenCalledWith(
-                { role: "admin" },
+                { role: "admin", v: 1 },
                 "test-secret",
                 { expiresIn: "15m" }
             );
