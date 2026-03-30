@@ -1,23 +1,140 @@
 {
   "siteSettings": {
-    "personalName": "Portfolio Owner",
-    "personalTitle": "Full-Stack Engineer",
-    "personalBio": "Passionate about building digital experiences that feel alive with a focus on performance, precision, and scalability.",
+    "personalName": "Your Name",
+    "personalTitle": "Full Stack Developer",
+    "personalBio": "Passionate about building amazing products",
     "logoText": "Portfolio.Dev",
-    "personalPhone": "+000 0000000",
+    "personalPhone": null,
     "heroHeadingLine1": "Start building",
     "heroHeadingLine2": "The Future",
     "heroTaglines": [
-      "Engineering scalable systems.",
-      "Crafting intuitive interfaces.",
-      "Solving complex problems."
+      "Building amazing products",
+      "Solving complex problems"
     ],
-    "socialEmail": "hello@example.com",
-    "socialGithub": "https://github.com/username",
-    "socialLinkedin": "https://linkedin.com/in/username",
+    "socialEmail": null,
+    "socialGithub": null,
+    "socialLinkedin": null,
     "footerTagline": "Building the future, one line of code at a time.",
-    "locationText": "Earth",
-    "isOpenToWork": true
+    "locationText": "Kathmandu, Nepal",
+    "isOpenToWork": true,
+    "availabilityStatus": null,
+    "personalAvatar": null,
+    "resumeUrl": null,
+    "whyHireMeData": null,
+    "aboutAvailability": "Open to Work",
+    "aboutDescription": "Building scalable web systems and analyzing complex algorithms.",
+    "aboutTechStack": [
+      "React",
+      "Node.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Tailwind"
+    ],
+    "aboutTimeline": [
+      {
+        "year": "2024 - Present",
+        "title": "Advanced System Design",
+        "description": "Deep diving into distributed systems, Docker, and Microservices architecture."
+      },
+      {
+        "year": "2023",
+        "title": "Engineering Core",
+        "description": "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University."
+      },
+      {
+        "year": "2022",
+        "title": "Hello World",
+        "description": "Started the journey with Python scripting and basic web development."
+      }
+    ],
+    "aboutInfoCards": [
+      {
+        "icon": "GraduationCap",
+        "label": "Status",
+        "value": "B.E. Student"
+      },
+      {
+        "icon": "Code",
+        "label": "Focus Area",
+        "value": "Full Stack System Design",
+        "color": "purple"
+      },
+      {
+        "icon": "Cpu",
+        "label": "Hardware",
+        "value": "Electronics & Comms",
+        "color": "purple"
+      },
+      {
+        "icon": "Target",
+        "label": "Goal",
+        "value": "Software Engineer"
+      }
+    ],
+    "socialTwitter": null,
+    "socialInstagram": null,
+    "socialFacebook": null,
+    "socialYoutube": null,
+    "socialDiscord": null,
+    "socialStackoverflow": null,
+    "socialDevto": null,
+    "socialMedium": null,
+    "heroGreeting": "Hey, I am",
+    "heroBadgeText": "Available for work",
+    "heroCtaPrimary": "View My Work",
+    "heroCtaPrimaryUrl": "#projects",
+    "heroCtaSecondary": "Get In Touch",
+    "heroCtaSecondaryUrl": "#contact",
+    "navbarLinks": [],
+    "footerCopyright": "© 2024 Your Name. All rights reserved.",
+    "sectionOrder": [
+      "hero",
+      "about",
+      "skills",
+      "experience",
+      "contact",
+      "whyhireme",
+      "services",
+      "mindset",
+      "projects",
+      "practice",
+      "guestbook",
+      "testimonials"
+    ],
+    "sectionVisibility": {
+      "hero": true,
+      "about": true,
+      "skills": true,
+      "contact": true,
+      "mindset": true,
+      "practice": true,
+      "projects": true,
+      "services": true,
+      "guestbook": true,
+      "whyhireme": true,
+      "experience": true,
+      "testimonials": true
+    },
+    "availabilitySlots": [],
+    "featureBlog": true,
+    "featureGuestbook": true,
+    "featureTestimonials": true,
+    "featureServices": true,
+    "featurePlayground": false,
+    "chatbotGreeting": "Hi there! I'm Abdhesh's AI assistant. How can I help you today?",
+    "aboutHeading": "About Me",
+    "projectsHeading": "Flagship Projects",
+    "skillsHeading": "Technical Arsenal",
+    "whyHireMeHeading": "Why Hire Me",
+    "servicesHeading": "What I Do",
+    "mindsetHeading": "Engineering Mindset",
+    "practiceHeading": "Disciplined Practice",
+    "experienceHeading": "Professional Journey",
+    "testimonialsHeading": "Client Feedback",
+    "guestbookHeading": "Guestbook",
+    "contactHeading": "Get In Touch",
+    "id": 1,
+    "updatedAt": "2026-03-30T10:22:06.036Z"
   },
   "projects": [
     {
