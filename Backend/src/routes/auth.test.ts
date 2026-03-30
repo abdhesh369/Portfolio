@@ -43,7 +43,6 @@ vi.mock("../env.js", () => ({
         JWT_SECRET: "test-secret",
         JWT_REFRESH_SECRET: "test-refresh-secret",
         ADMIN_PASSWORD: "test-password",
-        REDIS_URL: "redis://localhost:6379",
         NODE_ENV: "test",
     },
 }));
