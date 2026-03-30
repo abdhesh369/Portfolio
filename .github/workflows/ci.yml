@@ -535,6 +535,8 @@ jobs:
   smoke-test:
     name: "Post-Deploy Smoke Test"
     runs-on: ubuntu-latest
+    environment:
+      name: production
     needs: [static-checks, unit-tests, integration-tests, build-check]
     if: github.ref == 'refs/heads/main'
     steps:
