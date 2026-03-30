@@ -35,6 +35,10 @@ export class RedisClient {
     private static instance: Redis | null = null; private static isConnected: boolean = false;
 
     public static getInstance(): Redis | null {
+        if (env.NODE_ENV === "test" && !env.REDIS_URL) {
+            return null;
+        }
+
         if (env.NODE_ENV === "production") {
             if (!env.REDIS_URL) {
                 logger.warn(
