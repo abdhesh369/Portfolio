@@ -65,7 +65,7 @@ test.describe("Admin Authentication Flow", () => {
     const staysOnLogin = page.locator('input[type="password"]').first();
     
     // Either a toast appears OR we remain on the login page
-    await expect(toast.or(staysOnLogin)).toBeVisible({ timeout: 15000 });
+    await expect(toast.or(staysOnLogin).first()).toBeVisible({ timeout: 15000 });
 
     console.warn("Error message visible");
     await expect(page).toHaveURL(/\/admin\/login/);
