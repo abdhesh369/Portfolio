@@ -1,9 +1,9 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, scaleXReveal, fadeIn, hoverCardLift, expand, hoverScale } from "@/lib/animation";
-import { useMindset } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import type { Mindset } from "@portfolio/shared/schema";
+import { fadeUp, fadeUpLarge, fadeDown, scaleXReveal, fadeIn, hoverCardLift, expand, hoverScale } from "#src/lib/animation";
+import { useMindset } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import type { Mindset } from "#shared/schema";
 import { Brain, Zap, Layers, Sparkles, ChevronRight, ArrowRight, Code2, Users, Cpu } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {

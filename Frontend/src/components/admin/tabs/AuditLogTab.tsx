@@ -1,10 +1,10 @@
 import { formatDate } from "../../../lib/utils/date";
 import { useState, useEffect, useCallback } from "react";
-import { apiFetch } from "@/lib/api-helpers";
-import { toast } from "@/hooks/use-toast";
-import { LoadingSkeleton, EmptyState, AdminButton, FormSelect } from "@/components/admin/AdminShared";
+import { apiFetch } from "#src/lib/api-helpers";
+import { toast } from "#src/hooks/use-toast";
+import { LoadingSkeleton, EmptyState, AdminButton, FormSelect } from "#src/components/admin/AdminShared";
 import { ChevronDown, ChevronRight, Filter, RefreshCw, Shield, ChevronLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 interface AuditEntry {
   id: number;

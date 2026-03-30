@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { useProjects } from "@/hooks/use-portfolio";
-import { ProjectCard } from "@/components/projects/ProjectCard";
+import { useProjects } from "#src/hooks/use-portfolio";
+import { ProjectCard } from "#src/components/projects/ProjectCard";
 import { Search, Folder, LayoutGrid, Calendar, Eye } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SEO } from "@/components/SEO";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import Navbar from "#src/components/Navbar";
+import Footer from "#src/components/Footer";
+import { SEO } from "#src/components/SEO";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 export default function ProjectsPage() {
   const { data: settings } = useSiteSettings();

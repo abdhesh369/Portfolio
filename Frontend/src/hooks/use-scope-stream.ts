@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 
 export interface ScopeEstimation {
     summary: string;

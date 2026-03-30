@@ -1,8 +1,8 @@
-import { api } from "@portfolio/shared";
+import { api } from "#shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import type { Article } from "@portfolio/shared/schema";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import type { Article } from "#shared/schema";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 import { usePersona } from "../use-persona";
 
 export function useArticles(status?: string) {
@@ -40,7 +40,7 @@ export function useArticleSearch(query: string) {
   return useQuery<Article[]>({
     queryKey: QUERY_KEYS.articles.search(query),
     queryFn: async () => {
-      const { apiFetch } = await import("@/lib/api-helpers");
+      const { apiFetch } = await import("#src/lib/api-helpers");
       return await apiFetch(`/api/v1/articles/search?q=${encodeURIComponent(query)}`);
     },
     enabled: query.trim().length >= 2,
@@ -69,7 +69,7 @@ export function useReactToArticle() {
 
   return useMutation({
     mutationFn: async ({ id, emoji }: { id: number; emoji: string }) => {
-      const { apiFetch } = await import("@/lib/api-helpers");
+      const { apiFetch } = await import("#src/lib/api-helpers");
       return await apiFetch(`/api/v1/articles/${id}/react`, {
         method: "POST",
         body: JSON.stringify({ emoji }),

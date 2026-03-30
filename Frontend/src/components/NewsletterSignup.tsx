@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Mail, Send, CheckCircle2 } from "lucide-react";
-import { useSubscribe } from "@/hooks/use-portfolio";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useSubscribe } from "#src/hooks/use-portfolio";
+import { Button } from "#src/components/ui/button";
+import { Input } from "#src/components/ui/input";
 
 interface NewsletterSignupProps {
   source?: string;

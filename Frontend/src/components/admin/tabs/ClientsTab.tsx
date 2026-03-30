@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '#src/hooks/use-toast';
 import { Users, Plus, Trash2, Copy, UserCircle, Building, Mail, X, Shield, Zap, FolderOpen, ChevronDown, ChevronUp, MessageSquare, Clock, Calendar, Edit2, Save } from 'lucide-react';
-import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '@/components/admin/AdminShared';
-import { apiFetch } from '@/lib/api-helpers';
-import { cn } from '@/lib/utils';
-import { formatDate } from '@/lib/utils/date';
-import { QUERY_KEYS } from '@/lib/query-keys';
+import { LoadingSkeleton, AdminButton, EmptyState, FormField } from '#src/components/admin/AdminShared';
+import { apiFetch } from '#src/lib/api-helpers';
+import { cn } from '#src/lib/utils';
+import { formatDate } from '#src/lib/utils/date';
+import { QUERY_KEYS } from '#src/lib/query-keys';
 
 interface ClientProject {
     id: number;

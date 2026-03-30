@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, CheckCircle, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api-helpers";
-import { useSendMessage } from "@/hooks/portfolio/use-contact";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { Button } from "#src/components/ui/button";
+import { apiFetch } from "#src/lib/api-helpers";
+import { useSendMessage } from "#src/hooks/portfolio/use-contact";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 interface Message {
   id: string;

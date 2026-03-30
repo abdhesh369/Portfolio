@@ -1,10 +1,10 @@
-import { api } from "@portfolio/shared";
-import type { InsertMessage } from "@portfolio/shared/schema";
+import { api } from "#shared";
+import type { InsertMessage } from "#shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { useToast } from "#src/hooks/use-toast";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function useMessages(limit: number = 100) {
   return useQuery({

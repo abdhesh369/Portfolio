@@ -1,5 +1,5 @@
 import { m } from "framer-motion";
-import { fadeUp, fadeIn, SPRING } from "@/lib/animation";
+import { fadeUp, fadeIn, SPRING } from "#src/lib/animation";
 import { Terminal, ArrowLeft, Home, Zap, AlertTriangle } from "lucide-react";
 
 export default function NotFound() {

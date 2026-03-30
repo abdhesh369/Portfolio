@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
-import { useReactToArticle } from "@/hooks/use-portfolio";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { useReactToArticle } from "#src/hooks/use-portfolio";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#src/components/ui/tooltip";
+import { cn } from "#src/lib/utils";
 
 interface ArticleReactionsProps {
   articleId: number;

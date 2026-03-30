@@ -2,9 +2,9 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { BookOpen, Calendar, ArrowLeft } from 'lucide-react';
-import { apiFetch } from '@/lib/api-helpers';
-import { formatDate } from '@/lib/utils/date';
-import { QUERY_KEYS } from '@/lib/query-keys';
+import { apiFetch } from '#src/lib/api-helpers';
+import { formatDate } from '#src/lib/utils/date';
+import { QUERY_KEYS } from '#src/lib/query-keys';
 
 interface CaseStudyData {
     id: number;

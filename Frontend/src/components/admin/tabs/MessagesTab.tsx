@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useMessages } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
+import { useMessages } from "#src/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
 
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { apiFetch } from "@/lib/api-helpers";
-import { queryClient } from "@/lib/queryClient";
-import { EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput } from "@/components/admin/AdminShared";
-import type { Message, EmailTemplate } from "@portfolio/shared/schema";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
+import { apiFetch } from "#src/lib/api-helpers";
+import { queryClient } from "#src/lib/queryClient";
+import { EmptyState, LoadingSkeleton, AdminButton, FloatingLabelInput } from "#src/components/admin/AdminShared";
+import type { Message, EmailTemplate } from "#shared/schema";
 import { Mail, Search, RefreshCw, Trash2, Reply, Send, X, Check, MessageSquare, User, Clock, ChevronRight, Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/date";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { cn } from "#src/lib/utils";
+import { formatDate } from "#src/lib/utils/date";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function MessagesTab() {
     const [limit, setLimit] = useState(50);

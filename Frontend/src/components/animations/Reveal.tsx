@@ -1,6 +1,6 @@
 import { useRef, ReactNode } from "react";
 import { m, useInView } from "framer-motion";
-import { EASE } from "@/lib/animation";
+import { EASE } from "#src/lib/animation";
 
 interface RevealProps {
     children: ReactNode;

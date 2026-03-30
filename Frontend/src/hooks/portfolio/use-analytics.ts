@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-helpers";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { apiFetch } from "#src/lib/api-helpers";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function useAnalyticsSummary() {
   return useQuery({

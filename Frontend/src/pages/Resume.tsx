@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
 import { m } from "framer-motion";
 import { Mail, Globe, Github, Linkedin, MapPin, Printer } from "lucide-react";
-import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { useProjects, useSkills, useExperiences } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useToast } from "#src/hooks/use-toast";
+import { Button } from "#src/components/ui/button";
 import { format } from "date-fns";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 import { Sparkles, FileText } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { AdminButton } from "@/components/admin/AdminShared";
+import { cn } from "#src/lib/utils";
+import { AdminButton } from "#src/components/admin/AdminShared";
 
 export default function Resume() {
     const { data: settings } = useSiteSettings();

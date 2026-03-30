@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef } from "react";
 import DOMPurify from "dompurify";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SEO } from "@/components/SEO";
-import { TableOfContents } from "@/components/TableOfContents";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useCodeBlockCopy } from "@/hooks/use-code-block-copy";
-import type { ArticleWithRelated } from "@portfolio/shared/schema";
+import Navbar from "#src/components/Navbar";
+import Footer from "#src/components/Footer";
+import { SEO } from "#src/components/SEO";
+import { TableOfContents } from "#src/components/TableOfContents";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useCodeBlockCopy } from "#src/hooks/use-code-block-copy";
+import type { ArticleWithRelated } from "#shared/schema";
 import { useRoute } from "wouter";
 import { m, useScroll, useSpring } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { Button } from "@/components/ui/button";
+import { Badge } from "#src/components/ui/badge";
+import { Skeleton } from "#src/components/ui/skeleton.tsx";
+import { Button } from "#src/components/ui/button";
 import { ArrowLeft, Link2, Check, Eye, Share2, Twitter, Linkedin, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
-import { useArticle, useReactToArticle } from "@/hooks/use-portfolio";
+import { useArticle, useReactToArticle } from "#src/hooks/use-portfolio";
 
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { ArticleReactions } from "@/components/ArticleReactions";
+import { OptimizedImage } from "#src/components/OptimizedImage";
+import { NewsletterSignup } from "#src/components/NewsletterSignup";
+import { ArticleReactions } from "#src/components/ArticleReactions";
 
 function getPlainTextFromHtml(html: string): string {
     // Sanitize the HTML first to remove any potentially unsafe content
@@ -52,8 +52,8 @@ function PostSkeleton() {
     );
 }
 
-import { formatDate } from "@/lib/utils/date";
-import { getDynamicOgImage } from "@/lib/cloudinary";
+import { formatDate } from "#src/lib/utils/date";
+import { getDynamicOgImage } from "#src/lib/cloudinary";
 
 export default function BlogPost() {
     const { data: settings } = useSiteSettings();

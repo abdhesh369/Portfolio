@@ -1,6 +1,6 @@
 import { UseFormRegister } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
-import { InsertSiteSettings } from "@portfolio/shared";
+import { InsertSiteSettings } from "#shared";
 import { CollapsibleSection } from "./SectionsCommon";
 import { FloatingLabelInput, AdminButton, FormTextarea } from "../AdminShared";
 

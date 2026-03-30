@@ -1,6 +1,6 @@
 /**
  * Backwards-compatible barrel — delegates to domain-separated files in ./portfolio/.
- * Consuming components continue to import from "@/hooks/use-portfolio" unchanged.
+ * Consuming components continue to import from "#src/hooks/use-portfolio" unchanged.
  */
 export {
   useProjects,

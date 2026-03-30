@@ -1,11 +1,11 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useLocation } from "wouter";
-import { useAuth } from "@/hooks/auth-context";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "#src/hooks/auth-context";
+import { useToast } from "#src/hooks/use-toast";
 
-import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
+import { apiFetch, setCsrfToken } from "#src/lib/api-helpers";
 
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 export default function AdminLogin() {
     const { data: settings } = useSiteSettings();

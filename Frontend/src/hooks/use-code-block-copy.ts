@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "#src/hooks/use-toast";
 
 /**
  * Adds copy-to-clipboard button to all <pre> code blocks in the article.

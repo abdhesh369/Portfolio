@@ -1,6 +1,6 @@
 import React from "react";
 import { UseFormRegister } from "react-hook-form";
-import { InsertSiteSettings } from "@portfolio/shared";
+import { InsertSiteSettings } from "#shared";
 import { CollapsibleSection } from "./SectionsCommon";
 import { FloatingLabelInput } from "../AdminShared";
 

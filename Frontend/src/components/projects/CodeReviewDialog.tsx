@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Shield, Zap, Building2, TestTube, Accessibility, X, Loader2, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { apiFetch } from '@/lib/api-helpers';
+import { apiFetch } from '#src/lib/api-helpers';
 
 interface CodeReview {
     id: number;

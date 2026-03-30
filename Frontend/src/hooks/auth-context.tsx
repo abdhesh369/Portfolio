@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useLocation } from "wouter";
-import { apiFetch, setCsrfToken } from "@/lib/api-helpers";
+import { apiFetch, setCsrfToken } from "#src/lib/api-helpers";
 import { useQueryClient } from "@tanstack/react-query";
-import { AUTH_QUERY_KEY } from "@/lib/query-keys";
+import { AUTH_QUERY_KEY } from "#src/lib/query-keys";
 
 interface AuthUser {
     username: string;

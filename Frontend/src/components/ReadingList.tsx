@@ -1,7 +1,7 @@
-import { useReadingList, type ReadingItem } from "@/hooks/portfolio";
+import { useReadingList, type ReadingItem } from "#src/hooks/portfolio";
 import { m } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "#src/components/ui/card";
+import { Badge } from "#src/components/ui/badge";
 import { BookOpen, Video, FileText, ExternalLink, Loader2 } from "lucide-react";
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {

@@ -1,12 +1,12 @@
 import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale, staggerContainer, staggerChild } from "@/lib/animation";
-import { useExperiences } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import type { Experience as ExperienceType } from "@portfolio/shared/schema";
+import { fadeUp, fadeDown, fadeIn, scaleIn, bobble, hoverScale, staggerContainer, staggerChild } from "#src/lib/animation";
+import { useExperiences } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import type { Experience as ExperienceType } from "#shared/schema";
 import { Calendar, Briefcase, GraduationCap, ChevronDown, MapPin } from "lucide-react";
 
-import { formatDate as standardFormatDate } from "@/lib/utils/date";
+import { formatDate as standardFormatDate } from "#src/lib/utils/date";
 
 // Animated Timeline Line
 const TimelineLine = ({ isActive }: { isActive: boolean }) => (

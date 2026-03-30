@@ -2,10 +2,10 @@ import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, User, Clock, AlertCircle, CheckCircle2, Heart, Star, ThumbsUp, Flame } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useToast } from "@/hooks/use-toast";
-import type { GuestbookEntry } from "@portfolio/shared/schema";
+import { useGuestbook, useSubmitGuestbook, useReactToGuestbook } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useToast } from "#src/hooks/use-toast";
+import type { GuestbookEntry } from "#shared/schema";
 
 const REACTION_EMOJIS = [
     { emoji: "👍", icon: ThumbsUp, label: "Like" },

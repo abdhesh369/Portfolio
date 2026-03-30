@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Send, Sparkles, CheckCircle2, AlertCircle, Clock, DollarSign, ListTodo, BrainCircuit } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useScopeStream } from "@/hooks/use-scope-stream";
-import { apiFetch } from "@/lib/api-helpers";
-import { cn } from "@/lib/utils";
+import { Button } from "#src/components/ui/button";
+import { Badge } from "#src/components/ui/badge";
+import { useScopeStream } from "#src/hooks/use-scope-stream";
+import { apiFetch } from "#src/lib/api-helpers";
+import { cn } from "#src/lib/utils";
 
 const PROJECT_TYPES = [
     "Web Application",

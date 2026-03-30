@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { staggerContainer, staggerChild } from '@/lib/animation';
-import { useSkills, useSkillConnections } from '@/hooks/use-portfolio';
-import { useSiteSettings } from '@/hooks/use-site-settings';
+import { staggerContainer, staggerChild } from '#src/lib/animation';
+import { useSkills, useSkillConnections } from '#src/hooks/use-portfolio';
+import { useSiteSettings } from '#src/hooks/use-site-settings';
 import { Zap, Layers, Code2, Cpu } from 'lucide-react';
 import { useTheme } from './theme-provider';
 

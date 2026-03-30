@@ -1,8 +1,8 @@
 import { Github, Linkedin, Twitter, Facebook, Instagram, Mail, Code2, Globe, Youtube, MessageCircle, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useVisitorCount } from "@/hooks/use-visitor-count";
-import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useVisitorCount } from "#src/hooks/use-visitor-count";
+import { TextHoverEffect, FooterBackgroundGradient } from "#src/components/ui/hover-footer";
 
 const defaultFooterNavItems = [
   { name: "Home", href: "/" },

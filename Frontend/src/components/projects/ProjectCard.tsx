@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { m, useReducedMotion } from "framer-motion";
-import { type Project } from "@portfolio/shared/schema";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { staggerChild } from "@/lib/animation";
+import { type Project } from "#shared/schema";
+import { OptimizedImage } from "#src/components/OptimizedImage";
+import { staggerChild } from "#src/lib/animation";
 import { ExternalLink, Github, ArrowRight, Folder, Eye, Sparkles, Flame } from "lucide-react";
 import { Link } from "wouter";
 import { CodeRoastModal } from "./CodeRoastModal";

@@ -2,18 +2,18 @@ import { Switch, Route, useRoute, useLocation } from "wouter";
 import { QueryClientProvider, useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { Suspense, lazy, useEffect, useState, Component, type ReactNode } from "react";
 import { queryClient } from "./lib/queryClient";
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme-provider";
-import { AuthProvider, ProtectedRoute } from "@/hooks/auth-context";
-import { ReloadPrompt } from "@/components/ReloadPrompt";
-import { InstallPrompt } from "@/components/InstallPrompt";
+import { Toaster } from "#src/components/ui/toaster";
+import { ThemeProvider } from "#src/components/theme-provider";
+import { AuthProvider, ProtectedRoute } from "#src/hooks/auth-context";
+import { ReloadPrompt } from "#src/components/ReloadPrompt";
+import { InstallPrompt } from "#src/components/InstallPrompt";
 import { LazyMotion, m, AnimatePresence } from "framer-motion";
-const loadFramerFeatures = () => import("@/lib/framer-features").then(res => res.default);
-import { pageTransition, withReducedMotion } from "@/lib/animation";
-import { useTheme } from "@/components/theme-provider";
-import { CommandPalette } from "@/components/CommandPalette";
-import { PersonaSelector } from "@/components/PersonaSelector";
-import { VoiceControl } from "@/components/VoiceControl";
+const loadFramerFeatures = () => import("#src/lib/framer-features").then(res => res.default);
+import { pageTransition, withReducedMotion } from "#src/lib/animation";
+import { useTheme } from "#src/components/theme-provider";
+import { CommandPalette } from "#src/components/CommandPalette";
+import { PersonaSelector } from "#src/components/PersonaSelector";
+import { VoiceControl } from "#src/components/VoiceControl";
 
 // ─── Chunk-Load Error Boundary ────────────────────────────────────────────
 // Catches React.lazy() failures (network blips, Render redeployment with
@@ -83,27 +83,27 @@ class ChunkErrorBoundary extends Component<
 }
 
 // Lazy load heavy components
-const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
-const AnalyticsTracker = lazy(() => import("@/components/AnalyticsTracker").then(m => ({ default: m.AnalyticsTracker })));
-const Chatbot = lazy(() => import("@/components/Chatbot").then(m => ({ default: m.Chatbot })));
+const PlexusBackground = lazy(() => import("#src/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
+const AnalyticsTracker = lazy(() => import("#src/components/AnalyticsTracker").then(m => ({ default: m.AnalyticsTracker })));
+const Chatbot = lazy(() => import("#src/components/Chatbot").then(m => ({ default: m.Chatbot })));
 
 // Eager-load Home for fast LCP — it no longer imports framer-motion directly
-import Home from "@/pages/Home";
-const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
-const ProjectsPage = lazy(() => import("@/pages/Projects"));
-const BlogList = lazy(() => import("@/pages/BlogList"));
-const BlogPost = lazy(() => import("@/pages/BlogPost"));
-const ClientPortalPage = lazy(() => import("@/components/ClientPortal"));
-const CaseStudyListPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
-const CaseStudyViewerPage = lazy(() => import("@/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
-const GuestbookPage = lazy(() => import("@/pages/GuestbookPage"));
-const ResumePage = lazy(() => import("@/pages/Resume"));
-const SearchPage = lazy(() => import("@/pages/SearchPage"));
-import NotFound from "@/pages/not-found";
+import Home from "#src/pages/Home";
+const ProjectDetail = lazy(() => import("#src/pages/ProjectDetail"));
+const ProjectsPage = lazy(() => import("#src/pages/Projects"));
+const BlogList = lazy(() => import("#src/pages/BlogList"));
+const BlogPost = lazy(() => import("#src/pages/BlogPost"));
+const ClientPortalPage = lazy(() => import("#src/components/ClientPortal"));
+const CaseStudyListPage = lazy(() => import("#src/components/CaseStudy").then(m => ({ default: m.CaseStudyList })));
+const CaseStudyViewerPage = lazy(() => import("#src/components/CaseStudy").then(m => ({ default: m.CaseStudyViewer })));
+const GuestbookPage = lazy(() => import("#src/pages/GuestbookPage"));
+const ResumePage = lazy(() => import("#src/pages/Resume"));
+const SearchPage = lazy(() => import("#src/pages/SearchPage"));
+import NotFound from "#src/pages/not-found";
 
 // Lazy load admin pages
-const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
-const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const AdminLogin = lazy(() => import("#src/pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("#src/pages/admin/AdminDashboard"));
 
 // Loading fallback component
 function PageLoader() {
@@ -119,7 +119,7 @@ function PageLoader() {
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ServerStatusBanner } from "./components/ServerStatusBanner";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 
 
@@ -338,7 +338,7 @@ function GlobalLoadingIndicator() {
 }
 
 
-import { TerminalOverlay } from "@/components/TerminalOverlay";
+import { TerminalOverlay } from "#src/components/TerminalOverlay";
 
 // Main App component
 function App() {

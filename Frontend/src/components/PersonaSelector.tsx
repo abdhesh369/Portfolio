@@ -1,8 +1,8 @@
 import { m, AnimatePresence } from "framer-motion";
 import { User, Briefcase, MousePointer2, X, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { usePersona, Persona } from "@/hooks/use-persona";
-import { cn } from "@/lib/utils";
+import { usePersona, Persona } from "#src/hooks/use-persona";
+import { cn } from "#src/lib/utils";
 
 export function PersonaSelector() {
     const { persona, setPersona } = usePersona();

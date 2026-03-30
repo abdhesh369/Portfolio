@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import { Loader2, Upload, X } from 'lucide-react';
-import { apiFetch } from "@/lib/api-helpers";
-import { useToast } from "@/hooks/use-toast";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { apiFetch } from "#src/lib/api-helpers";
+import { useToast } from "#src/hooks/use-toast";
+import { OptimizedImage } from "#src/components/OptimizedImage";
 
 interface ImageUploadProps {
     value: string;

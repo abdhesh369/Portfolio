@@ -1,7 +1,7 @@
-import { api } from "@portfolio/shared";
+import { api } from "#shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function useTestimonials() {
   return useQuery({

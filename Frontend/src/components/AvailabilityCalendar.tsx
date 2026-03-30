@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { format, parseISO, isPast } from "date-fns";
 
 export function AvailabilityCalendar() {

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useAdminSubscribers } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/lib/api-helpers";
+import { useAdminSubscribers } from "#src/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
+import { apiFetch } from "#src/lib/api-helpers";
 import { 
     Send, FileText, AlertTriangle, Sparkles, Layout, Eye
 } from "lucide-react";
 import { 
     AdminButton, 
     FormField,
-} from "@/components/admin/AdminShared";
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
+} from "#src/components/admin/AdminShared";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
 import type { AdminTabProps } from "./types";
 import { motion, AnimatePresence } from "framer-motion";
 

@@ -5,11 +5,11 @@ import {
     FileText, Trash2, Sparkles, Eye, EyeOff,
     ChevronRight, Layout, Plus
 } from 'lucide-react';
-import { apiFetch } from '@/lib/api-helpers';
-import { AdminButton, EmptyState } from '@/components/admin/AdminShared';
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/date";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { apiFetch } from '#src/lib/api-helpers';
+import { AdminButton, EmptyState } from '#src/components/admin/AdminShared';
+import { cn } from "#src/lib/utils";
+import { formatDate } from "#src/lib/utils/date";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 interface CaseStudyData {
     id: number;

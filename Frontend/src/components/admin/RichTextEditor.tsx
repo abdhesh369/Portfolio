@@ -6,7 +6,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
-import { Button } from "@/components/ui/button";
+import { Button } from "#src/components/ui/button";
 import {
     Bold, Italic, Strikethrough, Code, List, ListOrdered,
     Quote, Heading1, Heading2, Undo, Redo,

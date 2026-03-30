@@ -1,10 +1,10 @@
 import React, { useState, type FormEvent } from "react";
 import DOMPurify from "dompurify";
-import { useToast } from "@/hooks/use-toast";
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
-import type { EmailTemplate } from "@portfolio/shared/schema";
-import { useEmailTemplates } from "@/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
+import { FormField, EmptyState, LoadingSkeleton, AdminButton } from "#src/components/admin/AdminShared";
+import type { EmailTemplate } from "#shared/schema";
+import { useEmailTemplates } from "#src/hooks/use-portfolio";
 import { FileText, Plus, Trash2, Edit3, X, Check, Mail } from "lucide-react";
 
 const emptyTemplate = { name: "", subject: "", body: "" };

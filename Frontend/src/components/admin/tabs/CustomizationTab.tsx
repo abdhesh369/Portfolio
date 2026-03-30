@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/use-site-settings";
-import { useToast } from "@/hooks/use-toast";
-import { LoadingSkeleton } from "@/components/admin/AdminShared";
+import { useSiteSettings, useUpdateSiteSettings } from "#src/hooks/use-site-settings";
+import { useToast } from "#src/hooks/use-toast";
+import { LoadingSkeleton } from "#src/components/admin/AdminShared";
 import { DragEndEvent } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import {
@@ -13,8 +13,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import type { InsertSiteSettings } from "@portfolio/shared";
-import { insertSiteSettingsApiSchema } from "@portfolio/shared";
+import type { InsertSiteSettings } from "#shared";
+import { insertSiteSettingsApiSchema } from "#shared";
 
 type FormPrimitiveArray<T> = {
   fields: Record<"id", string>[];

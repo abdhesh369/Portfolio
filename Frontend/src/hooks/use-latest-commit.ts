@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@portfolio/shared";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { api } from "#shared";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export const useLatestCommit = () => {
     return useQuery({

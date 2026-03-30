@@ -23,21 +23,10 @@
       "vite/client",
       "vite-plugin-pwa/client"
     ],
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@shared/*": [
-        "./shared/*"
-      ],
-      "@portfolio/shared": [
-        "../packages/shared/src/index.ts"
-      ],
-      "@portfolio/shared/*": [
-        "../packages/shared/src/*"
-      ]
+      "#src/*": ["./src/*"],
+      "#shared/*": ["../packages/shared/src/*"],
+      "#shared": ["../packages/shared/src/index.ts"]
     }
   },
   "include": [

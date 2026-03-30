@@ -1,7 +1,7 @@
 import { m } from 'framer-motion';
 import { X, BookOpen, ThumbsUp, Loader2 } from 'lucide-react';
 import { SkillNode } from './SkillTypes';
-import { useEndorseSkill } from '@/hooks/portfolio/use-skills';
+import { useEndorseSkill } from '#src/hooks/portfolio/use-skills';
 import { useState } from 'react';
 
 interface SkillTooltipProps {

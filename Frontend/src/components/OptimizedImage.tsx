@@ -1,6 +1,6 @@
 import { m, HTMLMotionProps } from "framer-motion";
-import { getOptimizedImageUrl } from "@/lib/image-utils";
-import { cn } from "@/lib/utils";
+import { getOptimizedImageUrl } from "#src/lib/image-utils";
+import { cn } from "#src/lib/utils";
 import { User, ImageOff } from "lucide-react";
 import { useState, useEffect } from "react";
 

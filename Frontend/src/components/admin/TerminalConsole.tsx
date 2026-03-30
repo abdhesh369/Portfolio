@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Terminal, Shield, Cpu } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useProjects, useSkills, useExperiences, useMessages, useAuth } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/lib/api-helpers";
+import { cn } from "#src/lib/utils";
+import { useProjects, useSkills, useExperiences, useMessages, useAuth } from "#src/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
+import { apiFetch } from "#src/lib/api-helpers";
 import { TabKey } from "./tabs/types";
 
 interface TerminalLine {

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useAnalyticsSummary, useVitalsSummary } from "../../hooks/use-portfolio";
 import { VisitorGlobe } from "./VisitorGlobe";
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "#src/lib/utils/date";
 import {
     Eye,
     Activity,

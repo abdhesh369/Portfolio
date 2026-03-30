@@ -4,10 +4,10 @@ import {
     Zap, Briefcase, Search, PenTool, Star, Shield,
     Brain, Sliders, BookOpen, Users, Globe, Palette, Wrench, MessageCircle, Pencil, ChevronLeft, X, Send, Rocket
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useAdminSubscribers } from "@/hooks/use-portfolio";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { cn } from "#src/lib/utils";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useAdminSubscribers } from "#src/hooks/use-portfolio";
+import { OptimizedImage } from "#src/components/OptimizedImage";
 
 interface SidebarProps {
     collapsed: boolean;

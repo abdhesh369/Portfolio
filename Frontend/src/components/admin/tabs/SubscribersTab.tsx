@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useAdminSubscribers } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/lib/api-helpers";
+import { useAdminSubscribers } from "#src/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
+import { apiFetch } from "#src/lib/api-helpers";
 import { 
     Users, Mail, Download, Send, Search, Trash2, 
     X, CheckCircle2, AlertTriangle, FileText
@@ -11,10 +11,10 @@ import {
     EmptyState, 
     LoadingSkeleton, 
     FormField
-} from "@/components/admin/AdminShared";
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
-import { formatDate } from "@/lib/utils/date";
-import { cn } from "@/lib/utils";
+} from "#src/components/admin/AdminShared";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
+import { formatDate } from "#src/lib/utils/date";
+import { cn } from "#src/lib/utils";
 import type { AdminTabProps } from "./types";
 import { AnimatePresence, motion } from "framer-motion";
 

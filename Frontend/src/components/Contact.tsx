@@ -1,13 +1,13 @@
 import { useForm, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMessageApiSchema, type InsertMessage } from "@portfolio/shared";
-import { useSendMessage } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { insertMessageApiSchema, type InsertMessage } from "#shared";
+import { useSendMessage } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { m, AnimatePresence } from "framer-motion";
-import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "@/lib/animation";
+import { fadeLeft, fadeDown, fadeUp, fadeRight, scaleIn } from "#src/lib/animation";
 import { useState, useEffect } from "react";
 import { Mail, MapPin, Phone, Send, CheckCircle, Github, Linkedin, Terminal, Copy, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "#src/components/ui/button";
 import { AvailabilityCalendar } from "./AvailabilityCalendar";
 import { ScopeWizard } from "./ScopeWizard";
 import { HireMeChat } from "./HireMeChat";

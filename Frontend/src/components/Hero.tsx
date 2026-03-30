@@ -1,17 +1,17 @@
 import { useLocation } from "wouter";
 import { m, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { fadeUp, fadeIn, DURATION, EASE } from "@/lib/animation";
+import { fadeUp, fadeIn, DURATION, EASE } from "#src/lib/animation";
 import { ArrowRight, Github, Linkedin, Mail, ChevronDown, Sparkles, Twitter, Instagram, Youtube, Code2, ExternalLink, Globe } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
-import { useServerStatus } from "@/hooks/use-server-status";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useLatestCommit } from "@/hooks/use-latest-commit";
-import { formatTimeAgo } from "@/lib/utils/date";
+import { Button } from "#src/components/ui/button";
+import { useProjects, useSkills, useExperiences } from "#src/hooks/use-portfolio";
+import { useServerStatus } from "#src/hooks/use-server-status";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useLatestCommit } from "#src/hooks/use-latest-commit";
+import { formatTimeAgo } from "#src/lib/utils/date";
 
 import { LiveCodeEditor } from "./LiveCodeEditor";
-import type { SiteSettings } from "@portfolio/shared";
+import type { SiteSettings } from "#shared";
 
 // Mouse Follower Gradient
 const MouseGradient = () => {

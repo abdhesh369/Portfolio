@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableAttributes } from "@dnd-kit/core";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 type SyntheticListenerMap = ReturnType<typeof useSortable>['listeners'];
 

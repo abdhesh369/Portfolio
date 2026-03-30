@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useScrollStore } from "@/hooks/use-scroll-store";
+import { Button } from "#src/components/ui/button";
+import { useScrollStore } from "#src/hooks/use-scroll-store";
 
 export default function BackToTop() {
     const { scrollY, progress } = useScrollStore();

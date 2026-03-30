@@ -1,9 +1,9 @@
 import { useAdminMutation } from "./use-admin-mutation";
-import { api, interpolatePath, type Experience } from "@portfolio/shared";
-import { apiFetch } from "@/lib/api-helpers";
+import { api, interpolatePath, type Experience } from "#shared";
+import { apiFetch } from "#src/lib/api-helpers";
 import { useExperiences } from "../portfolio";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function useAdminExperiences() {
     const { refetch } = useExperiences();

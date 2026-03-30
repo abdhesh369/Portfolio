@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { useAdminChatLogs } from "@/hooks/use-portfolio";
+import { useAdminChatLogs } from "#src/hooks/use-portfolio";
 import { MessageSquare, Calendar, ExternalLink, X, User, Bot, Clock, Filter, Search } from "lucide-react";
 import { 
     AdminButton, 
     EmptyState, 
     LoadingSkeleton 
-} from "@/components/admin/AdminShared";
-import { formatDate } from "@/lib/utils/date";
-import { cn } from "@/lib/utils";
-import type { ChatConversation } from "@portfolio/shared/schema";
+} from "#src/components/admin/AdminShared";
+import { formatDate } from "#src/lib/utils/date";
+import { cn } from "#src/lib/utils";
+import type { ChatConversation } from "#shared/schema";
 import type { AdminTabProps } from "./types";
 import { AnimatePresence, motion } from "framer-motion";
 

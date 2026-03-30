@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { apiFetch } from "@/lib/api-helpers";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { QUERY_KEYS } from "@/lib/query-keys";
-import { seoSettingsSchema } from "@portfolio/shared";
+import { apiFetch } from "#src/lib/api-helpers";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { QUERY_KEYS } from "#src/lib/query-keys";
+import { seoSettingsSchema } from "#shared";
 
 interface SeoProps {
     slug?: string;

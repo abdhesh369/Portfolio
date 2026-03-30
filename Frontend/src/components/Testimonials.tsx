@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { useTestimonials } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useTestimonials } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { Quote, Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
 import { OptimizedImage } from "./OptimizedImage";
-import { fadeUp } from "@/lib/animation";
+import { fadeUp } from "#src/lib/animation";
 
 export default function Testimonials() {
     const { data: testimonials, isLoading } = useTestimonials();

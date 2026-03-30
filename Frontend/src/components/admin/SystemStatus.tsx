@@ -1,5 +1,5 @@
 import { Database, Server, Shield, Activity, RefreshCw, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 interface SystemStatusProps {
     apiHealth: "healthy" | "unreachable" | "degraded" | "loading";

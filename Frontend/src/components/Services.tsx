@@ -1,8 +1,8 @@
 import { m, useReducedMotion } from "framer-motion";
-import { useServices } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useServices } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { Sparkles, ChevronRight, Layers } from "lucide-react";
-import type { Service } from "@portfolio/shared";
+import type { Service } from "#shared";
 
 function getFallbackServices() {
   return [

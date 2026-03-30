@@ -1,7 +1,7 @@
-import { api, type Project } from "@portfolio/shared";
+import { api, type Project } from "#shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 import { usePersona } from "../use-persona";
 
 export function useProjects(sortBy: string = "default") {

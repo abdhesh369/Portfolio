@@ -1,8 +1,8 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SEO } from "@/components/SEO";
-import { Guestbook } from "@/components/Guestbook";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import Navbar from "#src/components/Navbar";
+import Footer from "#src/components/Footer";
+import { SEO } from "#src/components/SEO";
+import { Guestbook } from "#src/components/Guestbook";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 export default function GuestbookPage() {
     const { data: settings } = useSiteSettings();

@@ -1,8 +1,8 @@
 import { useState, ReactNode, useEffect } from "react";
-import Sidebar from "@/components/admin/Sidebar";
-import TopBar from "@/components/admin/TopBar";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { ThemeProvider, useTheme } from "@/components/theme-provider";
+import Sidebar from "#src/components/admin/Sidebar";
+import TopBar from "#src/components/admin/TopBar";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { ThemeProvider, useTheme } from "#src/components/theme-provider";
 
 interface AdminLayoutProps {
     children: ReactNode;

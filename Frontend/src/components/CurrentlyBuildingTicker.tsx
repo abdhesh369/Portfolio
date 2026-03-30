@@ -5,7 +5,7 @@ import { Github, ExternalLink, Cpu, Terminal, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "#src/lib/utils/date";
 
 export const CurrentlyBuildingTicker: React.FC = () => {
     const { data: commitData, isLoading: isCommitLoading } = useLatestCommit();

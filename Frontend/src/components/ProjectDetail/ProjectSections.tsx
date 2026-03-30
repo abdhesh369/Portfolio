@@ -1,10 +1,10 @@
 import { m } from "framer-motion";
-import { fadeUp, scaleInSubtle, fadeLeft, fadeIn, hoverScale, hoverLift, fadeUpLarge } from "@/lib/animation";
-import { useTheme } from "@/components/theme-provider";
+import { fadeUp, scaleInSubtle, fadeLeft, fadeIn, hoverScale, hoverLift, fadeUpLarge } from "#src/lib/animation";
+import { useTheme } from "#src/components/theme-provider";
 import React from "react";
 import { ArrowLeft, ChevronRight, Sparkles, Github, ExternalLink, Share2, Twitter, Linkedin, MessageCircle, Layers } from "lucide-react";
 import { Link } from "wouter";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "#src/components/OptimizedImage";
 
 // Simple seeded randomizer for deterministic rendering
 const seededRandom = (seed: number) => {

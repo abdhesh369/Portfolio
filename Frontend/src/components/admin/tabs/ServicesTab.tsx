@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, type FormEvent } from "react";
-import { useServices, useAdminServices } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState, AdminButton, FormCheckbox } from "@/components/admin/AdminShared";
+import { useServices, useAdminServices } from "#src/hooks/use-portfolio";
+import { FormField, FormTextarea, EmptyState, AdminButton, FormCheckbox } from "#src/components/admin/AdminShared";
 import { Plus, Trash2, Edit3, X, Zap, Cpu } from "lucide-react";
-import type { Service } from "@portfolio/shared/schema";
+import type { Service } from "#shared/schema";
 
 const emptyService = {
   title: "",

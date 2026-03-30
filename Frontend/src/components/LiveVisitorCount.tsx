@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from "framer-motion";
-import { useVisitorCount } from "@/hooks/use-visitor-count";
+import { useVisitorCount } from "#src/hooks/use-visitor-count";
 import { Users } from "lucide-react";
 
 export function LiveVisitorCount() {

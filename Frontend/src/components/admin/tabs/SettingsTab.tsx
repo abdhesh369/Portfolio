@@ -1,8 +1,8 @@
 import React from "react";
-import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/portfolio";
-import { LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { useSiteSettings, useUpdateSiteSettings } from "#src/hooks/portfolio";
+import { LoadingSkeleton, AdminButton } from "#src/components/admin/AdminShared";
+import { Switch } from "#src/components/ui/switch";
+import { Label } from "#src/components/ui/label";
 import {
     Briefcase,
     Sparkles,
@@ -16,9 +16,9 @@ import {
     Shield,
     Terminal
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/lib/api-helpers";
-import { cn } from "@/lib/utils";
+import { useToast } from "#src/hooks/use-toast";
+import { apiFetch } from "#src/lib/api-helpers";
+import { cn } from "#src/lib/utils";
 import {
     DndContext,
     closestCenter,
@@ -36,7 +36,7 @@ import {
     useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
+import { DEFAULT_SECTION_ORDER } from "#shared";
 
 const SECTION_LABELS: Record<string, string> = {
     hero: "Home (Hero)",

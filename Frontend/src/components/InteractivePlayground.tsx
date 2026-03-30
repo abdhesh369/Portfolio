@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Code2, Copy, Check, ExternalLink, Maximize2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "#src/components/ui/button";
+import { useToast } from "#src/hooks/use-toast";
 
 interface InteractivePlaygroundProps {
   projectId: number;

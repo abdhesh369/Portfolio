@@ -1,6 +1,6 @@
 import React from "react";
 import { Control, Controller } from "react-hook-form";
-import { InsertSiteSettings } from "@portfolio/shared";
+import { InsertSiteSettings } from "#shared";
 import { CollapsibleSection } from "./SectionsCommon";
 import { SpringToggle } from "../AdminShared";
 

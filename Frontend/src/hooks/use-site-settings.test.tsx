@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import type { InsertSiteSettings } from "@portfolio/shared";
+import type { InsertSiteSettings } from "#shared";
 
 // Mock apiFetch
-vi.mock("@/lib/api-helpers", () => ({
+vi.mock("#src/lib/api-helpers", () => ({
     apiFetch: vi.fn(),
 }));
 

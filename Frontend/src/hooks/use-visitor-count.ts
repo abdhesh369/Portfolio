@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 
 const API_URL = API_BASE_URL;
 

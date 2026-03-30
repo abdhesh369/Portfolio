@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";
 import { Code2, Copy, Check, Terminal, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
-import { API_BASE_URL, apiFetch } from "@/lib/api-helpers";
+import { API_BASE_URL, apiFetch } from "#src/lib/api-helpers";
 
 /* ------------------------------------------------------------------ */
 /* Syntax-highlighted JSON renderer (no external deps)                 */

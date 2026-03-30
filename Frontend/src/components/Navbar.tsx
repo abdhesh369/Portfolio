@@ -3,13 +3,13 @@ import { useLocation } from "wouter";
 import { Menu, X, Code2, Search } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 
-import { Button } from "@/components/ui/button";
-import { PerformanceToggle } from "@/components/PerformanceToggle";
-import { useScrollSpy } from "@/hooks/use-scroll-spy";
-import { useScrollStore } from "@/hooks/use-scroll-store";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useCommandPalette } from "@/hooks/use-command-palette";
-import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
+import { Button } from "#src/components/ui/button";
+import { PerformanceToggle } from "#src/components/PerformanceToggle";
+import { useScrollSpy } from "#src/hooks/use-scroll-spy";
+import { useScrollStore } from "#src/hooks/use-scroll-store";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useCommandPalette } from "#src/hooks/use-command-palette";
+import { DEFAULT_SECTION_ORDER } from "#shared";
 
 const DEFAULT_NAV_ITEMS = [
   { name: "Home", href: "/" },

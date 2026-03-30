@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CustomizationTab } from "./CustomizationTab";
-import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteSettings, useUpdateSiteSettings } from "#src/hooks/use-site-settings";
 import React from "react";
 import { UseQueryResult, UseMutationResult, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { SiteSettings, InsertSiteSettings } from "@portfolio/shared";
+import type { SiteSettings, InsertSiteSettings } from "#shared";
 
 // Mock hooks
-vi.mock("@/hooks/use-site-settings", () => ({
+vi.mock("#src/hooks/use-site-settings", () => ({
     useSiteSettings: vi.fn(),
     useUpdateSiteSettings: vi.fn(),
 }));
 
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("#src/hooks/use-toast", () => ({
     useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
@@ -59,7 +59,7 @@ vi.mock("../customization/StickyFormFooter", () => ({
         </div>
     ),
 }));
-vi.mock("@/components/admin/AdminShared", () => ({
+vi.mock("#src/components/admin/AdminShared", () => ({
     LoadingSkeleton: () => <div data-testid="loading">Loading...</div>,
     FloatingLabelInput: ({ label }: { label: string }) => <div data-testid="floating-input">{label}</div>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useServerStatus, type ServerStatus } from "@/hooks/use-server-status";
+import { useServerStatus, type ServerStatus } from "#src/hooks/use-server-status";
 import { m, AnimatePresence } from "framer-motion";
 
 const MESSAGES: Record<Exclude<ServerStatus, "online" | "checking">, { text: string; icon: string }> = {

@@ -1,13 +1,13 @@
 import React, { useState, type FormEvent } from "react";
-import { useMindset } from "@/hooks/use-portfolio";
-import { useAdminMindset } from "@/hooks/admin/use-admin-mindset";
-import { FormField, FormTextarea, EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
-import type { Mindset } from "@portfolio/shared/schema";
+import { useMindset } from "#src/hooks/use-portfolio";
+import { useAdminMindset } from "#src/hooks/admin/use-admin-mindset";
+import { FormField, FormTextarea, EmptyState, LoadingSkeleton, AdminButton } from "#src/components/admin/AdminShared";
+import type { Mindset } from "#shared/schema";
 import {
     Plus, Pencil, Trash2, Brain, Lightbulb,
     Zap, Anchor, Target, Compass, ChevronRight
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 const ICON_OPTIONS = [
     { label: "Brain", value: "Brain", icon: Brain },

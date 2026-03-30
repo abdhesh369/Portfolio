@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PenTool, Plus, Trash2, Archive, Calendar } from 'lucide-react';
-import { apiFetch } from '@/lib/api-helpers';
-import { Badge } from "@/components/ui/badge";
-import { AdminButton, LoadingSkeleton, EmptyState, FormField } from "@/components/admin/AdminShared";
-import { formatDate } from '@/lib/utils/date';
-import { QUERY_KEYS } from '@/lib/query-keys';
+import { apiFetch } from '#src/lib/api-helpers';
+import { Badge } from "#src/components/ui/badge";
+import { AdminButton, LoadingSkeleton, EmptyState, FormField } from "#src/components/admin/AdminShared";
+import { formatDate } from '#src/lib/utils/date';
+import { QUERY_KEYS } from '#src/lib/query-keys';
 
 interface SketchpadSessionData {
     id: number;

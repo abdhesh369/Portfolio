@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

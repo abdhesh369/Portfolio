@@ -1,34 +1,34 @@
 import { lazy, Suspense, useEffect, useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import { SEO } from "@/components/SEO";
-import SectionDivider from "@/components/SectionDivider";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { useScrollStore } from "@/hooks/use-scroll-store";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { DEFAULT_SECTION_ORDER } from "@portfolio/shared";
+import Navbar from "#src/components/Navbar";
+import Hero from "#src/components/Hero";
+import { SEO } from "#src/components/SEO";
+import SectionDivider from "#src/components/SectionDivider";
+import { ErrorBoundary } from "#src/components/ErrorBoundary";
+import { useScrollStore } from "#src/hooks/use-scroll-store";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { DEFAULT_SECTION_ORDER } from "#shared";
 import React from "react";
-import { usePersona } from "@/hooks/use-persona";
+import { usePersona } from "#src/hooks/use-persona";
 
 // Lazy-load below-the-fold sections to reduce initial bundle
-const About = lazy(() => import("@/components/About"));
-const Skills = lazy(() => import("@/components/Skills"));
-const WhyHireMe = lazy(() => import("@/components/WhyHireMe"));
-const Services = lazy(() => import("@/components/Services"));
-const EngineeringMindset = lazy(() => import("@/components/EngineeringMindset"));
-const Projects = lazy(() => import("@/components/Projects"));
-const CodeAndPractice = lazy(() => import("@/components/CodeAndPractice"));
-const Experience = lazy(() => import("@/components/Experience"));
-const Testimonials = lazy(() => import("@/components/Testimonials"));
-const Contact = lazy(() => import("@/components/Contact"));
-const Footer = lazy(() => import("@/components/Footer"));
-const BackToTop = lazy(() => import("@/components/BackToTop"));
-const SectionReveal = lazy(() => import("@/components/animations/Reveal"));
-const Guestbook = lazy(() => import("@/components/Guestbook").then(m => ({ default: m.Guestbook })));
-import { GithubHeatmap } from "@/components/GithubHeatmap";
-import { ReadingList } from "@/components/ReadingList";
-import { LiveActivityTicker } from "@/components/LiveActivityTicker";
+const About = lazy(() => import("#src/components/About"));
+const Skills = lazy(() => import("#src/components/Skills"));
+const WhyHireMe = lazy(() => import("#src/components/WhyHireMe"));
+const Services = lazy(() => import("#src/components/Services"));
+const EngineeringMindset = lazy(() => import("#src/components/EngineeringMindset"));
+const Projects = lazy(() => import("#src/components/Projects"));
+const CodeAndPractice = lazy(() => import("#src/components/CodeAndPractice"));
+const Experience = lazy(() => import("#src/components/Experience"));
+const Testimonials = lazy(() => import("#src/components/Testimonials"));
+const Contact = lazy(() => import("#src/components/Contact"));
+const Footer = lazy(() => import("#src/components/Footer"));
+const BackToTop = lazy(() => import("#src/components/BackToTop"));
+const SectionReveal = lazy(() => import("#src/components/animations/Reveal"));
+const Guestbook = lazy(() => import("#src/components/Guestbook").then(m => ({ default: m.Guestbook })));
+import { GithubHeatmap } from "#src/components/GithubHeatmap";
+import { ReadingList } from "#src/components/ReadingList";
+import { LiveActivityTicker } from "#src/components/LiveActivityTicker";
 
 
 // Skeleton loading states that match section shapes
@@ -61,7 +61,7 @@ function SectionFallback() {
 }
 
 
-import { SuspenseErrorBoundary } from "@/components/SuspenseErrorBoundary";
+import { SuspenseErrorBoundary } from "#src/components/SuspenseErrorBoundary";
 
 function SafeSection({ children, name }: { children: React.ReactNode, name: string }) {
   return (

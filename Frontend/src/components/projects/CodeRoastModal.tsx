@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { X, Flame, Shield, Zap, Info, Loader2, Sparkles, AlertTriangle } from "lucide-react";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 import ReactMarkdown from "react-markdown";
 
 interface CodeRoastModalProps {

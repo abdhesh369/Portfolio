@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Terminal, GitCommit, FileCode, Plus, Minus, Activity, ExternalLink } from "lucide-react";
 
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 
 interface CommitFile {
   filename: string;

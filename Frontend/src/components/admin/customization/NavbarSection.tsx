@@ -3,7 +3,7 @@ import { UseFormRegister, UseFieldArrayRemove, UseFieldArrayMove, UseFieldArrayA
 import { GripVertical, Plus, Trash2, ChevronDown, Link as LinkIcon } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { InsertSiteSettings } from "@portfolio/shared";
+import { InsertSiteSettings } from "#shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
 import { FloatingLabelInput, AdminButton } from "../AdminShared";
 

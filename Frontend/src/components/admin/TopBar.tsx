@@ -1,11 +1,11 @@
 import {
     Menu, Bell, Search, User, LogOut, ChevronRight, Sun, Moon, Settings, Globe, Clock
 } from "lucide-react";
-import { useAuth } from "@/hooks/auth-context";
-import { useTheme } from "@/components/theme-provider";
+import { useAuth } from "#src/hooks/auth-context";
+import { useTheme } from "#src/components/theme-provider";
 import { useState, useRef, useEffect } from "react";
 import { useMutationState } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
 interface TopBarProps {

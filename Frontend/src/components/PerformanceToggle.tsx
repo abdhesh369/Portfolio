@@ -1,6 +1,6 @@
 import { Zap, ZapOff } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
+import { useTheme } from "#src/components/theme-provider";
+import { Button } from "#src/components/ui/button";
 
 export function PerformanceToggle() {
     const { performanceMode, setPerformanceMode } = useTheme();

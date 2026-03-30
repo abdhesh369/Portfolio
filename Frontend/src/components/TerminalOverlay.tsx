@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Terminal as TerminalIcon, X, Cpu, Shield } from "lucide-react";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useSkills } from "@/hooks/portfolio/use-skills";
-import { useProjects } from "@/hooks/portfolio/use-projects";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useSkills } from "#src/hooks/portfolio/use-skills";
+import { useProjects } from "#src/hooks/portfolio/use-projects";
 import { useLocation } from "wouter";
 
 interface TerminalLine {

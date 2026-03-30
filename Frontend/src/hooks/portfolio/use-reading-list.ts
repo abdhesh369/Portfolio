@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 
 export interface ReadingItem {
     id: number;

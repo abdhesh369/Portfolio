@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { API_BASE_URL } from "@/lib/api-helpers";
-import { queryClient } from "@/lib/queryClient";
-import { AUTH_QUERY_KEY } from "@/lib/query-keys";
+import { useToast } from "#src/hooks/use-toast";
+import { API_BASE_URL } from "#src/lib/api-helpers";
+import { queryClient } from "#src/lib/queryClient";
+import { AUTH_QUERY_KEY } from "#src/lib/query-keys";
 
 /**
  * Hook for admin login

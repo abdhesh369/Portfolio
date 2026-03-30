@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient, type UseQueryResult } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-helpers";
-import { siteSettingsSchema } from "@portfolio/shared";
-import type { SiteSettings, InsertSiteSettings } from "@portfolio/shared";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { apiFetch } from "#src/lib/api-helpers";
+import { siteSettingsSchema } from "#shared";
+import type { SiteSettings, InsertSiteSettings } from "#shared";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 import seedData from "../../../Backend/src/seed-data.json";
 

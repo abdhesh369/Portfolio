@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-import { staggerChildScale } from '@/lib/animation';
+import { staggerChildScale } from '#src/lib/animation';
 import { SkillNode, NodeColors } from './SkillTypes';
 
 const statusColors: Record<string, NodeColors> = {

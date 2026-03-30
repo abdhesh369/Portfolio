@@ -10,17 +10,17 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link, useRoute, useLocation } from "wouter";
-import { fadeUp, fadeRight, fadeIn } from "@/lib/animation";
+import { fadeUp, fadeRight, fadeIn } from "#src/lib/animation";
 import { m } from "framer-motion";
 import DOMPurify from "dompurify";
-import { SEO } from "@/components/SEO";
-import { useProjects, useProjectById } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { getDynamicOgImage } from "@/lib/cloudinary";
-import { toast } from "@/hooks/use-toast";
-import { ApiResponseViewer } from "@/components/ApiResponseViewer";
-import { InteractivePlayground } from "@/components/InteractivePlayground";
-import { FloatingParticles, SectionCard, TechBadge, ProjectHero, OtherProjectsSection } from "@/components/ProjectDetail/ProjectSections";
+import { SEO } from "#src/components/SEO";
+import { useProjects, useProjectById } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { getDynamicOgImage } from "#src/lib/cloudinary";
+import { toast } from "#src/hooks/use-toast";
+import { ApiResponseViewer } from "#src/components/ApiResponseViewer";
+import { InteractivePlayground } from "#src/components/InteractivePlayground";
+import { FloatingParticles, SectionCard, TechBadge, ProjectHero, OtherProjectsSection } from "#src/components/ProjectDetail/ProjectSections";
 
 export default function ProjectDetail() {
   const { data: settings } = useSiteSettings();

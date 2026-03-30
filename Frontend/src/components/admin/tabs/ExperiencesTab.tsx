@@ -1,9 +1,9 @@
 import React, { useState, type FormEvent } from "react";
-import { useExperiences, useAdminExperiences } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FloatingLabelInput } from "@/components/admin/AdminShared";
-import type { Experience } from "@portfolio/shared/schema";
+import { useExperiences, useAdminExperiences } from "#src/hooks/use-portfolio";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FloatingLabelInput } from "#src/components/admin/AdminShared";
+import type { Experience } from "#shared/schema";
 import { Briefcase, Calendar, Building2, Trash2, Edit2, Plus, X, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 interface ExperienceFormState extends Omit<Partial<Experience>, 'startDate' | 'endDate'> {
     startDate: string | Date;
@@ -20,7 +20,7 @@ const emptyExperience: ExperienceFormState = {
     type: "Experience"
 };
 
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "#src/lib/utils/date";
 import type { AdminTabProps } from "./types";
 
 export function ExperiencesTab(_props: AdminTabProps) {

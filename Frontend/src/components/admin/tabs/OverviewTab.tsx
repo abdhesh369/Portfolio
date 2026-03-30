@@ -1,12 +1,12 @@
-import { useProjects, useSkills, useExperiences, useMessages, useAnalyticsSummary, useAdminSubscribers, useArticles, useAdminGuestbook } from "@/hooks/use-portfolio";
-import { formatTime, formatTimeAgo } from "@/lib/utils/date";
+import { useProjects, useSkills, useExperiences, useMessages, useAnalyticsSummary, useAdminSubscribers, useArticles, useAdminGuestbook } from "#src/hooks/use-portfolio";
+import { formatTime, formatTimeAgo } from "#src/lib/utils/date";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 import {
     Rocket, Mail, Zap, Briefcase, Plus, Activity, ChevronRight, PenTool, FolderKanban, Palette,
     Eye, Users, StickyNote, Signature
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 import StatCard from "../StatCard";
 import ActivityFeed from "../ActivityFeed";
 import SystemStatus from "../SystemStatus";

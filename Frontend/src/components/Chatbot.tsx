@@ -3,9 +3,9 @@ import { m, AnimatePresence } from "framer-motion";
 import { Send, Minimize2, Trash2 } from "lucide-react";
 import { ChatbotIcon } from "./ChatbotIcon";
 import ReactMarkdown from "react-markdown";
-import { apiFetch } from "@/lib/api-helpers";
-import { formatTime } from "@/lib/utils/date";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import { apiFetch } from "#src/lib/api-helpers";
+import { formatTime } from "#src/lib/utils/date";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 
 type Role = "user" | "model";
 

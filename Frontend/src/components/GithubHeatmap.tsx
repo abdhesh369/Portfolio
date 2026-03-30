@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Github, Info, ExternalLink } from "lucide-react";
 
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 import { ContributionGrid, ContributionDay } from "./ContributionGrid";
 

@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pen, Eraser, Square, Circle as CircleIcon, Minus, Palette, RotateCcw, Download, Save, MousePointer2 } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '#src/hooks/use-toast';
 
 interface Point { x: number; y: number }
 interface DrawElement {

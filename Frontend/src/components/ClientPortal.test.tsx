@@ -1,10 +1,10 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ClientPortal } from "./ClientPortal";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "#src/hooks/use-toast";
 
 // Mock toast
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("#src/hooks/use-toast", () => ({
     toast: vi.fn(),
 }));
 

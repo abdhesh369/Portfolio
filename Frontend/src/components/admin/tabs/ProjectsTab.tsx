@@ -1,11 +1,11 @@
 import React, { useState, useEffect, type FormEvent } from "react";
-import { useProjects, useAdminProjects } from "@/hooks/use-portfolio";
-import type { Project } from "@portfolio/shared";
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
+import { useProjects, useAdminProjects } from "#src/hooks/use-portfolio";
+import type { Project } from "#shared";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
 import { Search, Plus, Trash2, Edit3, GripVertical, Check, ExternalLink, Github, Layers, Zap, Pin } from "lucide-react";
 import { FormField, EmptyState, FormSelect, FormCheckbox, AdminButton, LoadingSkeleton } from "../AdminShared";
 import { ImageUpload } from "../ImageUpload";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "#src/components/OptimizedImage";
 import {
     DndContext,
     closestCenter,
@@ -23,7 +23,7 @@ import {
     useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { cn } from "@/lib/utils";
+import { cn } from "#src/lib/utils";
 
 const emptyProject = {
     title: "", slug: "", description: "", techStack: [] as string[], imageUrl: "",

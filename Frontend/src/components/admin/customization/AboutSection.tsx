@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { UseFormRegister, useFieldArray, Control } from "react-hook-form";
-import { InsertSiteSettings } from "@portfolio/shared";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input, Textarea } from "@/components/ui";
-import { Button } from "@/components/ui/button";
+import { InsertSiteSettings } from "#shared";
+import { Card, CardContent } from "#src/components/ui/card";
+import { Input, Textarea } from "#src/components/ui";
+import { Button } from "#src/components/ui/button";
 import { Plus, Trash2, Calendar, Zap } from "lucide-react";
 import { CollapsibleSection } from "./SectionsCommon";
 

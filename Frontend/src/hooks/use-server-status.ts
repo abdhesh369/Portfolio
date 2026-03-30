@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 
 /**
  * Server status states:

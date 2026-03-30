@@ -7,7 +7,7 @@
  * honoured with a single boolean toggle.
  *
  * Usage:
- *   import { fadeUp, hoverScale, duration, withReducedMotion } from "@/lib/animation";
+ *   import { fadeUp, hoverScale, duration, withReducedMotion } from "#src/lib/animation";
  *   const { reducedMotion } = useTheme();
  *   <motion.div {...withReducedMotion(fadeUp, reducedMotion)} />
  */

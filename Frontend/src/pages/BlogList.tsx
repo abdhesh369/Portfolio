@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { Article } from "@portfolio/shared/schema";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SEO } from "@/components/SEO";
-import { useArticles, useArticleSearch } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
+import type { Article } from "#shared/schema";
+import Navbar from "#src/components/Navbar";
+import Footer from "#src/components/Footer";
+import { SEO } from "#src/components/SEO";
+import { useArticles, useArticleSearch } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { m } from "framer-motion";
-import { fadeUp, fadeLeft } from "@/lib/animation";
+import { fadeUp, fadeLeft } from "#src/lib/animation";
 import { Link } from "wouter";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Badge } from "#src/components/ui/badge";
+import { Card, CardContent } from "#src/components/ui/card";
+import { Skeleton } from "#src/components/ui/skeleton.tsx";
 import { Eye, Clock } from "lucide-react";
 
-import { formatDate } from "@/lib/utils/date";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { formatDate } from "#src/lib/utils/date";
+import { OptimizedImage } from "#src/components/OptimizedImage";
+import { NewsletterSignup } from "#src/components/NewsletterSignup";
 
 function BlogCard({ article }: { article: Article }) {
     return (

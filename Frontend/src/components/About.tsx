@@ -1,11 +1,11 @@
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild } from "@/lib/animation";
+import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild } from "#src/lib/animation";
 import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
-import { useProjects, useSkills, useExperiences } from "@/hooks/use-portfolio";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useProjects, useSkills, useExperiences } from "#src/hooks/use-portfolio";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { OptimizedImage } from "#src/components/OptimizedImage";
+import { Skeleton } from "#src/components/ui/skeleton";
 
 
 // 3D Tilt Card Component

@@ -1,9 +1,9 @@
 import React, { useState, type FormEvent } from "react";
-import { useSkills, useAdminSkills } from "@/hooks/use-portfolio";
-import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton } from "@/components/admin/AdminShared";
+import { useSkills, useAdminSkills } from "#src/hooks/use-portfolio";
+import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton } from "#src/components/admin/AdminShared";
 import { Plus, Trash2, Edit3, X, Check, Zap, Cpu, Code, Layers } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { Skill } from "@portfolio/shared/schema";
+import { cn } from "#src/lib/utils";
+import type { Skill } from "#shared/schema";
 
 const emptySkill = { name: "", category: "", status: "Core" as "Core" | "Advanced" | "Learning", icon: "Code", description: "", proof: "", x: 50, y: 50, mastery: 50 };
 

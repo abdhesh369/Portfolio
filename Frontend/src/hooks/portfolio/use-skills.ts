@@ -1,8 +1,8 @@
-import { api } from "@portfolio/shared";
+import { api } from "#shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import { QUERY_KEYS } from "@/lib/query-keys";
-import { API_BASE_URL } from "@/lib/api-helpers";
+import { QUERY_KEYS } from "#src/lib/query-keys";
+import { API_BASE_URL } from "#src/lib/api-helpers";
 
 export function useSkills() {
   return useQuery({

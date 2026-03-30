@@ -1,8 +1,8 @@
-import { api } from "@portfolio/shared";
+import { api } from "#shared";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAndParse } from "./_fetch-helper";
-import { apiFetch } from "@/lib/api-helpers";
-import type { EmailTemplate } from "@portfolio/shared/schema";
+import { apiFetch } from "#src/lib/api-helpers";
+import type { EmailTemplate } from "#shared/schema";
 import { useAdminMutation } from "../admin/use-admin-mutation";
 
 export function useEmailTemplates() {

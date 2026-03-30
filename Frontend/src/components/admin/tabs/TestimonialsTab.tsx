@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { useTestimonials } from "@/hooks/use-portfolio";
-import { apiFetch } from "@/lib/api-helpers";
-import { clearQueryCache } from "@/lib/query-cache-persister";
-import type { Testimonial } from "@portfolio/shared/schema";
-import { useToast } from "@/hooks/use-toast";
+import { useTestimonials } from "#src/hooks/use-portfolio";
+import { apiFetch } from "#src/lib/api-helpers";
+import { clearQueryCache } from "#src/lib/query-cache-persister";
+import type { Testimonial } from "#shared/schema";
+import { useToast } from "#src/hooks/use-toast";
 import {
     Quote, Plus, Trash2, Edit3, X, User,
     Linkedin, Building2, Briefcase,
     Save, Hash, Users, MessageSquareQuote, Mail
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "#src/components/admin/AdminShared";
+import { OptimizedImage } from "#src/components/OptimizedImage";
 
 function TestimonialRequestModal({ onClose }: { onClose: () => void }) {
     const { toast } = useToast();

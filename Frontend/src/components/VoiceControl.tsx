@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Mic, VolumeX } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { useToast } from "#src/hooks/use-toast";
+import { cn } from "#src/lib/utils";
 
 /**
  * VoiceControl - Neutralized

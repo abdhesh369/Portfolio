@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent } from "#src/components/ui/dialog";
+import { Input } from "#src/components/ui/input";
 import { 
   Search, FileText, Code, FolderGit2, ArrowRight, Home, 
   Mail, Palette, Briefcase, Star, Layers, MessageSquare,
@@ -9,12 +9,12 @@ import {
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { m, AnimatePresence } from "framer-motion";
-import { useProjects, useArticles, useAuth } from "@/hooks/use-portfolio";
-import { usePersona } from "@/hooks/use-persona";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useTheme } from "@/components/theme-provider";
-import { useToast } from "@/hooks/use-toast";
-import { TOGGLE_COMMAND_PALETTE } from "@/hooks/use-command-palette";
+import { useProjects, useArticles, useAuth } from "#src/hooks/use-portfolio";
+import { usePersona } from "#src/hooks/use-persona";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useTheme } from "#src/components/theme-provider";
+import { useToast } from "#src/hooks/use-toast";
+import { TOGGLE_COMMAND_PALETTE } from "#src/hooks/use-command-palette";
 
 interface SearchResultItem {
   id: string;

@@ -1,23 +1,23 @@
 import React, { useState, type FormEvent } from "react";
-import { useArticles } from "@/hooks/use-portfolio";
-import { useToast } from "@/hooks/use-toast";
-import { RichTextEditor } from "@/components/admin/LazyRichTextEditor";
+import { useArticles } from "#src/hooks/use-portfolio";
+import { useToast } from "#src/hooks/use-toast";
+import { RichTextEditor } from "#src/components/admin/LazyRichTextEditor";
 
-import { ImageUpload } from "@/components/admin/ImageUpload";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { apiFetch } from "@/lib/api-helpers";
-import { queryClient } from "@/lib/queryClient";
-import { clearQueryCache } from "@/lib/query-cache-persister";
-import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton, LoadingSkeleton } from "@/components/admin/AdminShared";
+import { ImageUpload } from "#src/components/admin/ImageUpload";
+import { OptimizedImage } from "#src/components/OptimizedImage";
+import { apiFetch } from "#src/lib/api-helpers";
+import { queryClient } from "#src/lib/queryClient";
+import { clearQueryCache } from "#src/lib/query-cache-persister";
+import { FormField, FormTextarea, EmptyState, FormSelect, AdminButton, LoadingSkeleton } from "#src/components/admin/AdminShared";
 import {
     FileText, Plus, Trash2, Edit3, X, Eye, Calendar,
     Tag, Globe, Search, ChevronRight, Save, Image as ImageIcon,
     Layout
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { Article } from "@portfolio/shared/schema";
+import { cn } from "#src/lib/utils";
+import type { Article } from "#shared/schema";
 import type { AdminTabProps } from "./types";
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "#src/lib/utils/date";
 
 type ArticleWithTags = Article & { tags: string[] };
 

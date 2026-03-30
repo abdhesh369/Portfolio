@@ -1,10 +1,10 @@
-import { api } from "@portfolio/shared";
+import { api } from "#shared";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-helpers";
+import { apiFetch } from "#src/lib/api-helpers";
 import { fetchAndParse } from "./_fetch-helper";
-import type { InsertGuestbookEntry, GuestbookEntry } from "@portfolio/shared/schema";
-import { useToast } from "@/hooks/use-toast";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import type { InsertGuestbookEntry, GuestbookEntry } from "#shared/schema";
+import { useToast } from "#src/hooks/use-toast";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function useGuestbook() {
     return useQuery<GuestbookEntry[]>({

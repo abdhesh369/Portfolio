@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { type Article, type Project, type Skill } from "@portfolio/shared";
+import { type Article, type Project, type Skill } from "#shared";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/lib/api-helpers";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { API_BASE_URL } from "#src/lib/api-helpers";
+import { Input } from "#src/components/ui/input";
+import { Card, CardContent } from "#src/components/ui/card";
 import { Search, Loader2, BookOpen, ExternalLink, Code2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "#src/components/ui/badge";
 import { Link } from "wouter";
 
 interface SearchResults {

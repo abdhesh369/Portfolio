@@ -4,7 +4,7 @@ import { GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent, SensorDescriptor, SensorOptions, DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { InsertSiteSettings } from "@portfolio/shared";
+import { InsertSiteSettings } from "#shared";
 import { CollapsibleSection, SortableItem } from "./SectionsCommon";
 import { SpringToggle, AdminButton } from "../AdminShared";
 

@@ -1,16 +1,16 @@
 import { m } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Github, ExternalLink, Activity, GitBranch, Terminal, Star, GitPullRequest, GitCommit, Plus, AlertCircle, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api-helpers";
-import { useToast } from "@/hooks/use-toast";
-import { useSiteSettings } from "@/hooks/use-site-settings";
-import { useTheme } from "@/components/theme-provider";
+import { Button } from "#src/components/ui/button";
+import { apiFetch } from "#src/lib/api-helpers";
+import { useToast } from "#src/hooks/use-toast";
+import { useSiteSettings } from "#src/hooks/use-site-settings";
+import { useTheme } from "#src/components/theme-provider";
 
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "#src/lib/utils/date";
 import { ContributionGrid, ContributionDay } from "./ContributionGrid";
 import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 type GitHubEvent = {
   type: string;

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, type UseMutationOptions, type QueryKey } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "#src/hooks/use-toast";
 
 interface AdminMutationOptions<TData, TError, TVariables, TContext>
     extends UseMutationOptions<TData, TError, TVariables, TContext> {

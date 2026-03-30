@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Clock, MessageSquare, Send, CheckCircle2, Circle, Loader2, ArrowRight } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { formatDate } from '@/lib/utils/date';
-import { API_BASE_URL } from '@/lib/api-helpers';
+import { toast } from '#src/hooks/use-toast';
+import { formatDate } from '#src/lib/utils/date';
+import { API_BASE_URL } from '#src/lib/api-helpers';
 
 interface ClientProject {
     id: number;

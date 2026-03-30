@@ -3,15 +3,15 @@ import React from "react";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { ScopeWizard } from "./ScopeWizard";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useScopeStream } from "@/hooks/use-scope-stream";
-import { apiFetch } from "@/lib/api-helpers";
+import { useScopeStream } from "#src/hooks/use-scope-stream";
+import { apiFetch } from "#src/lib/api-helpers";
 
 // Mock hooks and lib
-vi.mock("@/hooks/use-scope-stream", () => ({
+vi.mock("#src/hooks/use-scope-stream", () => ({
     useScopeStream: vi.fn(),
 }));
 
-vi.mock("@/lib/api-helpers", () => ({
+vi.mock("#src/lib/api-helpers", () => ({
     apiFetch: vi.fn(),
 }));
 

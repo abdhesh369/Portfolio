@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-helpers";
-import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "#src/lib/api-helpers";
+import { useToast } from "#src/hooks/use-toast";
 import {
     BookOpen, Plus, Trash2, ExternalLink,
     Save, X, FileText, Video
 } from "lucide-react";
-import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "@/components/admin/AdminShared";
+import { FormField, FormTextarea, EmptyState, AdminButton, LoadingSkeleton, FormSelect } from "#src/components/admin/AdminShared";
 import { AdminTabProps } from "./types";
 
 interface ReadingItem {

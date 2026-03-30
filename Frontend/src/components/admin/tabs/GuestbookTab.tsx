@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "@/hooks/use-portfolio";
+import { useAdminGuestbook, useApproveGuestbook, useDeleteGuestbook } from "#src/hooks/use-portfolio";
 
-import { EmptyState, LoadingSkeleton, AdminButton } from "@/components/admin/AdminShared";
+import { EmptyState, LoadingSkeleton, AdminButton } from "#src/components/admin/AdminShared";
 import {
     Trash2, Clock, MessageSquare,
     Search, RefreshCw, User, Mail, Calendar,
     ShieldCheck, X, Check
 } from "lucide-react";
-import { queryClient } from "@/lib/queryClient";
-import { cn } from "@/lib/utils";
+import { queryClient } from "#src/lib/queryClient";
+import { cn } from "#src/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { formatDate } from "@/lib/utils/date";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { formatDate } from "#src/lib/utils/date";
+import { QUERY_KEYS } from "#src/lib/query-keys";
 
 export function GuestbookTab() {
     const { data: entriesData, isLoading } = useAdminGuestbook();
