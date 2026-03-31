@@ -22,11 +22,11 @@ export default function Projects() {
 
   const hasNoPinned = displayedProjects.length === 0;
 
-  // Fallback: if no pinned, show 4 most recent
+  // Fallback: if no pinned, show 6 most recent (for 3x2 layout)
   if (hasNoPinned) {
     displayedProjects = [...allProjects]
       .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-      .slice(0, 4);
+      .slice(0, 6);
   }
 
   return (
@@ -91,8 +91,8 @@ export default function Projects() {
 
         {/* Projects Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {[1, 2, 3, 4].map(i => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {[1, 2, 3, 4, 5, 6].map(i => (
               <div
                 key={i}
                 className="aspect-video rounded-2xl animate-pulse"
@@ -106,7 +106,7 @@ export default function Projects() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
           >
             <AnimatePresence mode="popLayout">
               {displayedProjects.map((project) => (
