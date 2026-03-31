@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from "framer-motion";
-import { useProjects, useAuth } from "#src/hooks/use-portfolio";
+import { useProjects, useAuth, useProjectVitals } from "#src/hooks/use-portfolio";
 import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { ProjectCard } from "#src/components/projects/ProjectCard";
 import { ArrowRight, Folder, Zap } from "lucide-react";
@@ -8,6 +8,7 @@ import { Link } from "wouter";
 
 export default function Projects() {
   const { data: projects, isLoading, error } = useProjects("default");
+  const { data: vitals } = useProjectVitals();
   const { user } = useAuth();
   const { data: settings } = useSiteSettings();
 
@@ -112,6 +113,7 @@ export default function Projects() {
                 <ProjectCard
                   key={project.id}
                   project={project}
+                  healthStatus={(vitals?.[project.id.toString()] as "up" | "down" | "checking" | "none") || "none"}
                 />
               ))}
             </AnimatePresence>

@@ -11,6 +11,7 @@ interface ProjectCardProps {
   project: Project;
   showPinBadge?: boolean;
   priority?: boolean;
+  healthStatus?: "up" | "down" | "checking" | "none";
 }
 
 // Category colors for glow effects
@@ -26,7 +27,7 @@ const categoryColors: Record<string, { glow: string; text: string; bg: string }>
 
 
 
-export function ProjectCard({ project, showPinBadge = true }: Omit<ProjectCardProps, 'priority'>) {
+export function ProjectCard({ project, showPinBadge = true, healthStatus = "none" }: Omit<ProjectCardProps, 'priority'>) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -120,6 +121,20 @@ export function ProjectCard({ project, showPinBadge = true }: Omit<ProjectCardPr
             <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-background/40 border border-border text-[10px] text-muted-foreground backdrop-blur-md flex items-center gap-1">
               <Eye className="w-3 h-3" /> {project.viewCount || 0}
             </div>
+
+            {/* Health Status */}
+            {healthStatus !== "none" && (
+              <div className="absolute bottom-3 right-3 px-2 py-1 rounded-full bg-background/40 border border-border text-[10px] backdrop-blur-md flex items-center gap-1.5">
+                <div className={`w-2 h-2 rounded-full animate-pulse ${
+                  healthStatus === "up" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : 
+                  healthStatus === "down" ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]" : 
+                  "bg-yellow-500"
+                }`} />
+                <span className="font-bold uppercase tracking-tighter text-[9px]">
+                  {healthStatus === "up" ? "Live" : healthStatus === "down" ? "Offline" : "Checking"}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Content */}

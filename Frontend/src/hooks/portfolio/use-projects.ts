@@ -34,3 +34,16 @@ export function useProjectById(id: number | null) {
     staleTime: 1000 * 60 * 5,
   });
 }
+
+export function useProjectVitals() {
+  return useQuery({
+    queryKey: ["projects", "vitals"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/projects/vitals");
+      if (!response.ok) throw new Error("Failed to fetch project vitals");
+      return response.json() as Promise<Record<string, "up" | "down" | "checking" | "none">>;
+    },
+    refetchInterval: 1000 * 60 * 2, // Refetch every 2 minutes
+    staleTime: 1000 * 60 * 1,
+  });
+}

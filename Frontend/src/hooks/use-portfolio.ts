@@ -4,6 +4,7 @@
  */
 export {
   useProjects,
+  useProjectVitals,
   useSkills,
   useSkillConnections,
   useMindset,
@@ -21,6 +22,7 @@ export {
   useAuth,
   useAnalyticsSummary,
   useVitalsSummary,
+  useCodingActivity,
   useEmailTemplates,
   useGuestbook,
   useSubmitGuestbook,

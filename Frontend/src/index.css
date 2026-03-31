@@ -374,14 +374,14 @@
   }
 
   .dark .section-container {
-    background: hsl(var(--background) / 0.6);
+    background: transparent;
   }
 
-  /* Glass Effect Card */
+  /* Glass Effect Card (Blur removed) */
   .glass-card {
-    @apply backdrop-blur-md border border-border/50 shadow-lg;
+    @apply border border-border/50 shadow-lg;
     @apply transition-all duration-300 hover:shadow-xl hover:border-border;
-    background-color: hsl(var(--card) / 0.8);
+    background-color: hsl(var(--card) / 0.95); /* Increased opacity for readability without blur */
   }
 
   /* Light mode: add a stronger shadow so white cards clearly lift off the grey page */
@@ -451,8 +451,8 @@
   /* ---- Unified Sci-Fi Utilities (10/10 Polish) ---- */
 
   .glass-cyber {
-    @apply backdrop-blur-xl border border-white/10 shadow-2xl transition-all duration-300;
-    background: rgba(var(--background-rgb, 10, 10, 20), 0.4);
+    @apply border border-white/10 shadow-2xl transition-all duration-300;
+    background: rgba(var(--background-rgb, 10, 10, 20), 0.9);
   }
 
   .neon-border {
@@ -510,19 +510,6 @@
 
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in forwards;
-  }
-
-  /* Utilities */
-  .blur-sm {
-    backdrop-filter: blur(4px);
-  }
-
-  .blur-md {
-    backdrop-filter: blur(8px);
-  }
-
-  .blur-lg {
-    backdrop-filter: blur(16px);
   }
 
   /* ---- Micro-Interactions (Fix #12) ---- */
@@ -876,3 +863,8 @@
 }
 
 /* Cache-busting refresh: 2026-03-20-T19:53:00Z */
+/* ==================== GLOBAL BLUR REMOVAL ==================== */
+* {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

@@ -1,11 +1,12 @@
+import React, { useRef, useState, useEffect } from "react";
 import { m, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
 import { fadeUp, fadeUpLarge, fadeDown, scaleIn, staggerContainer, staggerChild } from "#src/lib/animation";
 import { GraduationCap, MapPin, Mail, Github, Code, Calendar, Zap, Target, Layers, Terminal, Cpu } from "lucide-react";
 import { useProjects, useSkills, useExperiences } from "#src/hooks/use-portfolio";
 import { useSiteSettings } from "#src/hooks/use-site-settings";
 import { OptimizedImage } from "#src/components/OptimizedImage";
 import { Skeleton } from "#src/components/ui/skeleton";
+import CodingActivity from "#src/components/CodingActivity";
 
 
 // 3D Tilt Card Component
@@ -328,6 +329,16 @@ export default function About() {
               ) : (
                 <AnimatedCounter value={experiences?.length ?? 0} suffix="+" label="Experiences" icon={Target} />
               )}
+            </m.div>
+
+            {/* Live Coding Metrics */}
+            <m.div
+              initial={fadeUp.initial}
+              whileInView={fadeUp.animate}
+              viewport={{ once: true }}
+              className="mt-8"
+            >
+              <CodingActivity />
             </m.div>
 
             {/* Info Cards Grid */}

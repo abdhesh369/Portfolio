@@ -170,8 +170,7 @@ export default function EngineeringMindset() {
   }, [apiPrinciples]);
 
   return (
-    <section id="mindset" className="section-container bg-muted/30 relative overflow-hidden">
-      <div className="absolute inset-0 bg-background/20 pointer-events-none -z-10" />
+    <section id="mindset" className="section-container bg-transparent relative overflow-hidden">
       {/* Header */}
       <div className="text-center mb-16">
         <m.div
@@ -238,7 +237,8 @@ export default function EngineeringMindset() {
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl" />
 
-          <div className="relative p-12 bg-card/80 backdrop-blur-sm rounded-3xl border border-border text-center">
+          <div className="relative p-12 bg-transparent text-center">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-primary/20 rounded-full" />
             {/* Animated quote icon */}
             <m.div
               animate={{ rotate: [0, 10, -10, 0] }}

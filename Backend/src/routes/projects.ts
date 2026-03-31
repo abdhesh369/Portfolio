@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { projectService } from "../services/project.service.js";
+import { vitalsService } from "../services/vitals.service.js";
 import { insertProjectApiSchema } from "@portfolio/shared";
 import { isAuthenticated } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
@@ -24,6 +25,18 @@ export function registerProjectRoutes(app: Router) {
 
       const projects = await projectService.getAll(sortBy);
       res.json(projects);
+    })
+  );
+
+  // GET /projects/vitals - Project health status
+  app.get(
+    "/projects/vitals",
+    asyncHandler(async (req, res) => {
+      const projects = await projectService.getAll();
+      const statusMap = await vitalsService.getBulkStatus(
+        projects.map(p => ({ id: p.id, healthCheckUrl: p.healthCheckUrl ?? null }))
+      );
+      res.json(statusMap);
     })
   );
 

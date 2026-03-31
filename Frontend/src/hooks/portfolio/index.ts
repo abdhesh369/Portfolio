@@ -2,7 +2,7 @@
  * Portfolio hooks - domain-separated barrel export.
  * All hooks are re-exported here for backwards compatibility.
  */
-export { useProjects, useProjectById } from "./use-projects";
+export { useProjects, useProjectById, useProjectVitals } from "./use-projects";
 export { useSkills, useSkillConnections, useMindset } from "./use-skills";
 export { useArticles, useArticle, useArticleSearch, useArticleReactions, useReactToArticle } from "./use-articles";
 export { useExperiences } from "./use-experiences";
@@ -11,7 +11,7 @@ export { useTestimonials } from "./use-testimonials";
 export { useMessages, useSendMessage } from "./use-contact";
 export { useSubscribe, useUnsubscribe, useAdminSubscribers } from "./use-subscribers";
 export { useAdminChatLogs } from "../admin/use-admin-chat";
-export { useAnalyticsSummary, useVitalsSummary } from "./use-analytics";
+export { useAnalyticsSummary, useVitalsSummary, useCodingActivity } from "./use-analytics";
 export { useEmailTemplates } from "./use-email-templates";
 export { useLogin } from "./use-auth";
 export { useAuth } from "../auth-context";

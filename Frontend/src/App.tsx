@@ -339,6 +339,7 @@ function GlobalLoadingIndicator() {
 
 
 import { TerminalOverlay } from "#src/components/TerminalOverlay";
+import { DebugOverlay } from "#src/components/DebugOverlay";
 
 // Main App component
 function App() {
@@ -367,6 +368,7 @@ function App() {
               <ConditionalPublicFloaters />
               <CommandPalette />
               <TerminalOverlay />
+              <DebugOverlay />
             </LazyMotion>
           </AuthProvider>
         </ThemeProvider>

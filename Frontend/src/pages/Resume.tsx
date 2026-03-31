@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { apiFetch } from "#src/lib/api-helpers";
 import { Sparkles, FileText } from "lucide-react";
 import { cn } from "#src/lib/utils";
+import { SkillAnalysisPanel } from "#src/components/SkillAnalysisPanel";
 import { AdminButton } from "#src/components/admin/AdminShared";
 
 export default function Resume() {
@@ -22,6 +23,8 @@ export default function Resume() {
     const [activeTab, setActiveTab] = useState<'resume' | 'cover-letter'>('resume');
     const [jobDescription, setJobDescription] = useState("");
     const [generatedLetter, setGeneratedLetter] = useState("");
+    const [matchScore, setMatchScore] = useState<number | null>(null);
+    const [missingSkills, setMissingSkills] = useState<string[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const githubDisplay = settings?.socialGithub
@@ -49,7 +52,9 @@ export default function Resume() {
                 body: JSON.stringify({ jobDescription })
             });
             setGeneratedLetter(res.letter);
-            toast({ title: "Generated!", description: "Your custom cover letter is ready." });
+            if (res.matchScore !== undefined) setMatchScore(res.matchScore);
+            if (res.missingSkills) setMissingSkills(res.missingSkills);
+            toast({ title: "Generated!", description: "Your custom cover letter and match analysis are ready." });
         } catch (err: unknown) {
             const error = err as Error;
             toast({ title: "Failed", description: error.message || "AI was unable to generate the letter.", variant: "destructive" });
@@ -196,8 +201,18 @@ export default function Resume() {
                         </section>
                     </div>
 
-                    {/* Right Column - Skills & Links */}
+                    {/* Right Column - Skills & AI Analysis */}
                     <div className="space-y-10">
+                        {/* AI Skill Analysis - New v2.0 feature */}
+                        <m.section
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="print:hidden"
+                        >
+                            <SkillAnalysisPanel />
+                        </m.section>
+
                         {/* Skills */}
                         <section>
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 mb-6 border-b border-neutral-100 pb-2">Technical Arsenal</h3>
@@ -310,6 +325,59 @@ export default function Resume() {
                             </div>
                         </div>
                     </div>
+
+                    {matchScore !== null && (
+                        <m.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="nm-flat rounded-2xl p-6 border border-primary/20 flex flex-col md:flex-row items-center gap-8 bg-primary/5"
+                        >
+                            <div className="relative w-24 h-24 flex-shrink-0">
+                                <svg className="w-full h-full" viewBox="0 0 100 100">
+                                    <circle className="text-neutral-200 dark:text-neutral-800" strokeWidth="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                                    <m.circle 
+                                        className="text-primary" 
+                                        strokeWidth="8" 
+                                        strokeDasharray={251.2}
+                                        strokeDashoffset={251.2 * (1 - (matchScore || 0) / 100)}
+                                        strokeLinecap="round" 
+                                        stroke="currentColor" 
+                                        fill="transparent" 
+                                        r="40" cx="50" cy="50" 
+                                        initial={{ strokeDashoffset: 251.2 }}
+                                        whileInView={{ strokeDashoffset: 251.2 * (1 - (matchScore || 0) / 100) }}
+                                        transition={{ duration: 1.5, ease: "easeOut" }}
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-xl font-black">{matchScore}%</span>
+                                    <span className="text-[7px] uppercase font-bold text-muted-foreground">Match</span>
+                                </div>
+                            </div>
+                            
+                            <div className="flex-1 space-y-3 text-center md:text-left">
+                                <h4 className="font-bold text-sm flex items-center justify-center md:justify-start gap-2">
+                                    <Sparkles size={14} className="text-primary" /> 
+                                    AI Profile Alignment
+                                </h4>
+                                <div className="space-y-2">
+                                    <p className="text-xs text-neutral-600 dark:text-neutral-400 max-w-lg">
+                                        Your profile is a <span className="font-bold text-primary">{matchScore >= 80 ? 'Strong' : matchScore >= 60 ? 'Good' : 'Fair'}</span> match for this role. 
+                                        {missingSkills.length > 0 ? " Focus on these areas to reach the 90%+ threshold:" : " You're exceptionally well-aligned for this role."}
+                                    </p>
+                                    {missingSkills.length > 0 && (
+                                        <div className="flex flex-wrap justify-center md:justify-start gap-1.5">
+                                            {missingSkills.map(skill => (
+                                                <span key={skill} className="px-2 py-0.5 bg-neutral-200 dark:bg-neutral-800 rounded text-[9px] font-bold text-neutral-600 dark:text-neutral-300 border border-neutral-300/30">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </m.div>
+                    )}
 
                     {generatedLetter && (
                         <m.div 

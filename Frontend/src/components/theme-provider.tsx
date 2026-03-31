@@ -17,6 +17,10 @@ type ThemeProviderState = {
   setPerformanceMode: (mode: "high" | "low") => void;
   treePerformanceMode: "normal" | "power";
   setTreePerformanceMode: (mode: "normal" | "power") => void;
+  debugMode: boolean;
+  setDebugMode: (value: boolean) => void;
+  safeMode: boolean;
+  setSafeMode: (value: boolean) => void;
   disableGlobalClass?: boolean;
 };
 
@@ -28,6 +32,10 @@ const initialState: ThemeProviderState = {
   setPerformanceMode: () => null,
   treePerformanceMode: "power",
   setTreePerformanceMode: () => null,
+  debugMode: false,
+  setDebugMode: () => null,
+  safeMode: false,
+  setSafeMode: () => null,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
@@ -81,6 +89,22 @@ export function ThemeProvider({
   const [treePerformanceMode, setTreePerformanceMode] = useState<"normal" | "power">(
     () => (typeof window !== "undefined" && localStorage.getItem("tree-performance-mode") as "normal" | "power") || "power"
   );
+
+  const [debugMode, setDebugMode] = useState(false);
+  const [safeMode, setSafeMode] = useState(
+    () => (typeof window !== "undefined" && localStorage.getItem("safe-mode") === "true") || false
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const root = window.document.documentElement;
+    if (safeMode) {
+      root.classList.add("safe-mode");
+    } else {
+      root.classList.remove("safe-mode");
+    }
+    localStorage.setItem("safe-mode", String(safeMode));
+  }, [safeMode]);
   const value = {
     theme,
     setTheme: (theme: Theme) => {
@@ -98,6 +122,10 @@ export function ThemeProvider({
       localStorage.setItem("tree-performance-mode", mode);
       setTreePerformanceMode(mode);
     },
+    debugMode,
+    setDebugMode,
+    safeMode,
+    setSafeMode,
     disableGlobalClass
   };
 

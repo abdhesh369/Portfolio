@@ -21,4 +21,12 @@ export function useVitalsSummary(days: number = 7) {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
-
+export function useCodingActivity() {
+  return useQuery({
+    queryKey: ["activity", "coding"],
+    queryFn: async () => {
+      return await apiFetch("/api/v1/activity/coding");
+    },
+    staleTime: 1000 * 60 * 30, // 30 minutes (mostly static data)
+  });
+}

@@ -41,6 +41,7 @@ export const projectsTable = pgTable("projects", {
   role: text("role"),
   imageAlt: text("imageAlt"),
   viewCount: integer("viewCount").notNull().default(0),
+  healthCheckUrl: varchar("healthCheckUrl", { length: 500 }),
   summary: text("summary"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -547,6 +548,7 @@ export const projectSchema = z.object({
   role: z.string().max(5000).nullable().default(null),
   imageAlt: z.string().max(500).nullable().default(null),
   viewCount: z.number().int().default(0),
+  healthCheckUrl: z.string().url().nullable().optional(),
   summary: z.string().max(500).nullable().default(null),
   createdAt: z.coerce.date().nullable().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -574,6 +576,7 @@ export const insertProjectApiSchema = z.object({
   impact: z.string().max(5000).nullable().optional(),
   role: z.string().max(5000).nullable().optional(),
   imageAlt: z.string().max(500).nullable().optional(),
+  healthCheckUrl: z.string().max(500).nullable().optional().refine(v => isValidUrl(v), { message: "Invalid url" }),
   summary: z.string().max(500).nullable().optional(),
 });
 
@@ -596,6 +599,7 @@ export const skillSchema = z.object({
   mastery: z.number(),
   x: z.number(),
   y: z.number(),
+  endorsements: z.number().int().nonnegative().default(0),
 }).strict();
 
 export const insertSkillApiSchema = z.object({
