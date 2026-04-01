@@ -123,13 +123,15 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild -ws --include-workspace-root || true
-          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
-            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
-            rm -rf node_modules
-            npm ci
-            npm rebuild -ws --include-workspace-root
-          }
+          # Actually load vite to trigger the rolldown native binding
+          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
+            echo "✓ Vite loaded successfully"
+            exit 0
+          fi
+          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
+          npm install --no-save @rolldown/binding-linux-x64-gnu
+          # Verify the fix worked
+          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -226,13 +228,15 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild -ws --include-workspace-root || true
-          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
-            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
-            rm -rf node_modules
-            npm ci
-            npm rebuild -ws --include-workspace-root
-          }
+          # Actually load vite to trigger the rolldown native binding
+          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
+            echo "✓ Vite loaded successfully"
+            exit 0
+          fi
+          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
+          npm install --no-save @rolldown/binding-linux-x64-gnu
+          # Verify the fix worked
+          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -293,13 +297,15 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild -ws --include-workspace-root || true
-          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
-            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
-            rm -rf node_modules
-            npm ci
-            npm rebuild -ws --include-workspace-root
-          }
+          # Actually load vite to trigger the rolldown native binding
+          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
+            echo "✓ Vite loaded successfully"
+            exit 0
+          fi
+          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
+          npm install --no-save @rolldown/binding-linux-x64-gnu
+          # Verify the fix worked
+          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -424,13 +430,15 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild -ws --include-workspace-root || true
-          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
-            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
-            rm -rf node_modules
-            npm ci
-            npm rebuild -ws --include-workspace-root
-          }
+          # Actually load vite to trigger the rolldown native binding
+          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
+            echo "✓ Vite loaded successfully"
+            exit 0
+          fi
+          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
+          npm install --no-save @rolldown/binding-linux-x64-gnu
+          # Verify the fix worked
+          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
