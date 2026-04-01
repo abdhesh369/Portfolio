@@ -8,6 +8,10 @@ import type { RequestHandler } from "express";
 /**
  * Creates a standardized rate limiter with Redis backend if available.
  * Falls back to memory if Redis is unavailable at startup — store selection is static at module initialization.
+ * 
+ * IMPORTANT: "trust proxy 1" (set in index.ts) assumes exactly ONE proxy tier (e.g. Render).
+ * If topology changes (e.g. Cloudflare + Render = 2 proxies), the "trust proxy" setting
+ * must be updated to '2' in the Render dashboard (or env.ts) to correctly identify client IPs.
  */
 const createLimiter = (options: {
     windowMs: number;

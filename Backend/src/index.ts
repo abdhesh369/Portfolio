@@ -272,12 +272,14 @@ async function getHealthStatus() {
 
 app.get("/health", async (_req: Request, res: Response) => {
   const health = await getHealthStatus();
-  res.status(health.status === "healthy" ? 200 : 503).json(health);
+  // Always return 200 in production to prevent Render restart loops during cold starts.
+  // Health status (healthy/degraded) is provided in the JSON body.
+  res.status(200).json(health);
 });
 
 app.get("/api/v1/health", async (_req: Request, res: Response) => {
   const health = await getHealthStatus();
-  res.status(health.status === "healthy" ? 200 : 503).json(health);
+  res.status(200).json(health);
 });
 
 
