@@ -125,7 +125,8 @@ jobs:
         run: |
           npm install --no-save \
             @rolldown/binding-linux-x64-gnu \
-            lightningcss-linux-x64-gnu
+            lightningcss-linux-x64-gnu \
+            @tailwindcss/oxide-linux-x64-gnu
           node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
@@ -225,7 +226,8 @@ jobs:
         run: |
           npm install --no-save \
             @rolldown/binding-linux-x64-gnu \
-            lightningcss-linux-x64-gnu
+            lightningcss-linux-x64-gnu \
+            @tailwindcss/oxide-linux-x64-gnu
           node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
@@ -289,7 +291,8 @@ jobs:
         run: |
           npm install --no-save \
             @rolldown/binding-linux-x64-gnu \
-            lightningcss-linux-x64-gnu
+            lightningcss-linux-x64-gnu \
+            @tailwindcss/oxide-linux-x64-gnu
           node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
@@ -417,7 +420,8 @@ jobs:
         run: |
           npm install --no-save \
             @rolldown/binding-linux-x64-gnu \
-            lightningcss-linux-x64-gnu
+            lightningcss-linux-x64-gnu \
+            @tailwindcss/oxide-linux-x64-gnu
           node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
