@@ -69,8 +69,8 @@ export const skillsTable = pgTable("skills", {
 
 export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
-  fromSkillId: integer("fromSkillId").notNull().references(() => skillsTable.id),
-  toSkillId: integer("toSkillId").notNull().references(() => skillsTable.id),
+  fromSkillId: integer("fromSkillId").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
+  toSkillId: integer("toSkillId").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
 });
 
 export const experiencesTable = pgTable("experiences", {

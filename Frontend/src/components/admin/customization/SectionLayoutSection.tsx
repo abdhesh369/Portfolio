@@ -10,6 +10,7 @@ import { SpringToggle, AdminButton } from "../AdminShared";
 
 interface SectionLayoutSectionProps {
     control: Control<InsertSiteSettings>;
+    sectionOrder: string[];
     sectionOrderFields: { id: string }[];
     moveSection: UseFieldArrayMove;
     sensors: SensorDescriptor<SensorOptions>[];
@@ -22,12 +23,12 @@ interface SectionLayoutSectionProps {
 
 export function SectionLayoutSection({
     control,
+    sectionOrder,
     sectionOrderFields,
     moveSection,
     sensors,
     handleSectionDragEnd,
     sectionLabels,
-    settings,
     isOpen,
     onToggle
 }: SectionLayoutSectionProps) {
@@ -50,7 +51,7 @@ export function SectionLayoutSection({
                     >
                         <div className="space-y-3">
                             {sectionOrderFields.map((field, index) => {
-                                const sectionId = (settings?.sectionOrder?.[index] || field.id) as string;
+                                const sectionId = sectionOrder[index];
                                 const label = sectionLabels[sectionId] || sectionId;
 
                                 return (

@@ -298,6 +298,7 @@ export function CustomizationTab() {
 
         <SectionLayoutSection
           control={control}
+          sectionOrder={watch("sectionOrder") || []}
           sectionOrderFields={sectionOrderFields}
           moveSection={moveSection}
           sensors={sensors}
