@@ -118,6 +118,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
+      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
+      - name: Repair optional native bindings (rolldown)
+        run: |
+          set -e
+          npm rebuild || true
+          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
+            rm -rf node_modules
+            npm ci
+            npm rebuild
+          }
+
       - name: Build shared package
         run: npm run build:shared
 
@@ -208,6 +221,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
+      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
+      - name: Repair optional native bindings (rolldown)
+        run: |
+          set -e
+          npm rebuild || true
+          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
+            rm -rf node_modules
+            npm ci
+            npm rebuild
+          }
+
       - name: Build shared package
         run: npm run build:shared
 
@@ -261,6 +287,19 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
+      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
+      - name: Repair optional native bindings (rolldown)
+        run: |
+          set -e
+          npm rebuild || true
+          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
+            rm -rf node_modules
+            npm ci
+            npm rebuild
+          }
 
       - name: Build shared package
         run: npm run build:shared
@@ -379,6 +418,19 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
+      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
+      - name: Repair optional native bindings (rolldown)
+        run: |
+          set -e
+          npm rebuild || true
+          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+            echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
+            rm -rf node_modules
+            npm ci
+            npm rebuild
+          }
 
       - name: Build shared package
         run: npm run build:shared
