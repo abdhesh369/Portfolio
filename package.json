@@ -45,8 +45,8 @@
         "multer-storage-cloudinary": {
             "cloudinary": "^2.0.0"
         },
-        "@types/express": "4.17.21",
-        "@types/express-serve-static-core": "4.17.41",
+        "@types/express": "5.0.6",
+        "@types/express-serve-static-core": "5.0.6",
         "serialize-javascript": "^7.0.4",
         "esbuild": "^0.25.0",
         "flatted": "^3.4.2",
