@@ -5,7 +5,10 @@ services:
     runtime: node
     plan: free
     region: singapore
-    buildCommand: npm install && npm run build:backend
+    buildCommand: |
+      npm install
+      node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })" || npm install --no-save @rolldown/binding-linux-x64-gnu lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu
+      npm run build:backend
     startCommand: npm run start -w Backend
     healthCheckPath: /health
     envVars:
@@ -54,7 +57,10 @@ services:
     name: portfolio-frontend
     runtime: static
     publishDir: Frontend/dist
-    buildCommand: npm run build:frontend
+    buildCommand: |
+      npm install
+      node -e "import('vite').catch(() => process.exit(1))" || npm install --no-save @rolldown/binding-linux-x64-gnu lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu
+      npm run build:frontend
     envVars:
       - key: VITE_API_URL
         fromService:

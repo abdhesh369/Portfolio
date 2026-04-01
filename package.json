@@ -37,7 +37,8 @@
         "lint:all": "npm run lint --workspaces",
         "type-check:backend": "npm run build:shared && npm run type-check -w Backend",
         "type-check:frontend": "npm run build:shared && npm run type-check -w Frontend",
-        "type-check:all": "npm run build:shared && npm run type-check --workspaces"
+        "type-check:all": "npm run build:shared && npm run type-check --workspaces",
+        "build": "npm run build:backend && npm run build:frontend"
     },
     "overrides": {
         "zod": "^3.25.76",
@@ -54,5 +55,10 @@
     },
     "dependencies": {
         "axios": "^1.14.0"
+    },
+    "optionalDependencies": {
+        "@rolldown/binding-linux-x64-gnu": "*",
+        "lightningcss-linux-x64-gnu": "*",
+        "@tailwindcss/oxide-linux-x64-gnu": "*"
     }
 }
