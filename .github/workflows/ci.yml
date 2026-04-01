@@ -123,12 +123,12 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild || true
-          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+          npm rebuild -ws --include-workspace-root || true
+          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
             echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
             rm -rf node_modules
             npm ci
-            npm rebuild
+            npm rebuild -ws --include-workspace-root
           }
 
       - name: Build shared package
@@ -226,12 +226,12 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild || true
-          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+          npm rebuild -ws --include-workspace-root || true
+          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
             echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
             rm -rf node_modules
             npm ci
-            npm rebuild
+            npm rebuild -ws --include-workspace-root
           }
 
       - name: Build shared package
@@ -293,12 +293,12 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild || true
-          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+          npm rebuild -ws --include-workspace-root || true
+          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
             echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
             rm -rf node_modules
             npm ci
-            npm rebuild
+            npm rebuild -ws --include-workspace-root
           }
 
       - name: Build shared package
@@ -424,12 +424,12 @@ jobs:
       - name: Repair optional native bindings (rolldown)
         run: |
           set -e
-          npm rebuild || true
-          node -e "try { require('vite'); process.exit(0); } catch (e) { process.exit(1); }" || {
+          npm rebuild -ws --include-workspace-root || true
+          node -e "try { require.resolve('vite', {paths:['$PWD/Frontend']}); } catch(e) { process.exit(1); }" || {
             echo "Vite/rolldown native binding missing — reinstalling with lockfile preserved..."
             rm -rf node_modules
             npm ci
-            npm rebuild
+            npm rebuild -ws --include-workspace-root
           }
 
       - name: Build shared package
