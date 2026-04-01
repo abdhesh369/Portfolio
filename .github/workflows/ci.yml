@@ -118,20 +118,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
-      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
-      - name: Repair optional native bindings (rolldown)
+      # TODO: Remove this workaround once npm's optional-dependency bug is resolved
+      #       upstream (https://github.com/npm/cli/issues/4828), or pin native
+      #       bindings in package.json optionalDependencies.
+      - name: Install missing native bindings (npm optional-deps bug)
         run: |
-          set -e
-          # Actually load vite to trigger the rolldown native binding
-          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
-            echo "✓ Vite loaded successfully"
-            exit 0
-          fi
-          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
-          npm install --no-save @rolldown/binding-linux-x64-gnu
-          # Verify the fix worked
-          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
+          npm install --no-save \
+            @rolldown/binding-linux-x64-gnu \
+            lightningcss-linux-x64-gnu
+          node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -223,20 +218,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
-      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
-      - name: Repair optional native bindings (rolldown)
+      # TODO: Remove this workaround once npm's optional-dependency bug is resolved
+      #       upstream (https://github.com/npm/cli/issues/4828), or pin native
+      #       bindings in package.json optionalDependencies.
+      - name: Install missing native bindings (npm optional-deps bug)
         run: |
-          set -e
-          # Actually load vite to trigger the rolldown native binding
-          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
-            echo "✓ Vite loaded successfully"
-            exit 0
-          fi
-          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
-          npm install --no-save @rolldown/binding-linux-x64-gnu
-          # Verify the fix worked
-          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
+          npm install --no-save \
+            @rolldown/binding-linux-x64-gnu \
+            lightningcss-linux-x64-gnu
+          node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -292,20 +282,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
-      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
-      - name: Repair optional native bindings (rolldown)
+      # TODO: Remove this workaround once npm's optional-dependency bug is resolved
+      #       upstream (https://github.com/npm/cli/issues/4828), or pin native
+      #       bindings in package.json optionalDependencies.
+      - name: Install missing native bindings (npm optional-deps bug)
         run: |
-          set -e
-          # Actually load vite to trigger the rolldown native binding
-          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
-            echo "✓ Vite loaded successfully"
-            exit 0
-          fi
-          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
-          npm install --no-save @rolldown/binding-linux-x64-gnu
-          # Verify the fix worked
-          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
+          npm install --no-save \
+            @rolldown/binding-linux-x64-gnu \
+            lightningcss-linux-x64-gnu
+          node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
@@ -425,20 +410,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # TODO: Remove this workaround once rolldown ships pre-built binaries for all
-      #       CI platforms, or add @rolldown/binding-* to package.json optionalDependencies.
-      - name: Repair optional native bindings (rolldown)
+      # TODO: Remove this workaround once npm's optional-dependency bug is resolved
+      #       upstream (https://github.com/npm/cli/issues/4828), or pin native
+      #       bindings in package.json optionalDependencies.
+      - name: Install missing native bindings (npm optional-deps bug)
         run: |
-          set -e
-          # Actually load vite to trigger the rolldown native binding
-          if node -e "import('vite').then(() => process.exit(0), () => process.exit(1))"; then
-            echo "✓ Vite loaded successfully"
-            exit 0
-          fi
-          echo "✗ Vite failed to load — installing missing rolldown platform binding..."
-          npm install --no-save @rolldown/binding-linux-x64-gnu
-          # Verify the fix worked
-          node -e "import('vite').then(() => console.log('✓ Vite loaded after repair'), () => { console.error('✗ Still broken'); process.exit(1); })"
+          npm install --no-save \
+            @rolldown/binding-linux-x64-gnu \
+            lightningcss-linux-x64-gnu
+          node -e "import('vite').then(() => console.log('✓ Vite loaded OK'), (e) => { console.error('✗', e.message); process.exit(1); })"
 
       - name: Build shared package
         run: npm run build:shared
