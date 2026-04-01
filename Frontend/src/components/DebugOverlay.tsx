@@ -19,7 +19,7 @@ export function DebugOverlay() {
       try {
         await fetch("/api/v1/health", { method: "HEAD", cache: "no-store" });
         if (active) setLatency(Date.now() - start);
-      } catch (e) {
+      } catch (_e) {
         if (active) setLatency(-1);
       }
     };
