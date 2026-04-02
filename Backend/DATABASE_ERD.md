@@ -114,7 +114,7 @@ Blog posts and write-ups.
 - `readTimeMinutes`: integer
 - `metaTitle`: varchar(255)
 - `metaDescription`: text
-- `authorId`: integer (FK -> users.id)
+- `authorId`: integer (FK -> users.id, ON DELETE SET NULL). Articles are retained and anonymized (author becomes NULL) if the original user is deleted.
 - `featuredImageAlt`: text
 - `reactions`: jsonb (Record<string, number>)
 - `createdAt`: timestamp

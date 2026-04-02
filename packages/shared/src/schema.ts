@@ -1,4 +1,4 @@
-import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType, check } from "drizzle-orm/pg-core";
 import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
@@ -103,8 +103,12 @@ export const messagesTable = pgTable("messages", {
   retentionDate: timestamp("retentionDate"), // When this record should be purged
   expiresAt: timestamp("expiresAt"), // When this record is considered "expired"
   deletedAt: timestamp("deletedAt"), // Soft delete
-  consentStatus: varchar("consentStatus", { length: 50 }).default("pending"),
-  consentGiven: boolean("consentGiven").default(false),
+  consentStatus: varchar("consentStatus", { length: 50 }).notNull().default("pending"),
+  consentGiven: boolean("consentGiven").notNull().default(false),
+}, (table) => {
+  return {
+    consentCheck: check("messages_consent_consistency", sql`("consentStatus" = 'given' AND "consentGiven" = true) OR ("consentStatus" != 'given' AND "consentGiven" = false)`),
+  };
 });
 
 export const mindsetTable = pgTable("mindset", {
@@ -192,6 +196,7 @@ export const articlesTable = pgTable("articles", {
   return {
     statusIdx: index("articles_status_idx").on(table.status),
     slugIdx: index("articles_slug_idx").on(table.slug), // though unique, status filtering is common
+    authorIdIdx: index("articles_authorId_idx").on(table.authorId),
   };
 });
 
@@ -346,9 +351,9 @@ export const usersTable = pgTable("users", {
   username: varchar("username", { length: 255 }).notNull().unique(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: varchar("passwordHash", { length: 255 }), // Added auth/authz support
-  role: varchar("role", { length: 50 }).default("viewer"), // admin, author, viewer
-  permissions: jsonb("permissions").$type<string[]>().default([]),
-  status: varchar("status", { length: 50 }).default("active"), // active, suspended, pending
+  role: varchar("role", { length: 50 }).notNull().default("viewer"), // admin, author, viewer
+  permissions: jsonb("permissions").$type<string[]>().notNull().default([]),
+  status: varchar("status", { length: 50 }).notNull().default("active"), // active, suspended, pending
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -365,6 +370,7 @@ export const auditLogTable = pgTable("audit_log", {
   requestId: varchar("request_id", { length: 255 }), // Added system tracing
   oldValues: jsonb("old_values"),
   newValues: jsonb("new_values"),
+  retentionUntil: timestamp("retention_until"), // Support data retention policies
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => {
   return {
@@ -478,10 +484,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   testimonialsHeading: varchar("testimonialsHeading", { length: 255 }).default("Client Feedback"),
   guestbookHeading: varchar("guestbookHeading", { length: 255 }).default("Guestbook"),
   contactHeading: varchar("contactHeading", { length: 255 }).default("Get In Touch"),
-}, (table) => {
-  return {
-    singletonGuard: integer("singleton_guard").notNull().default(1).unique(),
-  };
+  singletonGuard: integer("singleton_guard").notNull().default(1).unique(),
 });
 
 export const chatConversationsTable = pgTable("chat_conversations", {
@@ -512,6 +515,8 @@ export const auditLogSchema = z.object({
   userId: z.number().nullable().optional(),
   performedBy: z.string().max(255).nullable().optional(),
   ipAddress: z.string().max(45).nullable().optional(),
+  userAgent: z.string().max(500).nullable().optional(),
+  requestId: z.string().max(255).nullable().optional(),
   oldValues: z.record(z.unknown()).nullable().optional(),
   newValues: z.record(z.unknown()).nullable().optional(),
   createdAt: z.coerce.date(),
@@ -758,6 +763,11 @@ export const messageSchema = z.object({
   email: z.string().email().max(255),
   subject: z.string().max(500),
   message: z.string().min(1).max(5000),
+  retentionDate: z.coerce.date().nullable().optional(),
+  expiresAt: z.coerce.date().nullable().optional(),
+  deletedAt: z.coerce.date().nullable().optional(),
+  consentStatus: z.string().max(50).default("pending"),
+  consentGiven: z.boolean().default(false),
   createdAt: z.coerce.date(),
 }).strict();
 
