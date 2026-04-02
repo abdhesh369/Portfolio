@@ -37,7 +37,32 @@ BEGIN
         ALTER TABLE "site_settings" ADD COLUMN "customCss" text;
     END IF;
 
-    -- 2. Clean up other legacy columns
+    -- 2. Ensure singleton_guard exists (Fix for skipped 0033 logic)
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='site_settings' AND column_name='singleton_guard') THEN
+        ALTER TABLE "site_settings" ADD COLUMN "singleton_guard" integer DEFAULT 1;
+    END IF;
+
+    -- 3. Reconcile singleton row
+    IF (SELECT count(*) FROM "site_settings") > 1 THEN
+        DELETE FROM "site_settings" WHERE id NOT IN (SELECT id FROM "site_settings" ORDER BY id LIMIT 1);
+    ELSIF (SELECT count(*) FROM "site_settings") = 0 THEN
+        INSERT INTO "site_settings" ("updatedAt", "singleton_guard") VALUES (now(), 1);
+    END IF;
+    UPDATE "site_settings" SET "singleton_guard" = 1;
+
+    -- 4. Clean up duplicate skill connections before adding unique constraint
+    DELETE FROM "skill_connections" a USING "skill_connections" b
+    WHERE a.id > b.id 
+    AND a."fromSkillId" = b."fromSkillId" 
+    AND a."toSkillId" = b."toSkillId";
+
+    -- 5. Reconcile messages consent before adding check constraint
+    UPDATE "messages" SET "consentStatus" = 'pending' WHERE "consentStatus" IS NULL;
+    UPDATE "messages" SET "consentGiven" = false WHERE "consentGiven" IS NULL;
+    UPDATE "messages" SET "consentGiven" = true WHERE "consentStatus" = 'given';
+    UPDATE "messages" SET "consentGiven" = false WHERE "consentStatus" IN ('pending', 'declined', 'withdrawn');
+
+    -- 6. Clean up other legacy columns
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='clients' AND column_name='token') THEN
         ALTER TABLE "clients" DROP COLUMN "token";
     END IF;

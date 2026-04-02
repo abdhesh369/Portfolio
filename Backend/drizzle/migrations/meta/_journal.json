@@ -246,13 +246,6 @@
       "when": 1775140842525,
       "tag": "0034_brainy_iron_lad",
       "breakpoints": true
-    },
-    {
-      "idx": 35,
-      "version": "7",
-      "when": 1775142037635,
-      "tag": "0035_zippy_sauron",
-      "breakpoints": true
     }
   ]
 }
