@@ -263,7 +263,6 @@ export const clientsTable = pgTable("clients", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   company: varchar("company", { length: 255 }),
-  token: varchar("token", { length: 255 }).notNull().unique(),
   tokenHash: varchar("tokenHash", { length: 255 }).unique(), // SHA-256 for O(1) matching
   status: varchar("status", { length: 50 }).$type<"active" | "inactive">().notNull().default("active"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -331,17 +330,29 @@ export const testimonialsTable = pgTable("testimonials", {
   };
 });
 
+export const usersTable = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 export const auditLogTable = pgTable("audit_log", {
   id: serial("id").primaryKey(),
   action: varchar("action", { length: 20 }).notNull(),
   entity: varchar("entity", { length: 50 }).notNull(),
   entityId: integer("entity_id"),
+  userId: integer("user_id").references(() => usersTable.id, { onDelete: "set null" }),
+  performedBy: varchar("performed_by", { length: 255 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
   oldValues: jsonb("old_values"),
   newValues: jsonb("new_values"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => {
   return {
     entityIdx: index("audit_log_entity_idx").on(table.entity),
+    userIdIdx: index("audit_log_user_id_idx").on(table.userId),
     createdIdx: index("audit_log_created_at_idx").on(table.createdAt),
   };
 });
@@ -391,6 +402,9 @@ export const siteSettingsTable = pgTable("site_settings", {
 
   // Chatbot
   chatbotGreeting: text("chatbotGreeting").default("Hi there! I'm Abdhesh's AI assistant. How can I help you today?"),
+
+  // Blog Section Heading
+  blogHeading: varchar("blogHeading", { length: 255 }).default("Blog"),
 
   // Hero Section
   heroGreeting: varchar("heroGreeting", { length: 255 }).default("Hey, I am"),
@@ -474,6 +488,9 @@ export const auditLogSchema = z.object({
   action: z.enum(["CREATE", "UPDATE", "DELETE", "LOGIN_SUCCESS", "LOGIN_FAILED", "LOGOUT", "OTHER"]),
   entity: z.string().min(1).max(50),
   entityId: z.number().nullable().optional(),
+  userId: z.number().nullable().optional(),
+  performedBy: z.string().max(255).nullable().optional(),
+  ipAddress: z.string().max(45).nullable().optional(),
   oldValues: z.record(z.unknown()).nullable().optional(),
   newValues: z.record(z.unknown()).nullable().optional(),
   createdAt: z.coerce.date(),
@@ -1144,7 +1161,6 @@ export const clientSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   company: z.string().nullable().optional(),
-  token: z.string(),
   status: z.enum(["active", "inactive"]),
   createdAt: z.coerce.date(),
 });

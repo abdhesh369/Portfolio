@@ -34,14 +34,24 @@ export function WhyHireMeSection({ register, control, isOpen, onToggle }: WhyHir
       onToggle={onToggle}
     >
       <div className="space-y-6">
-        {/* Description */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Main Description (CTA Section)</label>
-          <Textarea
-            {...register("whyHireMeData.description" as any)}
-            placeholder="As a student, I bring fresh perspectives..."
-            className="min-h-[100px] nm-inset bg-background/50 border-white/10"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Main Description (CTA Section)</label>
+            <Textarea
+              {...register("whyHireMeData.description" as any)}
+              placeholder="As a student, I bring fresh perspectives..."
+              className="min-h-[100px] nm-inset bg-background/50 border-white/10"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Personal Phone / WhatsApp</label>
+            <Input
+              {...register("personalPhone" as any)}
+              placeholder="e.g., +977 9800000000"
+              className="nm-inset bg-background/50 border-white/10"
+            />
+            <p className="text-[10px] text-muted-foreground italic px-1">Displayed in contact info or hiring CTAs.</p>
+          </div>
         </div>
 
         {/* Stats */}

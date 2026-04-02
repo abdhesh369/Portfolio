@@ -35,6 +35,7 @@ import { ActiveFeaturesSection } from "../customization/ActiveFeaturesSection";
 import { AvailabilitySlotsSection } from "../customization/AvailabilitySlotsSection";
 import { WhyHireMeSection } from "../customization/WhyHireMeSection";
 import { AboutSection } from "../customization/AboutSection";
+import { SectionHeadingsSection } from "../customization/SectionHeadingsSection";
 import { StickyFormFooter } from "../customization/StickyFormFooter";
 
 const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
@@ -78,7 +79,21 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
     { year: "2024 - Present", title: "Advanced System Design", description: "Deep diving into distributed systems, Docker, and Microservices architecture." },
     { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University." },
     { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development." }
-  ]
+  ],
+  chatbotGreeting: "Hello! I'm Abdhesh's AI assistant. How can I help you today?",
+  personalPhone: "+977 9800000000",
+  aboutHeading: "About Me",
+  projectsHeading: "Featured Projects",
+  skillsHeading: "Technical Arsenal",
+  whyHireMeHeading: "Why Hire Me",
+  servicesHeading: "What I Do",
+  mindsetHeading: "Engineering Mindset",
+  practiceHeading: "Disciplined Practice",
+  experienceHeading: "Professional Journey",
+  testimonialsHeading: "Client Feedback",
+  guestbookHeading: "Guestbook",
+  contactHeading: "Get In Touch",
+  blogHeading: "Latest Articles"
 };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -261,6 +276,12 @@ export function CustomizationTab() {
           removeTagline={removeTagline}
           isOpen={activeSection === "hero"}
           onToggle={() => toggleSection("hero")}
+        />
+
+        <SectionHeadingsSection
+          register={register}
+          isOpen={activeSection === "headings"}
+          onToggle={() => toggleSection("headings")}
         />
 
         <NavbarSection

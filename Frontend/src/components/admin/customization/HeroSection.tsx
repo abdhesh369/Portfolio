@@ -49,6 +49,12 @@ export function HeroSection({ register, taglineFields, appendTagline, removeTagl
                     {...register("heroBadgeText")}
                 />
 
+                <FloatingLabelInput
+                    label="Chatbot Welcome Message"
+                    placeholder="Hello! How can I help?"
+                    {...register("chatbotGreeting")}
+                />
+
                 <div className="md:col-span-2 space-y-6 pt-4 border-t border-white/5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="p-6 rounded-2xl bg-white/5 space-y-4">

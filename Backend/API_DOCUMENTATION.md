@@ -1,6 +1,6 @@
 # Portfolio API Documentation (v1)
 
-This document provides a comprehensive overview of the Portfolio Backend API (v1). All endpoints are prefixed with `/api/v1`.
+This document provides a comprehensive overview of the Portfolio Backend API (v1).
 
 ## Authentication & Authorization
 
@@ -45,7 +45,7 @@ The API uses **Session-based authentication** with specialized middleware for Ad
 
 ### Newsletters
 - `POST /subscribers`: Subscribe to updates/newsletter.
-- `DELETE /subscribers/:email`: Unsubscribe using email.
+- `DELETE /subscribers/:token`: Unsubscribe using a secure token sent via email.
 
 ### AI Features (Modern Features)
 - `POST /chat`: Interact with the Portfolio AI Assistant.
@@ -71,7 +71,7 @@ The API uses **Session-based authentication** with specialized middleware for Ad
 - `GET /feed/json`: JSON Feed.
 
 ### Client Portal (MF-4)
-- `GET /clients/portal/:token`: Access client portal with a unique token.
+- `GET /clients/portal`: Access client portal (requires token in Authorization header or secure cookie).
 - `POST /clients/feedback`: Submit feedback within a client project.
 
 ---

@@ -4,11 +4,19 @@ This document describes the database schema used in the Portfolio project, manag
 
 ## Overview
 
-The database uses PostgreSQL with Drizzle ORM. The schema is defined in [schema.ts](file:///d:/Portfolio/packages/shared/src/schema.ts).
+The database uses PostgreSQL with Drizzle ORM. The schema is defined in [schema.ts](../packages/shared/src/schema.ts).
 
 ## Tables
 
 ### Core Portfolio Tables
+
+#### `users`
+System administrators and backend users.
+- `id`: serial (PK)
+- `username`: varchar(255) (Unique)
+- `email`: varchar(255) (Unique)
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
 
 #### `projects`
 Stores portfolio projects and their metadata.
@@ -36,6 +44,7 @@ Stores portfolio projects and their metadata.
 - `imageAlt`: text
 - `viewCount`: integer
 - `healthCheckUrl`: varchar(500)
+    > **Security Requirement**: When used by the automated health check component (`vitals.service`) to periodically ping projects, explicitly apply proper SSRF prevention measures: enforce http/https protocols only, apply destination allowlisting or CIDR network restrictions, implement safe DNS resolution to block private IP space, add timeouts and rate limits, and sanitize response logging.
 - `summary`: text
 - `createdAt`: timestamp
 - `updatedAt`: timestamp
@@ -115,6 +124,9 @@ Tags associated with articles.
 
 #### `messages`
 Contact form submissions.
+
+> **PII Handling**: Data stored in this table may contain personally identifiable information (PII). Ensure compliance with GDPR/CCPA by enforcing a 90-day retention policy (automatically purging older records), encrypting this data at rest, and securing access via strict role-based access control.
+
 - `id`: serial (PK)
 - `name`: varchar(255)
 - `email`: varchar(255)
@@ -196,6 +208,9 @@ Tracking administrative actions.
 - `action`: varchar(20) ('CREATE', 'UPDATE', 'DELETE', etc.)
 - `entity`: varchar(50)
 - `entityId`: integer
+- `userId`: integer (FK -> users.id)
+- `performedBy`: varchar(255)
+- `ipAddress`: varchar(45)
 - `oldValues`: jsonb
 - `newValues`: jsonb
 - `createdAt`: timestamp
@@ -230,7 +245,6 @@ Client portal management.
 - `name`: varchar(255)
 - `email`: varchar(255) (Unique)
 - `company`: varchar(255)
-- `token`: varchar(255) (Unique)
 - `tokenHash`: varchar(255) (Unique)
 - `status`: varchar(50) ('active', 'inactive')
 - `createdAt`: timestamp

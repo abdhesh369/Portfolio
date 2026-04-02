@@ -218,6 +218,13 @@
       "when": 1774000002000,
       "tag": "0030_sync_project_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1775130229593,
+      "tag": "0031_strange_amphibian",
+      "breakpoints": true
     }
   ]
 }

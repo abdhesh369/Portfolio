@@ -2,7 +2,6 @@ import { eq, desc } from "drizzle-orm";
 import { db } from "../db.js";
 import { clientsTable, clientProjectsTable, clientFeedbackTable, type Client, type ClientProject, type ClientFeedback } from "@portfolio/shared";
 import crypto from "crypto";
-import bcrypt from "bcryptjs";
 
 export class ClientRepository {
     async findAll(limit: number = 50, offset: number = 0): Promise<Client[]> {
@@ -27,33 +26,16 @@ export class ClientRepository {
             .limit(1);
 
         if (client && client.status === "active") return client as Client;
-
-        // Fallback for legacy clients without tokenHash
-        const legacyClients = await db.select().from(clientsTable)
-            .where(eq(clientsTable.status, "active"));
-
-        for (const c of legacyClients) {
-            if (!c.token || c.tokenHash !== null) continue; // Skip if it already has a hash
-            
-            // Only support bcrypt legacy, plain-text is purged
-            if (!c.token.startsWith("$2")) continue;
-            
-            const isMatch = await bcrypt.compare(token, c.token);
-            if (isMatch) return c as Client;
-        }
         
         return null;
     }
 
     async create(data: { name: string; email: string; company?: string }): Promise<Client & { rawToken: string }> {
         const rawToken = crypto.randomUUID();
-        const salt = await bcrypt.genSalt(10);
-        const hashedToken = await bcrypt.hash(rawToken, salt);
         const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
         const [inserted] = await db.insert(clientsTable).values({ 
             ...data, 
-            token: hashedToken,
             tokenHash
         }).returning();
         
@@ -70,12 +52,10 @@ export class ClientRepository {
 
     async regenerateToken(id: number): Promise<string> {
         const rawToken = crypto.randomUUID();
-        const salt = await bcrypt.genSalt(10);
-        const hashedToken = await bcrypt.hash(rawToken, salt);
         const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
         const [updated] = await db.update(clientsTable)
-            .set({ token: hashedToken, tokenHash })
+            .set({ tokenHash })
             .where(eq(clientsTable.id, id))
             .returning();
 
