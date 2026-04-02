@@ -80,7 +80,7 @@ const DEFAULT_SETTINGS: Partial<InsertSiteSettings> = {
     { year: "2023", title: "Engineering Core", description: "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University." },
     { year: "2022", title: "Hello World", description: "Started the journey with Python scripting and basic web development." }
   ],
-  chatbotGreeting: "Hello! I'm Abdhesh's AI assistant. How can I help you today?",
+  chatbotGreeting: "Hello! I'm your portfolio AI assistant. How can I help you today?",
   personalPhone: "+977 9800000000",
   aboutHeading: "About Me",
   projectsHeading: "Featured Projects",

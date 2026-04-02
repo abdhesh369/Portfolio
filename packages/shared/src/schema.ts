@@ -71,6 +71,10 @@ export const skillConnectionsTable = pgTable("skill_connections", {
   id: serial("id").primaryKey(),
   fromSkillId: integer("fromSkillId").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
   toSkillId: integer("toSkillId").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
+}, (table) => {
+  return {
+    unq: sql`UNIQUE(${table.fromSkillId}, ${table.toSkillId})`,
+  };
 });
 
 export const experiencesTable = pgTable("experiences", {
@@ -94,6 +98,13 @@ export const messagesTable = pgTable("messages", {
   budget: varchar("budget", { length: 100 }),
   timeline: varchar("timeline", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+
+  // PII & Retention Support (MF-4)
+  retentionDate: timestamp("retentionDate"), // When this record should be purged
+  expiresAt: timestamp("expiresAt"), // When this record is considered "expired"
+  deletedAt: timestamp("deletedAt"), // Soft delete
+  consentStatus: varchar("consentStatus", { length: 50 }).default("pending"),
+  consentGiven: boolean("consentGiven").default(false),
 });
 
 export const mindsetTable = pgTable("mindset", {
@@ -171,7 +182,7 @@ export const articlesTable = pgTable("articles", {
   readTimeMinutes: integer("readTimeMinutes").notNull().default(0),
   metaTitle: varchar("metaTitle", { length: 255 }),
   metaDescription: text("metaDescription"),
-  authorId: integer("authorId"),
+  authorId: integer("authorId").references(() => usersTable.id, { onDelete: "set null" }), // Added FK constraint
   featuredImageAlt: text("featuredImageAlt"),
   reactions: jsonb("reactions").$type<Record<string, number>>().notNull().default({}),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -334,6 +345,10 @@ export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 255 }).notNull().unique(),
   email: varchar("email", { length: 255 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }), // Added auth/authz support
+  role: varchar("role", { length: 50 }).default("viewer"), // admin, author, viewer
+  permissions: jsonb("permissions").$type<string[]>().default([]),
+  status: varchar("status", { length: 50 }).default("active"), // active, suspended, pending
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -344,8 +359,10 @@ export const auditLogTable = pgTable("audit_log", {
   entity: varchar("entity", { length: 50 }).notNull(),
   entityId: integer("entity_id"),
   userId: integer("user_id").references(() => usersTable.id, { onDelete: "set null" }),
-  performedBy: varchar("performed_by", { length: 255 }),
-  ipAddress: varchar("ip_address", { length: 45 }),
+  performedBy: varchar("performed_by", { length: 255 }), // Name/Identifier of the user
+  ipAddress: varchar("ip_address", { length: 45 }), // Supports IPv6
+  userAgent: varchar("user_agent", { length: 500 }), // Added system tracing
+  requestId: varchar("request_id", { length: 255 }), // Added system tracing
   oldValues: jsonb("old_values"),
   newValues: jsonb("new_values"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -461,6 +478,10 @@ export const siteSettingsTable = pgTable("site_settings", {
   testimonialsHeading: varchar("testimonialsHeading", { length: 255 }).default("Client Feedback"),
   guestbookHeading: varchar("guestbookHeading", { length: 255 }).default("Guestbook"),
   contactHeading: varchar("contactHeading", { length: 255 }).default("Get In Touch"),
+}, (table) => {
+  return {
+    singletonGuard: integer("singleton_guard").notNull().default(1).unique(),
+  };
 });
 
 export const chatConversationsTable = pgTable("chat_conversations", {

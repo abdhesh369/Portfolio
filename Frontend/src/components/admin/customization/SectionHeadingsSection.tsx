@@ -14,7 +14,7 @@ interface SectionHeadingsSectionProps {
 export function SectionHeadingsSection({ register, isOpen, onToggle }: SectionHeadingsSectionProps) {
   return (
     <CollapsibleSection
-      title="SECTION_HEADINGS_V1"
+      title="Section Headings"
       description="Manage the title overrides for all portfolio sections."
       icon={<Heading2 size={20} />}
       isOpen={isOpen}

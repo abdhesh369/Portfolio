@@ -15,6 +15,10 @@ System administrators and backend users.
 - `id`: serial (PK)
 - `username`: varchar(255) (Unique)
 - `email`: varchar(255) (Unique)
+- `passwordHash`: varchar(255) (Auth)
+- `role`: varchar(50) ('admin', 'author', 'viewer')
+- `permissions`: jsonb (string[])
+- `status`: varchar(50) ('active', 'suspended', 'pending')
 - `createdAt`: timestamp
 - `updatedAt`: timestamp
 
@@ -68,6 +72,7 @@ Many-to-many relationship mapping between skills.
 - `id`: serial (PK)
 - `fromSkillId`: integer (FK -> skills.id)
 - `toSkillId`: integer (FK -> skills.id)
+- **Constraint**: Unique index on `(fromSkillId, toSkillId)` to prevent duplicate connections.
 
 #### `experiences`
 Professional and educational history.
@@ -109,7 +114,7 @@ Blog posts and write-ups.
 - `readTimeMinutes`: integer
 - `metaTitle`: varchar(255)
 - `metaDescription`: text
-- `authorId`: integer
+- `authorId`: integer (FK -> users.id)
 - `featuredImageAlt`: text
 - `reactions`: jsonb (Record<string, number>)
 - `createdAt`: timestamp
@@ -125,7 +130,11 @@ Tags associated with articles.
 #### `messages`
 Contact form submissions.
 
-> **PII Handling**: Data stored in this table may contain personally identifiable information (PII). Ensure compliance with GDPR/CCPA by enforcing a 90-day retention policy (automatically purging older records), encrypting this data at rest, and securing access via strict role-based access control.
+> **PII Handling**: Data stored in this table may contain personally identifiable information (PII). Ensure compliance with GDPR/CCPA by:
+> 1. Enforcing a 90-day retention policy via `retentionDate` (automatically purging older records).
+> 2. Supporting data subject rights via `deletedAt` (soft delete/right to be forgotten) and `consentStatus`.
+> 3. Encrypting sensitive contact data at rest and securing access via strict role-based access control.
+> 4. Auditing all access to these records in `audit_log`.
 
 - `id`: serial (PK)
 - `name`: varchar(255)
@@ -136,6 +145,11 @@ Contact form submissions.
 - `budget`: varchar(100)
 - `timeline`: varchar(100)
 - `createdAt`: timestamp
+- `retentionDate`: timestamp (Purge scheduling)
+- `expiresAt`: timestamp (Data expiration)
+- `deletedAt`: timestamp (Soft delete)
+- `consentStatus`: varchar(50) ('pending', 'granted', 'withdrawn')
+- `consentGiven`: boolean
 
 #### `guestbook`
 Visitor comments.
@@ -160,6 +174,7 @@ Newsletter/Update subscribers.
 #### `site_settings`
 Global configuration for the portfolio.
 - `id`: serial (PK)
+- `singleton_guard`: integer (Unique, Default: 1) - **Enforces single-row configuration**.
 - `isOpenToWork`: boolean
 - `availabilityStatus`: varchar(255)
 - `updatedAt`: timestamp
@@ -209,8 +224,10 @@ Tracking administrative actions.
 - `entity`: varchar(50)
 - `entityId`: integer
 - `userId`: integer (FK -> users.id)
-- `performedBy`: varchar(255)
-- `ipAddress`: varchar(45)
+- `performedBy`: varchar(255) (Human-readable name or system identifier)
+- `ipAddress`: varchar(45) (IPv4/IPv6 support)
+- `userAgent`: varchar(500) (Client tracing)
+- `requestId`: varchar(255) (Transaction tracing)
 - `oldValues`: jsonb
 - `newValues`: jsonb
 - `createdAt`: timestamp

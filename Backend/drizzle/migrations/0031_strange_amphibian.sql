@@ -85,6 +85,7 @@ ALTER TABLE "skill_connections" ADD CONSTRAINT "skill_connections_toSkillId_skil
 CREATE INDEX "audit_log_user_id_idx" ON "audit_log" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "clients_token_hash_idx" ON "clients" USING btree ("tokenHash");--> statement-breakpoint
 CREATE INDEX "audit_log_created_at_idx" ON "audit_log" USING btree ("created_at");--> statement-breakpoint
+UPDATE "audit_log" SET "entity_id" = "entityId", "new_values" = "newValues", "created_at" = "createdAt";--> statement-breakpoint
 ALTER TABLE "audit_log" DROP COLUMN "entityId";--> statement-breakpoint
 ALTER TABLE "audit_log" DROP COLUMN "newValues";--> statement-breakpoint
 ALTER TABLE "audit_log" DROP COLUMN "createdAt";--> statement-breakpoint
