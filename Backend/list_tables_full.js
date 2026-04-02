@@ -1,7 +1,13 @@
 import pg from 'pg';
+import "dotenv/config";
 const { Client } = pg;
 
-const url = "postgresql://postgres:4M8DeZWBZ5Gt1E11@db.tctzdrjxdzyzpvknwbco.supabase.co:5432/postgres";
+const url = process.env.DATABASE_URL;
+
+if (!url) {
+    console.warn("ERROR: DATABASE_URL environment variable is not set.");
+    process.exit(1);
+}
 
 async function listAll() {
     const client = new Client({ connectionString: url });

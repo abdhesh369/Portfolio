@@ -2,49 +2,48 @@ import pg from 'pg';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import "dotenv/config";
 
 const { Client } = pg;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const url = "postgresql://postgres:4M8DeZWBZ5Gt1E11@db.tctzdrjxdzyzpvknwbco.supabase.co:5432/postgres";
-const migrationPath = path.join(__dirname, 'drizzle', 'migrations', '0034_brainy_iron_lad.sql');
+const url = process.env.DATABASE_URL;
 
-async function debug() {
+if (!url) {
+    console.error("ERROR: DATABASE_URL environment variable is not set.");
+    process.exit(1);
+}
+
+async function runSQL() {
+    const filePath = path.join(__dirname, 'drizzle', 'migrations', '0034_brainy_iron_lad.sql');
+    const content = fs.readFileSync(filePath, 'utf8');
+    
+    // Split by statement-breakpoint
+    const statements = content.split('--> statement-breakpoint');
+    
     const client = new Client({ connectionString: url });
     try {
         await client.connect();
         console.log('Connected to DB');
-        
-        const sql = fs.readFileSync(migrationPath, 'utf8');
-        const statements = sql.split('--> statement-breakpoint');
-        
         console.log(`Found ${statements.length} statements`);
-        
+
         for (let i = 0; i < statements.length; i++) {
-            const stmt = statements[i].trim().replace(/;$/, '');
-            if (!stmt) continue;
+            const sql = statements[i].trim();
+            if (!sql) continue;
             
-            try {
-                console.log(`Executing statement ${i + 1}...`);
-                await client.query(stmt);
-            } catch (err) {
-                console.error(`FAILED on statement ${i + 1}:`);
-                console.error('SQL:', stmt);
-                console.error('ERROR:', err.message);
-                
-                if (err.message.includes('check constraint')) {
-                     // Diagnostic query
-                     console.log('Running diagnostics...');
-                }
-                break;
-            }
+            console.log(`Executing statement ${i + 1}...`);
+            await client.query(sql);
         }
+        
+        console.log('\nMigration script finished successfully!');
     } catch (err) {
-        console.error('Connection failed:', err.message);
+        console.error('\nFAIL at statement:', err.message);
+        if (err.detail) console.error('Detail:', err.detail);
+        if (err.hint) console.error('Hint:', err.hint);
+        process.exit(1);
     } finally {
         await client.end();
     }
 }
 
-debug();
+runSQL();

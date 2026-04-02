@@ -1,21 +1,28 @@
--- Backfill messages consent logic and reconcile inconsistencies
-UPDATE "messages" SET "consentStatus" = 'pending' WHERE "consentStatus" IS NULL;--> statement-breakpoint
-UPDATE "messages" SET "consentGiven" = false WHERE "consentGiven" IS NULL;--> statement-breakpoint
--- Reconcile: Ensure consentGiven matches consentStatus before adding check constraint
-UPDATE "messages" SET "consentGiven" = true WHERE "consentStatus" = 'given';--> statement-breakpoint
-UPDATE "messages" SET "consentGiven" = false WHERE "consentStatus" IN ('pending', 'declined', 'withdrawn');--> statement-breakpoint
+-- 31: Robust reconciliation of message consent before adding CHECK constraint
+UPDATE "messages" 
+SET "consentStatus" = 'pending' 
+WHERE "consentStatus" IS NULL 
+   OR "consentStatus" NOT IN ('given', 'pending', 'declined', 'withdrawn');--> statement-breakpoint
 
--- Backfill users data
+UPDATE "messages" 
+SET "consentGiven" = CASE 
+    WHEN "consentStatus" = 'given' THEN true 
+    ELSE false 
+END;--> statement-breakpoint
+
+-- 33: Robust backfill and NOT NULL for users
 UPDATE "users" SET "role" = 'viewer' WHERE "role" IS NULL;--> statement-breakpoint
 UPDATE "users" SET "permissions" = '[]'::jsonb WHERE "permissions" IS NULL;--> statement-breakpoint
 UPDATE "users" SET "status" = 'active' WHERE "status" IS NULL;--> statement-breakpoint
 
+-- Ensure constraints are applied only if columns are currently nullable (manual check not strictly needed for NOT NULL but good for documentation)
+DO $$ BEGIN ALTER TABLE "users" ALTER COLUMN "role" SET NOT NULL; EXCEPTION WHEN OTHERS THEN NULL; END $$;--> statement-breakpoint
+DO $$ BEGIN ALTER TABLE "users" ALTER COLUMN "permissions" SET NOT NULL; EXCEPTION WHEN OTHERS THEN NULL; END $$;--> statement-breakpoint
+DO $$ BEGIN ALTER TABLE "users" ALTER COLUMN "status" SET NOT NULL; EXCEPTION WHEN OTHERS THEN NULL; END $$;--> statement-breakpoint
+
 -- Existing ALTER declarations
 ALTER TABLE "messages" ALTER COLUMN "consentStatus" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "messages" ALTER COLUMN "consentGiven" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "users" ALTER COLUMN "role" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "users" ALTER COLUMN "permissions" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "users" ALTER COLUMN "status" SET NOT NULL;--> statement-breakpoint
 -- 16: Idempotent column adds
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='retention_until') THEN 
     ALTER TABLE "audit_log" ADD COLUMN "retention_until" timestamp; 

@@ -1,23 +1,24 @@
 import pg from 'pg';
+import "dotenv/config";
 const { Client } = pg;
 
-const url = "postgresql://postgres:4M8DeZWBZ5Gt1E11@db.tctzdrjxdzyzpvknwbco.supabase.co:5432/postgres";
+const url = process.env.DATABASE_URL;
 
-async function checkDb() {
+if (!url) {
+    console.error("ERROR: DATABASE_URL environment variable is not set.");
+    process.exit(1);
+}
+
+async function check() {
     const client = new Client({ connectionString: url });
     try {
         await client.connect();
-        console.log('Connected');
+        const res = await client.query('SELECT table_name FROM information_schema.tables WHERE table_schema = \'public\'');
+        console.log('Tables found:', res.rows.map(r => r.table_name).join(', '));
         
-        const res = await client.query(`
-            SELECT table_schema, table_name 
-            FROM information_schema.tables 
-            WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
-            ORDER BY table_schema, table_name
-        `);
-        console.log('Tables:');
-        res.rows.forEach(r => console.log(`- ${r.table_schema}.${r.table_name}`));
-        
+        // Check site_settings specifically
+        const settings = await client.query('SELECT * FROM site_settings LIMIT 1');
+        console.log('Site Settings keys:', Object.keys(settings.rows[0] || {}).join(', '));
     } catch (err) {
         console.error('Error:', err.message);
     } finally {
@@ -25,4 +26,4 @@ async function checkDb() {
     }
 }
 
-checkDb();
+check();

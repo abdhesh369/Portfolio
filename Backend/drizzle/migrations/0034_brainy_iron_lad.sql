@@ -57,10 +57,17 @@ BEGIN
     AND a."toSkillId" = b."toSkillId";
 
     -- 5. Reconcile messages consent before adding check constraint
-    UPDATE "messages" SET "consentStatus" = 'pending' WHERE "consentStatus" IS NULL;
-    UPDATE "messages" SET "consentGiven" = false WHERE "consentGiven" IS NULL;
-    UPDATE "messages" SET "consentGiven" = true WHERE "consentStatus" = 'given';
-    UPDATE "messages" SET "consentGiven" = false WHERE "consentStatus" IN ('pending', 'declined', 'withdrawn');
+    -- 31: Robust reconciliation of message consent before adding CHECK constraint
+    UPDATE "messages" 
+    SET "consentStatus" = 'pending' 
+    WHERE "consentStatus" IS NULL 
+       OR "consentStatus" NOT IN ('given', 'pending', 'declined', 'withdrawn');
+
+    UPDATE "messages" 
+    SET "consentGiven" = CASE 
+        WHEN "consentStatus" = 'given' THEN true 
+        ELSE false 
+    END;
 
     -- 6. Clean up other legacy columns
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='clients' AND column_name='token') THEN
