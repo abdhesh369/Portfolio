@@ -25,6 +25,7 @@ export function VoiceControl() {
   const { theme, setTheme } = useTheme();
   const [feedback, setFeedback] = useState<FeedbackState>({ type: "idle" });
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasShownUnsupportedRef = useRef(false);
 
   // Build action helpers
@@ -40,6 +41,7 @@ export function VoiceControl() {
       }
     },
     toggleTheme: () => setTheme(theme === "dark" ? "light" : "dark"),
+    setTheme: (mode: "dark" | "light") => setTheme(mode),
     scrollToTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
   };
 
@@ -47,6 +49,13 @@ export function VoiceControl() {
     if (feedbackTimerRef.current) {
       clearTimeout(feedbackTimerRef.current);
       feedbackTimerRef.current = null;
+    }
+  }, []);
+
+  const clearActionTimer = useCallback(() => {
+    if (actionTimeoutRef.current) {
+      clearTimeout(actionTimeoutRef.current);
+      actionTimeoutRef.current = null;
     }
   }, []);
 
@@ -67,8 +76,13 @@ export function VoiceControl() {
       const matched: VoiceAction | null = matchVoiceCommand(transcript);
       if (matched) {
         showTemporaryFeedback({ type: "matched", label: matched.label }, 2000);
+        
+        clearActionTimer();
         // Small delay so user sees the match feedback before navigation
-        setTimeout(() => matched.execute(helpers), 300);
+        actionTimeoutRef.current = setTimeout(() => {
+          matched.execute(helpers);
+          actionTimeoutRef.current = null;
+        }, 300);
       } else {
         showTemporaryFeedback(
           { type: "no-match", transcript },
@@ -76,7 +90,7 @@ export function VoiceControl() {
         );
       }
     },
-    [helpers, showTemporaryFeedback]
+    [helpers, showTemporaryFeedback, clearActionTimer]
   );
 
   const handleError = useCallback(
@@ -143,8 +157,9 @@ export function VoiceControl() {
   useEffect(() => {
     return () => {
       clearFeedbackTimer();
+      clearActionTimer();
     };
-  }, [clearFeedbackTimer]);
+  }, [clearFeedbackTimer, clearActionTimer]);
 
   // Determine visual state
   const isActive = isListening || feedback.type === "matched";

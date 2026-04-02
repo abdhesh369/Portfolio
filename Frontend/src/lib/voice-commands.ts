@@ -17,6 +17,7 @@ export interface VoiceActionHelpers {
   navigate: (path: string) => void;
   scrollToSection: (id: string) => void;
   toggleTheme: () => void;
+  setTheme: (mode: "dark" | "light") => void;
   scrollToTop: () => void;
 }
 
@@ -179,7 +180,7 @@ const COMMANDS: VoiceCommandEntry[] = [
     action: {
       label: "Switching to Dark Mode",
       category: "theme",
-      execute: ({ toggleTheme }) => toggleTheme(),
+      execute: ({ setTheme }) => setTheme("dark"),
     },
   },
   {
@@ -187,7 +188,7 @@ const COMMANDS: VoiceCommandEntry[] = [
     action: {
       label: "Switching to Light Mode",
       category: "theme",
-      execute: ({ toggleTheme }) => toggleTheme(),
+      execute: ({ setTheme }) => setTheme("light"),
     },
   },
   {

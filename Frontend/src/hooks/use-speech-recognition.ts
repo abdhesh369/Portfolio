@@ -140,7 +140,8 @@ export function useSpeechRecognition(
     // If already listening, stop first
     if (recognitionRef.current) {
       recognitionRef.current.abort();
-      recognitionRef.current = null;
+      // We don't null it here yet; let the existing onend handler (with instance check) deal with it,
+      // or we override it below.
     }
 
     setError(null);
@@ -209,9 +210,12 @@ export function useSpeechRecognition(
 
     recognition.onend = () => {
       clearSilenceTimer();
-      setIsListening(false);
-      isStoppingRef.current = false;
-      recognitionRef.current = null;
+      // Only clear collective state if THIS instance is the active one
+      if (recognitionRef.current === recognition) {
+        setIsListening(false);
+        isStoppingRef.current = false;
+        recognitionRef.current = null;
+      }
     };
 
     recognitionRef.current = recognition;
@@ -221,6 +225,7 @@ export function useSpeechRecognition(
     } catch {
       setError("unknown");
       setIsListening(false);
+      onErrorRef.current?.("unknown");
     }
   }, [lang, resetSilenceTimer, clearSilenceTimer]);
 
