@@ -1,4 +1,4 @@
-import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType, check } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, varchar, timestamp, jsonb, real, boolean, serial, index, customType, check, unique } from "drizzle-orm/pg-core";
 import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
@@ -73,7 +73,7 @@ export const skillConnectionsTable = pgTable("skill_connections", {
   toSkillId: integer("toSkillId").notNull().references(() => skillsTable.id, { onDelete: "cascade" }),
 }, (table) => {
   return {
-    unq: sql`UNIQUE(${table.fromSkillId}, ${table.toSkillId})`,
+    unq: unique("skill_connections_fromSkillId_toSkillId_unique").on(table.fromSkillId, table.toSkillId),
   };
 });
 
@@ -103,11 +103,11 @@ export const messagesTable = pgTable("messages", {
   retentionDate: timestamp("retentionDate"), // When this record should be purged
   expiresAt: timestamp("expiresAt"), // When this record is considered "expired"
   deletedAt: timestamp("deletedAt"), // Soft delete
-  consentStatus: varchar("consentStatus", { length: 50 }).notNull().default("pending"),
+  consentStatus: varchar("consentStatus", { length: 50 }).$type<"given" | "pending" | "withdrawn" | "declined">().notNull().default("pending"),
   consentGiven: boolean("consentGiven").notNull().default(false),
 }, (table) => {
   return {
-    consentCheck: check("messages_consent_consistency", sql`("consentStatus" = 'given' AND "consentGiven" = true) OR ("consentStatus" != 'given' AND "consentGiven" = false)`),
+    consentCheck: check("messages_consent_consistency", sql`("consentStatus" = 'given' AND "consentGiven" = true) OR ("consentStatus" IN ('pending', 'declined', 'withdrawn') AND "consentGiven" = false)`),
   };
 });
 
@@ -169,6 +169,7 @@ export const seoSettingsTable = pgTable("seo_settings", {
   canonicalUrl: varchar("canonicalUrl", { length: 500 }),
   noindex: boolean("noindex").default(false),
   twitterCard: varchar("twitter_card", { length: 50 }).default("summary_large_image"),
+  deprecatedTwitterCard: varchar("twitterCard", { length: 50 }), // @deprecated
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -280,6 +281,7 @@ export const clientsTable = pgTable("clients", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   company: varchar("company", { length: 255 }),
   tokenHash: varchar("tokenHash", { length: 255 }).unique(), // SHA-256 for O(1) matching
+  deprecatedToken: varchar("token", { length: 255 }), // @deprecated - staged rollout
   status: varchar("status", { length: 50 }).$type<"active" | "inactive">().notNull().default("active"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => {
@@ -372,6 +374,10 @@ export const auditLogTable = pgTable("audit_log", {
   newValues: jsonb("new_values"),
   retentionUntil: timestamp("retention_until"), // Support data retention policies
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  // @deprecated - phased out columns below:
+  deprecatedEntityId: integer("entityId"),
+  deprecatedNewValues: jsonb("newValues"),
+  deprecatedCreatedAt: timestamp("createdAt"),
 }, (table) => {
   return {
     entityIdx: index("audit_log_entity_idx").on(table.entity),
@@ -485,6 +491,23 @@ export const siteSettingsTable = pgTable("site_settings", {
   guestbookHeading: varchar("guestbookHeading", { length: 255 }).default("Guestbook"),
   contactHeading: varchar("contactHeading", { length: 255 }).default("Get In Touch"),
   singletonGuard: integer("singleton_guard").notNull().default(1).unique(),
+
+  // @deprecated - staged out columns for removal
+  colorBackground: varchar("colorBackground", { length: 50 }),
+  colorSurface: varchar("colorSurface", { length: 50 }),
+  colorPrimary: varchar("colorPrimary", { length: 50 }),
+  colorSecondary: varchar("colorSecondary", { length: 50 }),
+  colorAccent: varchar("colorAccent", { length: 50 }),
+  colorBorder: varchar("colorBorder", { length: 50 }),
+  colorText: varchar("colorText", { length: 50 }),
+  colorMuted: varchar("colorMuted", { length: 50 }),
+  fontDisplay: varchar("fontDisplay", { length: 50 }),
+  fontBody: varchar("fontBody", { length: 50 }),
+  customCss: text("customCss"),
+}, (table) => {
+  return {
+    singletonGuardCheck: check("site_settings_singleton_guard_check", sql`"singleton_guard" = 1`),
+  };
 });
 
 export const chatConversationsTable = pgTable("chat_conversations", {
@@ -766,7 +789,7 @@ export const messageSchema = z.object({
   retentionDate: z.coerce.date().nullable().optional(),
   expiresAt: z.coerce.date().nullable().optional(),
   deletedAt: z.coerce.date().nullable().optional(),
-  consentStatus: z.string().max(50).default("pending"),
+  consentStatus: z.enum(["given", "pending", "declined", "withdrawn"]).default("pending"),
   consentGiven: z.boolean().default(false),
   createdAt: z.coerce.date(),
 }).strict();

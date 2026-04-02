@@ -86,20 +86,5 @@ CREATE INDEX "audit_log_user_id_idx" ON "audit_log" USING btree ("user_id");--> 
 CREATE INDEX "clients_token_hash_idx" ON "clients" USING btree ("tokenHash");--> statement-breakpoint
 CREATE INDEX "audit_log_created_at_idx" ON "audit_log" USING btree ("created_at");--> statement-breakpoint
 UPDATE "audit_log" SET "entity_id" = "entityId", "new_values" = "newValues", "created_at" = COALESCE("createdAt", now());--> statement-breakpoint
-ALTER TABLE "audit_log" DROP COLUMN "entityId";--> statement-breakpoint
-ALTER TABLE "audit_log" DROP COLUMN "newValues";--> statement-breakpoint
-ALTER TABLE "audit_log" DROP COLUMN "createdAt";--> statement-breakpoint
-ALTER TABLE "clients" DROP COLUMN "token";--> statement-breakpoint
-ALTER TABLE "seo_settings" DROP COLUMN "twitterCard";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorBackground";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorSurface";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorPrimary";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorSecondary";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorAccent";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorBorder";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorText";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "colorMuted";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "fontDisplay";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "fontBody";--> statement-breakpoint
-ALTER TABLE "site_settings" DROP COLUMN "customCss";--> statement-breakpoint
+--> statement-breakpoint
 ALTER TABLE "clients" ADD CONSTRAINT "clients_tokenHash_unique" UNIQUE("tokenHash");
