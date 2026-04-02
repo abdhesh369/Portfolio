@@ -49,13 +49,16 @@ const SimpleReviewForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    console.log('Submitting Review:', review);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    
-    setIsSubmitting(false);
-    alert('Review submitted successfully! (Check console for data)');
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      alert('Review submitted successfully!');
+    } catch (err) {
+      console.error('Failed to submit review:', err);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -86,7 +89,9 @@ const SimpleReviewForm = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleRatingChange(star)}
-                    className="focus:outline-none"
+                    aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                    aria-pressed={star <= review.rating}
+                    className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2"
                   >
                     <Star
                       className={cn(
