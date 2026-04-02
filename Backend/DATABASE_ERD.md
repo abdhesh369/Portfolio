@@ -1,325 +1,284 @@
-# Database Entity Relationship Diagram
+# Database Entity Relationship Diagram (ERD)
 
-This document provides a visual representation of the portfolio database schema.
+This document describes the database schema used in the Portfolio project, managed via Drizzle ORM.
 
-```mermaid
-erDiagram
-    PROJECTS ||--o{ ANALYTICS : tracks
-    PROJECTS ||--o{ CODE_REVIEWS : has
-    PROJECTS ||--o{ CASE_STUDIES : generates
-    
-    SKILLS ||--o{ SKILL_CONNECTIONS : from
-    SKILLS ||--o{ SKILL_CONNECTIONS : to
-    
-    ARTICLES ||--o{ ARTICLE_TAGS : has
-    
-    CLIENTS ||--o{ CLIENT_PROJECTS : has
-    CLIENTS ||--o{ CLIENT_FEEDBACK : provides
-    CLIENT_PROJECTS ||--o{ CLIENT_FEEDBACK : receives
-    
-    PROJECTS {
-        serial id PK
-        varchar title
-        text description
-        jsonb techStack
-        varchar imageUrl
-        varchar githubUrl
-        varchar liveUrl
-        varchar category
-        integer displayOrder
-        varchar status
-        text problemStatement
-        text motivation
-        text systemDesign
-        text challenges
-        text learnings
-        boolean isFlagship
-        boolean isHidden
-        text impact
-        text role
-        text imageAlt
-        integer viewCount
-    }
+## Overview
 
-    SKILLS {
-        serial id PK
-        varchar name
-        varchar category
-        varchar status
-        varchar icon
-        text description
-        text proof
-        integer mastery
-        real x
-        real y
-    }
+The database uses PostgreSQL with Drizzle ORM. The schema is defined in [schema.ts](file:///d:/Portfolio/packages/shared/src/schema.ts).
 
-    SKILL_CONNECTIONS {
-        serial id PK
-        integer fromSkillId FK
-        integer toSkillId FK
-    }
+## Tables
 
-    EXPERIENCES {
-        serial id PK
-        varchar role
-        varchar organization
-        varchar period
-        timestamp startDate
-        timestamp endDate
-        text description
-        varchar type
-    }
+### Core Portfolio Tables
 
-    MESSAGES {
-        serial id PK
-        varchar name
-        varchar email
-        varchar subject
-        text message
-        varchar projectType
-        varchar budget
-        varchar timeline
-        timestamp createdAt
-    }
+#### `projects`
+Stores portfolio projects and their metadata.
+- `id`: serial (PK)
+- `title`: varchar(255)
+- `slug`: varchar(255) (Unique)
+- `description`: text
+- `longDescription`: text
+- `techStack`: jsonb (string[])
+- `imageUrl`: varchar(500)
+- `githubUrl`: varchar(500)
+- `liveUrl`: varchar(500)
+- `category`: varchar(100)
+- `displayOrder`: integer
+- `status`: varchar(50) ('In Progress', 'Completed', 'Archived')
+- `problemStatement`: text
+- `motivation`: text
+- `systemDesign`: text
+- `challenges`: text
+- `learnings`: text
+- `isFlagship`: boolean
+- `isHidden`: boolean
+- `impact`: text
+- `role`: text
+- `imageAlt`: text
+- `viewCount`: integer
+- `healthCheckUrl`: varchar(500)
+- `summary`: text
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
 
-    MINDSET {
-        serial id PK
-        varchar title
-        text description
-        varchar icon
-        jsonb tags
-    }
+#### `skills`
+Technical skills inventory.
+- `id`: serial (PK)
+- `name`: varchar(100)
+- `category`: varchar(100)
+- `status`: varchar(100) ('Core', 'Advanced', 'Learning')
+- `icon`: varchar(100)
+- `description`: text
+- `proof`: text
+- `mastery`: integer
+- `x`: real
+- `y`: real
+- `endorsements`: integer
 
-    ANALYTICS {
-        serial id PK
-        varchar type
-        integer targetId FK
-        varchar path
-        varchar browser
-        varchar os
-        varchar device
-        varchar country
-        varchar city
-        timestamp createdAt
-    }
+#### `skill_connections`
+Many-to-many relationship mapping between skills.
+- `id`: serial (PK)
+- `fromSkillId`: integer (FK -> skills.id)
+- `toSkillId`: integer (FK -> skills.id)
 
-    GUESTBOOK {
-        serial id PK
-        varchar name
-        text content
-        varchar email
-        boolean isApproved
-        jsonb reactions
-        timestamp createdAt
-    }
+#### `experiences`
+Professional and educational history.
+- `id`: serial (PK)
+- `role`: varchar(200)
+- `organization`: varchar(200)
+- `period`: varchar(100)
+- `startDate`: timestamp
+- `endDate`: timestamp
+- `description`: text
+- `type`: varchar(100) ('Experience', 'Education', etc.)
 
-    EMAIL_TEMPLATES {
-        serial id PK
-        varchar name
-        varchar subject
-        text body
-        timestamp createdAt
-    }
+#### `services`
+Offerings for clients.
+- `id`: serial (PK)
+- `title`: varchar(255)
+- `summary`: text
+- `category`: varchar(100)
+- `tags`: jsonb (string[])
+- `displayOrder`: integer
+- `isFeatured`: boolean
+- `priceMin`: integer
+- `priceMax`: integer
+- `ctaUrl`: varchar(500)
 
-    SEO_SETTINGS {
-        serial id PK
-        varchar pageSlug
-        varchar metaTitle
-        text metaDescription
-        varchar ogTitle
-        text ogDescription
-        varchar ogImage
-        text keywords
-        varchar canonicalUrl
-        boolean noindex
-        varchar twitterCard
-        timestamp createdAt
-        timestamp updatedAt
-    }
+### Content & Communication
 
-    ARTICLES {
-        serial id PK
-        varchar title
-        varchar slug
-        text content
-        text excerpt
-        varchar featuredImage
-        varchar status
-        timestamp publishedAt
-        integer viewCount
-        integer readTimeMinutes
-        varchar metaTitle
-        text metaDescription
-        integer authorId
-        text featuredImageAlt
-        timestamp createdAt
-        timestamp updatedAt
-    }
+#### `articles`
+Blog posts and write-ups.
+- `id`: serial (PK)
+- `title`: varchar(255)
+- `slug`: varchar(255) (Unique)
+- `content`: text
+- `excerpt`: text
+- `featuredImage`: varchar(500)
+- `status`: varchar(50) ('draft', 'published', 'archived')
+- `publishedAt`: timestamp
+- `viewCount`: integer
+- `readTimeMinutes`: integer
+- `metaTitle`: varchar(255)
+- `metaDescription`: text
+- `authorId`: integer
+- `featuredImageAlt`: text
+- `reactions`: jsonb (Record<string, number>)
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
+- `searchVector`: tsvector
 
-    ARTICLE_TAGS {
-        serial id PK
-        integer articleId FK
-        varchar tag
-    }
+#### `article_tags`
+Tags associated with articles.
+- `id`: serial (PK)
+- `articleId`: integer (FK -> articles.id)
+- `tag`: varchar(100)
 
-    SERVICES {
-        serial id PK
-        varchar title
-        text summary
-        varchar category
-        jsonb tags
-        integer displayOrder
-        boolean isFeatured
-    }
+#### `messages`
+Contact form submissions.
+- `id`: serial (PK)
+- `name`: varchar(255)
+- `email`: varchar(255)
+- `subject`: varchar(500)
+- `message`: text
+- `projectType`: varchar(100)
+- `budget`: varchar(100)
+- `timeline`: varchar(100)
+- `createdAt`: timestamp
 
-    SCOPE_REQUESTS {
-        serial id PK
-        varchar name
-        varchar email
-        text description
-        varchar projectType
-        jsonb features
-        jsonb estimation
-        varchar status
-        text error
-        timestamp completedAt
-        timestamp createdAt
-        timestamp updatedAt
-    }
+#### `guestbook`
+Visitor comments.
+- `id`: serial (PK)
+- `name`: varchar(255)
+- `content`: text
+- `email`: varchar(255)
+- `isApproved`: boolean
+- `reactions`: jsonb (Record<string, number>)
+- `createdAt`: timestamp
 
-    CODE_REVIEWS {
-        serial id PK
-        integer projectId FK
-        text content
-        jsonb badges
-        varchar status
-        text error
-        timestamp createdAt
-    }
+#### `subscribers`
+Newsletter/Update subscribers.
+- `id`: serial (PK)
+- `email`: varchar(255) (Unique)
+- `status`: varchar(50) ('active', 'unsubscribed')
+- `source`: varchar(100)
+- `createdAt`: timestamp
 
-    CASE_STUDIES {
-        serial id PK
-        integer projectId FK
-        varchar title
-        varchar slug
-        text content
-        varchar status
-        timestamp generatedAt
-        timestamp createdAt
-        timestamp updatedAt
-    }
+### System & Meta
 
-    CLIENTS {
-        serial id PK
-        varchar name
-        varchar email
-        varchar company
-        varchar token
-        varchar status
-        timestamp createdAt
-    }
+#### `site_settings`
+Global configuration for the portfolio.
+- `id`: serial (PK)
+- `isOpenToWork`: boolean
+- `availabilityStatus`: varchar(255)
+- `updatedAt`: timestamp
+- `personalName`: varchar(255)
+- `personalTitle`: varchar(255)
+- `personalBio`: text
+- `personalAvatar`: varchar(500)
+- `resumeUrl`: varchar(500)
+- `whyHireMeData`: jsonb
+- `socialGithub`: varchar(500)
+- `socialLinkedin`: varchar(500)
+- `socialTwitter`: varchar(500)
+- `socialInstagram`: varchar(500)
+- `socialFacebook`: varchar(500)
+- `socialYoutube`: varchar(500)
+- `socialDiscord`: varchar(500)
+- `socialStackoverflow`: varchar(500)
+- `socialDevto`: varchar(500)
+- `socialMedium`: varchar(500)
+- `socialEmail`: varchar(255)
+- `personalPhone`: varchar(255)
+- `locationText`: varchar(255)
+- `chatbotGreeting`: text
+- `heroGreeting`: varchar(255)
+- `heroBadgeText`: varchar(255)
+- `heroTaglines`: jsonb (string[])
+- `heroCtaPrimary`: varchar(255)
+- `heroCtaPrimaryUrl`: varchar(500)
+- `heroCtaSecondary`: varchar(255)
+- `heroCtaSecondaryUrl`: varchar(500)
+- `logoText`: varchar(255)
+- `navbarLinks`: jsonb
+- `footerCopyright`: varchar(255)
+- `footerTagline`: varchar(500)
+- `sectionOrder`: jsonb (string[])
+- `sectionVisibility`: jsonb (Record<string, boolean>)
+- `featureBlog`: boolean
+- `featureGuestbook`: boolean
+- `featureTestimonials`: boolean
+- `featureServices`: boolean
+- `featurePlayground`: boolean
 
-    CLIENT_PROJECTS {
-        serial id PK
-        integer clientId FK
-        varchar title
-        varchar status
-        timestamp deadline
-        text notes
-        timestamp createdAt
-        timestamp updatedAt
-    }
+#### `audit_log`
+Tracking administrative actions.
+- `id`: serial (PK)
+- `action`: varchar(20) ('CREATE', 'UPDATE', 'DELETE', etc.)
+- `entity`: varchar(50)
+- `entityId`: integer
+- `oldValues`: jsonb
+- `newValues`: jsonb
+- `createdAt`: timestamp
 
-    CLIENT_FEEDBACK {
-        serial id PK
-        integer clientProjectId FK
-        integer clientId FK
-        text message
-        jsonb attachments
-        timestamp createdAt
-    }
+### AI & Modern Features (MF)
 
-    SKETCHPAD_SESSIONS {
-        serial id PK
-        varchar title
-        jsonb canvasData
-        varchar status
-        varchar createdBy
-        timestamp createdAt
-        timestamp updatedAt
-    }
+#### `code_reviews` (MF-2)
+AI-generated analysis of projects.
+- `id`: serial (PK)
+- `projectId`: integer (FK -> projects.id)
+- `content`: text
+- `badges`: jsonb (string[])
+- `status`: varchar(50) ('pending', 'processing', 'completed', 'failed')
+- `error`: text
+- `createdAt`: timestamp
 
-    TESTIMONIALS {
-        serial id PK
-        varchar name
-        varchar role
-        varchar company
-        text quote
-        varchar relationship
-        varchar avatarUrl
-        varchar linkedinUrl
-        integer displayOrder
-        timestamp createdAt
-    }
+#### `case_studies` (MF-3)
+AI-generated deep-dives into projects.
+- `id`: serial (PK)
+- `projectId`: integer (FK -> projects.id)
+- `title`: varchar(255)
+- `slug`: varchar(255) (Unique)
+- `content`: text
+- `status`: varchar(50) ('draft', 'published')
+- `generatedAt`: timestamp
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
 
-    AUDIT_LOG {
-        serial id PK
-        varchar action
-        varchar entity
-        integer entityId
-        jsonb oldValues
-        jsonb newValues
-        timestamp createdAt
-    }
+#### `clients` (MF-4)
+Client portal management.
+- `id`: serial (PK)
+- `name`: varchar(255)
+- `email`: varchar(255) (Unique)
+- `company`: varchar(255)
+- `token`: varchar(255) (Unique)
+- `tokenHash`: varchar(255) (Unique)
+- `status`: varchar(50) ('active', 'inactive')
+- `createdAt`: timestamp
 
-    SITE_SETTINGS {
-        serial id PK
-        boolean isOpenToWork
-        timestamp updatedAt
-        varchar personalName
-        varchar personalTitle
-        text personalBio
-        varchar personalAvatar
-        varchar socialGithub
-        varchar socialLinkedin
-        varchar socialTwitter
-        varchar socialInstagram
-        varchar socialFacebook
-        varchar socialYoutube
-        varchar socialDiscord
-        varchar socialStackoverflow
-        varchar socialDevto
-        varchar socialMedium
-        varchar socialEmail
-        varchar heroGreeting
-        varchar heroBadgeText
-        jsonb heroTaglines
-        varchar heroCtaPrimary
-        varchar heroCtaPrimaryUrl
-        varchar heroCtaSecondary
-        varchar heroCtaSecondaryUrl
-        varchar colorBackground
-        varchar colorSurface
-        varchar colorPrimary
-        varchar colorSecondary
-        varchar colorAccent
-        varchar colorBorder
-        varchar colorText
-        varchar colorMuted
-        fontDisplay varchar
-        fontBody varchar
-        text customCss
-        jsonb navbarLinks
-        varchar footerCopyright
-        varchar footerTagline
-        jsonb sectionOrder
-        jsonb sectionVisibility
-        jsonb availabilitySlots
-        boolean featureBlog
-        boolean featureGuestbook
-        boolean featureTestimonials
-        boolean featureServices
-        boolean featurePlayground
-    }
-```
+#### `client_projects`
+Tracking projects per client.
+- `id`: serial (PK)
+- `clientId`: integer (FK -> clients.id)
+- `title`: varchar(255)
+- `status`: varchar(50)
+- `deadline`: timestamp
+- `notes`: text
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
+
+#### `client_feedback`
+Communication within the client portal.
+- `id`: serial (PK)
+- `clientProjectId`: integer (FK -> client_projects.id)
+- `clientId`: integer (FK -> clients.id)
+- `message`: text
+- `isAdmin`: boolean
+- `attachments`: jsonb (string[])
+- `createdAt`: timestamp
+
+#### `sketchpad_sessions` (MF-5)
+Creative whiteboard tool data.
+- `id`: serial (PK)
+- `title`: varchar(255)
+- `canvasData`: jsonb
+- `status`: varchar(50) ('active', 'archived')
+- `createdBy`: varchar(255)
+- `createdAt`: timestamp
+- `updatedAt`: timestamp
+
+#### `chat_conversations`
+History for the portfolio AI chatbot.
+- `id`: serial (PK)
+- `sessionId`: varchar(255)
+- `messages`: jsonb ({role: string, content: string}[])
+- `metadata`: jsonb
+- `createdAt`: timestamp
+
+#### `reading_list`
+Curated resources and recommendations.
+- `id`: serial (PK)
+- `title`: varchar(255)
+- `url`: varchar(500)
+- `note`: text
+- `type`: varchar(50) ('article', 'video', 'book', 'other')
+- `createdAt`: timestamp

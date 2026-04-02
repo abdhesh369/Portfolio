@@ -946,6 +946,7 @@ const siteSettingsBaseSchema = z.object({
   testimonialsHeading: z.string().max(255).nullish(),
   guestbookHeading: z.string().max(255).nullish(),
   contactHeading: z.string().max(255).nullish(),
+  blogHeading: z.string().max(255).nullish(),
 });
 
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({

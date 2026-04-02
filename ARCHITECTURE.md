@@ -6,7 +6,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              Frontend (React 19 + Vite 7)        │
+│              Frontend (React 19 + Vite 8)        │
 │  Netlify / Cloudflare Pages                      │
 │  ┌─────────┐ ┌───────────┐ ┌──────────────────┐ │
 │  │ wouter  │ │ TanStack  │ │ framer-motion    │ │
@@ -19,7 +19,7 @@
 └───────────────────┬─────────────────────────────┘
                     │ HTTPS (JSON)
 ┌───────────────────▼─────────────────────────────┐
-│              Backend (Express 4 + Node 20)       │
+│              Backend (Express 5 + Node 22)       │
 │  Render (Docker)                                 │
 │  ┌────────┐ ┌──────────┐ ┌────────────────────┐ │
 │  │ Routes │→│ Services │→│ Repositories       │ │
@@ -207,11 +207,14 @@ Client                          Server                          Redis
 
 ---
 
-## Database Schema (v7+)
-The following tables were added in v7 to support new features:
+## Database Schema (v8+)
+The following tables were added/updated in v8 to support new features:
 
 | Table | Purpose |
 |---|---|
+| `chat_conversations` | Persistent storage for AI assistant user history |
+| `reading_list` | Collection of curated articles and links |
+| `subscribers` | Newsletter and recruitment intake management |
 | `clients` | Client metadata and hashed access tokens |
 | `client_projects` | Projects assigned to specific clients |
 | `client_feedback` | Feedback messages submitted via the portal |
