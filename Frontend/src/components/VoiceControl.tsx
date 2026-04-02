@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { Mic, VolumeX } from "lucide-react";
 import { useToast } from "#src/hooks/use-toast";
@@ -12,19 +12,29 @@ export function VoiceControl() {
   const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
 
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
   const toggleListening = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setIsListening(true);
     
     // Simulate attempt but fail gracefully
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setIsListening(false);
       toast({
         title: "Voice Control Unavailable",
         description: "Voice navigation is disabled in this environment to maintain performance stability.",
         variant: "destructive"
       });
+      timeoutRef.current = null;
     }, 1500);
   };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   return (
     <div className="fixed bottom-48 left-6 z-[var(--z-dock)] flex flex-col items-start gap-3 pointer-events-none">
@@ -58,7 +68,7 @@ export function VoiceControl() {
         whileTap={{ scale: 0.95 }}
         onClick={toggleListening}
         className={cn(
-          "pointer-events-auto p-4 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl transition-all duration-500 group relative",
+          "pointer-events-auto p-4 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl transition-all duration-500 group relative focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           isListening && "border-destructive/50 ring-4 ring-destructive/10 bg-destructive/5"
         )}
         aria-label="Voice control (Disabled)"

@@ -60,7 +60,7 @@ export default function BackToTop() {
                         <Button
                             onClick={scrollToTop}
                             size="icon"
-                            className="w-12 h-12 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all group overflow-hidden"
+                            className="w-12 h-12 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                             aria-label="Back to Top"
                         >
                             <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" />

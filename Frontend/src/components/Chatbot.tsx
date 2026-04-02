@@ -194,7 +194,7 @@ export function Chatbot() {
                         animate={{ scale: 1, opacity: 1, rotate: 0 }}
                         exit={{ scale: 0, opacity: 0, rotate: 180 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed right-4 sm:right-6 w-14 h-14 group pointer-events-auto"
+                        className="fixed right-4 sm:right-6 w-14 h-14 group pointer-events-auto rounded-full focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-shadow"
                         style={{ 
                             bottom: `max(1rem, env(safe-area-inset-bottom))`,
                             zIndex: 9999
@@ -313,7 +313,7 @@ export function Chatbot() {
                                     animate={{ opacity: 1, x: 0 }}
                                     className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse text-right" : "flex-row text-left"}`}
                                 >
-                                    <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border font-mono text-[10px] font-bold ${msg.role === "user"
+                                    <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center border font-mono text-[10px] font-bold focus-visible:ring-2 focus-visible:ring-cyan-500 ${msg.role === "user"
                                         ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
                                         : "bg-purple-500/10 text-purple-400 border-purple-500/30"
                                         }`}>

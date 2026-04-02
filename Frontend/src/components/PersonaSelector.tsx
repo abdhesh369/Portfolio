@@ -38,7 +38,7 @@ export function PersonaSelector() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(true)}
                 className={cn(
-                    "fixed bottom-28 left-6 z-[var(--z-dock)] p-4 rounded-2xl glass-cyber group",
+                    "fixed bottom-28 left-6 z-[var(--z-dock)] p-4 rounded-2xl glass-cyber group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-shadow",
                     persona !== 'default' && "neon-border ring-4 ring-primary/10"
                 )}
             >
@@ -80,6 +80,7 @@ export function PersonaSelector() {
                             <button 
                                 onClick={() => setIsOpen(false)}
                                 className="absolute top-6 right-6 p-2 text-muted-foreground hover:text-white transition-colors"
+                                aria-label="Close persona selector"
                             >
                                 <X size={20} />
                             </button>
