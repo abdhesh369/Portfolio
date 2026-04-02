@@ -1,13 +1,13 @@
-ALTER TABLE "audit_log" ADD COLUMN "user_agent" varchar(500);--> statement-breakpoint
-ALTER TABLE "audit_log" ADD COLUMN "request_id" varchar(255);--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "retentionDate" timestamp;--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "expiresAt" timestamp;--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "deletedAt" timestamp;--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "consentStatus" varchar(50) DEFAULT 'pending';--> statement-breakpoint
-ALTER TABLE "messages" ADD COLUMN "consentGiven" boolean DEFAULT false;--> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "passwordHash" varchar(255);--> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "role" varchar(50) DEFAULT 'viewer';--> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "permissions" jsonb DEFAULT '[]'::jsonb;--> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "status" varchar(50) DEFAULT 'active';--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='user_agent') THEN ALTER TABLE "audit_log" ADD COLUMN "user_agent" varchar(500); END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='request_id') THEN ALTER TABLE "audit_log" ADD COLUMN "request_id" varchar(255); END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='retentionDate') THEN ALTER TABLE "messages" ADD COLUMN "retentionDate" timestamp; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='expiresAt') THEN ALTER TABLE "messages" ADD COLUMN "expiresAt" timestamp; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='deletedAt') THEN ALTER TABLE "messages" ADD COLUMN "deletedAt" timestamp; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='consentStatus') THEN ALTER TABLE "messages" ADD COLUMN "consentStatus" varchar(50) DEFAULT 'pending'; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='consentGiven') THEN ALTER TABLE "messages" ADD COLUMN "consentGiven" boolean DEFAULT false; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='passwordHash') THEN ALTER TABLE "users" ADD COLUMN "passwordHash" varchar(255); END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='role') THEN ALTER TABLE "users" ADD COLUMN "role" varchar(50) DEFAULT 'viewer'; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='permissions') THEN ALTER TABLE "users" ADD COLUMN "permissions" jsonb DEFAULT '[]'::jsonb; END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='status') THEN ALTER TABLE "users" ADD COLUMN "status" varchar(50) DEFAULT 'active'; END IF; END $$;--> statement-breakpoint
 UPDATE "articles" SET "authorId" = NULL WHERE "authorId" NOT IN (SELECT id FROM "public"."users");--> statement-breakpoint
-ALTER TABLE "articles" ADD CONSTRAINT "articles_authorId_users_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name='articles_authorId_users_id_fk') THEN ALTER TABLE "articles" ADD CONSTRAINT "articles_authorId_users_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action; END IF; END $$;
