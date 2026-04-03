@@ -10,6 +10,7 @@ import { experienceService } from "./services/experience.service.js";
 import { settingsService } from "./services/settings.service.js";
 import type { Project, InsertProject, InsertSiteSettings } from "@portfolio/shared";
 
+import seedData from "./seed-data.json" with { type: "json" };
 import { logger } from "./lib/logger.js";
 
 function logSeed(message: string, level: "info" | "error" | "warn" = "info") {
@@ -36,8 +37,6 @@ export async function seedDatabase() {
     }
 
     logSeed("Starting database seed...");
-
-    const seedData = (await import("./seed-data.json", { with: { type: "json" } })).default;
 
     const currentYear = new Date().getFullYear();
     const rawSiteSettings = seedData.siteSettings;

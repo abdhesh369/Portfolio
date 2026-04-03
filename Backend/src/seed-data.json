@@ -1,0 +1,548 @@
+{
+  "siteSettings": {
+    "personalName": "Your Name",
+    "personalTitle": "Full Stack Developer",
+    "personalBio": "Passionate about building amazing products",
+    "logoText": "Portfolio.Dev",
+    "personalPhone": null,
+    "heroHeadingLine1": "Start building",
+    "heroHeadingLine2": "The Future",
+    "heroTaglines": [
+      "Building amazing products",
+      "Solving complex problems"
+    ],
+    "socialEmail": null,
+    "socialGithub": null,
+    "socialLinkedin": null,
+    "footerTagline": "Building the future, one line of code at a time.",
+    "locationText": "Kathmandu, Nepal",
+    "isOpenToWork": true,
+    "availabilityStatus": null,
+    "personalAvatar": null,
+    "resumeUrl": null,
+    "whyHireMeData": null,
+    "aboutAvailability": "Open to Work",
+    "aboutDescription": "Building scalable web systems and analyzing complex algorithms.",
+    "aboutTechStack": [
+      "React",
+      "Node.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Tailwind"
+    ],
+    "aboutTimeline": [
+      {
+        "year": "2024 - Present",
+        "title": "Advanced System Design",
+        "description": "Deep diving into distributed systems, Docker, and Microservices architecture."
+      },
+      {
+        "year": "2023",
+        "title": "Engineering Core",
+        "description": "Mastering Data Structures, Algorithms, and OOP at Tribhuvan University."
+      },
+      {
+        "year": "2022",
+        "title": "Hello World",
+        "description": "Started the journey with Python scripting and basic web development."
+      }
+    ],
+    "aboutInfoCards": [
+      {
+        "icon": "GraduationCap",
+        "label": "Status",
+        "value": "B.E. Student"
+      },
+      {
+        "icon": "Code",
+        "label": "Focus Area",
+        "value": "Full Stack System Design",
+        "color": "purple"
+      },
+      {
+        "icon": "Cpu",
+        "label": "Hardware",
+        "value": "Electronics & Comms",
+        "color": "purple"
+      },
+      {
+        "icon": "Target",
+        "label": "Goal",
+        "value": "Software Engineer"
+      }
+    ],
+    "socialTwitter": null,
+    "socialInstagram": null,
+    "socialFacebook": null,
+    "socialYoutube": null,
+    "socialDiscord": null,
+    "socialStackoverflow": null,
+    "socialDevto": null,
+    "socialMedium": null,
+    "heroGreeting": "Hey, I am",
+    "heroBadgeText": "Available for work",
+    "heroCtaPrimary": "View My Work",
+    "heroCtaPrimaryUrl": "#projects",
+    "heroCtaSecondary": "Get In Touch",
+    "heroCtaSecondaryUrl": "#contact",
+    "navbarLinks": [],
+    "footerCopyright": "© 2024 Your Name. All rights reserved.",
+    "sectionOrder": [
+      "hero",
+      "about",
+      "skills",
+      "experience",
+      "contact",
+      "whyhireme",
+      "services",
+      "mindset",
+      "projects",
+      "practice",
+      "guestbook",
+      "testimonials"
+    ],
+    "sectionVisibility": {
+      "hero": true,
+      "about": true,
+      "skills": true,
+      "contact": true,
+      "mindset": true,
+      "practice": true,
+      "projects": true,
+      "services": true,
+      "guestbook": true,
+      "whyhireme": true,
+      "experience": true,
+      "testimonials": true
+    },
+    "availabilitySlots": [],
+    "featureBlog": true,
+    "featureGuestbook": true,
+    "featureTestimonials": true,
+    "featureServices": true,
+    "featurePlayground": false,
+    "chatbotGreeting": "Hi there! I'm Abdhesh's AI assistant. How can I help you today?",
+    "aboutHeading": "About Me",
+    "projectsHeading": "Flagship Projects",
+    "skillsHeading": "Technical Arsenal",
+    "whyHireMeHeading": "Why Hire Me",
+    "servicesHeading": "What I Do",
+    "mindsetHeading": "Engineering Mindset",
+    "practiceHeading": "Disciplined Practice",
+    "experienceHeading": "Professional Journey",
+    "testimonialsHeading": "Client Feedback",
+    "guestbookHeading": "Guestbook",
+    "contactHeading": "Get In Touch",
+    "id": 1,
+    "updatedAt": "2026-03-30T10:22:06.036Z"
+  },
+  "projects": [
+    {
+      "title": "Portfolio Website",
+      "slug": "portfolio-website",
+      "description": "Modern portfolio website built with React, TypeScript, and Express backend featuring a sci-fi themed UI with animated skill trees and glassmorphism effects.",
+      "techStack": [
+        "React",
+        "TypeScript",
+        "Express",
+        "PostgreSQL",
+        "TailwindCSS",
+        "Framer Motion",
+        "Drizzle ORM",
+        "Three.js"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+      "category": "Web",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": "https://example.com",
+      "problemStatement": "Needed a professional online presence to showcase projects and skills to potential employers and collaborators with a unique, memorable design.",
+      "motivation": "Create a modern, responsive portfolio that demonstrates full-stack development capabilities with cutting-edge UI/UX design principles.",
+      "systemDesign": "Full-stack application with React frontend using Framer Motion and Three.js for animations, Express REST API backend, PostgreSQL database with Drizzle ORM for type-safe queries, and custom sci-fi themed component library.",
+      "challenges": "Implementing complex animations like the 3D plexus and skill tree without performance issues, creating a cohesive sci-fi design language, and ensuring responsive design across all devices.",
+      "learnings": "Advanced animation techniques, full-stack development workflow, API design patterns, and the importance of consistent design systems."
+    },
+    {
+      "title": "AI Study Buddy",
+      "slug": "ai-study-buddy",
+      "description": "A Monolithic Flask application integrated with OpenRouter API (GPT-4o-mini) to provide AI-powered study assistance. Features a modern glassmorphic UI.",
+      "techStack": [
+        "Python",
+        "Flask",
+        "OpenRouter API",
+        "Jinja2",
+        "JavaScript",
+        "Glassmorphism",
+        "CSS3"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
+      "category": "Web",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": null,
+      "problemStatement": "Students often lack immediate access to tutoring or help when studying complex subjects, leading to frustration and slower learning.",
+      "motivation": "To leverage modern LLMs to provide a personal AI tutor that can answer questions and generate study materials in a visually appealing interface.",
+      "systemDesign": "Flask backend handling API requests to OpenRouter, using Jinja2 templates for dynamic content delivery. Frontend uses vanilla JavaScript for asynchronous communication and CSS for glassmorphism effects.",
+      "challenges": "Ensuring smooth API integration with error handling for rate limits or connectivity issues, and perfecting the glassmorphic UI without sacrificing readability.",
+      "learnings": "AI API integration, Flask web development, and advanced CSS styling techniques."
+    },
+    {
+      "title": "Assistant (Edith)",
+      "slug": "edith-assistant",
+      "description": "A modular Python-based desktop automation assistant with voice recognition and text-to-speech capabilities, designed to streamline daily tasks.",
+      "techStack": [
+        "Python",
+        "pyttsx3",
+        "SpeechRecognition",
+        "pyautogui",
+        "pywhatkit",
+        "psutil"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=800&auto=format&fit=crop",
+      "category": "System",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": null,
+      "problemStatement": "Interacting with computer systems manually for repetitive tasks like opening apps, searching YouTube, or taking notes can be inefficient.",
+      "motivation": "Created to experiment with desktop automation and voice-UI (VUI) to build a hands-free interactive layer for Windows.",
+      "systemDesign": "Modular architecture with dedicated command mapping for dispatcher efficiency. Uses pyttsx3 for offline TTS and Google Speech Recognition for STT. pyautogui handles hardware control.",
+      "challenges": "Improving the robustness of voice command detection and ensuring file-path automation (like video playback) works across different system environments.",
+      "learnings": "Automation scripting, speech processing, and modular software design in Python."
+    },
+    {
+      "title": "Finance Tracker",
+      "slug": "finance-tracker",
+      "description": "A secure personal finance management web application featuring user authentication and database persistence for transaction tracking.",
+      "techStack": [
+        "Flask",
+        "Flask-Login",
+        "SQLAlchemy",
+        "SQLite",
+        "Flask-Migrate",
+        "Flask-WTF",
+        "Python"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
+      "category": "Web",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": null,
+      "problemStatement": "Managing personal expenses and budgets manually is tedious and often results in lost data or lack of financial insight.",
+      "motivation": "Demonstrate secure development practices including password hashing, session management, and database migrations in a Flask environment.",
+      "systemDesign": "Application Factory pattern with Blueprints for authentication and main routes. Uses SQLAlchemy ORM for database abstraction and Flask-Login for session security.",
+      "challenges": "Implementing a clean authentication flow and setting up scalable database migrations for future feature expansions.",
+      "learnings": "Web security fundamentals, database design, and the Flask application factory pattern."
+    },
+    {
+      "title": "Calculator Application",
+      "slug": "calculator-app",
+      "description": "A polished scientific calculator featuring a detailed dark-theme UI with ripple effects and comprehensive keyboard support.",
+      "techStack": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "Vanilla JS",
+        "Regex"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=800&auto=format&fit=crop",
+      "category": "Utility",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": null,
+      "problemStatement": "Most basic web calculators lack a premium feel and do not support keyboard navigation, making them less efficient for power users.",
+      "motivation": "To create a highly interactive and visually stunning utility tool that prioritizes user experience through micro-animations and responsive logic.",
+      "systemDesign": "Event-driven architecture using vanilla JS. Implements custom ripple animations via dynamic DOM manipulation and uses regex for real-time number formatting.",
+      "challenges": "Perfecting the CSS Grid layout for all screen sizes and implementing error-free keyboard event listeners for all math operations.",
+      "learnings": "Advanced DOM manipulation, event handling, and polished UI design using modern CSS."
+    },
+    {
+      "title": "Flappy Bird",
+      "slug": "flappy-bird",
+      "description": "A Python-based desktop game prototype using Pygame, demonstrating game loop fundamentals and collision detection concepts.",
+      "techStack": [
+        "Python",
+        "Pygame"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
+      "category": "Academic",
+      "status": "Completed",
+      "githubUrl": "https://github.com/username/project",
+      "liveUrl": null,
+      "problemStatement": "Understanding the complexities of game physics and state management can be difficult for beginners.",
+      "motivation": "Built as a skeleton project to explore the Pygame engine and set the foundation for more complex game development projects.",
+      "systemDesign": "Implements a standard game loop (Process Inputs -> Update State -> Render). Features a 1000x1000 game window with basic event polling.",
+      "challenges": "Setting up a stable frame-rate and preparing the architectural hooks for bird physics and pipe generation.",
+      "learnings": "Game development basics, 2D rendering, and event-driven programming."
+    }
+  ],
+  "skills": [
+    {
+      "name": "C",
+      "category": "Foundations",
+      "icon": "Terminal",
+      "status": "Core",
+      "x": 20,
+      "y": 20,
+      "description": "System programming language",
+      "proof": "Academic coursework"
+    },
+    {
+      "name": "C++",
+      "category": "Foundations",
+      "icon": "Code2",
+      "status": "Core",
+      "x": 50,
+      "y": 18,
+      "description": "Object-oriented programming",
+      "proof": "Academic coursework"
+    },
+    {
+      "name": "Python",
+      "category": "Foundations",
+      "icon": "Terminal",
+      "status": "Core",
+      "x": 80,
+      "y": 20,
+      "description": "General-purpose language",
+      "proof": "Project Edith, AI Study Buddy"
+    },
+    {
+      "name": "HTML",
+      "category": "Frontend",
+      "icon": "Globe",
+      "status": "Core",
+      "x": 30,
+      "y": 45,
+      "description": "Web structure",
+      "proof": "All web projects"
+    },
+    {
+      "name": "CSS",
+      "category": "Frontend",
+      "icon": "Layers",
+      "status": "Core",
+      "x": 50,
+      "y": 45,
+      "description": "Web styling",
+      "proof": "All web projects"
+    },
+    {
+      "name": "JavaScript",
+      "category": "Frontend",
+      "icon": "Zap",
+      "status": "Core",
+      "x": 70,
+      "y": 45,
+      "description": "Web scripting",
+      "proof": "All web projects"
+    },
+    {
+      "name": "React",
+      "category": "Frontend",
+      "icon": "Code2",
+      "status": "Core",
+      "x": 70,
+      "y": 60,
+      "description": "Frontend library",
+      "proof": "Portfolio Website"
+    },
+    {
+      "name": "Node.js",
+      "category": "Backend",
+      "icon": "Server",
+      "status": "Advanced",
+      "x": 40,
+      "y": 70,
+      "description": "Server-side runtime",
+      "proof": "Portfolio Backend"
+    },
+    {
+      "name": "Express",
+      "category": "Backend",
+      "icon": "Terminal",
+      "status": "Advanced",
+      "x": 60,
+      "y": 70,
+      "description": "Web framework",
+      "proof": "Portfolio Backend"
+    },
+    {
+      "name": "PostgreSQL",
+      "category": "Backend",
+      "icon": "Database",
+      "status": "Advanced",
+      "x": 50,
+      "y": 85,
+      "description": "Relational database",
+      "proof": "Portfolio Backend"
+    },
+    {
+      "name": "Git",
+      "category": "Tools",
+      "icon": "GitBranch",
+      "status": "Core",
+      "x": 15,
+      "y": 60,
+      "description": "Version control",
+      "proof": "All projects"
+    },
+    {
+      "name": "GitHub",
+      "category": "Tools",
+      "icon": "GitBranch",
+      "status": "Core",
+      "x": 30,
+      "y": 70,
+      "description": "Code hosting",
+      "proof": "All projects"
+    },
+    {
+      "name": "TypeScript",
+      "category": "Languages",
+      "icon": "Code",
+      "status": "Advanced",
+      "x": 50,
+      "y": 50,
+      "description": "Advanced TS usage",
+      "proof": "Project experience",
+      "mastery": 90,
+      "endorsements": 0
+    },
+    {
+      "name": "hhhh",
+      "category": "jhhh",
+      "status": "Core",
+      "icon": "Code",
+      "description": "nnnnnnnnnnnnn",
+      "proof": "bbbbbbbbbbbbbbbb",
+      "mastery": 51,
+      "x": 50,
+      "y": 50,
+      "endorsements": 0
+    },
+    {
+      "name": "dddddddddddd",
+      "category": "dddddddddd",
+      "status": "Core",
+      "icon": "Code",
+      "description": "ddddddddddddddddd",
+      "proof": "",
+      "mastery": 50,
+      "x": 50,
+      "y": 50,
+      "endorsements": 0
+    }
+  ],
+  "mindsets": [
+    {
+      "title": "Occam's Razor",
+      "description": "The simplest explanation is usually the best. Applied to code: avoid over-engineering and keep solutions as simple as possible.",
+      "icon": "Brain",
+      "tags": [
+        "Architecture",
+        "Simplicity"
+      ]
+    },
+    {
+      "title": "The DRY Principle",
+      "description": "Don't Repeat Yourself. Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.",
+      "icon": "Zap",
+      "tags": [
+        "Refactoring",
+        "Efficiency"
+      ]
+    },
+    {
+      "title": "Growth Mindset",
+      "description": "Viewing challenges as opportunities to learn rather than obstacles. Documentation and failures are just data points for improvement.",
+      "icon": "Cpu",
+      "tags": [
+        "Learning",
+        "Resilience"
+      ]
+    },
+    {
+      "title": "The KISS Principle",
+      "description": "Keep It Simple, Stupid. Complexity is a cost. I strive to write code that is easy to read, easy to test, and easy for the next developer to maintain.",
+      "icon": "Zap",
+      "tags": [
+        "Maintainability",
+        "Clean Code",
+        "Design"
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "role": "Bachelor of Engineering Student",
+      "organization": "Tribhuvan University",
+      "period": "2024 – 2028",
+      "startDate": "2024-01-01",
+      "description": "Pursuing B.E. in Electronics & Communication Engineering. Relevant coursework: Data Structures, Computer Programming, Digital Electronics, Microprocessors, and Engineering Mathematics.",
+      "type": "Education"
+    },
+    {
+      "role": "Self-Taught Developer",
+      "organization": "Personal Projects",
+      "period": "2023 – Present",
+      "startDate": "2023-01-01",
+      "description": "Building web applications and automation tools. Learning modern web technologies including React, TypeScript, and Node.js through hands-on projects.",
+      "type": "Experience"
+    },
+    {
+      "role": "Software Engineer",
+      "organization": "Tech Corp",
+      "period": "2020 - Present",
+      "startDate": "2026-03-20T05:36:23.192Z",
+      "endDate": null,
+      "description": "Built amazing things",
+      "type": "Experience"
+    }
+  ],
+  "emailTemplates": [
+    {
+      "name": "General Inquiry Reply",
+      "subject": "Re: Inquiry regarding my portfolio",
+      "body": "Hello {name},\n\nThank you for reaching out! I've received your message and will get back to you shortly.\n\nBest regards,\n{personalName}"
+    },
+    {
+      "name": "Project Collaboration",
+      "subject": "Re: Collaboration opportunity",
+      "body": "Hi {name},\n\nThanks for your interest in collaborating. I've reviewed your message and I'm very interested in hearing more about the project.\n\nLet's schedule a call to discuss further.\n\nBest,\n{personalName}"
+    }
+  ],
+  "seoSettings": [
+    {
+      "pageSlug": "home",
+      "metaTitle": "Portfolio Owner | Full-Stack Engineer",
+      "metaDescription": "Portfolio showcasing projects and skills in React, Node.js, and modern web technologies.",
+      "keywords": "Portfolio, Full-Stack Engineer, React, Node.js, Web Development",
+      "noindex": false,
+      "twitterCard": "summary_large_image"
+    },
+    {
+      "pageSlug": "projects",
+      "metaTitle": "Projects | Developer Portfolio",
+      "metaDescription": "Explore the projects built by Your Name, showcasing skills in full-stack development, AI, and automation.",
+      "keywords": "Projects, Web Development, Case Studies, Portfolio Work",
+      "noindex": false,
+      "twitterCard": "summary_large_image"
+    },
+    {
+      "pageSlug": "about",
+      "metaTitle": "About Me | Developer Portfolio",
+      "metaDescription": "Learn more about Your Name, his background, education, and journey as a self-taught developer.",
+      "keywords": "About Your Name, Biography, Developer Journey, Skills",
+      "noindex": false,
+      "twitterCard": "summary_large_image"
+    },
+    {
+      "pageSlug": "contact",
+      "metaTitle": "Contact | Developer Portfolio",
+      "metaDescription": "Get in touch with Your Name for collaborations, freelance work, or just to say hi.",
+      "keywords": "Contact, Hire Developer, Freelance, Collaboration",
+      "noindex": false,
+      "twitterCard": "summary_large_image"
+    }
+  ]
+}
