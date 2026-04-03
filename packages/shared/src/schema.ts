@@ -908,18 +908,18 @@ const siteSettingsBaseSchema = z.object({
   }).nullable().optional(),
   aboutAvailability: z.string().max(255).nullish(),
   aboutDescription: z.string().max(10000).nullish(),
-  aboutTechStack: z.array(z.string()).nullish(),
+  aboutTechStack: z.array(z.string()).optional(),
   aboutTimeline: z.array(z.object({
     year: z.string(),
     title: z.string(),
     description: z.string()
-  })).nullish(),
+  })).optional(),
   aboutInfoCards: z.array(z.object({
     icon: z.string(),
     label: z.string(),
     value: z.string(),
     color: z.enum(["cyan", "purple"]).optional()
-  })).nullish(),
+  })).optional(),
 
   // Social Links (10 platforms)
   socialGithub: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
@@ -939,7 +939,7 @@ const siteSettingsBaseSchema = z.object({
   // Hero Section
   heroGreeting: z.string().max(255).nullish(),
   heroBadgeText: z.string().max(255).nullish(),
-  heroTaglines: z.array(z.string()).nullish(),
+  heroTaglines: z.array(z.string()).optional(),
 
   // Branding & Hero (Untangled)
   logoText: z.string().max(255).nullish(),
@@ -959,14 +959,14 @@ const siteSettingsBaseSchema = z.object({
     label: z.string(),
     href: z.string(),
     icon: z.string().optional(),
-  })).nullish(),
+  })).optional(),
 
   // Footer Configuration
   footerCopyright: z.string().max(255).nullish(),
   footerTagline: z.string().max(500).nullish(),
 
   // Section Ordering & Visibility
-  sectionOrder: z.array(z.string()).nullish(),
+  sectionOrder: z.array(z.string()).optional(),
   sectionVisibility: z.record(z.boolean()).nullish(),
 
   // Availability
@@ -976,7 +976,7 @@ const siteSettingsBaseSchema = z.object({
     endDate: z.string(),
     status: z.enum(["available", "booked", "unavailable"]),
     label: z.string().optional(),
-  })).nullish(),
+  })).optional(),
 
   // Feature Toggles
   featureBlog: z.boolean().optional(),
@@ -1001,12 +1001,12 @@ const siteSettingsBaseSchema = z.object({
   guestbookHeading: z.string().max(255).nullish(),
   contactHeading: z.string().max(255).nullish(),
   blogHeading: z.string().max(255).nullish(),
-}).passthrough();
+});
 
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({
   id: z.number(),
   updatedAt: z.coerce.date(),
-}).passthrough();
+}).strict();
 
 export const insertSiteSettingsApiSchema = siteSettingsBaseSchema.partial();
 
