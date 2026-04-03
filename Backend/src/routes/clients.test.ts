@@ -31,6 +31,7 @@ vi.mock("../middleware/csrf.js", () => ({ csrfProtection: (_req: unknown, _res: 
 vi.mock("../middleware/validate.js", () => ({ validateBody: () => (_req: unknown, _res: unknown, next: (err?: any) => void) => next() }));
 vi.mock("../auth.js", () => ({
     isAuthenticated: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
+    isAdmin: vi.fn((_req: unknown, _res: unknown, next: (err?: any) => void) => next()),
     asyncHandler: (fn: any) => fn,
 }));
 vi.mock("../lib/rate-limit.js", () => ({
