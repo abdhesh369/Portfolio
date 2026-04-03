@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { env } from "./env.js";
+import { logger } from "./lib/logger.js";
 
 const PROFILING_SUPPORTED_NODE_MAJORS = new Set([16, 18, 20, 22, 24]);
 const isProfilingEnabled = process.env.SENTRY_PROFILING_ENABLED === "true";
@@ -12,8 +13,9 @@ async function getSentryIntegrations() {
     const nodeMajor = Number.parseInt(process.versions.node.split(".")[0] ?? "", 10);
 
     if (!PROFILING_SUPPORTED_NODE_MAJORS.has(nodeMajor)) {
-        console.warn(
-            `[Sentry Profiling] SENTRY_PROFILING_ENABLED=true but Node ${process.versions.node} is not in the supported majors: ${Array.from(PROFILING_SUPPORTED_NODE_MAJORS).join(", ")}`
+        logger.warn(
+            { context: "sentry-profiling" },
+            `SENTRY_PROFILING_ENABLED=true but Node ${process.versions.node} is not in the supported majors: ${Array.from(PROFILING_SUPPORTED_NODE_MAJORS).join(", ")}`
         );
         return [];
     }
@@ -23,7 +25,7 @@ async function getSentryIntegrations() {
         return [nodeProfilingIntegration()];
     } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
-        console.warn(`[Sentry Profiling] Profiling integration unavailable: ${reason}`);
+        logger.warn({ context: "sentry-profiling", error }, `Profiling integration unavailable: ${reason}`);
         return [];
     }
 }

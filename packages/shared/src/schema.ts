@@ -889,12 +889,13 @@ export const insertSubscriberApiSchema = z.object({
 // Common fields for Site Settings to avoid duplication
 const siteSettingsBaseSchema = z.object({
   isOpenToWork: z.boolean(),
-  availabilityStatus: z.string().max(255).nullable().optional(),
+  availabilityStatus: z.string().max(255).nullish().or(z.literal("").transform(() => null)),
+  singletonGuard: z.number().nullish(),
 
   // Personal Branding
-  personalName: z.string().max(255).optional(),
-  personalTitle: z.string().max(255).optional(),
-  personalBio: z.string().max(5000).optional(),
+  personalName: z.string().max(255).nullish(),
+  personalTitle: z.string().max(255).nullish(),
+  personalBio: z.string().max(5000).nullish(),
   personalAvatar: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
   resumeUrl: z.string().max(500).nullable().optional().or(z.literal("").transform(() => null)),
   whyHireMeData: z.object({
@@ -905,20 +906,20 @@ const siteSettingsBaseSchema = z.object({
       value: z.string()
     }))
   }).nullable().optional(),
-  aboutAvailability: z.string().max(255).optional(),
-  aboutDescription: z.string().max(10000).optional(),
-  aboutTechStack: z.array(z.string()).optional(),
+  aboutAvailability: z.string().max(255).nullish(),
+  aboutDescription: z.string().max(10000).nullish(),
+  aboutTechStack: z.array(z.string()).nullish(),
   aboutTimeline: z.array(z.object({
     year: z.string(),
     title: z.string(),
     description: z.string()
-  })).optional(),
+  })).nullish(),
   aboutInfoCards: z.array(z.object({
     icon: z.string(),
     label: z.string(),
     value: z.string(),
     color: z.enum(["cyan", "purple"]).optional()
-  })).optional(),
+  })).nullish(),
 
   // Social Links (10 platforms)
   socialGithub: z.string().url().max(500).nullable().optional().or(z.literal("").transform(() => null)),
@@ -936,20 +937,20 @@ const siteSettingsBaseSchema = z.object({
   locationText: z.string().max(255).nullable().optional(),
 
   // Hero Section
-  heroGreeting: z.string().max(255).optional(),
-  heroBadgeText: z.string().max(255).optional(),
-  heroTaglines: z.array(z.string()).optional(),
+  heroGreeting: z.string().max(255).nullish(),
+  heroBadgeText: z.string().max(255).nullish(),
+  heroTaglines: z.array(z.string()).nullish(),
 
   // Branding & Hero (Untangled)
-  logoText: z.string().max(255).optional(),
-  heroHeadingLine1: z.string().max(255).optional(),
-  heroHeadingLine2: z.string().max(255).optional(),
+  logoText: z.string().max(255).nullish(),
+  heroHeadingLine1: z.string().max(255).nullish(),
+  heroHeadingLine2: z.string().max(255).nullish(),
 
   // Hero CTAs
-  heroCtaPrimary: z.string().max(255).optional(),
-  heroCtaPrimaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
-  heroCtaSecondary: z.string().max(255).optional(),
-  heroCtaSecondaryUrl: z.string().max(500).optional().refine(isValidUrl, { message: "Invalid URL or path" }),
+  heroCtaPrimary: z.string().max(255).nullish(),
+  heroCtaPrimaryUrl: z.string().max(500).nullish().refine(isValidUrl, { message: "Invalid URL or path" }),
+  heroCtaSecondary: z.string().max(255).nullish(),
+  heroCtaSecondaryUrl: z.string().max(500).nullish().refine(isValidUrl, { message: "Invalid URL or path" }),
 
   // Appearance & Typography (Removed - Now controlled via index.css)
 
@@ -1000,12 +1001,12 @@ const siteSettingsBaseSchema = z.object({
   guestbookHeading: z.string().max(255).nullish(),
   contactHeading: z.string().max(255).nullish(),
   blogHeading: z.string().max(255).nullish(),
-});
+}).passthrough();
 
 export const siteSettingsSchema = siteSettingsBaseSchema.extend({
   id: z.number(),
   updatedAt: z.coerce.date(),
-}).strict();
+}).passthrough();
 
 export const insertSiteSettingsApiSchema = siteSettingsBaseSchema.partial();
 

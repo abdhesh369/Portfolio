@@ -284,6 +284,9 @@ router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
     res.clearCookie("refresh_token", getCookieOptions(isProd, 0));
     res.clearCookie("csrf_token", { ...getCookieOptions(isProd, 0), httpOnly: false });
 
+    logger.info({ context: "auth", ip: req.ip }, "User logged out");
+    recordAudit("LOGOUT", "auth", undefined, null, { ip: req.ip });
+
     res.json({
         success: true,
         message: "Logged out successfully"

@@ -6,7 +6,7 @@
   "scripts": {
     "env:validate": "node scripts/validate-env.js",
     "predev": "npm run env:validate",
-    "dev": "tsx --watch src/index.ts",
+    "dev": "tsx --watch --import ./src/instrument.ts src/index.ts",
     "lint": "eslint src --ext .ts --max-warnings 0",
     "type-check": "tsc --noEmit",
     "build": "(node -e \"import('vite').catch(() => process.exit(0))\" || npm install --no-save @rolldown/binding-linux-x64-gnu lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu) && npm run build --prefix .. -w @portfolio/shared && tsc --project tsconfig.json",

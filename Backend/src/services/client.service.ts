@@ -1,6 +1,7 @@
 import { clientRepository } from "../repositories/client.repository.js";
 import type { Client, ClientProject, ClientFeedback } from "@portfolio/shared";
 import { emailService } from "./email.service.js";
+import { logger } from "../lib/logger.js";
 
 export class ClientService {
     async getAllClients(): Promise<Client[]> {
@@ -26,7 +27,7 @@ export class ClientService {
                 rawToken: client.rawToken
             });
         } catch (err) {
-            console.error("Failed to send client portal invite:", err);
+            logger.error({ context: "client-service", error: err }, "Failed to send client portal invite");
         }
         
         return client;
@@ -50,7 +51,7 @@ export class ClientService {
                 });
             }
         } catch (err) {
-            console.error("Failed to send client portal token regeneration notice:", err);
+            logger.error({ context: "client-service", error: err }, "Failed to send client portal token regeneration notice");
         }
         
         return rawToken;
@@ -86,7 +87,7 @@ export class ClientService {
                     });
                 }
             } catch (err) {
-                console.error("Failed to send project status update alert:", err);
+                logger.error({ context: "client-service", error: err }, "Failed to send project status update alert");
             }
         }
         
@@ -118,7 +119,7 @@ export class ClientService {
                     });
                 }
             } catch (err) {
-                console.error("Failed to send admin feedback alert:", err);
+                logger.error({ context: "client-service", error: err }, "Failed to send admin feedback alert");
             }
         }
         
