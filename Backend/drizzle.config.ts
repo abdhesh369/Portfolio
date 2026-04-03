@@ -5,7 +5,7 @@ const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env";
 dotenv.config({ path: envFile, override: true });
 
 export default defineConfig({
-  schema: "./drizzle/schema.ts",
+  schema: "../packages/shared/src/schema.ts",
   out: "./drizzle/migrations",
   dialect: "postgresql",
   dbCredentials: {
