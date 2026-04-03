@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { guestbookService } from "../services/guestbook.service.js";
 import { asyncHandler } from "../lib/async-handler.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, isAdmin } from "../auth.js";
 import { parseIntParam } from "../lib/params.js";
 import { validateBody } from "../middleware/validate.js";
 import { guestbookLimiter } from "../lib/rate-limit.js";
@@ -30,13 +30,13 @@ guestbookRoutes.post("/", guestbookLimiter, validateBody(insertGuestbookApiSchem
 // --- Admin Routes ---
 
 // GET /guestbook/admin - Fetch all entries (unfiltered)
-guestbookRoutes.get("/admin", isAuthenticated, asyncHandler(async (_req: Request, res: Response) => {
+guestbookRoutes.get("/admin", isAuthenticated, isAdmin, asyncHandler(async (_req: Request, res: Response) => {
     const entries = await guestbookService.getMessages(false);
     res.json(entries);
 }));
 
 // PATCH /guestbook/:id/approve - Approve an entry
-guestbookRoutes.patch("/:id/approve", isAuthenticated, asyncHandler(async (req, res) => {
+guestbookRoutes.patch("/:id/approve", isAuthenticated, isAdmin, asyncHandler(async (req, res) => {
     const id = parseIntParam(res, req.params.id, "guestbook entry ID");
     if (id === null) return;
     const entry = await guestbookService.approveMessage(id);
@@ -74,7 +74,7 @@ guestbookRoutes.post("/:id/react", guestbookLimiter, asyncHandler(async (req, re
 }));
 
 // DELETE /guestbook/:id - Delete an entry
-guestbookRoutes.delete("/:id", isAuthenticated, asyncHandler(async (req, res) => {
+guestbookRoutes.delete("/:id", isAuthenticated, isAdmin, asyncHandler(async (req, res) => {
     const id = parseIntParam(res, req.params.id, "guestbook entry ID");
     if (id === null) return;
     await guestbookService.deleteMessage(id);

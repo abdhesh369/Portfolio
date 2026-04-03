@@ -4,6 +4,8 @@ import { eq, desc, sql } from "drizzle-orm";
 import { logger } from "../lib/logger.js";
 import { CacheService } from "../lib/cache.js";
 
+import DOMPurify from "isomorphic-dompurify";
+
 const FEATURE = "guestbook";
 const LIST_NAMESPACE = "list";
 const CACHE_TTL = 3600;
@@ -27,11 +29,27 @@ export class GuestbookService {
 
     async addMessage(data: { name: string; content: string; email?: string }) {
         try {
+            // XSS Prevention: Sanitize user input before database insertion
+            const sanitizedName = DOMPurify.sanitize(data.name.trim());
+            const sanitizedContent = DOMPurify.sanitize(data.content.trim());
+
+            if (!sanitizedName) {
+                const error = new Error("Name was stripped empty by sanitization or was empty") as Error & { status?: number };
+                error.status = 400;
+                throw error;
+            }
+
+            if (!sanitizedContent) {
+                const error = new Error("Message content was stripped empty by sanitization or was empty") as Error & { status?: number };
+                error.status = 400;
+                throw error;
+            }
+
             const [newMessage] = await db.insert(guestbookTable)
                 .values({
-                    name: data.name,
-                    content: data.content,
-                    email: data.email,
+                    name: sanitizedName,
+                    content: sanitizedContent,
+                    email: data.email?.trim(),
                     isApproved: false, // Auto-moderate: needs approval
                 })
                 .returning();
@@ -78,8 +96,14 @@ export class GuestbookService {
                         (coalesce(reactions->>${emoji}, '0')::int + 1)::text::jsonb
                     )`
                 })
-                .where(eq(guestbookTable.id, id))
+                .where(sql`${guestbookTable.id} = ${id} AND ${guestbookTable.isApproved} = true`)
                 .returning();
+
+            if (!updated) {
+                const error = new Error("Approved guestbook entry not found") as Error & { status?: number };
+                error.status = 404;
+                throw error;
+            }
 
             try {
                 await this.invalidateCache();

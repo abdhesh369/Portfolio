@@ -1,5 +1,6 @@
 import { logger } from "../lib/logger.js";
 import { redis } from "../lib/redis.js";
+import { validateSafeUrl } from "../lib/url-validator.js";
 
 export type HealthStatus = "up" | "down" | "checking" | "none";
 
@@ -8,6 +9,14 @@ class VitalsService {
 
   async getHealthStatus(url: string | null | undefined): Promise<HealthStatus> {
     if (!url || url === "#") return "none";
+
+    // SSRF Prevention: Validate URL for project health checks
+    try {
+        await validateSafeUrl(url);
+    } catch (err) {
+        logger.warn({ url, err: err instanceof Error ? err.message : err }, "Health check blocked: SSRF attempt or invalid URL");
+        return "down";
+    }
 
     const cacheKey = `vitals:status:${url}`;
     
@@ -33,7 +42,7 @@ class VitalsService {
       });
       
       clearTimeout(timeoutId);
-
+      
       const status: HealthStatus = response.ok ? "up" : "down";
 
       // 3. Cache Result

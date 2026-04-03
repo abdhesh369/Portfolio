@@ -3,7 +3,7 @@ import { z } from "zod";
 import { projectService } from "../services/project.service.js";
 import { vitalsService } from "../services/vitals.service.js";
 import { insertProjectApiSchema } from "@portfolio/shared";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, isAdmin } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { parseIntParam } from "../lib/params.js";
 
@@ -44,6 +44,7 @@ export function registerProjectRoutes(app: Router) {
   app.post(
     "/projects",
     isAuthenticated,
+    isAdmin,
     validateBody(insertProjectApiSchema),
     asyncHandler(async (req, res) => {
       const project = await projectService.create(req.body);
@@ -60,6 +61,7 @@ export function registerProjectRoutes(app: Router) {
   app.put(
     "/projects/reorder",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
       const schema = z.object({ orderedIds: z.array(z.number()) });
       const { orderedIds } = schema.parse(req.body);
@@ -73,6 +75,7 @@ export function registerProjectRoutes(app: Router) {
   app.post(
     "/projects/:id/summary",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
       const id = parseIntParam(res, req.params.id, "project ID");
             if (id === null) return;
@@ -86,6 +89,7 @@ export function registerProjectRoutes(app: Router) {
   app.post(
     "/projects/bulk-delete",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
       const schema = z.object({ ids: z.array(z.number()) });
       const { ids } = schema.parse(req.body);
@@ -99,6 +103,7 @@ export function registerProjectRoutes(app: Router) {
   app.post(
     "/projects/bulk-status",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
       const schema = z.object({
         ids: z.array(z.number()),
@@ -128,7 +133,7 @@ export function registerProjectRoutes(app: Router) {
       res.json(project);
 
       // Fire-and-forget IP-based deduplication for view counts (1 hour)
-      const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+      const ip = req.ip || 'unknown';
       const viewKey = `view:project:${project.id}:ip:${ip}`;
 
       const r = redis;
@@ -158,6 +163,7 @@ export function registerProjectRoutes(app: Router) {
   app.put(
     "/projects/:id",
     isAuthenticated,
+    isAdmin,
     validateBody(insertProjectApiSchema.partial()),
     asyncHandler(async (req: Request, res: Response) => {
       const id = parseIntParam(res, req.params.id, "project ID");
@@ -177,6 +183,7 @@ export function registerProjectRoutes(app: Router) {
   app.delete(
     "/projects/:id",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req: Request, res: Response) => {
       const id = parseIntParam(res, req.params.id, "project ID");
             if (id === null) return;

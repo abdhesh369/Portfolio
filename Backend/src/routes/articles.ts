@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { insertArticleApiSchema, updateArticleApiSchema, type Article } from "@portfolio/shared";
-import { isAuthenticated, checkAuthStatus } from "../auth.js";
+import { isAuthenticated, isAdmin, checkAuthStatus } from "../auth.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { parseIntParam } from "../lib/params.js";
 import { z } from "zod";
@@ -76,7 +76,20 @@ articlesRouter.get(
         res.json({ ...article, relatedArticles });
 
         if (!isAdmin) {
-            const ip = req.ip || req.socket.remoteAddress || 'unknown';
+            let ip = req.ip;
+            
+            // If IP is missing, generate a more unique fingerprint from headers
+            if (!ip || ip === 'unknown') {
+                const userAgent = req.headers['user-agent'] || 'unknown-ua';
+                const xff = req.headers['x-forwarded-for'] || 'no-xff';
+                // Use a coarse timestamp (hourly) to balance uniqueness and cache utility
+                const hourlyBucket = Math.floor(Date.now() / 3600000);
+                const fingerprintRaw = `${userAgent}-${xff}-${hourlyBucket}`;
+                
+                const { createHash } = await import("crypto");
+                ip = `fp_${createHash("sha256").update(fingerprintRaw).digest("hex").substring(0, 16)}`;
+            }
+
             const viewKey = `article_view:${article.id}:${ip}`;
 
             // Fire-and-forget: don't await, don't block response
@@ -103,6 +116,7 @@ articlesRouter.get(
 articlesRouter.post(
     "/",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
         const data = insertArticleApiSchema.parse(req.body);
         if (data.content && (!data.readTimeMinutes || data.readTimeMinutes === 0)) {
@@ -122,6 +136,7 @@ articlesRouter.post(
 articlesRouter.post(
     "/bulk-delete",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
         const { ids } = z.object({ ids: z.array(z.number()) }).parse(req.body);
         await articleService.bulkDelete(ids);
@@ -134,6 +149,7 @@ articlesRouter.post(
 articlesRouter.patch(
     "/:id",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
         const id = parseIntParam(res, req.params.id, "article ID");
         if (id === null) return;
@@ -155,6 +171,7 @@ articlesRouter.patch(
 articlesRouter.delete(
     "/:id",
     isAuthenticated,
+    isAdmin,
     asyncHandler(async (req, res) => {
         const id = parseIntParam(res, req.params.id, "article ID");
         if (id === null) return;

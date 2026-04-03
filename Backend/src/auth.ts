@@ -250,4 +250,23 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
     res.status(401).json({ message: "Unauthorized. Please provide a valid token." });
 };
 
+/**
+ * Middleware to strictly enforce admin role.
+ * MUST be used after isAuthenticated.
+ */
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || req.user.role !== "admin") {
+        logger.warn({ 
+            context: "auth", 
+            path: req.path, 
+            user: req.user?.role || "anonymous" 
+        }, "Unauthorized access attempt to admin resource");
+        
+        return res.status(403).json({ 
+            message: "Forbidden: You do not have permission to access this resource." 
+        });
+    }
+    next();
+};
+
 

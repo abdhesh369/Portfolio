@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { clientService } from "../services/client.service.js";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, isAdmin } from "../auth.js";
 import { parseIntParam } from "../lib/params.js";
 import { asyncHandler } from "../lib/async-handler.js";
 import { recordAudit } from "../lib/audit.js";
@@ -15,6 +15,7 @@ export function registerClientRoutes(app: Router) {
     app.get(
         "/admin/clients",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (_req: Request, res: Response) => {
             const clients = await clientService.getAllClients();
             res.json(clients);
@@ -25,6 +26,7 @@ export function registerClientRoutes(app: Router) {
     app.post(
         "/admin/clients",
         isAuthenticated,
+        isAdmin,
         validateBody(insertClientApiSchema),
         asyncHandler(async (req: Request, res: Response) => {
             const result = await clientService.createClient(req.body);
@@ -37,6 +39,7 @@ export function registerClientRoutes(app: Router) {
     app.put(
         "/admin/clients/:id",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -50,6 +53,7 @@ export function registerClientRoutes(app: Router) {
     app.post(
         "/admin/clients/:id/regenerate-token",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -63,6 +67,7 @@ export function registerClientRoutes(app: Router) {
     app.delete(
         "/admin/clients/:id",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -76,6 +81,7 @@ export function registerClientRoutes(app: Router) {
     app.post(
         "/admin/client-projects",
         isAuthenticated,
+        isAdmin,
         validateBody(insertClientProjectApiSchema),
         asyncHandler(async (req: Request, res: Response) => {
             const project = await clientService.createClientProject(req.body);
@@ -88,6 +94,7 @@ export function registerClientRoutes(app: Router) {
     app.put(
         "/admin/client-projects/:id",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -101,6 +108,7 @@ export function registerClientRoutes(app: Router) {
     app.get(
         "/admin/clients/:id/projects",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -113,6 +121,7 @@ export function registerClientRoutes(app: Router) {
     app.get(
         "/admin/client-projects/:id/feedback",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -125,6 +134,7 @@ export function registerClientRoutes(app: Router) {
     app.post(
         "/admin/client-projects/:id/feedback",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const id = parseIntParam(res, req.params.id, "ID");
             if (id === null) return;
@@ -150,6 +160,7 @@ export function registerClientRoutes(app: Router) {
     app.post(
         "/admin/clients/:id/request-testimonial",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req: Request, res: Response) => {
             const clientId = parseIntParam(res, req.params.id, "Client ID");
             if (clientId === null) return;

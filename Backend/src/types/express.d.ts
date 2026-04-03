@@ -11,7 +11,7 @@ declare global {
                 email?: string;
                 token?: string;
                 via?: "bearer" | "cookie";
-            } | string;
+            };
         }
     }
 }

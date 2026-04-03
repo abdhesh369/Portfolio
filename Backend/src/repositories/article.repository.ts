@@ -156,7 +156,7 @@ export class ArticleRepository {
     async incrementViewCount(id: number): Promise<void> {
         await db.update(articlesTable)
             .set({ viewCount: sql`${articlesTable.viewCount} + 1` })
-            .where(eq(articlesTable.id, id));
+            .where(sql`${articlesTable.id} = ${id} AND ${articlesTable.status} = 'published'`);
     }
 
     async search(query: string, limit: number = 10): Promise<Article[]> {
@@ -305,7 +305,7 @@ export class ArticleRepository {
                         (COALESCE((reactions->>${emoji}), '0')::int + 1)::text::jsonb
                     )`
                 })
-                .where(eq(articlesTable.id, id))
+                .where(sql`${articlesTable.id} = ${id} AND ${articlesTable.status} = 'published'`)
                 .returning();
             
             if (!updated) throw new Error(`Article with id ${id} not found`);

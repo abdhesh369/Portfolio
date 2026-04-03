@@ -4,6 +4,7 @@ import { articleRepository } from "../repositories/article.repository.js";
 import { settingsRepository } from "../repositories/settings.repository.js";
 import { seoSettingsRepository } from "../repositories/seo-settings.repository.js";
 import { UploadService } from "./upload.service.js";
+import { validateSafeUrl } from "../lib/url-validator.js";
 import { logger } from "../lib/logger.js";
 
 export interface OptimizationStats {
@@ -92,9 +93,20 @@ export class BulkImageService {
 
         if (!this.isCloudinary(url)) {
             try {
+                // SSRF Prevention: Validate URL and pin the resolution
+                const { url: safeUrl, resolvedIp } = await validateSafeUrl(url);
+                const parsedUrl = new URL(safeUrl);
+                const requestUrl = safeUrl.replace(parsedUrl.hostname, resolvedIp);
+
                 // Try to migrate external image to Cloudinary
-                const response = await this.fetchWithTimeout(url);
+                const response = await this.fetchWithTimeout(requestUrl);
                 if (!response.ok) throw new Error(`Failed to fetch external image: ${response.statusText}`);
+
+                // File Upload Prevention: Verify content is an image (case-insensitive)
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.toLowerCase().startsWith("image/")) {
+                    throw new Error(`Invalid content type: ${contentType}. Expected an image.`);
+                }
 
                 const arrayBuffer = await response.arrayBuffer();
                 const buffer = Buffer.from(arrayBuffer);

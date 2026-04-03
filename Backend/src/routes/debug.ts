@@ -5,7 +5,7 @@ import { redis } from "../lib/redis.js";
 import { db } from "../db.js";
 import { projectsTable } from "@portfolio/shared/schema";
 import { count } from "drizzle-orm";
-import { isAuthenticated } from "../auth.js";
+import { isAuthenticated, isAdmin } from "../auth.js";
 
 export const debugRouter = Router();
 
@@ -13,6 +13,7 @@ export const debugRouter = Router();
 debugRouter.get(
   "/performance",
   isAuthenticated,
+  isAdmin,
   asyncHandler(async (req, res) => {
     const start = Date.now();
     
@@ -53,6 +54,7 @@ debugRouter.get(
 debugRouter.post(
   "/stress",
   isAuthenticated,
+  isAdmin,
   asyncHandler(async (req, res) => {
     const { clients } = z.object({ clients: z.number().int().min(1).max(200).default(50) })
         .parse(req.body);

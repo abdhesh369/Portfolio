@@ -9,6 +9,8 @@ import { SubscriberService } from "../services/subscriber.service.js";
 import { emailService } from "../services/email.service.js";
 import { CacheService } from "../lib/cache.js";
 import { z } from "zod";
+import { isAdmin } from "../auth.js";
+import { validateSafeUrl } from "../lib/url-validator.js";
 
 const subscriberService = new SubscriberService();
 
@@ -17,8 +19,9 @@ export function registerAdminRoutes(app: Router) {
     app.post(
         "/admin/optimize-images",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req, res) => {
-            logger.info({ context: "admin-tools", user: typeof req.user === 'object' ? req.user.email : undefined }, "Starting bulk image optimization");
+            logger.info({ context: "admin-tools", user: req.user?.email || "unknown" }, "Starting bulk image optimization");
 
             try {
                 const stats = await BulkImageService.optimizeAll();
@@ -45,8 +48,9 @@ export function registerAdminRoutes(app: Router) {
     app.post(
         "/admin/deploy",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req, res) => {
-            const userEmail = typeof req.user === 'object' ? req.user.email : undefined;
+            const userEmail = req.user?.email || "unknown";
             logger.info({ context: "admin-tools", user: userEmail }, "Request to trigger production deployment");
 
             if (!env.RENDER_DEPLOY_HOOK_URL) {
@@ -58,8 +62,18 @@ export function registerAdminRoutes(app: Router) {
             }
 
             try {
-                const response = await fetch(env.RENDER_DEPLOY_HOOK_URL, {
-                    method: "POST"
+                const { url, resolvedIp } = await validateSafeUrl(env.RENDER_DEPLOY_HOOK_URL);
+                const parsedUrl = new URL(url);
+
+                // For DNS rebinding prevention, connect to the resolved IP directly
+                // but keep the original Host header for the server.
+                const requestUrl = url.replace(parsedUrl.hostname, resolvedIp);
+
+                const response = await fetch(requestUrl, {
+                    method: "POST",
+                    headers: {
+                        "Host": parsedUrl.hostname
+                    }
                 });
 
                 if (!response.ok) {
@@ -90,6 +104,7 @@ export function registerAdminRoutes(app: Router) {
     app.post(
         "/admin/subscribers/broadcast",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req, res) => {
             const { subject, body } = z.object({
                 subject: z.string().min(1).max(255),
@@ -97,26 +112,41 @@ export function registerAdminRoutes(app: Router) {
             }).parse(req.body);
 
             const subscribers = await subscriberService.getActiveSubscribers();
+            if (subscribers.length === 0) {
+                return res.json({ success: true, message: "No active subscribers found.", count: 0 });
+            }
+
             logger.info({ count: subscribers.length }, "Starting newsletter broadcast");
 
-            // Add all to email queue
-            for (const sub of subscribers) {
-                await emailService.sendBroadcast({
-                    to: sub.email,
-                    subject,
-                    html: body // body is expected to be HTML from the frontend composer
-                });
-            }
+            // Execute all broadcasts concurrently
+            const results = await Promise.allSettled(
+                subscribers.map(sub => 
+                    emailService.sendBroadcast({
+                        to: sub.email,
+                        subject,
+                        html: body
+                    })
+                )
+            );
+
+            const succeeded = results.filter(r => r.status === "fulfilled").length;
+            const failed = results.filter(r => r.status === "rejected").length;
 
             recordAudit("OTHER", "newsletter_broadcast", undefined, null, { 
                 subject, 
-                recipientCount: subscribers.length 
+                recipientCount: subscribers.length,
+                succeeded,
+                failed
             });
 
             res.json({
                 success: true,
-                message: `Broadcast queued for ${subscribers.length} subscribers.`,
-                count: subscribers.length
+                message: `Broadcast completed. Succeeded: ${succeeded}, Failed: ${failed}`,
+                data: {
+                    total: subscribers.length,
+                    succeeded,
+                    failed
+                }
             });
         })
     );
@@ -125,8 +155,9 @@ export function registerAdminRoutes(app: Router) {
     app.post(
         "/admin/cache/clear",
         isAuthenticated,
+        isAdmin,
         asyncHandler(async (req, res) => {
-            logger.info({ context: "admin-tools", user: typeof req.user === 'object' ? req.user.email : undefined }, "Clearing system cache");
+            logger.info({ context: "admin-tools", user: req.user?.email || "unknown" }, "Clearing system cache");
 
             try {
                 await CacheService.clearAll();
