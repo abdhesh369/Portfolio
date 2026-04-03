@@ -889,7 +889,8 @@ export const insertSubscriberApiSchema = z.object({
 // Common fields for Site Settings to avoid duplication
 const siteSettingsBaseSchema = z.object({
   isOpenToWork: z.boolean(),
-  availabilityStatus: z.string().max(255).nullish().transform(v => v === "" ? null : v), singletonGuard: z.number().nullish(),
+  availabilityStatus: z.string().max(255).nullish().transform(v => v === "" ? null : v),
+  singletonGuard: z.literal(1).optional().default(1),
 
   // Personal Branding
   personalName: z.string().max(255).nullish(),
