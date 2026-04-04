@@ -43,7 +43,7 @@ describe("SettingsService", () => {
 
     describe("getSettings", () => {
         it("returns settings from cache", async () => {
-            const mockSettings = { id: 1, isOpenToWork: true, updatedAt: new Date() };
+            const mockSettings = { id: 1, isOpenToWork: true, singletonGuard: 1, updatedAt: new Date() };
             mockCacheGetOrSet.mockResolvedValue(mockSettings);
 
             const result = await service.getSettings();
@@ -57,20 +57,20 @@ describe("SettingsService", () => {
                 return await fetcher();
             });
             mockGetSettings.mockResolvedValue(null);
-            mockUpdateSettings.mockResolvedValue({ id: 1, isOpenToWork: true, updatedAt: new Date() });
+            mockUpdateSettings.mockResolvedValue({ id: 1, isOpenToWork: true, singletonGuard: 1, updatedAt: new Date() });
 
             const result = await service.getSettings();
 
             expect(mockGetSettings).toHaveBeenCalled();
             expect(mockUpdateSettings).toHaveBeenCalledWith({ isOpenToWork: true });
-            expect(result).toEqual({ id: 1, isOpenToWork: true, updatedAt: expect.any(Date) });
+            expect(result).toEqual({ id: 1, isOpenToWork: true, singletonGuard: 1, updatedAt: expect.any(Date) });
         });
     });
 
     describe("updateSettings", () => {
         it("updates settings and invalidates cache", async () => {
             const data = { isOpenToWork: false };
-            const updated = { id: 1, ...data, updatedAt: new Date() };
+            const updated = { id: 1, singletonGuard: 1, ...data, updatedAt: new Date() };
             mockUpdateSettings.mockResolvedValue(updated);
 
             const result = await service.updateSettings(data as unknown as Parameters<typeof service.updateSettings>[0]);
