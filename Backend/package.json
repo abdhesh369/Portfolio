@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@openrouter/sdk": "^0.10.2",
+    "@openrouter/sdk": "^0.12.21",
     "@portfolio/shared": "*",
     "@sentry/node": "^10.42.0",
     "@sentry/profiling-node": "^10.42.0",
