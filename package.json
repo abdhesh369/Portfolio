@@ -8,14 +8,14 @@
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
         "@types/node": "^26.1.1",
-        "@typescript-eslint/eslint-plugin": "^8.64.0",
-        "@typescript-eslint/parser": "^8.64.0",
+        "@typescript-eslint/eslint-plugin": "^8.66.0",
+        "@typescript-eslint/parser": "^8.66.0",
         "concurrently": "^10.0.3",
-        "eslint": "^10.6.0",
+        "eslint": "^10.8.0",
         "jsdom": "^29.0.1",
         "tinyexec": "^1.2.4",
-        "tsx": "^4.23.1",
-        "typescript": "^5.7.3"
+        "tsx": "^4.23.9",
+        "typescript": "^7.0.2"
     },
     "workspaces": [
         "Backend",
